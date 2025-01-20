@@ -1,0 +1,28 @@
+/* estilos.css */
+#simulador {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: 2px solid black;
+    overflow: auto;
+    background-color: #1d241e59;
+}
+
+#contenido-simulador {  /* Estilos para el contenido del simulador */
+    transform-origin: top left;
+    transform: scale(0.5);
+}
+
+.cuadro {
+    background-color: rgb(205, 205, 205);
+}
+
+.cuadro.carro {
+    background-image: url('carro.png');
+    background-size: contain;
+    /* Asegura que la imagen se ajuste dentro del cuadro */
+    background-repeat: no-repeat;
+    /* Evita que la imagen se repita */
+    background-position: center;
+    /* Centra la imagen dentro del cuadro */
+}

@@ -1,75 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Tráfico</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            overflow: auto;
-            background-color: #f0f0f000;
-        }
-        #simulador {
-            position: relative;
-            width: 90%;
-            height: 1900px;
-            border: 2px solid black;
-            margin: auto;
-            overflow: auto; 
-            background-color: #1d241e59;
-            /* Permite el desplazamiento dentro del simulador */
-            /*background-image: url('Fondo.png'); /* Cambia esto por la ruta de tu imagen */
-            /*vbackground-size: 100% 100%; /* Hace que la imagen cubra todo el contenedor */
-            /*background-repeat: no-repeat; /* Evita que la imagen se repita */
-            /*background-position: center; /* Centra la imagen en el contenedor */
-        
-        }
-        
-
-        .cuadro {
-            background-color: rgb(205, 205, 205);
-        }
-
-        .cuadro.carro {
-            background-image: url('carro.png');
-            background-size: contain; /* Asegura que la imagen se ajuste dentro del cuadro */
-            background-repeat: no-repeat; /* Evita que la imagen se repita */
-            background-position: center; /* Centra la imagen dentro del cuadro */
-        }
-        /* Estilo para el cuadrado */
-        #miCuadrado {
-            position: absolute;
-            width: 2100px;
-            height: 2100px;
-            left: 220px;
-            top: -62px;
-            background-image: url('Fondo.png');
-            background-size: 143%; /* Ajusta el tamaño de la imagen en porcentaje */
-            
-            /*background-color: blue;
-            left: 200px; 
-            top: 100px;*/
-            z-index: 1; /* Ajusta este valor según sea necesario */
-        }
-        /* Contenedor para las calles */
-        #callesContainer {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 10; /* Ajusta este valor según sea necesario */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Calles Dinámicas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <link rel="stylesheet" href="estilos.css">
 </head>
+
 <body>
-    <h1>Simulador de Tráfico</h1>
-    
-    <div id="simulador">
-        <div id="miCuadrado"></div>
-        <div id="callesContainer"></div> </div>
+  <div class="container-fluid vh-100 d-flex flex-column">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="text-center">Simulador de Tráfico con Calles Dinámicas</h1>
+      </div>
     </div>
-    <script src="trafico.js"></script>
+    <hr>
+    <div class="row">
+      <div class="col-12 d-flex justify-content-center">
+        <button id="zoomIn" class="btn btn-secondary mx-2">+</button>
+        <button id="zoomOut" class="btn btn-secondary mx-2">-</button>
+      </div>
+    </div>
+    <hr>
+    <div class="row flex-grow-1">
+      <div class="col-12 d-flex justify-content-center">
+        <div id="simulador">
+          <div id="contenido-simulador"></div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-12 d-flex justify-content-center">
+        <button class="btn btn-primary mx-2">Hold</button>
+        <button class="btn btn-primary mx-2">Precio</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+    crossorigin="anonymous"></script>
+  <script src="trafico.js"></script>
 </body>
+
 </html>
