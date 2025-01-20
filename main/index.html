@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Tráfico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            overflow: auto;
+            background-color: #f0f0f000;
+        }
+        #simulador {
+            position: relative;
+            width: 90%;
+            height: 1900px;
+            border: 2px solid black;
+            margin: auto;
+            overflow: auto; 
+            background-color: #1d241e59;
+            /* Permite el desplazamiento dentro del simulador */
+            /*background-image: url('Fondo.png'); /* Cambia esto por la ruta de tu imagen */
+            /*vbackground-size: 100% 100%; /* Hace que la imagen cubra todo el contenedor */
+            /*background-repeat: no-repeat; /* Evita que la imagen se repita */
+            /*background-position: center; /* Centra la imagen en el contenedor */
+        
+        }
+        
+
+        .cuadro {
+            background-color: rgb(205, 205, 205);
+        }
+
+        .cuadro.carro {
+            background-image: url('carro.png');
+            background-size: contain; /* Asegura que la imagen se ajuste dentro del cuadro */
+            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            background-position: center; /* Centra la imagen dentro del cuadro */
+        }
+        /* Estilo para el cuadrado */
+        #miCuadrado {
+            position: absolute;
+            width: 2100px;
+            height: 2100px;
+            left: 220px;
+            top: -62px;
+            background-image: url('Fondo.png');
+            background-size: 143%; /* Ajusta el tamaño de la imagen en porcentaje */
+            
+            /*background-color: blue;
+            left: 200px; 
+            top: 100px;*/
+            z-index: 1; /* Ajusta este valor según sea necesario */
+        }
+        /* Contenedor para las calles */
+        #callesContainer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 10; /* Ajusta este valor según sea necesario */
+        }
+    </style>
+</head>
+<body>
+    <h1>Simulador de Tráfico</h1>
+    
+    <div id="simulador">
+        <div id="miCuadrado"></div>
+        <div id="callesContainer"></div> </div>
+    </div>
+    <script src="trafico.js"></script>
+</body>
+</html>
