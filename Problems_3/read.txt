@@ -1,0 +1,1 @@
+Esta carepta vera el problema de no actualziar HTL con DOM sino con canvas, ya que esto mejora el rendimiento de manera notable
