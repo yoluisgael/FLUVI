@@ -1,10 +1,10 @@
-/* Estilos generales para todos los edificios */
+/* Estilos generales para todos los edificios 
 .edificio {
     position: absolute;
     background-color: green;
 }
 
-/* Edificios específicos */
+//Edificios específicos 
 .edificio-1 {
     width: 30px;
     height: 41px;
@@ -27,4 +27,4 @@
     left: 300px;
     top: 180px;
     transform: rotate(5deg);
-}
+}*/

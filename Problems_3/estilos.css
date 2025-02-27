@@ -1,15 +1,16 @@
 /* estilos.css */
 
 
+/*
 .cuadro.carro {
     background-image: url('carro.png');
     background-size: contain;
-    /* Asegura que la imagen se ajuste dentro del cuadro */
+    // Asegura que la imagen se ajuste dentro del cuadro 
     background-repeat: no-repeat;
-    /* Evita que la imagen se repita */
+    // Evita que la imagen se repita 
     background-position: center;
-    /* Centra la imagen dentro del cuadro */
-}
+    // Centra la imagen dentro del cuadro
+}*/
 
 .canvas-container {
     width: 100%; /* Ajusta el ancho del contenedor según tus necesidades */
@@ -25,4 +26,9 @@
     height: 100%;
     position: absolute; /* Para que el canvas ocupe todo el espacio del contenedor */
     touch-action: none; /* Desactiva gestos de zoom del navegador */
+}
+
+/* Para ocultar elementos del menú */
+.d-none {
+    display: none;
 }

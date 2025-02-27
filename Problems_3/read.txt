@@ -1,1 +1,1 @@
-Esta carepta vera el problema de no actualziar HTL con DOM sino con canvas, ya que esto mejora el rendimiento de manera notable
+Se agrego luminosidad a las calles, se uso canvas y aumento de carriles a conveniencia, ademas, se ppuede seleccionar la calle y modificar su valor de generacion
