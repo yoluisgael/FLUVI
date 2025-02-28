@@ -1,0 +1,1 @@
+Se agrego minimapa y se modifico la escala de acercamiento con ruedita de mause
