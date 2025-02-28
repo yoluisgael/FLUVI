@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Calles Dinámicas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="minimapa.css">
+</head>
+
+<body>
+  <div class="container-fluid vh-100 d-flex flex-column">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="text-center">Simulador de Tráfico con Calles Dinámicas</h1>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-12">
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                1. Modificador por calle
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+              <div class="accordion-body">
+                <strong>Modificador de parámetros por calle.</strong> Seleccione la calle a la que desea modificar un valor de los parametros disponibles. Registre en el <code>input</code> correspondiente el valor a modificar. Suba los cambios y observe el simulador.
+                <!-- Selección de calles -->
+                <label for="selectCalle" class="form-label mt-3">Seleccione una calle:</label>
+                <select id="selectCalle" class="form-select">
+                  <option value="">Seleccione una calle...</option>
+                </select>
+                <!-- Modificación de probabilidadGeneracion -->
+                <label for="inputProbabilidadGeneracion" class="form-label mt-3">Probabilidad de Generación:</label>
+                <input type="number" id="inputProbabilidadGeneracion" class="form-control" min="0" max="100" step="1">
+                <!-- Modificación de probabilidadSaltoDeCarril -->
+                <label for="inputProbabilidadSalto" class="form-label mt-3">Probabilidad de Salto de Carril (%):</label>
+                <input type="number" id="inputProbabilidadSalto" class="form-control" min="0" max="100" step="1">
+
+                <button id="btnActualizarCalle" class="btn btn-primary mt-3">Actualizar</button>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row flex-grow-1">
+      <div class="col-12 d-flex justify-content-center">
+        <div class="canvas-container">  
+          <canvas id="simuladorCanvas"></canvas>
+          <canvas id="minimapa"></canvas>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row"><hr></div>
+  </div>
+
+  <script src="trafico.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
