@@ -1,6 +1,14 @@
 const canvas = document.getElementById("simuladorCanvas");
 const ctx = canvas.getContext("2d");
 
+// Constantes de intersecciones
+
+let intersecciones = []; 
+const celdasIntersectadas = new Set();
+let mapaIntersecciones = new Map(); 
+
+let prioridadPar = true;
+
 // Ajustar tamaño inicial del canvas
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -156,6 +164,180 @@ function crearCalle(nombre, tamano, tipoInicio, tipoFinal, x, y, angulo, probabi
     return calle;
 }
 
+/**
+ * Calcula las coordenadas globales del CENTRO de una celda específica.
+ * @param {object} calle El objeto calle.
+ * @param {number} carril El índice del carril.
+ * @param {number} indice El índice de la celda dentro del carril.
+ * @returns {{x: number, y: number}} Coordenadas globales del centro de la celda.
+ */
+function obtenerCoordenadasGlobalesCelda(calle, carril, indice) {
+    // Centro de la celda en coordenadas locales de la calle (relativo a calle.x, calle.y)
+    // El origen local (0,0) para la rotación lo consideramos en la esquina superior izquierda de la calle.
+    const localX = (indice + 0.5) * celda_tamano; // Centro horizontal de la celda
+    const localY = (carril + 0.5) * celda_tamano; // Centro vertical de la celda
+
+    // Rotar el punto local alrededor del origen local (0,0)
+    const anguloRad = -calle.angulo * Math.PI / 180; // Negativo porque la rotación del canvas es horaria
+    const cos = Math.cos(anguloRad);
+    const sin = Math.sin(anguloRad);
+    const rotadoX = localX * cos - localY * sin;
+    const rotadoY = localX * sin + localY * cos;
+
+    // Trasladar a la posición global de la esquina de la calle
+    return {
+        x: rotadoX + calle.x,
+        y: rotadoY + calle.y
+    };
+}
+
+// Calcula la distancia euclidiana entre dos puntos.
+function distancia(p1, p2) {
+  return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+}
+
+// Detecta y almacena las intersecciones entre celdas de diferentes calles.
+function inicializarIntersecciones() {
+    console.log("Inicializando detección de intersecciones...");
+    intersecciones = []; // Limpiar array por si se llama de nuevo
+    celdasIntersectadas.clear(); // Limpiar el set de control
+
+    // Umbral de distancia para considerar una intersección (puede requerir ajuste)
+    // Si los centros están más cerca que esto, se consideran intersectados.
+    // Usar el tamaño de la celda es un buen punto de partida.
+    const umbralDistancia = celda_tamano;
+
+    // Iterar por cada par único de calles
+    for (let j = 0; j < calles.length; j++) {
+        const calle1 = calles[j];
+        for (let k = j + 1; k < calles.length; k++) { // j + 1 para evitar comparar consigo misma y pares duplicados
+            const calle2 = calles[k];
+
+            // Iterar por cada celda de la calle 1
+            for (let c1 = 0; c1 < calle1.carriles; c1++) {
+                for (let i1 = 0; i1 < calle1.tamano; i1++) {
+                    const idCelda1 = `${j}-${c1}-${i1}`; // ID único para la celda 1
+
+                    // Si esta celda ya es parte de una intersección, saltarla
+                    if (celdasIntersectadas.has(idCelda1)) {
+                        continue;
+                    }
+
+                    const centro1 = obtenerCoordenadasGlobalesCelda(calle1, c1, i1);
+
+                    // Iterar por cada celda de la calle 2
+                    for (let c2 = 0; c2 < calle2.carriles; c2++) {
+                        for (let i2 = 0; i2 < calle2.tamano; i2++) {
+                            const idCelda2 = `${k}-${c2}-${i2}`; // ID único para la celda 2
+
+                            // Si esta celda ya es parte de una intersección, saltarla
+                            if (celdasIntersectadas.has(idCelda2)) {
+                                continue;
+                            }
+
+                            const centro2 = obtenerCoordenadasGlobalesCelda(calle2, c2, i2);
+
+                            // Comprobar si los centros de las celdas están lo suficientemente cerca
+                            if (distancia(centro1, centro2) < umbralDistancia) {
+                                // ¡Intersección encontrada!
+                                const nuevaInterseccion = {
+                                    calle1: calle1,       // Referencia al objeto calle1
+                                    calle1Index: j,       // Índice de calle1 en el array `calles`
+                                    carril1: c1,          // Índice del carril en calle1
+                                    indice1: i1,          // Índice de la celda en el carril de calle1
+                                    calle2: calle2,       // Referencia al objeto calle2
+                                    calle2Index: k,       // Índice de calle2
+                                    carril2: c2,          // Índice del carril en calle2
+                                    indice2: i2,          // Índice de la celda en el carril de calle2
+                                    // Coordenada aproximada de la intersección (punto medio)
+                                    coords: { x: (centro1.x + centro2.x) / 2, y: (centro1.y + centro2.y) / 2 }
+                                };
+                                intersecciones.push(nuevaInterseccion);
+
+                                // Marcar ambas celdas como intersectadas para asegurar la relación 1 a 1
+                                celdasIntersectadas.add(idCelda1);
+                                celdasIntersectadas.add(idCelda2);
+
+                                console.log(`Intersección: Calle ${j}[${c1},${i1}] (${calle1.nombre}) con Calle ${k}[${c2},${i2}] (${calle2.nombre})`);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    console.log(`Detección finalizada. ${intersecciones.length} intersecciones encontradas.`);
+
+}
+
+
+// Construye un mapa de búsqueda rápida para intersecciones a partir del array intersecciones
+function construirMapaIntersecciones() {
+    mapaIntersecciones.clear(); // Limpiar por si se llama de nuevo
+    intersecciones.forEach(inter => {
+        // Crear IDs únicos para cada celda de la intersección
+        const id1 = `${inter.calle1Index}-${inter.carril1}-${inter.indice1}`;
+        const id2 = `${inter.calle2Index}-${inter.carril2}-${inter.indice2}`;
+
+        // Guardar la referencia cruzada en el mapa
+        // Clave: ID de celda 1 -> Valor: Info de celda 2
+        mapaIntersecciones.set(id1, {
+            calle: inter.calle2, // Referencia al objeto de la otra calle
+            carril: inter.carril2,
+            indice: inter.indice2
+        });
+        // Clave: ID de celda 2 -> Valor: Info de celda 1
+        mapaIntersecciones.set(id2, {
+            calle: inter.calle1, // Referencia al objeto de la otra calle
+            carril: inter.carril1,
+            indice: inter.indice1
+        });
+    });
+    console.log(`Mapa de lookup de intersecciones construido con ${mapaIntersecciones.size} entradas.`);
+}
+
+// Regresa un carro en caso de haber dos en la misma intersecciión
+function checarIntersecciones() {
+    intersecciones.forEach(inter => {
+        const { calle1Index, carril1, indice1, calle2Index, carril2, indice2 } = inter;
+
+        // Acceder a las calles y sus arreglos ACTUALIZADOS
+        const calle1 = calles[calle1Index];
+        const calle2 = calles[calle2Index];
+
+        // Validar acceso a datos necesarios
+        if (!calle1?.arreglo?.[carril1]?.[indice1] === undefined ||
+            !calle2?.arreglo?.[carril2]?.[indice2] === undefined) {
+             return; // Saltar si algo no existe
+        }
+
+        const estadoActualI1 = calle1.arreglo[carril1][indice1];
+        const estadoActualI2 = calle2.arreglo[carril2][indice2];
+
+        // ¿Conflicto detectado AHORA?
+        if (estadoActualI1 === 1 && estadoActualI2 === 1) {
+            if (prioridadPar) {
+                callePerdedora = calle2; carrilPerdedor = carril2; indicePerdedor = indice2;
+            } else {
+                callePerdedora = calle1; carrilPerdedor = carril1; indicePerdedor = indice1;
+            }
+
+            // Aplicar "Regreso" directamente sobre callePerdedora.arreglo
+            // 1. Poner celda de intersección del perdedor a 0
+            callePerdedora.arreglo[carrilPerdedor][indicePerdedor] = 0;
+
+            // 2. Poner celda ANTERIOR del perdedor a 1 (si existe)
+            let indiceAnteriorPerdedor = indicePerdedor - 1;
+            if (indiceAnteriorPerdedor >= 0) {
+                 if (callePerdedora.arreglo[carrilPerdedor]?.[indiceAnteriorPerdedor] !== undefined) {
+                     callePerdedora.arreglo[carrilPerdedor][indiceAnteriorPerdedor] = 1;
+                 } else {
+                 }
+            }
+        }
+    });
+}
+
 // Función para conectar dos calles
 function conexion_calle_de_2(calle1, calle2) {
     if (calle1.tipoFinal === "conexion" && calle2.tipoInicio === "conexion"
@@ -166,7 +348,7 @@ function conexion_calle_de_2(calle1, calle2) {
     }
 }
 
-function actualizarCalle(calle) {
+function actualizarCalle(calle, calleIndex) {
     let nuevaCalle = [];
     for (let c = 0; c < calle.carriles; c++) {
         nuevaCalle.push([...calle.arreglo[c]]); // Copia profunda
@@ -185,15 +367,24 @@ function actualizarCalle(calle) {
     }
 
     for (let c = 0; c < calle.carriles; c++) {
-        for (let i = 1; i < calle.tamano; i++) {
-            let izquierda = calle.arreglo[c][i - 1];
-            let actual = calle.arreglo[c][i];
-            let derecha = (i < calle.tamano - 1) ? calle.arreglo[c][i + 1] : 0;
+        if (!calle.arreglo?.[c] || !nuevaCalle?.[c] || calle.arreglo[c].length !== calle.tamano) continue;
+        if (calle.tamano <= 1) continue;
 
-            let reglaKey = `${izquierda},${actual},${derecha}`;
-            nuevaCalle[c][i] = reglas[reglaKey];
-        }
-    }
+       for (let i = 1; i < calle.tamano; i++) {
+           let izquierda = calle.arreglo[c][i - 1];
+           let actual = calle.arreglo[c][i];
+           let derecha = (i < calle.tamano - 1 && calle.arreglo[c]?.[i + 1] !== undefined) ? calle.arreglo[c][i + 1] : 0;
+
+           const idCeldaActual = `${calleIndex}-${c}-${i}`;
+           const infoIntersec = mapaIntersecciones.get(idCeldaActual);
+           if (infoIntersec) {
+               derecha = infoIntersec.calle.arreglo[infoIntersec.carril][infoIntersec.indice];
+           }
+
+           let reglaKey = `${izquierda},${actual},${derecha}`;
+           nuevaCalle[c][i] = reglas[reglaKey];
+       }
+   }
 
     calle.arreglo = nuevaCalle;
 }
@@ -275,6 +466,23 @@ function dibujarCarros() {
     });
 }
 
+function dibujarInterseccionesDetectadas() {
+    ctx.save();
+    // Usar el estado de transformación actual (zoom/pan)
+    // ctx.setTransform(escala, 0, 0, escala, offsetX, offsetY); // No es necesario si se llama después de aplicar la transformación en renderizarCanvas
+  
+    ctx.fillStyle = "rgba(255, 0, 255, 0.5)"; // Magenta semi-transparente
+    const radio = celda_tamano / 2; // Un pequeño radio para el marcador
+  
+    intersecciones.forEach(inter => {
+        // Dibujar un círculo en el punto medio calculado de la intersección
+        ctx.beginPath();
+        ctx.arc(inter.coords.x, inter.coords.y, radio, 0, 2 * Math.PI);
+        ctx.fill();
+    });
+    ctx.restore();
+  }
+
 // Renderizar canvas
 function renderizarCanvas() {
     ctx.fillStyle = "#c6cbcd"; // Color de fondo personalizado (gris oscuro)
@@ -292,6 +500,7 @@ function renderizarCanvas() {
     dibujarEdificios();
     dibujarCalles();
     dibujarCarros();
+    dibujarInterseccionesDetectadas();
     // Dibujar el minimapa después de renderizar el canvas principal
     dibujarMinimapa();
 }
@@ -342,6 +551,11 @@ function iniciarSimulacion() {
         selectCalle.appendChild(option);
     });
 
+    //Detectar e inicializar intersecciones físicas
+    inicializarIntersecciones();
+    //Construir mapa de búsqueda rápida
+    construirMapaIntersecciones();
+
     // Evento para actualizar la probabilidad al hacer clic en el botón
     btnActualizarCalle.addEventListener("click", () => {
         const calleIndex = selectCalle.value;
@@ -359,14 +573,21 @@ function iniciarSimulacion() {
         const tiempoTranscurrido = tiempoActual - tiempoAnterior;
 
         if (tiempoTranscurrido >= intervaloDeseado) {
-            calles.forEach(actualizarCalle);
+            calles.forEach((calle, index) => {
+                 actualizarCalle(calle, index);
+            });
+
             calles.forEach(cambioCarril);
+            checarIntersecciones();
             conexiones.forEach(({ origen, destino }) => {
                 for(let c = 0; c < origen.carriles; c++){ //Iterar sobre los carriles
                     destino.arreglo[c][0] = origen.arreglo[c][origen.tamano - 1];
                 }
             });
+
             renderizarCanvas();
+
+            prioridadPar = !prioridadPar; // Cambiar prioridad de intersecciones
             tiempoAnterior = tiempoActual; // Reiniciar el contador
 
         }
