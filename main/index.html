@@ -27,7 +27,7 @@
                 1. Modificador por calle
               </button>
             </h2>
-            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
               <div class="accordion-body">
                 <strong>Modificador de parámetros por calle.</strong> Seleccione la calle a la que desea modificar un valor de los parametros disponibles. Registre en el <code>input</code> correspondiente el valor a modificar. Suba los cambios y observe el simulador.
                 <!-- Selección de calles -->
@@ -56,10 +56,23 @@
         <div class="canvas-container">  
           <canvas id="simuladorCanvas"></canvas>
           <canvas id="minimapa"></canvas>
+          <div class="row justify-content-center align-items-center" id="canvasControlBar">
+            <div class="col-auto d-flex align-items-center" id="controlBar">
+              <button id="btnPauseResume" class="btn btn-secondary me-2">Pause</button>
+              <button id="btnPaso" class="btn btn-success me-2" disabled>Paso &gt;&gt;</button>
+              <button id="btnIntersecciones" class="btn btn-info me-3">Mostrar Intersecciones</button>
+              <button id="btnBorrar" class="btn btn-info me-3">Borrar</button>
+              <button id="btnRandom" class="btn btn-info me-3">Generar Aleatorio</button>
+              <label for="velocidadSlider" class="form-label me-2 mb-0">Velocidad:</label>
+              <input type="range" class="form-range me-2" id="velocidadSlider" min="1" max="100" step="1" style="width: 100px;">
+              <span id="velocidadValor" class="badge bg-primary">10</span>
+              <label for="probabilidadSlider" class="form-label me-2 mb-0">Probabilidad de Generación:</label>
+              <input type="range" class="form-range me-2" id="probabilidadSlider" min="0" max="100" step="1" style="width: 100px;">
+              <span id="probabilidadValor" class="badge bg-primary">10</span>
+            </div>
+          </div>
         </div>
-      </div>
     </div>
-    <hr>
     <div class="row"><hr></div>
   </div>
 

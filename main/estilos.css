@@ -20,3 +20,32 @@
 .d-none {
     display: none;
 }
+
+#canvasControlBar {
+    position: absolute;  /* Posicionamiento absoluto respecto al padre (.canvas-container) */
+    bottom: 0;           /* Pegado a la parte inferior del padre */
+    left: 0;             /* Extiende desde la izquierda... */
+    right: 0;            /* ...hasta la derecha (ocupa todo el ancho) */
+    width: 100%;         /* Asegura que ocupe todo el ancho (alternativa a left/right) */
+
+    background-color: rgba(230, 230, 230, 0.95); /* Fondo semi-transparente para legibilidad */
+    padding: 10px 0;     /* Espaciado vertical (ajusta según necesites) */
+    z-index: 50;         /* Asegura que esté por encima del canvas y el minimapa */
+
+    /* Quitar márgenes por defecto de la fila de Bootstrap si interfieren */
+    margin-left: 0;
+    margin-right: 0;
+
+    /* El 'justify-content-center' en el HTML ya centra los botones dentro de esta barra */
+}
+
+/* Opcional: Ajustar el margen inferior del span de velocidad si queda muy pegado */
+#velocidadValor {
+    margin-bottom: 0; /* Intenta asegurar que no tenga margen inferior extra */
+}
+
+#velocidadSlider {
+    border: solid 1px #82CFD0;
+    border-radius: 10px;
+    color: rgba(0, 0, 0, 0.95);
+}

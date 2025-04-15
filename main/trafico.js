@@ -2,7 +2,6 @@ const canvas = document.getElementById("simuladorCanvas");
 const ctx = canvas.getContext("2d");
 
 // Constantes de intersecciones
-
 let intersecciones = []; 
 const celdasIntersectadas = new Set();
 let mapaIntersecciones = new Map(); 
@@ -27,7 +26,14 @@ const btnActualizarCalle = document.getElementById("btnActualizarCalle");
 
 let animationId; // Variable para guardar el ID de la animación
 let tiempoAnterior = 0;
-const intervaloDeseado = 500; // Intervalo en milisegundos (100ms = 10 actualizaciones por segundo)
+let intervaloDeseado = 500; // Intervalo en milisegundos (100ms = 10 actualizaciones por segundo)
+
+let isPaused = false;
+let mostrarIntersecciones = false;
+const minVelocidadSlider = 1;  
+const maxVelocidadSlider = 100; 
+const maxIntervalo = 1000;  
+const minIntervalo = 10;
 
 // Configuración
 let calles = [];
@@ -36,8 +42,10 @@ const celda_tamano = 5;
 let escala = 1;
 let offsetX = 0, offsetY = 0;
 let isDragging = false, startX, startY;
+let hasDragged = false;
 let lastTouchX, lastTouchY;
 let calleSeleccionada = null; // Variable para almacenar la calle seleccionada
+let probabilidadGeneracionGeneral = 0.5;
 
 // Cargar la imagen del carro
 const carroImg = new Image();
@@ -105,16 +113,6 @@ function dibujarMinimapa() {
     minimapaCtx.restore();
 }
 
-/*Evento para guardar la calle seleccionada
-selectCalle.addEventListener("change", () => {
-    const calleIndex = selectCalle.value;
-    if (calleIndex !== "") {
-        calleSeleccionada = calles[calleIndex];
-    } else {
-        calleSeleccionada = null;
-    }
-    renderizarCanvas();
-});*/
 // Evento para guardar la calle seleccionada y mostrar valores en los inputs
 selectCalle.addEventListener("change", () => {
     const calleIndex = selectCalle.value;
@@ -164,13 +162,7 @@ function crearCalle(nombre, tamano, tipoInicio, tipoFinal, x, y, angulo, probabi
     return calle;
 }
 
-/**
- * Calcula las coordenadas globales del CENTRO de una celda específica.
- * @param {object} calle El objeto calle.
- * @param {number} carril El índice del carril.
- * @param {number} indice El índice de la celda dentro del carril.
- * @returns {{x: number, y: number}} Coordenadas globales del centro de la celda.
- */
+// Calcula las coordenadas globales del CENTRO de una celda específica.
 function obtenerCoordenadasGlobalesCelda(calle, carril, indice) {
     // Centro de la celda en coordenadas locales de la calle (relativo a calle.x, calle.y)
     // El origen local (0,0) para la rotación lo consideramos en la esquina superior izquierda de la calle.
@@ -270,7 +262,6 @@ function inicializarIntersecciones() {
 
 }
 
-
 // Construye un mapa de búsqueda rápida para intersecciones a partir del array intersecciones
 function construirMapaIntersecciones() {
     mapaIntersecciones.clear(); // Limpiar por si se llama de nuevo
@@ -334,6 +325,39 @@ function checarIntersecciones() {
                  } else {
                  }
             }
+        }
+    });
+}
+
+// Elimina un carro en las intersecciones sin regresos
+function suavizarIntersecciones() {
+    intersecciones.forEach(inter => {
+        const { calle1Index, carril1, indice1, calle2Index, carril2, indice2 } = inter;
+
+        // Acceder a las calles y sus arreglos ACTUALIZADOS
+        const calle1 = calles[calle1Index];
+        const calle2 = calles[calle2Index];
+
+        // Validar acceso a datos necesarios
+        if (!calle1?.arreglo?.[carril1]?.[indice1] === undefined ||
+            !calle2?.arreglo?.[carril2]?.[indice2] === undefined) {
+             return; // Saltar si algo no existe
+        }
+
+        const estadoActualI1 = calle1.arreglo[carril1][indice1];
+        const estadoActualI2 = calle2.arreglo[carril2][indice2];
+
+        // ¿Conflicto detectado AHORA?
+        if (estadoActualI1 === 1 && estadoActualI2 === 1) {
+            if (prioridadPar) {
+                callePerdedora = calle2; carrilPerdedor = carril2; indicePerdedor = indice2;
+            } else {
+                callePerdedora = calle1; carrilPerdedor = carril1; indicePerdedor = indice1;
+            }
+
+            // Aplicar "Regreso" directamente sobre callePerdedora.arreglo
+            // 1. Poner celda de intersección del perdedor a 0
+            callePerdedora.arreglo[carrilPerdedor][indicePerdedor] = 0;
         }
     });
 }
@@ -467,6 +491,9 @@ function dibujarCarros() {
 }
 
 function dibujarInterseccionesDetectadas() {
+    if(!mostrarIntersecciones)
+        return;
+
     ctx.save();
     // Usar el estado de transformación actual (zoom/pan)
     // ctx.setTransform(escala, 0, 0, escala, offsetX, offsetY); // No es necesario si se llama después de aplicar la transformación en renderizarCanvas
@@ -514,11 +541,57 @@ function calcularViewportVisible() {
     return { x: vistaX, y: vistaY, ancho: vistaAncho, alto: vistaAlto };
 }
 
+function encontrarCeldaMasCercana(worldX, worldY) {
+    let celdaMasCercana = null;
+    let distanciaMinima = Infinity;
+    // const umbralDistancia = (Math.sqrt(2 * celda_tamano * celda_tamano)) / 2 * 1.5; // <-- Línea original comentada
+    const umbralDistancia = celda_tamano; // <-- NUEVA LÍNEA: Umbral más simple
+
+    // Añadimos calleIndex al forEach
+    calles.forEach((calle, calleIndex) => {
+        for (let carril = 0; carril < calle.carriles; carril++) {
+            for (let indice = 0; indice < calle.tamano; indice++) {
+                const centroCelda = obtenerCoordenadasGlobalesCelda(calle, carril, indice);
+                const dx = worldX - centroCelda.x;
+                const dy = worldY - centroCelda.y;
+                const distancia = Math.sqrt(dx * dx + dy * dy);
+
+                if (distancia < distanciaMinima) {
+                    distanciaMinima = distancia;
+                    // Incluir calleIndex en el objeto retornado
+                    celdaMasCercana = { calle, carril, indice, calleIndex }; // <-- MODIFICADO
+                }
+            }
+        }
+    });
+
+    if (celdaMasCercana && distanciaMinima < umbralDistancia) { // <-- Se usa el nuevo umbral aquí
+        // console.log(`Celda encontrada: ${celdaMasCercana.calle.nombre}[${celdaMasCercana.carril}][${celdaMasCercana.indice}], CalleIdx: ${celdaMasCercana.calleIndex}, Dist: ${distanciaMinima.toFixed(1)}`);
+        return celdaMasCercana; // <-- Ahora incluye calleIndex
+    } else {
+        // console.log(`Clic (${worldX.toFixed(1)}, ${worldY.toFixed(1)}) muy lejos. Dist mín: ${distanciaMinima.toFixed(1)}`);
+        return null;
+    }
+}
+
+function limpiarCeldas(){
+    calles.forEach(calle => {
+        for (let c = 0; c < calle.carriles; c++) {
+            const carrilActual = calle.arreglo[c];
+            if (carrilActual) { 
+                for (let i = 0; i < calle.tamano; i++) { 
+                    carrilActual[i] = 0; 
+                }
+            }
+        }
+        renderizarCanvas();
+    });
+}
+
 // Iniciar la simulación
 function iniciarSimulacion() {
 
     // Calles con posiciones ajustadas
-    
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 422, "generador", "devorador", 210, 110, 0, 0.2,3,0.01);
     const Avenida_Miguel_Othon_de_Mendizabal = crearCalle("Av. Miguel Othon de Mendizabal",277, "generador", "conexion", 108, 192, 39, 0.2,3,0.02);
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard",148, "conexion", "devorador", 324, 17, -39, 0.2,3,0.01);
@@ -537,7 +610,17 @@ function iniciarSimulacion() {
     const Avenida_Lindavista = crearCalle("Av. Lindavista", 60, "generador", "devorador", 541, 230, 152, 0.2,1,0.01);
     const Avenida_Buenavista = crearCalle("Av. Buenavista", 60, "generador", "devorador", 540, 293, 152, 0.2,1,0.01);
     
-    
+    // Obtener botones
+    const btnPauseResume = document.getElementById('btnPauseResume');
+    const btnIntersecciones = document.getElementById('btnIntersecciones');
+    const btnPaso = document.getElementById('btnPaso');
+    const velocidadSlider = document.getElementById('velocidadSlider');
+    const velocidadValorSpan = document.getElementById('velocidadValor');
+    const btnBorrar = document.getElementById('btnBorrar');
+    const btnRandom = document.getElementById('btnRandom');
+    const probabilidadSlider = document.getElementById('probabilidadSlider');
+    const probabilidadValor = document.getElementById('probabilidadValor');
+
     // Conectar calles
     conexion_calle_de_2(Avenida_Wilfrido_Massieu_1, Avenida_Wilfrido_Massieu_2);
     conexion_calle_de_2(Avenida_Miguel_Othon_de_Mendizabal, Avenida_Miguel_Bernard);
@@ -551,10 +634,40 @@ function iniciarSimulacion() {
         selectCalle.appendChild(option);
     });
 
+    // Calcular el intervalo basado en el valor del slider de velocidad (mapeo lineal inverso)
+    function calcularIntervaloDesdeSlider(valorSlider) {
+        const rangoSlider = maxVelocidadSlider - minVelocidadSlider;
+        const rangoIntervalo = maxIntervalo - minIntervalo;
+
+        if (rangoSlider === 0) return intervaloDeseado;
+
+        // Normalizar valor del slider (0 a 1)
+        const normalizado = (valorSlider - minVelocidadSlider) / rangoSlider;
+
+        // Aplicar al rango de intervalo de forma inversa (mayor slider -> menor intervalo)
+        return Math.round(maxIntervalo - (normalizado * rangoIntervalo));
+    }
+
+    // Calcular el valor del slider de velocidad basado en un intervalo (para valor inicial)
+    function calcularSliderDesdeIntervalo(intervalo) {
+        const rangoSlider = maxVelocidadSlider - minVelocidadSlider;
+        const rangoIntervalo = maxIntervalo - minIntervalo;
+
+        if (rangoIntervalo === 0) return minVelocidadSlider;
+
+        // Normalizar intervalo (0 a 1, invertido porque menor intervalo es más rápido)
+        const normalizado = (maxIntervalo - Math.max(minIntervalo, Math.min(maxIntervalo, intervalo))) / rangoIntervalo;
+
+        // Aplicar al rango del slider y redondear
+        return Math.round(minVelocidadSlider + (normalizado * rangoSlider));
+    }
+
     //Detectar e inicializar intersecciones físicas
     inicializarIntersecciones();
     //Construir mapa de búsqueda rápida
     construirMapaIntersecciones();
+
+    intervaloDeseado = calcularIntervaloDesdeSlider(50);
 
     // Evento para actualizar la probabilidad al hacer clic en el botón
     btnActualizarCalle.addEventListener("click", () => {
@@ -568,51 +681,211 @@ function iniciarSimulacion() {
         }
     });
 
+    function paso(){
+        calles.forEach((calle, index) => {
+            actualizarCalle(calle, index);
+       });
+
+       calles.forEach(cambioCarril);
+       checarIntersecciones();
+       conexiones.forEach(({ origen, destino }) => {
+           for(let c = 0; c < origen.carriles; c++){ //Iterar sobre los carriles
+               destino.arreglo[c][0] = origen.arreglo[c][origen.tamano - 1];
+           }
+       });
+
+       renderizarCanvas();
+
+       prioridadPar = !prioridadPar; // Cambiar prioridad de intersecciones
+    }
+
     function animate(tiempoActual) {
         if (!tiempoAnterior) tiempoAnterior = tiempoActual;
         const tiempoTranscurrido = tiempoActual - tiempoAnterior;
 
         if (tiempoTranscurrido >= intervaloDeseado) {
-            calles.forEach((calle, index) => {
-                 actualizarCalle(calle, index);
-            });
-
-            calles.forEach(cambioCarril);
-            checarIntersecciones();
-            conexiones.forEach(({ origen, destino }) => {
-                for(let c = 0; c < origen.carriles; c++){ //Iterar sobre los carriles
-                    destino.arreglo[c][0] = origen.arreglo[c][origen.tamano - 1];
-                }
-            });
-
-            renderizarCanvas();
-
-            prioridadPar = !prioridadPar; // Cambiar prioridad de intersecciones
+            paso();
             tiempoAnterior = tiempoActual; // Reiniciar el contador
-
         }
 
         animationId = requestAnimationFrame(animate);
     }
 
-    animate(); // Iniciar la animación
+
+    animationId = requestAnimationFrame(animate);
+
+    if (btnPauseResume) {
+        btnPauseResume.addEventListener('click', () => {
+            isPaused = !isPaused; // Cambia el estado de pausa
+
+            if (isPaused) {
+                cancelAnimationFrame(animationId); // Detiene el bucle de animación
+                btnPauseResume.textContent = 'Resume'; 
+                btnPaso.disabled = false;
+            } else {
+                tiempoAnterior = performance.now(); // Resetea el tiempo para evitar un salto grande
+                animationId = requestAnimationFrame(animate);
+                btnPauseResume.textContent = 'Pause';
+                btnPaso.disabled = true;
+            }
+        });
+    }
+
+    if (btnIntersecciones) { 
+        btnIntersecciones.addEventListener('click', () => {
+            mostrarIntersecciones = !mostrarIntersecciones;
+            btnIntersecciones.textContent = mostrarIntersecciones ? 'Ocultar Intersecciones' : 'Mostrar Intersecciones';
+            renderizarCanvas();
+        });
+    }
+
+    if (btnPaso) { 
+        btnPaso.addEventListener('click', () => {
+            paso();
+        });
+    }
+
+    if (btnBorrar) { 
+        btnBorrar.addEventListener('click', () => {
+            limpiarCeldas();
+        });
+    }
+
+    if (btnRandom) { 
+        btnRandom.addEventListener('click', () => {
+            calles.forEach(calle => {
+                for (let c = 0; c < calle.carriles; c++) {
+                    const carrilActual = calle.arreglo[c];
+                    if (carrilActual) { 
+                        for (let i = 0; i < calle.tamano; i++) { 
+                            carrilActual[i] = Math.random() < probabilidadGeneracionGeneral ? 1 : 0;; 
+                        }
+                    }
+                }
+                suavizarIntersecciones();
+                renderizarCanvas();
+            });
+        });
+    }
+
+    if (velocidadSlider && velocidadValorSpan) {
+        const valorInicialSlider = calcularSliderDesdeIntervalo(intervaloDeseado);
+        velocidadSlider.value = valorInicialSlider;
+        velocidadValorSpan.textContent = valorInicialSlider; 
+        
+        velocidadSlider.addEventListener('input', () => {
+            const valorActualSlider = parseFloat(velocidadSlider.value);
+            intervaloDeseado = calcularIntervaloDesdeSlider(valorActualSlider);
+            velocidadValorSpan.textContent = valorActualSlider; 
+        });
+    }
+
+    if (probabilidadSlider && probabilidadValor) {
+        const valorInicialPorcentaje = probabilidadGeneracionGeneral * 100;
+        probabilidadSlider.value = valorInicialPorcentaje;
+        probabilidadValor.textContent = valorInicialPorcentaje + '%'; 
+        
+        probabilidadSlider.addEventListener('input', () => {
+            // 1. Obtener el valor del slider (será un string entre "0" y "100")
+            const valorSlider = probabilidadSlider.value;
+
+            // 2. Convertir el valor a probabilidad (número entre 0 y 1)
+            const nuevaProbabilidad = parseFloat(valorSlider) / 100.0;
+
+            // 3. Actualizar la variable global
+            probabilidadGeneracionGeneral = nuevaProbabilidad;
+
+            // 4. Actualizar el texto del span para mostrar el porcentaje
+            probabilidadValor.textContent = valorSlider + '%';
+        });
+    }
 }
 
-// --- Zoom y Desplazamiento ---
+// Zoom y Desplazamiento
 canvas.addEventListener("wheel", event => {
-    event.preventDefault();
-    escala *= event.deltaY < 0 ? 1.4 : 0.9;
+    event.preventDefault(); // Evita el scroll de la página
+
+    // Factor de Zoom
+    // Usar Math.pow para un zoom más suave y consistente
+    const zoomIntensity = 1.1;
+    const direction = event.deltaY < 0 ? 1 : -1; // 1 para acercar, -1 para alejar
+
+    // Posición del Ratón Relativa al Canvas
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Coordenadas del Mundo Bajo el Ratón (Antes del Zoom)
+    // (mx - offsetX) / escala = worldX  =>  worldX = (mouseX - offsetX) / escala
+    const worldX_before = (mouseX - offsetX) / escala;
+    const worldY_before = (mouseY - offsetY) / escala;
+
+    // Calcular Nueva Escala 
+    const escala_anterior = escala;
+    escala = escala_anterior * Math.pow(zoomIntensity, direction);
+
+    // Limitar la Escala 
+    const minEscala = 0.7;  // Límite mínimo de zoom
+    const maxEscala = 20.0; // Límite máximo de zoom
+    escala = Math.max(minEscala, Math.min(maxEscala, escala));
+    if (escala === escala_anterior) {
+        return;
+    }
+
+    // Calcular Nuevo Offset
+    offsetX = mouseX - worldX_before * escala;
+    offsetY = mouseY - worldY_before * escala;
+
     renderizarCanvas();
 });
 
 canvas.addEventListener("mousedown", event => {
     isDragging = true;
+    hasDragged = false; // Resetear la bandera en cada nuevo intento de clic/arrastre
     startX = event.clientX - offsetX;
     startY = event.clientY - offsetY;
 });
 
+canvas.addEventListener('click', (event) => {
+    // Evitar comportamiento si se está arrastrando
+    if (hasDragged) return; 
+
+    // 1. Obtener coordenadas del ratón relativas al borde CSS del canvas
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // 2. ESCALAR las coordenadas del ratón para que coincidan con la resolución interna del canvas
+    //    Esto corrige discrepancias si el tamaño CSS no es igual a canvas.width/height
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const scaledMouseX = mouseX * scaleX;
+    const scaledMouseY = mouseY * scaleY;
+
+    // 3. Convertir las coordenadas ESCALADAS a coordenadas del mundo (considerando pan/zoom)
+    const worldX = (scaledMouseX - offsetX) / escala;
+    const worldY = (scaledMouseY - offsetY) / escala;
+
+    // 4. Encontrar la celda más cercana al punto del clic en el mundo
+    const celdaObjetivo = encontrarCeldaMasCercana(worldX, worldY);
+
+    // 5. Si se encontró una celda válida y está vacía, colocar un carro
+    if (celdaObjetivo) {
+        const { calle, carril, indice } = celdaObjetivo;
+        if (calle.arreglo[carril] !== undefined && calle.arreglo[carril][indice] === 0) {
+            calle.arreglo[carril][indice] = 1; 
+            renderizarCanvas();
+        } else if (calle.arreglo[carril] !== undefined && calle.arreglo[carril][indice] !== 0) {
+            calle.arreglo[carril][indice] = 0; 
+            renderizarCanvas();
+        } 
+    } 
+});
+
 canvas.addEventListener("mousemove", event => {
     if (isDragging) {
+        hasDragged = true;
+
         offsetX = (event.clientX - startX);
         offsetY = (event.clientY - startY);
         renderizarCanvas();
