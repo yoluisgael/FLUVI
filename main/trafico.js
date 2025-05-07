@@ -592,23 +592,37 @@ function limpiarCeldas(){
 function iniciarSimulacion() {
 
     // Calles con posiciones ajustadas
-    const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 422, "generador", "devorador", 210, 110, 0, 0.2,3,0.01);
-    const Avenida_Miguel_Othon_de_Mendizabal = crearCalle("Av. Miguel Othon de Mendizabal",277, "generador", "conexion", 108, 192, 39, 0.2,3,0.02);
-    const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard",148, "conexion", "devorador", 324, 17, -39, 0.2,3,0.01);
-    const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 250, "generador", "devorador", 134, 115, -73, 0.2,3,0.01);
-    const Avenida_IPN = crearCalle("Av. IPN", 305, "generador", "devorador", 489, 50, -90, 0.2,2,0.01);
-    const Avenida_Guanajuato = crearCalle("Av. Guanajuato", 150, "generador", "devorador", 192, 305, 0, 0.2,1,0.01);
-    const Avenida_Montevideo = crearCalle("Av. Montevideo", 330, "generador", "devorador", 200, 333, 0, 0.2,3,0.01);
-    const Avenida_Otavalo = crearCalle("Av. Otavalo", 210, "generador", "devorador", 342, 292, 0, 0.2,1,0.01);
-    const Avenida_17_de_mayo = crearCalle("Av. 17 de mayo", 92, "generador", "devorador", 313, 353, 90, 0.2,1,0.01);
-    const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro 1", 220, "generador", "conexion", 342, 306, 90, 0.2,2,0.01);
-    const Calle_Luis_Enrique_Erro_2 = crearCalle("Calle Luis Enrique Erro 2", 41, "conexion", "devorador", 342, 86, 55, 0.2,2,0.01);
-    const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo", 153, "generador", "devorador", 415, 264, 90, 0.2,1,0.01);
-    const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu 1", 152, "generador", "conexion", 488, 265, 180, 0.2,2,0.01);
-    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 164, "conexion", "devorador", 336, 265, 173, 0.2,2,0.01);
-    const Avenida_Sierravista = crearCalle("Av. Sierravista", 61, "generador", "devorador", 541, 185, 150, 0.2,1,0.01);
-    const Avenida_Lindavista = crearCalle("Av. Lindavista", 60, "generador", "devorador", 541, 230, 152, 0.2,1,0.01);
-    const Avenida_Buenavista = crearCalle("Av. Buenavista", 60, "generador", "devorador", 540, 293, 152, 0.2,1,0.01);
+    const Avenida_Miguel_Othon_de_Mendizabal = crearCalle("Av. Miguel Othon de Mendizabal",250, "generador", "conexion", 145, 160, 22, 0.2,3,0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal2 = crearCalle("Av. Miguel Othon de Mendizabal 2",250, "conexion", "devorador", 376, 62, 202, 0.2,3,0.02);
+    const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard",190, "conexion", "devorador", 380, 67, -46, 0.2,3,0.01);
+    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2",195, "generador", "conexion", 516, 203, 134, 0.2,3,0.01);
+    const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, "generador", "devorador", 114, 119, -70, 0.2,3,0.01);
+    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, "generador", "devorador", 258, 475, 110, 0.2,3,0.01);
+    const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, "generador", "devorador", 204, 152, -10, 0.2,3,0.01);
+    const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz 2", 380, "generador", "devorador", 584, 215, 170, 0.2,2,0.01);
+    const Avenida_IPN = crearCalle("Av. IPN", 320, "generador", "devorador", 561, 190, -100, 0.2,2,0.01);
+    const Avenida_IPN2 = crearCalle("Av. IPN 2", 320, "generador", "devorador", 509, 505, 80, 0.2,2,0.01);
+    const Avenida_Guanajuato = crearCalle("Av. Guanajuato", 100, "generador", "devorador", 236, 407, -14, 0.2,1,0.01);
+    const Avenida_Montevideo = crearCalle("Av. Montevideo", 308, "generador", "devorador", 246, 432, -12, 0.2,3,0.01);
+    const Avenida_Montevideo2 = crearCalle("Av. Montevideo 2", 308, "generador", "devorador", 544, 492, 168, 0.2,3,0.01);
+    const Avenida_Otavalo = crearCalle("Av. Otavalo", 150, "generador", "devorador", 353, 410, -11, 0.2,1,0.01);
+    const Avenida_17_de_mayo = crearCalle("Av. 17 de mayo", 122, "generador", "devorador", 304, 479, 72, 0.2,1,0.01);
+    const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro 1", 202, "generador", "conexion", 358, 360, 80, 0.2,2,0.01);
+    const Calle_Luis_Enrique_Erro_2 = crearCalle("Calle Luis Enrique Erro 2", 10, "conexion", "conexion", 393, 161, 65, 0,2,0.01);
+    const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro 3", 43, "conexion", "devorador",  397, 152, 46, 0.2,2,0.01);
+    const Calle_Luis_Enrique_Erro_6 = crearCalle("Calle Luis Enrique Erro 6", 174, "conexion", "devorador", 389, 160, -100, 0.2,2,0.01);
+    const Calle_Luis_Enrique_Erro_4 = crearCalle("Calle Luis Enrique Erro 4", 46, "generador", "conexion", 425, 119, -134, 0.2,2,0.01);
+    const Calle_Luis_Enrique_Erro_5 = crearCalle("Calle Luis Enrique Erro 5", 10, "conexion", "conexion", 393, 152, -115, 0.2,2,0.01);
+    
+    const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo", 185, "generador", "devorador", 436, 383, 80, 0.2,1,0.01);
+    const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo 2", 183, "generador", "devorador", 464, 200, -100, 0.2,1,0.01);
+    const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu 1", 160, "generador", "conexion", 520, 404, 166, 0.2,2,0.01);
+    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, "conexion", "devorador", 364, 365, 155, 0.2,2,0.01);
+    const Avenida_Wilfrido_Massieu_3 = crearCalle("Av. Wilfrido Massieu 3", 185, "generador", "conexion", 197, 297, -24, 0.2,2,0.01);
+    const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 160, "conexion", "devorador", 365, 372, -14, 0,2,0.01);
+    const Avenida_Sierravista = crearCalle("Av. Sierravista", 50, "generador", "devorador", 588, 289, 132, 0.2,1,0.01);
+    const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, "generador", "devorador", 569, 342, 134, 0.2,1,0.01);
+    const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, "generador", "devorador", 565, 419, 171, 0.2,1,0.01);
     
     // Obtener botones
     const btnPauseResume = document.getElementById('btnPauseResume');
@@ -623,9 +637,13 @@ function iniciarSimulacion() {
 
     // Conectar calles
     conexion_calle_de_2(Avenida_Wilfrido_Massieu_1, Avenida_Wilfrido_Massieu_2);
+    conexion_calle_de_2(Avenida_Wilfrido_Massieu_3, Avenida_Wilfrido_Massieu_4);
     conexion_calle_de_2(Avenida_Miguel_Othon_de_Mendizabal, Avenida_Miguel_Bernard);
     conexion_calle_de_2(Calle_Luis_Enrique_Erro_1, Calle_Luis_Enrique_Erro_2);
-
+    conexion_calle_de_2(Calle_Luis_Enrique_Erro_2, Calle_Luis_Enrique_Erro_3);
+    conexion_calle_de_2(Avenida_Miguel_Bernard2, Avenida_Miguel_Othon_de_Mendizabal2);
+    conexion_calle_de_2(Calle_Luis_Enrique_Erro_4, Calle_Luis_Enrique_Erro_5);
+    conexion_calle_de_2(Calle_Luis_Enrique_Erro_5, Calle_Luis_Enrique_Erro_6);
     // Llenar el select con las calles
     calles.forEach(calle => {
         let option = document.createElement("option");
