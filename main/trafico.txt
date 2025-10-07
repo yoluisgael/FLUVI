@@ -1779,3 +1779,38 @@ window.addEventListener('load', () => {
 });
 
 iniciarSimulacion();
+
+// ========== EXPONER VARIABLES PARA EL EDITOR ==========
+// (Agregar al final del archivo trafico.js)
+
+window.calleSeleccionada = calleSeleccionada;
+window.escala = escala;
+window.offsetX = offsetX;
+window.offsetY = offsetY;
+window.celda_tamano = celda_tamano;
+window.isPaused = isPaused;
+
+// Actualizar variables globales cuando cambien
+const originalSelectCalleListener = selectCalle.onchange;
+selectCalle.addEventListener("change", () => {
+    window.calleSeleccionada = calleSeleccionada;
+});
+
+// Exponer funciones necesarias
+window.renderizarCanvas = renderizarCanvas;
+window.inicializarIntersecciones = inicializarIntersecciones;
+window.construirMapaIntersecciones = construirMapaIntersecciones;
+
+// Actualizar escala y offset en tiempo real
+canvas.addEventListener("wheel", () => {
+    window.escala = escala;
+    window.offsetX = offsetX;
+    window.offsetY = offsetY;
+});
+
+canvas.addEventListener("mousemove", () => {
+    if (isDragging) {
+        window.offsetX = offsetX;
+        window.offsetY = offsetY;
+    }
+});
