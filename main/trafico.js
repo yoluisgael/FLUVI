@@ -1117,20 +1117,19 @@ function iniciarSimulacion() {
         0.05                       // 10. probabilidadSaltoDeCarril: Probabilidad de cambio de carril (0.0 a 1.0)
     );*/
     // Sistema 1: Avenida Wilfrido Massieu (Generador → Conexión → Incorporación → Devorador)
-    const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal 1", 219, TIPOS.CONEXION, 731, 796, 22, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal 1", 220, TIPOS.CONEXION, 731, 796, 22, 0.0, 3, 0.02);
     const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
     const Avenida_Miguel_Othon_de_Mendizabal_4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 9, TIPOS.CONEXION, 1745, 386, 28, 0.0, 3, 0.02);
     
     const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal 5", 219, TIPOS.CONEXION, 1739, 367, 202, 0.0, 3, 0.02);
     const Avenida_Miguel_Othon_de_Mendizabal_6 = crearCalle("Av. Miguel Othon de Mendizabal 6", 10, TIPOS.CONEXION, 1780, 345, 208, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 10, TIPOS.CONEXION, 1874, 277, 221, 0.0, 3, 0.02);
-    
+    const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 10, TIPOS.CONEXION, 1872, 278, 221, 0.0, 3, 0.02);
+
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard", 190, TIPOS.CONEXION, 1863, 298, -46, 0.0, 3, 0.01);
-    const Avenida_Miguel_Bernard_2 = crearCalle("Av. Miguel Bernard 2", 10, TIPOS.CONEXION, 1900, 335, -46, 0.0, 3, 0.01);
-    
-    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 3", 195, TIPOS.CONEXION, 2541, 968, 134, 0.0, 3, 0.01);
-    const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, TIPOS.GENERADOR, 570, 595, -70, 0.5, 3, 0.01);
+    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2", 195, TIPOS.CONEXION, 2527, 980, 133, 0.0, 3, 0.01);
+    const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, TIPOS.CONEXION, 570, 595, -70, 0.0, 3, 0.01);
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, TIPOS.CONEXION, 1290, 2375, 110, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 1020, 760, -10, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz 2", 380, TIPOS.CONEXION, 2920, 1075, 170, 0.0, 2, 0.01);
@@ -1156,6 +1155,10 @@ function iniciarSimulacion() {
     const Avenida_Sierravista = crearCalle("Av. Sierravista", 50, TIPOS.CONEXION, 2940, 1445, 132, 0.0, 1, 0.01);
     const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
     const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 2825, 2095, 171, 0.0, 1, 0.01);
+    
+    const Devorador = crearCalle("Salida Cien Metros 2", 4, TIPOS.DEVORADOR, 638, 584, 110, 0.5, 3, 0.01);
+    const Generador_1 = crearCalle("Entrada a Cien Metros 1", 4, TIPOS.GENERADOR, 565, 580, -70, 0.3, 3, 0.01);
+    
     /*const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu 1", 250, TIPOS.GENERADOR, 520, 404, 166, 0.2, 3, 0.05);
     const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 364, 365, 155, 0.0, 3, 0.08);
     const Avenida_Wilfrido_Massieu_3 = crearCalle("Av. Wilfrido Massieu 3", 100, TIPOS.CONEXION, 200, 300, 145, 0.0, 1, 0.0);
@@ -1170,25 +1173,76 @@ function iniciarSimulacion() {
     // ==================== CREAR CONEXIONES ====================
     const conexionesCA = [];
 
-    // --- Sistema 1: Avenida Wilfrido Massieu ---
-    // GENERADOR → CONEXION (lineal 3 carriles)
+    // --- Sistema 1: Avenida_Miguel_Othon_de_Mendizabal ---
+    // CONEXION → CONEXION (lineal 3 carriles)
     conexionesCA.push(...crearConexionLineal(
         Avenida_Miguel_Othon_de_Mendizabal_1, 
-        Avenida_Miguel_Bernard
+        Avenida_Miguel_Othon_de_Mendizabal_4
     ));
+    conexionesCA.push(...crearConexionLineal(
+        Avenida_Miguel_Othon_de_Mendizabal_4, 
+        Avenida_Miguel_Othon_de_Mendizabal_2
+    ));
+    conexionesCA.push(...crearConexionLineal(
+        Avenida_Miguel_Othon_de_Mendizabal_2, 
+        Avenida_Miguel_Othon_de_Mendizabal_3
+    ));
+    
+    conexionesCA.push(...crearConexionIncorporacion(
+        Avenida_Miguel_Othon_de_Mendizabal_3,
+        Avenida_Miguel_Bernard,
+        2,      // carril destino
+        0       // posición inicial
+    ));
+
+    conexionesCA.push(...crearConexionLineal(
+        Avenida_Miguel_Othon_de_Mendizabal_8, 
+        Avenida_Miguel_Othon_de_Mendizabal_7
+    ));
+    conexionesCA.push(...crearConexionLineal(
+        Avenida_Miguel_Othon_de_Mendizabal_7, 
+        Avenida_Miguel_Othon_de_Mendizabal_6
+    ));
+    conexionesCA.push(...crearConexionLineal(
+        Avenida_Miguel_Othon_de_Mendizabal_6, 
+        Avenida_Miguel_Othon_de_Mendizabal_5
+    ));
+
+    // Montevideo a Cien Metros 
+    conexionesCA.push(...crearConexionIncorporacion(
+        Avenida_Montevideo2,
+        Avenida_Cien_Metros2,
+        2,      // carril destino
+        49
+    ));
+    // Massieu a Cien Metros
+    conexionesCA.push(...crearConexionIncorporacion(
+        Avenida_Wilfrido_Massieu_2,
+        Avenida_Cien_Metros2,
+        2,      // carril destino
+        201
+    ));
+    // Massieu a Cien Metros
+    conexionesCA.push(...crearConexionIncorporacion(
+        Avenida_Miguel_Othon_de_Mendizabal_5,
+        Avenida_Cien_Metros2,
+        2,      // carril destino
+        339
+    ));
+
+    //GENERADORES
+    conexionesCA.push(...crearConexionLineal(
+        Generador_1, 
+        Avenida_Cien_Metros
+    ));
+
     // GENERADOR → CONEXION (lineal 3 carriles)
     conexionesCA.push(...crearConexionLineal(
         Avenida_Wilfrido_Massieu_1, 
         Avenida_Wilfrido_Massieu_2
     ));
     
-    // CONEXION → CONEXION (incorporación 3 a 1)
-    conexionesCA.push(...crearConexionIncorporacion(
-        Avenida_Wilfrido_Massieu_2,
-        Avenida_Wilfrido_Massieu_3,
-        0,      // carril destino
-        4       // posición inicial
-    ));
+    
     
     // CONEXION → DEVORADOR (lineal 1 carril)
     conexionesCA.push(...crearConexionLineal(
