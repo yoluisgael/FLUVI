@@ -71,6 +71,18 @@ let lastTouchX, lastTouchY;
 let calleSeleccionada = null; // Variable para almacenar la calle seleccionada
 let probabilidadGeneracionGeneral = 0.5;
 
+// Variables globales expuestas para el editor
+window.calles = calles;
+window.calleSeleccionada = null;
+window.isPaused = false;
+window.escala = escala;
+window.offsetX = offsetX;
+window.offsetY = offsetY;
+window.celda_tamano = celda_tamano;
+window.renderizarCanvas = renderizarCanvas;
+window.inicializarIntersecciones = inicializarIntersecciones;
+window.construirMapaIntersecciones = construirMapaIntersecciones;
+
 // Cargar la imagen del carro
 const carroImg = new Image();
 carroImg.src = "carro.png";
@@ -142,12 +154,13 @@ selectCalle.addEventListener("change", () => {
     const calleIndex = selectCalle.value;
     if (calleIndex !== "") {
         calleSeleccionada = calles[calleIndex];
-
+        window.calleSeleccionada = calleSeleccionada; // Exponer globalmente
         // Mostrar valores actuales en los inputs
         inputProbabilidadGeneracion.value = calleSeleccionada.probabilidadGeneracion * 100; // Conversión a porcentaje
         inputProbabilidadSalto.value = calleSeleccionada.probabilidadSaltoDeCarril * 100; // Conversión a porcentaje
     } else {
         calleSeleccionada = null;
+        window.calleSeleccionada = null;
     }
     renderizarCanvas();
 });
@@ -1104,10 +1117,16 @@ function iniciarSimulacion() {
         0.05                       // 10. probabilidadSaltoDeCarril: Probabilidad de cambio de carril (0.0 a 1.0)
     );*/
     // Sistema 1: Avenida Wilfrido Massieu (Generador → Conexión → Incorporación → Devorador)
-    const Avenida_Miguel_Othon_de_Mendizabal = crearCalle("Av. Miguel Othon de Mendizabal", 250, TIPOS.CONEXION, 145, 160, 22, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 250, TIPOS.CONEXION, 376, 62, 202, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal = crearCalle("Av. Miguel Othon de Mendizabal 1", 200, TIPOS.CONEXION, 145, 160, 22, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 380, 50, 25, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 380, 60, 29, 0.0, 3, 0.02);
+    
+    //140
+    const Avenida_Miguel_Othon_de_Mendizabal4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 250, TIPOS.CONEXION, 376, 62, 202, 0.0, 3, 0.02);
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard", 190, TIPOS.CONEXION, 380, 67, -46, 0.0, 3, 0.01);
-    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2", 195, TIPOS.CONEXION, 516, 203, 134, 0.0, 3, 0.01);
+    const Avenida_Miguel_Bernard_2 = crearCalle("Av. Miguel Bernard 2", 10, TIPOS.CONEXION, 380, 67, -46, 0.0, 3, 0.01);
+    
+    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 3", 195, TIPOS.CONEXION, 516, 203, 134, 0.0, 3, 0.01);
     const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, TIPOS.GENERADOR, 114, 119, -70, 0.5, 3, 0.01);
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, TIPOS.CONEXION, 258, 475, 110, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 204, 152, -10, 0.0, 3, 0.01);
