@@ -8,341 +8,62 @@
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
   <link rel="stylesheet" href="estilos.css">
   <link rel="stylesheet" href="minimapa.css">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 380px;
-      height: 100vh;
-      background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
-      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-      z-index: 1000;
-      overflow-y: auto;
-      padding: 20px;
-      transition: left 0.3s ease;
-    }
-
-    .sidebar::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .sidebar::-webkit-scrollbar-track {
-      background: #e9ecef;
-    }
-
-    .sidebar::-webkit-scrollbar-thumb {
-      background: #0d6efd;
-      border-radius: 4px;
-    }
-
-    .sidebar h4 {
-      color: #0d6efd;
-      font-weight: 600;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 3px solid #0d6efd;
-    }
-
-    .sidebar h5 {
-      color: #495057;
-      font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 15px;
-    }
-
-    .sidebar h6 {
-      color: #6c757d;
-      font-weight: 500;
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-    }
-
-    .main-content {
-      margin-left: 380px;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: #c6cbcd;
-    }
-
-    .chart-container {
-      margin-bottom: 15px;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      padding: 12px;
-      background: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .chart-container:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-
-    .param-section {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-    }
-
-    .form-label {
-      font-weight: 500;
-      color: #495057;
-      margin-top: 10px;
-    }
-
-    .btn-primary {
-      background: #0d6efd;
-      border: none;
-      font-weight: 500;
-      padding: 10px;
-      transition: all 0.3s;
-    }
-
-    .btn-primary:hover {
-      background: #0b5ed7;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
-    }
-
-    .canvas-wrapper {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #simuladorCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    #minimapa {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 100;
-      border: 2px solid #0d6efd;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .header {
-      background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
-      color: white;
-      padding: 15px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 1.8rem;
-      font-weight: 600;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-    }
-
-    #canvasControlBar {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.95);
-      padding: 15px 20px;
-      border-radius: 50px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
-
-    #controlBar .btn {
-      margin: 0 5px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-
-    /* ========== NUEVOS ESTILOS PARA MODO EDICIÓN ========== */
-    
-    /* Indicador de modo edición */
-    .edit-mode-badge {
-      display: none;
-      background: #ffc107;
-      color: #000;
-      padding: 8px 15px;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 0.85rem;
-      margin-bottom: 15px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(255, 193, 7, 0.4);
-      animation: pulse 2s infinite;
-    }
-
-    .edit-mode-badge.active {
-      display: block;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
-    /* Sección de ajustes avanzados (colapsable) */
-    .advanced-settings {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease;
-      margin-top: 10px;
-    }
-
-    .advanced-settings.show {
-      max-height: 500px;
-    }
-
-    .coordinate-input {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-top: 10px;
-    }
-
-    .coordinate-input label {
-      min-width: 60px;
-      font-weight: 500;
-    }
-
-    /* Handles visuales en el canvas */
-    .edit-handle {
-      position: absolute;
-      display: none;
-      z-index: 150;
-      pointer-events: auto;
-    }
-
-    .edit-handle.active {
-      display: block;
-    }
-
-    .move-handle {
-      width: 40px;
-      height: 40px;
-      background: #0d6efd;
-      border: 3px solid white;
-      border-radius: 50%;
-      cursor: move;
-      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .move-handle::before {
-      content: "✥";
-    }
-
-    .rotate-handle {
-      width: 40px;
-      height: 40px;
-      background: #198754;
-      border: 3px solid white;
-      border-radius: 50%;
-      cursor: grab;
-      box-shadow: 0 4px 12px rgba(25, 135, 84, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .rotate-handle::before {
-      content: "↻";
-    }
-
-    .rotate-handle:active {
-      cursor: grabbing;
-    }
-
-    /* Botones de modo edición */
-    .btn-warning {
-      background: #ffc107;
-      border: none;
-      color: #000;
-    }
-
-    .btn-warning:hover {
-      background: #ffb300;
-    }
-
-    .btn-success {
-      background: #198754;
-      border: none;
-    }
-
-    .btn-success:hover {
-      background: #157347;
-    }
-
-    /* Responsive para móviles */
-    @media (max-width: 768px) {
-      .sidebar {
-        left: -380px;
-      }
-
-      .sidebar.open {
-        left: 0;
-      }
-
-      .main-content {
-        margin-left: 0;
-      }
-
-      .sidebar-toggle {
-        display: block;
-        position: fixed;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 999;
-        background: #0d6efd;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 0 5px 5px 0;
-        cursor: pointer;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-      }
-
-      .sidebar-toggle:hover {
-        background: #0b5ed7;
-      }
-    }
-
-    @media (min-width: 769px) {
-      .sidebar-toggle {
-        display: none;
-      }
-    }
-  </style>
 </head>
 
 <body>
+  <!-- ========== PANTALLA DE CARGA ========== -->
+  <div id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-header">
+        <h1>🚦 Simulador de Tráfico FLUVI</h1>
+        <p>Cargando simulación...</p>
+      </div>
+
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+
+      <div class="instructions">
+        <div class="instruction-card">
+          <h3>🖱️ Controles Básicos</h3>
+          <p>Usa la rueda del mouse para hacer zoom. Arrastra el canvas para moverte. Haz clic en las celdas para agregar/quitar vehículos.</p>
+        </div>
+
+        <div class="instruction-card">
+          <h3>⚙️ Panel de Control</h3>
+          <p>Selecciona calles en el panel izquierdo para modificar probabilidades de generación y cambio de carril.</p>
+        </div>
+
+        <div class="instruction-card">
+          <h3>⏸️ Simulación</h3>
+          <p>Pausa, avanza paso a paso, ajusta la velocidad y visualiza métricas de tu simulación.</p>
+        </div>
+
+        <div class="instruction-card">
+          <h3>✏️ Modo Edición</h3>
+          <p>Selecciona una calle y activa el modo edición para reposicionar y rotar calles visualmente.</p>
+        </div>
+
+        <div class="instruction-card">
+          <h3>🚦 Intersecciones</h3>
+          <p>Activa la visualización de intersecciones para ver conflictos de tráfico entre calles.</p>
+        </div>
+
+        <div class="instruction-card">
+          <h3>🔗 Conexiones</h3>
+          <p>Muestra las conexiones entre calles: lineales (verde), incorporación (naranja) y probabilísticas (morado).</p>
+        </div>
+      </div>
+
+      <div class="loading-progress">
+        <div class="progress-bar-custom">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="loading-status" id="loadingStatus">Inicializando recursos...</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toggle button for mobile -->
   <button class="sidebar-toggle" id="sidebarToggle">
     <span id="toggleIcon">📊</span>
@@ -361,96 +82,255 @@
       🔧 MODO EDICIÓN ACTIVO
     </div>
 
-    <!-- Sección de parámetros -->
-    <div class="param-section">
-      <h5>⚙️ Configuración por Calle</h5>
-      
-      <label for="selectCalle" class="form-label">Calle:</label>
-      <select id="selectCalle" class="form-select">
-        <option value="">Seleccione una calle...</option>
-      </select>
+    <!-- ========== ACCORDIONS ========== -->
+    <div class="accordion" id="controlPanelAccordion">
 
-      <label for="inputProbabilidadGeneracion" class="form-label">Probabilidad de Generación (%):</label>
-      <input type="number" id="inputProbabilidadGeneracion" class="form-control" min="0" max="100" step="1" placeholder="0-100">
-      
-      <label for="inputProbabilidadSalto" class="form-label">Probabilidad de Cambio de Carril (%):</label>
-      <input type="number" id="inputProbabilidadSalto" class="form-control" min="0" max="100" step="1" placeholder="0-100">
-
-      <!-- Botón de modo edición -->
-      <button id="btnModoEdicion" class="btn btn-warning mt-3 w-100" disabled>
-        ✏️ Modo Edición
-      </button>
-
-      <!-- Botones de guardar/cancelar (solo visibles en modo edición) -->
-      <div id="editActionButtons" style="display: none;">
-        <div class="d-flex gap-2 mt-2">
-          <button id="btnGuardarEdicion" class="btn btn-success flex-fill">
-            💾 Guardar
+      <!-- Accordion 1: Instrucciones -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingInstrucciones">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInstrucciones" aria-expanded="false" aria-controls="collapseInstrucciones">
+            📖 Instrucciones
           </button>
-          <button id="btnCancelarEdicion" class="btn btn-secondary flex-fill">
-            ❌ Cancelar
-          </button>
+        </h2>
+        <div id="collapseInstrucciones" class="accordion-collapse collapse" aria-labelledby="headingInstrucciones" data-bs-parent="#controlPanelAccordion">
+          <div class="accordion-body">
+            <p class="text-muted small mb-3">Aprende a usar el simulador de tráfico</p>
+            <button class="btn btn-info w-100" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+              📚 Ver Guía Completa
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Dropdown de Ajustes Avanzados -->
-      <div class="mt-3">
-        <button class="btn btn-outline-primary w-100" type="button" id="btnAjustesAvanzados">
-          🔧 Ajustes Avanzados <span id="advancedArrow">▼</span>
-        </button>
-        
-        <div class="advanced-settings" id="advancedSettings">
-          <div class="mt-3">
-            <h6>📍 Posición y Rotación Manual</h6>
-            
-            <div class="coordinate-input">
-              <label for="inputPosX">X:</label>
-              <input type="number" id="inputPosX" class="form-control" step="1" placeholder="Posición X">
-            </div>
-            
-            <div class="coordinate-input">
-              <label for="inputPosY">Y:</label>
-              <input type="number" id="inputPosY" class="form-control" step="1" placeholder="Posición Y">
-            </div>
-            
-            <div class="coordinate-input">
-              <label for="inputAngulo">Ángulo:</label>
-              <input type="number" id="inputAngulo" class="form-control" min="0" max="360" step="1" placeholder="0-360°">
-              <span>°</span>
-            </div>
+      <!-- Accordion 2: Configuración por Calle -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingConfig">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfig" aria-expanded="true" aria-controls="collapseConfig">
+            ⚙️ Configuración por Calle
+          </button>
+        </h2>
+        <div id="collapseConfig" class="accordion-collapse collapse show" aria-labelledby="headingConfig" data-bs-parent="#controlPanelAccordion">
+          <div class="accordion-body">
+            <label for="selectCalle" class="form-label">Calle:</label>
+            <select id="selectCalle" class="form-select mb-3">
+              <option value="">Seleccione una calle...</option>
+            </select>
 
-            <button id="btnAplicarPosicion" class="btn btn-sm btn-success mt-2 w-100">
-              ✓ Aplicar Posición
+            <label for="inputProbabilidadGeneracion" class="form-label">Probabilidad de Generación (%):</label>
+            <input type="number" id="inputProbabilidadGeneracion" class="form-control mb-3" min="0" max="100" step="1" placeholder="0-100">
+
+            <label for="inputProbabilidadSalto" class="form-label">Probabilidad de Cambio de Carril (%):</label>
+            <input type="number" id="inputProbabilidadSalto" class="form-control mb-3" min="0" max="100" step="1" placeholder="0-100">
+
+            <!-- Botón de modo edición -->
+            <button id="btnModoEdicion" class="btn btn-warning w-100 mb-2" disabled>
+              ✏️ Modo Edición
             </button>
 
-            <div class="mt-3 p-2 bg-light rounded">
-              <small class="text-muted">
-                <strong>💡 Consejo:</strong> Usa el modo edición para arrastrar y rotar visualmente la calle.
-              </small>
+            <!-- Botones de guardar/cancelar (solo visibles en modo edición) -->
+            <div id="editActionButtons" style="display: none;">
+              <div class="d-flex gap-2 mb-2">
+                <button id="btnGuardarEdicion" class="btn btn-success flex-fill">
+                  💾 Guardar
+                </button>
+                <button id="btnCancelarEdicion" class="btn btn-secondary flex-fill">
+                  ❌ Cancelar
+                </button>
+              </div>
+            </div>
+
+            <!-- Dropdown de Ajustes Avanzados -->
+            <div class="mt-3">
+              <button class="btn btn-outline-primary w-100" type="button" id="btnAjustesAvanzados">
+                🔧 Ajustes Avanzados <span id="advancedArrow">▼</span>
+              </button>
+
+              <div class="advanced-settings" id="advancedSettings">
+                <div class="mt-3">
+                  <h6>📍 Posición y Rotación Manual</h6>
+
+                  <div class="coordinate-input">
+                    <label for="inputPosX">X:</label>
+                    <input type="number" id="inputPosX" class="form-control" step="1" placeholder="Posición X">
+                  </div>
+
+                  <div class="coordinate-input">
+                    <label for="inputPosY">Y:</label>
+                    <input type="number" id="inputPosY" class="form-control" step="1" placeholder="Posición Y">
+                  </div>
+
+                  <div class="coordinate-input">
+                    <label for="inputAngulo">Ángulo:</label>
+                    <input type="number" id="inputAngulo" class="form-control" min="0" max="360" step="1" placeholder="0-360°">
+                    <span>°</span>
+                  </div>
+
+                  <button id="btnAplicarPosicion" class="btn btn-sm btn-success mt-2 w-100">
+                    ✓ Aplicar Posición
+                  </button>
+
+                  <div class="mt-3 p-2 bg-light rounded">
+                    <small class="text-muted">
+                      <strong>💡 Consejo:</strong> Usa el modo edición para arrastrar y rotar visualmente la calle.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button id="btnActualizarCalle" class="btn btn-primary mt-3 w-100">✓ Aplicar Cambios</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion 3: Métricas en Tiempo Real -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingMetrics">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMetrics" aria-expanded="false" aria-controls="collapseMetrics">
+            📈 Métricas de la Simulación
+          </button>
+        </h2>
+        <div id="collapseMetrics" class="accordion-collapse collapse" aria-labelledby="headingMetrics" data-bs-parent="#controlPanelAccordion">
+          <div class="accordion-body p-2">
+            <div class="chart-container mb-3">
+              <h6>🚗 Densidad de Tráfico</h6>
+              <div id="densityChart" style="height: 180px;"></div>
+            </div>
+
+            <div class="chart-container mb-3">
+              <h6>🌊 Flujo Vehicular</h6>
+              <div id="flowChart" style="height: 180px;"></div>
+            </div>
+
+            <div class="chart-container">
+              <h6>⚡ Velocidad Promedio</h6>
+              <div id="speedChart" style="height: 180px;"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <button id="btnActualizarCalle" class="btn btn-primary mt-3 w-100">✓ Aplicar Cambios</button>
     </div>
+    <!-- FIN ACCORDIONS -->
+  </div>
 
-    <!-- Gráficas -->
-    <h5>📈 Métricas en Tiempo Real</h5>
+  <!-- Modal de Instrucciones -->
+  <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="instructionsModalLabel">📚 Guía del Simulador de Tráfico FLUVI</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <div class="card border-primary">
+                <div class="card-body">
+                  <h5 class="card-title text-primary">🖱️ Controles Básicos</h5>
+                  <ul class="list-unstyled">
+                    <li><strong>Zoom:</strong> Rueda del mouse</li>
+                    <li><strong>Mover vista:</strong> Arrastrar con el mouse</li>
+                    <li><strong>Agregar/quitar vehículos:</strong> Clic en celdas</li>
+                    <li><strong>Minimapa:</strong> Clic para teletransportarse</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
 
-    <div class="chart-container">
-      <h6>🚗 Densidad de Tráfico</h6>
-      <div id="densityChart" style="height: 180px;"></div>
-    </div>
+            <div class="col-md-6 mb-4">
+              <div class="card border-success">
+                <div class="card-body">
+                  <h5 class="card-title text-success">⚙️ Panel de Control</h5>
+                  <ul class="list-unstyled">
+                    <li><strong>Seleccionar calle:</strong> Usa el dropdown</li>
+                    <li><strong>Probabilidad de generación:</strong> % de crear vehículos</li>
+                    <li><strong>Cambio de carril:</strong> % de saltar de carril</li>
+                    <li><strong>Aplicar cambios:</strong> Botón azul al final</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
 
-    <div class="chart-container">
-      <h6>🌊 Flujo Vehicular</h6>
-      <div id="flowChart" style="height: 180px;"></div>
-    </div>
+            <div class="col-md-6 mb-4">
+              <div class="card border-warning">
+                <div class="card-body">
+                  <h5 class="card-title text-warning">✏️ Modo Edición</h5>
+                  <ul class="list-unstyled">
+                    <li>1. Selecciona una calle</li>
+                    <li>2. Activa "Modo Edición"</li>
+                    <li>3. Arrastra el handle azul para mover</li>
+                    <li>4. Arrastra el handle verde para rotar</li>
+                    <li>5. Guarda o cancela los cambios</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
 
-    <div class="chart-container">
-      <h6>⚡ Velocidad Promedio</h6>
-      <div id="speedChart" style="height: 180px;"></div>
+            <div class="col-md-6 mb-4">
+              <div class="card border-info">
+                <div class="card-body">
+                  <h5 class="card-title text-info">⏸️ Simulación</h5>
+                  <ul class="list-unstyled">
+                    <li><strong>Pause/Resume:</strong> Detener/continuar</li>
+                    <li><strong>Paso:</strong> Avanzar frame por frame</li>
+                    <li><strong>Velocidad:</strong> Slider de velocidad</li>
+                    <li><strong>Generación:</strong> % global de vehículos</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="card border-danger">
+                <div class="card-body">
+                  <h5 class="card-title text-danger">🚦 Intersecciones</h5>
+                  <p>Las intersecciones detectan colisiones entre calles. Al activar la visualización verás:</p>
+                  <ul class="list-unstyled">
+                    <li>🟣 <strong>Círculos morados:</strong> Puntos de intersección</li>
+                    <li>🚗 Sistema de prioridad alternada</li>
+                    <li>⏱️ Los vehículos esperan su turno</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="card border-secondary">
+                <div class="card-body">
+                  <h5 class="card-title text-secondary">🔗 Conexiones</h5>
+                  <p>Tipos de conexiones entre calles:</p>
+                  <ul class="list-unstyled">
+                    <li>🟢 <strong>Verde (Lineal):</strong> 1 a 1 entre carriles</li>
+                    <li>🟠 <strong>Naranja (Incorporación):</strong> Varios a uno</li>
+                    <li>🟣 <strong>Morado (Probabilística):</strong> Con probabilidad</li>
+                    <li>🔴 <strong>Roja:</strong> Conexión bloqueada</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h5 class="card-title">📊 Métricas del Simulador</h5>
+                  <ul class="list-unstyled">
+                    <li><strong>Densidad de Tráfico:</strong> % de ocupación de las calles</li>
+                    <li><strong>Flujo Vehicular:</strong> Carros por segundo moviéndose</li>
+                    <li><strong>Velocidad Promedio:</strong> % de vehículos en movimiento</li>
+                  </ul>
+                  <div class="alert alert-info mb-0 mt-3">
+                    <small><strong>💡 Tip:</strong> Las métricas se actualizan cada 5 frames de simulación para optimizar el rendimiento.</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -484,9 +364,87 @@
     </div>
   </div>
 
+  <script>
+    // ========== SISTEMA DE CARGA ==========
+    (function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      const progressFill = document.getElementById('progressFill');
+      const loadingStatus = document.getElementById('loadingStatus');
+
+      let progress = 0;
+      const statusMessages = [
+        'Inicializando recursos...',
+        'Cargando librerías...',
+        'Preparando canvas...',
+        'Generando calles...',
+        'Calculando intersecciones...',
+        'Creando conexiones...',
+        'Iniciando simulación...',
+        'Listo!'
+      ];
+
+      let messageIndex = 0;
+
+      // Simular progreso de carga
+      const progressInterval = setInterval(() => {
+        progress += Math.random() * 15;
+
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(progressInterval);
+        }
+
+        progressFill.style.width = progress + '%';
+
+        // Cambiar mensaje según progreso
+        const newMessageIndex = Math.floor((progress / 100) * statusMessages.length);
+        if (newMessageIndex !== messageIndex && newMessageIndex < statusMessages.length) {
+          messageIndex = newMessageIndex;
+          loadingStatus.textContent = statusMessages[messageIndex];
+        }
+      }, 200);
+
+      // Función para ocultar la pantalla de carga
+      window.hideLoadingScreen = function() {
+        clearInterval(progressInterval);
+        progressFill.style.width = '100%';
+        loadingStatus.textContent = 'Listo!';
+
+        setTimeout(() => {
+          loadingScreen.classList.add('fade-out');
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 500);
+        }, 500);
+      };
+
+      // Ocultar pantalla cuando todo esté cargado
+      window.addEventListener('load', () => {
+        // Esperar un mínimo de 2 segundos para que se vean las instrucciones
+        setTimeout(() => {
+          // Verificar que los scripts principales estén cargados
+          if (typeof iniciarSimulacion !== 'undefined') {
+            hideLoadingScreen();
+          } else {
+            // Esperar un poco más si no está listo
+            setTimeout(hideLoadingScreen, 1000);
+          }
+        }, 2000);
+      });
+
+      // Backup: ocultar después de 15 segundos máximo
+      setTimeout(() => {
+        if (loadingScreen && !loadingScreen.classList.contains('fade-out')) {
+          console.warn('Forzando cierre de pantalla de carga');
+          hideLoadingScreen();
+        }
+      }, 15000);
+    })();
+  </script>
+
   <script src="trafico.js"></script>
   <script src="editor.js"></script>
-  
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
