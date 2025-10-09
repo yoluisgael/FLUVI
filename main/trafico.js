@@ -2215,6 +2215,15 @@ window.actualizarAnguloVertice = actualizarAnguloVertice;
 window.actualizarVerticePorArrastre = actualizarVerticePorArrastre;
 window.obtenerCoordenadasGlobalesCeldaConCurva = obtenerCoordenadasGlobalesCeldaConCurva;
 
+// EXPOSICIONES PARA EL CONSTRUCTOR
+window.crearCalle = crearCalle;
+window.crearConexionLineal = crearConexionLineal;
+window.crearConexionIncorporacion = crearConexionIncorporacion;
+window.crearConexionProbabilistica = crearConexionProbabilistica;
+window.registrarConexiones = registrarConexiones;
+window.TIPOS = TIPOS;
+window.TIPOS_CONEXION = TIPOS_CONEXION;
+
 selectCalle.addEventListener("change", () => {
     window.calleSeleccionada = calleSeleccionada;
 });
