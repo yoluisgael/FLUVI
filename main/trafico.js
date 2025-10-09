@@ -93,9 +93,92 @@ carreteraImg.src = "carretera.png";
 
 // Lista de edificios estáticos
 const edificios = [
-    { x: 400, y: 100, width: 30, height: 41, color: "green", angle: 10 },
-    { x: 500, y: 150, width: 50, height: 60, color: "green", angle: -15 },
-    { x: 600, y: 180, width: 40, height: 55, color: "green", angle: 5 }
+    // ========== ZONA SUPERIOR IZQUIERDA (cerca de Av. Miguel Othon de Mendizabal) ==========
+    // ESCOM
+    { x: 1083, y: 854, width: 100, height: 60, color: "#0047a3ff", angle: 12, label: "ESCOM" },
+    
+    // ESTACIONAMIENTO ESCOM
+    { x: 1199, y: 916, width: 200, height: 90, color: "#29293aff", angle: 282, label: "ESTACIONAMIENTO ESCOM" },
+    
+    // CIC
+    { x: 1050, y: 1008, width: 100, height: 60, color: "#0047a3ff", angle: 12, label: "CIC" },
+
+    // ESTACIONAMIENTO CIC
+    { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 282, label: "ESTACIONAMIENTO CIC" },
+    
+    // CFIE
+    { x: 1643, y: 1592, width: 140, height: 100, color: "#0047a3ff", angle: 12, label: "CFIE" },
+// Edificios pequeños E
+    { x: 2029, y: 1774, width: 35, height: 30, color: "#29293aff", angle: 17, label: "E" },
+    { x: 1688, y: 463, width: 35, height: 30, color: "#29293aff", angle: 157, label: "E" },
+    { x: 1591, y: 517, width: 35, height: 30, color: "#29293aff", angle: 149, label: "E" },
+    
+    // ========== ZONA CENTRAL IZQUIERDA (entre Av. Cien Metros y Av. Juan de Dios Batiz) ==========
+    // Campo de entrenamiento "Pieles Rojas"
+    { x: 1739, y: 1116, width: 300, height: 140, color: "#164916ff", angle: 279, label: "CAMPO ENTRENAMIENTO" },
+    
+    // Campo de Beisbol
+    { x: 1963, y: 1413, width: 100, height: 200, color: "#164916ff", angle: 10, label: "BEISBOL" },
+
+    // ========== ZONA CENTRAL (entre Luis Enrique Erro y Miguel Anda y Barredo) ==========
+    // Estadio Americano
+    { x: 2018, y: 1107, width: 250, height: 80, color: "#164916ff", angle: 280, label: "ESTADIO AMERICANO" },
+    
+    // Alberca
+    { x: 2136, y: 1497, width: 80, height: 70, color: "#4169E1", angle: 100, label: "Alberca" },
+    
+    // Gimnasio
+    { x: 1891, y: 1617, width: 70, height: 50, color: "#8b4513", angle: 282, label: "Gimnasio" },
+    
+    // PLANETARIO
+    { x: 1876, y: 1740, width: 80, height: 80, color: "#4b0000ff", angle: 13, label: "PLANETARIO" },
+    
+    // CENLEX
+    { x: 2050, y: 1689, width: 70, height: 45, color: "#8b4513", angle: 12, label: "CENLEX" },
+    
+    // Estacionamiento zona planetario
+    { x: 2584, y: 1370, width: 70, height: 90, color: "#fff9d0ff", angle: 11, label: "EST" },
+
+    // ========== ZONA SUPERIOR CENTRAL (cerca de Av. Miguel Bernard) ==========
+    // Edificios E (fila horizontal)
+    { x: 1940, y: 624, width: 40, height: 35, color: "#8b7355", angle: 25, label: "E" },
+    { x: 1873, y: 690, width: 40, height: 35, color: "#8b7355", angle: 43, label: "E" },
+    { x: 1411, y: 590, width: 40, height: 35, color: "#8b7355", angle: 127, label: "E" },
+    { x: 1370, y: 663, width: 40, height: 35, color: "#8b7355", angle: 45, label: "E" },
+    { x: 1303, y: 720, width: 40, height: 35, color: "#8b7355", angle: 9, label: "E" },
+    { x: 1636, y: 779, width: 40, height: 35, color: "#8b7355", angle: 14, label: "E" },
+    
+
+
+    // ========== ZONA DERECHA (entre Av. IPN y edificios numerados) ==========
+    // Edificios numerados 1-9
+    { x: 2429, y: 1134, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 1" },
+    { x: 2410, y: 1206, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 2" },
+    { x: 2397, y: 1280, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 3" },
+    { x: 2384, y: 1341, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 4" },
+    { x: 2369, y: 1411, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 5" },
+    { x: 2350, y: 1476, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 6" },
+    { x: 2339, y: 1531, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 7" },
+    { x: 2326, y: 1594, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 8" },
+    { x: 2317, y: 1664, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 9" },
+    
+    // Edificio Z (vertical largo)
+    { x: 2216, y: 897, width: 35, height: 300, color: "#4b0000ff", angle: 99, label: "Z" },
+    
+    // Centro Cultural JTB
+    { x: 2306, y: 1754, width: 90, height: 60, color: "#8b4513", angle: 17, label: "CC JTB" },
+    
+    // ========== ESTACIONAMIENTOS ZONA DERECHA ==========
+    { x: 1974, y: 1273, width: 160, height: 50, color: "#29293aff", angle: 10, label: "ESTACIONAMIENTO" },
+    { x: 1923, y: 1548, width: 160, height: 50, color: "#29293aff", angle: 10, label: "ESTACIONAMIENTO" },
+    { x: 2551, y: 1537, width: 45, height: 140, color: "#29293aff", angle: 12, label: "ESTACIONAMIENTO" }, 
+    
+    // Estacionamiento grande abajo
+    { x: 2399, y: 1904, width: 200, height: 50, color: "#29293aff", angle: 15, label: "ESTACIONAMIENTO" },
+    
+    
+    // ========== EDIFICIOS ADICIONALES (zona Montevideo/Guanajuato) ==========
+    { x: 2637, y: 974, width: 60, height: 50, color: "#8b7355", angle: 13, label: "Edificio A" },
 ];
 
 // Obtener el contexto del minimapa
@@ -731,14 +814,36 @@ function cambioCarril(calle) {
     });
 }
 
-// Dibujar edificios
+// ========== EXPONER EDIFICIOS PARA EL EDITOR ==========
+window.edificios = edificios;
+window.edificioSeleccionado = null;
+
+// Función mejorada para dibujar edificios con selección visual
 function dibujarEdificios() {
-    edificios.forEach(edificio => {
+    edificios.forEach((edificio, index) => {
         ctx.save();
         ctx.translate(edificio.x, edificio.y);
-        ctx.rotate(edificio.angle * Math.PI / 180);
+        ctx.rotate((edificio.angle || 0) * Math.PI / 180);
         ctx.fillStyle = edificio.color;
         ctx.fillRect(-edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
+        
+        // Resaltar edificio seleccionado
+        if (window.edificioSeleccionado && window.edificioSeleccionado.index === index) {
+            ctx.strokeStyle = "#FFD700"; // Dorado
+            ctx.lineWidth = 4 / escala;
+            ctx.setLineDash([10 / escala, 5 / escala]);
+            ctx.strokeRect(-edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
+            ctx.setLineDash([]);
+        }
+        
+        // Etiqueta del edificio
+        if (edificio.label) {
+            ctx.fillStyle = "white";
+            ctx.font = `${12 / escala}px Arial`;
+            ctx.textAlign = "center";
+            ctx.fillText(edificio.label, 0, 0);
+        }
+        
         ctx.restore();
     });
 }
@@ -1845,18 +1950,23 @@ window.addEventListener('load', () => {
         initializeCharts();
     }
 });
-
+// ========== EXPONER CALLES GLOBALMENTE PARA EL EDITOR ==========
+window.calles = calles;
 iniciarSimulacion();
-
-// ========== EXPONER VARIABLES PARA EL EDITOR ==========
-// (Agregar al final del archivo trafico.js)
-
-window.calleSeleccionada = calleSeleccionada;
+// Actualizar referencia global después de inicializar
+// ========== EXPONER VARIABLES GLOBALMENTE PARA EL EDITOR ==========
+window.calles = calles;
+window.edificios = edificios;
+window.calleSeleccionada = null;
+window.edificioSeleccionado = null;
 window.escala = escala;
 window.offsetX = offsetX;
 window.offsetY = offsetY;
 window.celda_tamano = celda_tamano;
+window.renderizarCanvas = renderizarCanvas;
 window.isPaused = isPaused;
+
+console.log('✅ Variables globales expuestas para el editor');
 
 // Actualizar variables globales cuando cambien
 const originalSelectCalleListener = selectCalle.onchange;
