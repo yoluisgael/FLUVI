@@ -41,7 +41,12 @@
 
         <div class="instruction-card">
           <h3>✏️ Modo Edición</h3>
-          <p>Selecciona una calle y activa el modo edición para reposicionar y rotar calles visualmente.</p>
+          <p>Selecciona una calle o edificio y activa el modo edición para reposicionar y rotar visualmente.</p>
+        </div>
+
+        <div class="instruction-card">
+          <h3>🌊 Curvas en Calles</h3>
+          <p>Activa el modo curva y arrastra los vértices perpendiculares a la calle para crear curvaturas suaves.</p>
         </div>
 
         <div class="instruction-card">
@@ -102,7 +107,7 @@
         </div>
       </div>
 
-      <!-- Accordion 2: Configuración de Objetos (MODIFICADO) -->
+      <!-- Accordion 2: Configuración de Objetos -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingConfig">
           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfig" aria-expanded="true" aria-controls="collapseConfig">
@@ -112,7 +117,7 @@
         <div id="collapseConfig" class="accordion-collapse collapse show" aria-labelledby="headingConfig" data-bs-parent="#controlPanelAccordion">
           <div class="accordion-body">
             
-            <!-- NUEVO: Selector de tipo de objeto -->
+            <!-- Selector de tipo de objeto -->
             <label for="selectTipoObjeto" class="form-label">Tipo de Objeto:</label>
             <select id="selectTipoObjeto" class="form-select mb-3">
               <option value="">Selecciona tipo...</option>
@@ -120,7 +125,7 @@
               <option value="edificio">🏢 Edificio</option>
             </select>
 
-            <!-- Selector de Calle (se muestra/oculta dinámicamente) -->
+            <!-- Selector de Calle -->
             <div id="calleSelector" style="display: none;">
               <label for="selectCalle" class="form-label">Calle:</label>
               <select id="selectCalle" class="form-select mb-3">
@@ -128,7 +133,7 @@
               </select>
             </div>
 
-            <!-- NUEVO: Selector de Edificio (se muestra/oculta dinámicamente) -->
+            <!-- Selector de Edificio -->
             <div id="edificioSelector" style="display: none;">
               <label for="selectEdificio" class="form-label">Edificio:</label>
               <select id="selectEdificio" class="form-select mb-3">
@@ -205,6 +210,28 @@
             <div id="calleApplyButton" style="display: none;">
               <button id="btnActualizarCalle" class="btn btn-primary mt-3 w-100">✓ Aplicar Cambios</button>
             </div>
+
+            <!-- NUEVO: Sección de Modo Curva (solo para calles) -->
+            <div id="curvaModeSection" style="display: none;">
+              <div class="mt-3 border-top pt-3">
+                <h6>🌊 Modo Curva</h6>
+                <div class="d-flex gap-2">
+                  <button id="btnToggleCurva" class="btn btn-outline-info flex-fill" disabled>
+                    🌊 Activar Curvas
+                  </button>
+                  <button id="btnResetVertices" class="btn btn-outline-secondary flex-fill" disabled>
+                    🔄 Resetear
+                  </button>
+                </div>
+                <small class="text-muted d-block mt-2">
+                  💡 <strong>Haz clic en un vértice</strong> y arrástralo perpendicular a la calle para curvarlo (máx ±30°)
+                </small>
+                <small class="text-muted d-block mt-1">
+                  🎯 Aparecerá una guía visual azul mostrando la dirección de arrastre
+                </small>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -269,9 +296,9 @@
                 <div class="card-body">
                   <h5 class="card-title text-success">⚙️ Panel de Control</h5>
                   <ul class="list-unstyled">
-                    <li><strong>Seleccionar calle:</strong> Usa el dropdown</li>
-                    <li><strong>Probabilidad de generación:</strong> % de crear vehículos</li>
-                    <li><strong>Cambio de carril:</strong> % de saltar de carril</li>
+                    <li><strong>Tipo de objeto:</strong> Selecciona calle o edificio</li>
+                    <li><strong>Probabilidad de generación:</strong> % de crear vehículos (calles)</li>
+                    <li><strong>Cambio de carril:</strong> % de saltar de carril (calles)</li>
                     <li><strong>Aplicar cambios:</strong> Botón azul al final</li>
                   </ul>
                 </div>
@@ -283,11 +310,27 @@
                 <div class="card-body">
                   <h5 class="card-title text-warning">✏️ Modo Edición</h5>
                   <ul class="list-unstyled">
-                    <li>1. Selecciona una calle</li>
+                    <li>1. Selecciona una calle o edificio</li>
                     <li>2. Activa "Modo Edición"</li>
                     <li>3. Arrastra el handle azul para mover</li>
                     <li>4. Arrastra el handle verde para rotar</li>
                     <li>5. Guarda o cancela los cambios</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="card border-info">
+                <div class="card-body">
+                  <h5 class="card-title text-info">🌊 Modo Curva</h5>
+                  <ul class="list-unstyled">
+                    <li>1. Selecciona una calle</li>
+                    <li>2. Activa "Mostrar Conexiones"</li>
+                    <li>3. Haz clic en "Activar Curvas"</li>
+                    <li>4. Arrastra vértices perpendicular a la calle</li>
+                    <li>5. Curva máxima: ±30°</li>
+                    <li>6. Usa "Resetear" para restaurar</li>
                   </ul>
                 </div>
               </div>
@@ -346,7 +389,7 @@
                     <li><strong>Velocidad Promedio:</strong> % de vehículos en movimiento</li>
                   </ul>
                   <div class="alert alert-info mb-0 mt-3">
-                    <small><strong>💡 Nota:</strong> Las métricas se actualizan cada 5 frames de simulación para optimizar el rendimiento.</small>
+                    <small><strong>💡 Tip:</strong> Las métricas se actualizan cada 5 frames de simulación para optimizar el rendimiento.</small>
                   </div>
                 </div>
               </div>
@@ -466,6 +509,42 @@
         }
       }, 15000);
     })();
+
+    // ========== MANEJO DE VISIBILIDAD DE SECCIONES ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectTipoObjeto = document.getElementById('selectTipoObjeto');
+      const calleSelector = document.getElementById('calleSelector');
+      const edificioSelector = document.getElementById('edificioSelector');
+      const calleConfigFields = document.getElementById('calleConfigFields');
+      const calleApplyButton = document.getElementById('calleApplyButton');
+      const curvaModeSection = document.getElementById('curvaModeSection');
+
+      if (selectTipoObjeto) {
+        selectTipoObjeto.addEventListener('change', function() {
+          const tipo = this.value;
+          
+          if (tipo === 'calle') {
+            calleSelector.style.display = 'block';
+            edificioSelector.style.display = 'none';
+            calleConfigFields.style.display = 'block';
+            calleApplyButton.style.display = 'block';
+            curvaModeSection.style.display = 'block';
+          } else if (tipo === 'edificio') {
+            calleSelector.style.display = 'none';
+            edificioSelector.style.display = 'block';
+            calleConfigFields.style.display = 'none';
+            calleApplyButton.style.display = 'none';
+            curvaModeSection.style.display = 'none';
+          } else {
+            calleSelector.style.display = 'none';
+            edificioSelector.style.display = 'none';
+            calleConfigFields.style.display = 'none';
+            calleApplyButton.style.display = 'none';
+            curvaModeSection.style.display = 'none';
+          }
+        });
+      }
+    });
   </script>
 
   <script src="trafico.js"></script>

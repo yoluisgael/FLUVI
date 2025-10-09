@@ -605,3 +605,38 @@ body {
     display: none;
   }
 }
+
+/* ========== ESTILOS PARA VÉRTICES ========== */
+.vertex-info {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.btn-outline-info:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.curve-mode-active {
+    border-left: 4px solid #17a2b8 !important;
+    background: rgba(23, 162, 184, 0.05);
+}
+
+/* ========== CURSOR PERSONALIZADO PARA VÉRTICES ========== */
+#simuladorCanvas.editing-vertices {
+    cursor: crosshair;
+}
+
+#simuladorCanvas.dragging-vertex {
+    cursor: grabbing !important;
+}
+
+/* Efecto hover en vértices */
+.vertex-hover {
+    filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8));
+    cursor: grab;
+}

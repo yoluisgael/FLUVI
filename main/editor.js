@@ -8,6 +8,12 @@ class EditorCalles {
         this.tipoObjetoEditando = null;
         this.objetoOriginal = null;
         
+        // NUEVO: Estado de edición de vértices
+        this.modoEdicionVertices = false;
+        this.verticeEditando = null;
+        this.indiceVerticeEditando = -1;
+        this.isDraggingVertice = false;
+        
         // Elementos del DOM
         this.btnModoEdicion = document.getElementById('btnModoEdicion');
         this.btnGuardarEdicion = document.getElementById('btnGuardarEdicion');
@@ -133,6 +139,14 @@ class EditorCalles {
                 window.calleSeleccionada = null;
             }
             this.actualizarEstadoBotonEdicion();
+            
+            // Si estamos en modo edición, cambiar a la nueva calle
+            if (this.modoEdicion && window.calleSeleccionada) {
+                this.objetoEditando = window.calleSeleccionada;
+                this.tipoObjetoEditando = 'calle';
+                this.actualizarPosicionHandles();
+            }
+            
             if (window.renderizarCanvas) window.renderizarCanvas();
         });
         
@@ -151,6 +165,14 @@ class EditorCalles {
                 window.edificioSeleccionado = null;
             }
             this.actualizarEstadoBotonEdicion();
+            
+            // Si estamos en modo edición, cambiar al nuevo edificio
+            if (this.modoEdicion && window.edificioSeleccionado) {
+                this.objetoEditando = window.edificioSeleccionado;
+                this.tipoObjetoEditando = 'edificio';
+                this.actualizarPosicionHandles();
+            }
+            
             if (window.renderizarCanvas) window.renderizarCanvas();
         });
         
@@ -204,8 +226,51 @@ class EditorCalles {
         
         // Eventos de arrastre para rotar
         this.rotationHandle?.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
             this.iniciarArrastreRotacion(e);
         });
+        
+        // NUEVO: Capturar mousedown en el canvas para detectar vértices
+        const canvas = document.getElementById('simuladorCanvas');
+        if (canvas) {
+            canvas.addEventListener('mousedown', (e) => {
+                // Solo procesar si estamos en modo edición y mostrando conexiones
+                if (!this.modoEdicion || !window.mostrarConexiones) return;
+                if (this.tipoObjetoEditando !== 'calle') return;
+                if (!this.objetoEditando || !this.objetoEditando.vertices) return;
+                
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const scaledMouseX = mouseX * scaleX;
+                const scaledMouseY = mouseY * scaleY;
+                
+                const escala = window.escala || 1;
+                const offsetX = window.offsetX || 0;
+                const offsetY = window.offsetY || 0;
+                
+                const worldX = (scaledMouseX - offsetX) / escala;
+                const worldY = (scaledMouseY - offsetY) / escala;
+                
+                // Intentar detectar vértice
+                const verticeDetectado = this.detectarClicEnVertice(worldX, worldY);
+                
+                if (verticeDetectado) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.iniciarArrastreVertice(
+                        verticeDetectado.vertice,
+                        verticeDetectado.indice,
+                        worldX,
+                        worldY
+                    );
+                    console.log(`🎯 Vértice ${verticeDetectado.indice} capturado`);
+                }
+            });
+        }
         
         // Eventos globales de mouse
         document.addEventListener('mousemove', (e) => {
@@ -213,6 +278,8 @@ class EditorCalles {
                 this.arrastreMovimiento(e);
             } else if (this.isDraggingRotate) {
                 this.arrastreRotacion(e);
+            } else if (this.isDraggingVertice) {
+                this.arrastreVertice(e);
             }
             
             // Actualizar posición de handles si estamos en modo edición
@@ -224,10 +291,111 @@ class EditorCalles {
         document.addEventListener('mouseup', () => {
             this.isDraggingMove = false;
             this.isDraggingRotate = false;
+            
+            if (this.isDraggingVertice) {
+                this.isDraggingVertice = false;
+                this.verticeEditando = null;
+                this.indiceVerticeEditando = -1;
+                
+                // Restaurar cursor
+                const canvas = document.getElementById('simuladorCanvas');
+                if (canvas) {
+                    canvas.classList.remove('dragging-vertex');
+                }
+            }
         });
         
         console.log('✅ Editor completamente inicializado');
     }
+    
+    // ==================== FUNCIONES DE DETECCIÓN Y EDICIÓN DE VÉRTICES ====================
+    
+    // Función para detectar clic en vértice
+    detectarClicEnVertice(mouseX, mouseY) {
+        if (!this.objetoEditando || !this.objetoEditando.vertices) return null;
+        
+        const umbralDistancia = 15 / (window.escala || 1);
+        
+        for (let i = 0; i < this.objetoEditando.vertices.length; i++) {
+            const vertice = this.objetoEditando.vertices[i];
+            const pos = window.calcularPosicionVertice 
+                ? window.calcularPosicionVertice(this.objetoEditando, vertice)
+                : null;
+            
+            if (!pos) continue;
+            
+            const dx = mouseX - pos.x;
+            const dy = mouseY - pos.y;
+            const distancia = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distancia < umbralDistancia) {
+                return { vertice, indice: i, pos };
+            }
+        }
+        
+        return null;
+    }
+
+    // Iniciar arrastre de vértice
+    iniciarArrastreVertice(vertice, indice, mouseX, mouseY) {
+        this.isDraggingVertice = true;
+        this.verticeEditando = vertice;
+        this.indiceVerticeEditando = indice;
+        this.dragStartX = mouseX;
+        this.dragStartY = mouseY;
+        
+        // Cambiar cursor
+        const canvas = document.getElementById('simuladorCanvas');
+        if (canvas) {
+            canvas.classList.add('dragging-vertex');
+        }
+        
+        console.log(`✏️ Editando vértice ${indice} de ${this.objetoEditando.nombre}`);
+    }
+
+    // Arrastrar vértice
+    arrastreVertice(e) {
+        if (!this.verticeEditando || !this.objetoEditando) return;
+        
+        const canvas = document.getElementById('simuladorCanvas');
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const scaledMouseX = mouseX * scaleX;
+        const scaledMouseY = mouseY * scaleY;
+        
+        const escala = window.escala || 1;
+        const offsetX = window.offsetX || 0;
+        const offsetY = window.offsetY || 0;
+        
+        const worldX = (scaledMouseX - offsetX) / escala;
+        const worldY = (scaledMouseY - offsetY) / escala;
+        
+        // Actualizar ángulo del vértice basado en posición del mouse
+        if (window.actualizarVerticePorArrastre) {
+            const exito = window.actualizarVerticePorArrastre(
+                this.objetoEditando,
+                this.indiceVerticeEditando,
+                worldX,
+                worldY
+            );
+            
+            if (exito) {
+                // Activar modo curva si no está activo
+                if (!this.objetoEditando.esCurva) {
+                    this.objetoEditando.esCurva = true;
+                    console.log(`🌊 Modo curva activado para ${this.objetoEditando.nombre}`);
+                }
+                
+                if (window.renderizarCanvas) window.renderizarCanvas();
+            }
+        }
+    }
+    
+    // ==================== FUNCIONES DE ESTADO Y ACTUALIZACIÓN ====================
     
     actualizarEstadoBotonEdicion() {
         if (this.btnModoEdicion) {
@@ -255,6 +423,8 @@ class EditorCalles {
         }
     }
     
+    // ==================== FUNCIONES DE MODO EDICIÓN ====================
+    
     entrarModoEdicion() {
         const calle = window.calleSeleccionada;
         const edificio = window.edificioSeleccionado;
@@ -275,6 +445,13 @@ class EditorCalles {
                 angulo: calle.angulo
             };
             console.log('✏️ Modo edición activado para calle:', calle.nombre);
+            
+            // NUEVO: Activar mostrar conexiones automáticamente si la calle tiene vértices
+            if (calle.vertices && calle.vertices.length > 0) {
+                if (!window.mostrarConexiones) {
+                    document.getElementById('btnConexiones')?.click();
+                }
+            }
         } else if (edificio) {
             this.objetoEditando = edificio;
             this.tipoObjetoEditando = 'edificio';
@@ -300,6 +477,13 @@ class EditorCalles {
             this.editModeBadge.classList.add('active');
         }
         
+        // Cambiar estilo del botón
+        if (this.btnModoEdicion) {
+            this.btnModoEdicion.textContent = '🔒 Salir de Edición';
+            this.btnModoEdicion.classList.remove('btn-warning');
+            this.btnModoEdicion.classList.add('btn-secondary');
+        }
+        
         // Mostrar handles
         this.actualizarPosicionHandles();
         if (this.moveHandle) {
@@ -313,7 +497,7 @@ class EditorCalles {
         
         // Ocultar controles normales
         const controlBar = document.getElementById('canvasControlBar');
-        if (controlBar) controlBar.style.display = 'none';
+        if (controlBar) controlBar.style.opacity = '0.3';
     }
     
     guardarEdicion() {
@@ -384,10 +568,19 @@ class EditorCalles {
             this.rotationHandle.classList.remove('active');
         }
         
+        // Restaurar estilo del botón
+        if (this.btnModoEdicion) {
+            this.btnModoEdicion.textContent = '✏️ Modo Edición';
+            this.btnModoEdicion.classList.remove('btn-secondary');
+            this.btnModoEdicion.classList.add('btn-warning');
+        }
+        
         // Mostrar controles normales
         const controlBar = document.getElementById('canvasControlBar');
-        if (controlBar) controlBar.style.display = 'block';
+        if (controlBar) controlBar.style.opacity = '1';
     }
+    
+    // ==================== FUNCIONES DE HANDLES Y ARRASTRE ====================
     
     actualizarPosicionHandles() {
         if (!this.objetoEditando) {
@@ -430,13 +623,11 @@ class EditorCalles {
         if (this.moveHandle) {
             this.moveHandle.style.left = `${centroX - 20}px`;
             this.moveHandle.style.top = `${centroY - 20}px`;
-            console.log(`📍 Handle movimiento en: (${centroX}, ${centroY})`);
         }
         
         if (this.rotationHandle) {
             this.rotationHandle.style.left = `${rotX - 20}px`;
             this.rotationHandle.style.top = `${rotY - 20}px`;
-            console.log(`🔄 Handle rotación en: (${rotX}, ${rotY})`);
         }
     }
     
@@ -552,7 +743,7 @@ let editorCalles;
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         editorCalles = new EditorCalles();
-        console.log('✅ Editor de calles inicializado');
+        console.log('✅ Editor de calles y edificios inicializado');
     });
 } else {
     editorCalles = new EditorCalles();
