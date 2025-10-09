@@ -1,0 +1,1926 @@
+const canvas = document.getElementById("simuladorCanvas");
+const ctx = canvas.getContext("2d");
+
+// Constantes de intersecciones
+let intersecciones = []; 
+const celdasIntersectadas = new Set();
+let mapaIntersecciones = new Map(); 
+
+let mostrarConexiones = false; // NUEVO: Variable para controlar visualización de conexiones
+let prioridadPar = true;
+
+// Ajustar tamaño inicial del canvas
+function resizeCanvas() {
+    const sidebar = document.querySelector('.sidebar');
+    const header = document.querySelector('.header');
+    const sidebarWidth = window.innerWidth > 768 ? 380 : 0;
+    const headerHeight = header ? header.offsetHeight : 0;
+
+    canvas.width = window.innerWidth - sidebarWidth;
+    canvas.height = window.innerHeight - headerHeight;
+}
+
+resizeCanvas();
+
+// Reglas de tráfico
+const reglas = {
+    "0,0,0": 0, "0,0,1": 0, "0,1,0": 0, "0,1,1": 1,
+    "1,0,0": 1, "1,0,1": 1, "1,1,0": 0, "1,1,1": 1
+};
+
+// Tipos de conexión
+const TIPOS_CONEXION = {
+    LINEAL: "lineal",
+    INCORPORACION: "incorporacion",
+    PROBABILISTICA: "probabilistica"
+};
+
+// AGREGAR: Tipos de arreglos
+const TIPOS = {
+    GENERADOR: "generador",
+    CONEXION: "conexion",
+    DEVORADOR: "devorador"
+};
+
+// Variables para el modificador de calles
+const selectCalle = document.getElementById("selectCalle");
+const inputProbabilidadGeneracion = document.getElementById("inputProbabilidadGeneracion");
+const inputProbabilidadSalto = document.getElementById("inputProbabilidadSalto");
+const btnActualizarCalle = document.getElementById("btnActualizarCalle");
+
+let animationId; // Variable para guardar el ID de la animación
+let tiempoAnterior = 0;
+let intervaloDeseado = 500; // Intervalo en milisegundos (100ms = 10 actualizaciones por segundo)
+
+let isPaused = false;
+let mostrarIntersecciones = false;
+const minVelocidadSlider = 1;  
+const maxVelocidadSlider = 100; 
+const maxIntervalo = 1000;  
+const minIntervalo = 10;
+
+// Configuración
+let calles = [];
+let conexiones = [];
+const celda_tamano = 5;
+let escala = 1;
+let offsetX = 0, offsetY = 0;
+let isDragging = false, startX, startY;
+let hasDragged = false;
+let lastTouchX, lastTouchY;
+let calleSeleccionada = null; // Variable para almacenar la calle seleccionada
+let probabilidadGeneracionGeneral = 0.5;
+
+// Variables globales expuestas para el editor
+window.calles = calles;
+window.calleSeleccionada = null;
+window.isPaused = false;
+window.escala = escala;
+window.offsetX = offsetX;
+window.offsetY = offsetY;
+window.celda_tamano = celda_tamano;
+window.renderizarCanvas = renderizarCanvas;
+window.inicializarIntersecciones = inicializarIntersecciones;
+window.construirMapaIntersecciones = construirMapaIntersecciones;
+
+// Cargar la imagen del carro
+const carroImg = new Image();
+carroImg.src = "carro.png";
+
+// Cargar la imagen del carretera
+const carreteraImg = new Image();
+carreteraImg.src = "carretera.png";
+
+// Lista de edificios estáticos
+const edificios = [
+    // ========== ZONA SUPERIOR IZQUIERDA (cerca de Av. Miguel Othon de Mendizabal) ==========
+    // ESCOM
+    { x: 1083, y: 854, width: 100, height: 60, color: "#0047a3ff", angle: 12, label: "ESCOM" },
+    
+    // ESTACIONAMIENTO ESCOM
+    { x: 1199, y: 916, width: 200, height: 90, color: "#29293aff", angle: 282, label: "ESTACIONAMIENTO ESCOM" },
+    
+    // CIC
+    { x: 1050, y: 1008, width: 100, height: 60, color: "#0047a3ff", angle: 12, label: "CIC" },
+
+    // ESTACIONAMIENTO CIC
+    { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 282, label: "ESTACIONAMIENTO CIC" },
+    
+    // CFIE
+    { x: 1643, y: 1592, width: 140, height: 100, color: "#0047a3ff", angle: 12, label: "CFIE" },
+// Edificios pequeños E
+    { x: 2029, y: 1774, width: 35, height: 30, color: "#29293aff", angle: 17, label: "E" },
+    { x: 1688, y: 463, width: 35, height: 30, color: "#29293aff", angle: 157, label: "E" },
+    { x: 1591, y: 517, width: 35, height: 30, color: "#29293aff", angle: 149, label: "E" },
+    
+    // ========== ZONA CENTRAL IZQUIERDA (entre Av. Cien Metros y Av. Juan de Dios Batiz) ==========
+    // Campo de entrenamiento "Pieles Rojas"
+    { x: 1739, y: 1116, width: 300, height: 140, color: "#164916ff", angle: 279, label: "CAMPO ENTRENAMIENTO" },
+    
+    // Campo de Beisbol
+    { x: 1963, y: 1413, width: 100, height: 200, color: "#164916ff", angle: 10, label: "BEISBOL" },
+
+    // ========== ZONA CENTRAL (entre Luis Enrique Erro y Miguel Anda y Barredo) ==========
+    // Estadio Americano
+    { x: 2018, y: 1107, width: 250, height: 80, color: "#164916ff", angle: 280, label: "ESTADIO AMERICANO" },
+    
+    // Alberca
+    { x: 2136, y: 1497, width: 80, height: 70, color: "#4169E1", angle: 100, label: "Alberca" },
+    
+    // Gimnasio
+    { x: 1891, y: 1617, width: 70, height: 50, color: "#8b4513", angle: 282, label: "Gimnasio" },
+    
+    // PLANETARIO
+    { x: 1876, y: 1740, width: 80, height: 80, color: "#4b0000ff", angle: 13, label: "PLANETARIO" },
+    
+    // CENLEX
+    { x: 2050, y: 1689, width: 70, height: 45, color: "#8b4513", angle: 12, label: "CENLEX" },
+    
+    // Estacionamiento zona planetario
+    { x: 2584, y: 1370, width: 70, height: 90, color: "#fff9d0ff", angle: 11, label: "EST" },
+
+    // ========== ZONA SUPERIOR CENTRAL (cerca de Av. Miguel Bernard) ==========
+    // Edificios E (fila horizontal)
+    { x: 1940, y: 624, width: 40, height: 35, color: "#8b7355", angle: 25, label: "E" },
+    { x: 1873, y: 690, width: 40, height: 35, color: "#8b7355", angle: 43, label: "E" },
+    { x: 1411, y: 590, width: 40, height: 35, color: "#8b7355", angle: 127, label: "E" },
+    { x: 1370, y: 663, width: 40, height: 35, color: "#8b7355", angle: 45, label: "E" },
+    { x: 1303, y: 720, width: 40, height: 35, color: "#8b7355", angle: 9, label: "E" },
+    { x: 1636, y: 779, width: 40, height: 35, color: "#8b7355", angle: 14, label: "E" },
+    
+
+
+    // ========== ZONA DERECHA (entre Av. IPN y edificios numerados) ==========
+    // Edificios numerados 1-9
+    { x: 2429, y: 1134, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 1" },
+    { x: 2410, y: 1206, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 2" },
+    { x: 2397, y: 1280, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 3" },
+    { x: 2384, y: 1341, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 4" },
+    { x: 2369, y: 1411, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 5" },
+    { x: 2350, y: 1476, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 6" },
+    { x: 2339, y: 1531, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 7" },
+    { x: 2326, y: 1594, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 8" },
+    { x: 2317, y: 1664, width: 90, height: 32, color: "#4b0000ff", angle: 15, label: "Edificio 9" },
+    
+    // Edificio Z (vertical largo)
+    { x: 2216, y: 897, width: 35, height: 300, color: "#4b0000ff", angle: 99, label: "Z" },
+    
+    // Centro Cultural JTB
+    { x: 2306, y: 1754, width: 90, height: 60, color: "#8b4513", angle: 17, label: "CC JTB" },
+    
+    // ========== ESTACIONAMIENTOS ZONA DERECHA ==========
+    { x: 1974, y: 1273, width: 160, height: 50, color: "#29293aff", angle: 10, label: "ESTACIONAMIENTO" },
+    { x: 1923, y: 1548, width: 160, height: 50, color: "#29293aff", angle: 10, label: "ESTACIONAMIENTO" },
+    { x: 2551, y: 1537, width: 45, height: 140, color: "#29293aff", angle: 12, label: "ESTACIONAMIENTO" }, 
+    
+    // Estacionamiento grande abajo
+    { x: 2399, y: 1904, width: 200, height: 50, color: "#29293aff", angle: 15, label: "ESTACIONAMIENTO" },
+    
+    
+    // ========== EDIFICIOS ADICIONALES (zona Montevideo/Guanajuato) ==========
+    { x: 2637, y: 974, width: 60, height: 50, color: "#8b7355", angle: 13, label: "Edificio A" },
+];
+
+// Obtener el contexto del minimapa
+const minimapaCanvas = document.getElementById("minimapa");
+const minimapaCtx = minimapaCanvas.getContext("2d");
+
+// Función para dibujar el minimapa (con los cambios anteriores)
+function dibujarMinimapa() {
+    // Ajustar el tamaño del minimapa según la escala del canvas principal
+    const minimapaEscala = 0.1; 
+    const minimapaAncho = canvas.width * minimapaEscala + 150;
+    const minimapaAlto = canvas.height * minimapaEscala + 100;
+    minimapaCanvas.width = minimapaAncho;
+    minimapaCanvas.height = minimapaAlto;
+
+    // Calcular las coordenadas del viewport visible
+    const viewport = calcularViewportVisible();
+
+    // Centrar el minimapa en el viewport visible
+    const centroX = viewport.x + viewport.ancho / 2;
+    const centroY = viewport.y + viewport.alto / 2;
+
+    // Ajustar el desplazamiento del minimapa
+    const minimapaOffsetX = minimapaAncho / 2 - centroX * minimapaEscala;
+    const minimapaOffsetY = minimapaAlto / 2 - centroY * minimapaEscala;
+
+    // Limpiar el minimapa
+    minimapaCtx.clearRect(0, 0, minimapaAncho, minimapaAlto);
+    // Dibujar el fondo del minimapa
+    minimapaCtx.fillStyle = "#767878"; // Color de fondo gris claro
+    
+    minimapaCtx.fillRect(0, 0, minimapaAncho, minimapaAlto);
+    // Aplicar el desplazamiento al minimapa
+    minimapaCtx.save();
+    minimapaCtx.translate(minimapaOffsetX, minimapaOffsetY);
+
+    // Dibujar las calles en el minimapa (ajustar la escala)
+    calles.forEach(calle => {
+        minimapaCtx.save();
+        minimapaCtx.translate(calle.x * minimapaEscala, calle.y * minimapaEscala);
+        minimapaCtx.rotate(-calle.angulo * Math.PI / 180);
+        minimapaCtx.fillStyle = "black";
+        minimapaCtx.fillRect(0, 0, calle.tamano * celda_tamano * minimapaEscala, calle.carriles * celda_tamano * minimapaEscala);
+        minimapaCtx.restore();
+    });
+
+    // Dibujar el rectángulo de la vista
+    minimapaCtx.strokeStyle = "red";
+    minimapaCtx.strokeRect(viewport.x * minimapaEscala, viewport.y * minimapaEscala, viewport.ancho * minimapaEscala, viewport.alto * minimapaEscala);
+
+    minimapaCtx.restore();
+}
+
+// Evento para guardar la calle seleccionada y mostrar valores en los inputs
+selectCalle.addEventListener("change", () => {
+    const calleIndex = selectCalle.value;
+    if (calleIndex !== "") {
+        calleSeleccionada = calles[calleIndex];
+        window.calleSeleccionada = calleSeleccionada; // Exponer globalmente
+        // Mostrar valores actuales en los inputs
+        inputProbabilidadGeneracion.value = calleSeleccionada.probabilidadGeneracion * 100; // Conversión a porcentaje
+        inputProbabilidadSalto.value = calleSeleccionada.probabilidadSaltoDeCarril * 100; // Conversión a porcentaje
+    } else {
+        calleSeleccionada = null;
+        window.calleSeleccionada = null;
+    }
+    renderizarCanvas();
+});
+
+// Función para crear una calle con posición, ángulo y tamaño
+function crearCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion, carriles = 1, probabilidadSaltoDeCarril = 0.05) {
+    let calle = {
+        nombre: nombre,
+        tamano: tamano,
+        tipo: tipo,  // Solo un tipo: GENERADOR, CONEXION o DEVORADOR
+        probabilidadGeneracion: probabilidadGeneracion,
+        arreglo: [],
+        celulasEsperando: [],
+        conexionesSalida: [],
+        x: x * celda_tamano,
+        y: y * celda_tamano,
+        angulo: angulo,
+        carriles: carriles,
+        probabilidadSaltoDeCarril: probabilidadSaltoDeCarril,
+    };
+
+    // Creamos la matriz (arreglo 2D) y estructuras de control
+    for (let i = 0; i < carriles; i++) {
+        calle.arreglo.push(new Array(tamano).fill(0));
+        calle.celulasEsperando.push(new Array(tamano).fill(false));
+        calle.conexionesSalida.push([]);
+    }
+
+    // Inicialización SOLO si es GENERADOR
+    if (tipo === TIPOS.GENERADOR) {
+        for (let i = 0; i < carriles; i++) {
+            for (let j = 0; j < tamano; j++) {
+                calle.arreglo[i][j] = Math.random() < 0.1 ? 1 : 0;
+            }
+        }
+    }
+
+    calles.push(calle);
+    return calle;
+}
+
+// Clase para conexiones multi-carril
+class ConexionCA {
+    constructor(origen, destino, carrilOrigen, carrilDestino, posOrigen = -1, posDestino = 0, probabilidadTransferencia = 1.0, tipo = TIPOS_CONEXION.LINEAL) {
+        this.origen = origen;
+        this.destino = destino;
+        this.carrilOrigen = carrilOrigen;
+        this.carrilDestino = carrilDestino;
+        this.posOrigen = posOrigen;
+        this.posDestino = posDestino;
+        this.probabilidadTransferencia = probabilidadTransferencia;
+        this.tipo = tipo;
+        this.bloqueada = false;
+        this.esConexionIntermedia = posOrigen !== -1 && posOrigen !== origen.tamano - 1;
+    }
+
+    transferir() {
+        const posOrig = this.posOrigen === -1 ? this.origen.tamano - 1 : this.posOrigen;
+        
+        this.bloqueada = false;
+        
+        if (this.origen.arreglo[this.carrilOrigen][posOrig] === 1) {
+            
+            // Para conexiones probabilísticas, aplicar probabilidad
+            if (this.tipo === TIPOS_CONEXION.PROBABILISTICA) {
+                const seTransfiere = Math.random() < this.probabilidadTransferencia;
+                
+                if (!seTransfiere) {
+                    //console.log(`🎲 PROBABILIDAD: Célula en ${this.origen.nombre}[C${this.carrilOrigen + 1}][${posOrig}] NO se transfiere (prob: ${this.probabilidadTransferencia})`);
+                    return false;
+                }
+                
+                //console.log(`🎲 PROBABILIDAD: Célula en ${this.origen.nombre}[C${this.carrilOrigen + 1}][${posOrig}] DECIDE transferirse`);
+            }
+            
+            // Verificar si destino está ocupado
+            if (this.destino.arreglo[this.carrilDestino][this.posDestino] === 1) {
+                this.bloqueada = true;
+                this.origen.celulasEsperando[this.carrilOrigen][posOrig] = true;
+                //console.log(`🚫 BLOQUEO: Conexión ${this.origen.nombre}[C${this.carrilOrigen + 1}][${posOrig}] -> ${this.destino.nombre}[C${this.carrilDestino + 1}][${this.posDestino}] bloqueada`);
+                return false;
+            } else {
+                if (!this.origen.celulasEsperando[this.carrilOrigen][posOrig]) {
+                    this.destino.arreglo[this.carrilDestino][this.posDestino] = 1;
+                    this.origen.arreglo[this.carrilOrigen][posOrig] = 0;
+                    
+                    //console.log(`✅ Transferencia exitosa (${this.tipo}): ${this.origen.nombre}[C${this.carrilOrigen + 1}][${posOrig}] -> ${this.destino.nombre}[C${this.carrilDestino + 1}][${this.posDestino}]`);
+                    return true;
+                } else {
+                    //console.log(`⏳ Célula sigue esperando en ${this.origen.nombre}[C${this.carrilOrigen + 1}][${posOrig}]`);
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Método para dibujar la conexión (ya existe, mantener como está)
+    dibujar() {
+        const posOrig = this.posOrigen === -1 ? this.origen.tamano - 1 : this.posOrigen;
+        
+        // Calcular coordenadas del origen
+        const coordOrigen = obtenerCoordenadasGlobalesCelda(this.origen, this.carrilOrigen, posOrig);
+        
+        // Calcular coordenadas del destino
+        const coordDestino = obtenerCoordenadasGlobalesCelda(this.destino, this.carrilDestino, this.posDestino);
+        
+        const x1 = coordOrigen.x;
+        const y1 = coordOrigen.y;
+        const x2 = coordDestino.x;
+        const y2 = coordDestino.y;
+
+        // Color según tipo
+        let colorLinea = "#6bff8bff"; // Verde para conexiones lineales
+        if (this.bloqueada) {
+            colorLinea = "#FF3333"; // Rojo para bloqueadas
+        } else if (this.tipo === TIPOS_CONEXION.PROBABILISTICA) {
+            colorLinea = "#9966FF"; // Morado para probabilísticas
+        } else if (this.tipo === TIPOS_CONEXION.INCORPORACION) {
+            colorLinea = "#FF8C00"; // Naranja para incorporación
+        }
+        
+        ctx.strokeStyle = colorLinea;
+        ctx.lineWidth = this.bloqueada ? 1.5 : 1; // CORREGIDO: máximo 1.5px
+        
+        // Patrón de línea
+        if (this.tipo === TIPOS_CONEXION.PROBABILISTICA) {
+            ctx.setLineDash([3, 3]); // Línea punteada para probabilística
+        } else if (this.tipo === TIPOS_CONEXION.INCORPORACION) {
+            ctx.setLineDash([5, 3]); // Línea discontinua para incorporación
+        } else {
+            ctx.setLineDash(this.bloqueada ? [2, 2] : []); // Sólida o punteada si bloqueada
+        }
+        
+        // Dibujar línea
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        
+        // Dibujar flecha en el destino (más pequeña)
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const arrowLength = 6; // CORREGIDO: flecha más pequeña
+        
+        ctx.setLineDash([]);
+        ctx.lineWidth = 1; // CORREGIDO: flecha delgada
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - arrowLength * Math.cos(angle - Math.PI/6), 
+                   y2 - arrowLength * Math.sin(angle - Math.PI/6));
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - arrowLength * Math.cos(angle + Math.PI/6), 
+                   y2 - arrowLength * Math.sin(angle + Math.PI/6));
+        ctx.stroke();
+        
+        // Indicadores visuales en el punto medio (más pequeños)
+        const midX = (x1 + x2) / 2;
+        const midY = (y1 + y2) / 2;
+        
+        if (this.bloqueada) {
+            // Círculo blanco con X roja para bloqueadas
+            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+            ctx.beginPath();
+            ctx.arc(midX, midY, 8, 0, 2 * Math.PI); // CORREGIDO: más pequeño
+            ctx.fill();
+            
+            ctx.strokeStyle = "#FF0000";
+            ctx.lineWidth = 1.5; // CORREGIDO: línea más delgada
+            ctx.beginPath();
+            ctx.moveTo(midX - 4, midY - 4);
+            ctx.lineTo(midX + 4, midY + 4);
+            ctx.moveTo(midX + 4, midY - 4);
+            ctx.lineTo(midX - 4, midY + 4);
+            ctx.stroke();
+        } else if (this.tipo === TIPOS_CONEXION.PROBABILISTICA) {
+            // Círculo con símbolo % y probabilidad
+            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+            ctx.beginPath();
+            ctx.arc(midX, midY, 10, 0, 2 * Math.PI); // CORREGIDO: más pequeño
+            ctx.fill();
+            
+            ctx.strokeStyle = "#9966FF";
+            ctx.lineWidth = 1; // CORREGIDO: borde delgado
+            ctx.beginPath();
+            ctx.arc(midX, midY, 10, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            ctx.fillStyle = "#9966FF";
+            ctx.font = "bold 8px Arial"; // CORREGIDO: texto más pequeño
+            ctx.textAlign = "center";
+            ctx.fillText("%", midX, midY + 3);
+            
+            ctx.font = "7px Arial"; // CORREGIDO: texto más pequeño
+            ctx.fillText(`${Math.round(this.probabilidadTransferencia * 100)}%`, midX, midY + 18);
+            ctx.textAlign = "left";
+        } else if (this.tipo === TIPOS_CONEXION.INCORPORACION) {
+            // Círculo con "I" para incorporación
+            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+            ctx.beginPath();
+            ctx.arc(midX, midY, 8, 0, 2 * Math.PI); // CORREGIDO: más pequeño
+            ctx.fill();
+            
+            ctx.strokeStyle = "#FF8C00";
+            ctx.lineWidth = 1; // CORREGIDO: borde delgado
+            ctx.beginPath();
+            ctx.arc(midX, midY, 8, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            ctx.fillStyle = "#FF8C00";
+            ctx.font = "bold 8px Arial"; // CORREGIDO: texto más pequeño
+            ctx.textAlign = "center";
+            ctx.fillText("I", midX, midY + 3);
+            ctx.textAlign = "left";
+        }
+        
+        // Restaurar configuración del contexto
+        ctx.lineWidth = 1;
+        ctx.setLineDash([]);
+    }
+}
+
+// Calcula las coordenadas globales del CENTRO de una celda específica.
+function obtenerCoordenadasGlobalesCelda(calle, carril, indice) {
+    // Centro de la celda en coordenadas locales de la calle (relativo a calle.x, calle.y)
+    // El origen local (0,0) para la rotación lo consideramos en la esquina superior izquierda de la calle.
+    const localX = (indice + 0.5) * celda_tamano; // Centro horizontal de la celda
+    const localY = (carril + 0.5) * celda_tamano; // Centro vertical de la celda
+
+    // Rotar el punto local alrededor del origen local (0,0)
+    const anguloRad = -calle.angulo * Math.PI / 180; // Negativo porque la rotación del canvas es horaria
+    const cos = Math.cos(anguloRad);
+    const sin = Math.sin(anguloRad);
+    const rotadoX = localX * cos - localY * sin;
+    const rotadoY = localX * sin + localY * cos;
+
+    // Trasladar a la posición global de la esquina de la calle
+    return {
+        x: rotadoX + calle.x,
+        y: rotadoY + calle.y
+    };
+}
+
+// Calcula la distancia euclidiana entre dos puntos.
+function distancia(p1, p2) {
+  return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+}
+
+// Detecta y almacena las intersecciones entre celdas de diferentes calles.
+function inicializarIntersecciones() {
+    console.log("Inicializando detección de intersecciones...");
+    intersecciones = []; // Limpiar array por si se llama de nuevo
+    celdasIntersectadas.clear(); // Limpiar el set de control
+
+    // Umbral de distancia para considerar una intersección (puede requerir ajuste)
+    // Si los centros están más cerca que esto, se consideran intersectados.
+    // Usar el tamaño de la celda es un buen punto de partida.
+    const umbralDistancia = celda_tamano;
+
+    // Iterar por cada par único de calles
+    for (let j = 0; j < calles.length; j++) {
+        const calle1 = calles[j];
+        for (let k = j + 1; k < calles.length; k++) { // j + 1 para evitar comparar consigo misma y pares duplicados
+            const calle2 = calles[k];
+
+            // Iterar por cada celda de la calle 1
+            for (let c1 = 0; c1 < calle1.carriles; c1++) {
+                for (let i1 = 0; i1 < calle1.tamano; i1++) {
+                    const idCelda1 = `${j}-${c1}-${i1}`; // ID único para la celda 1
+
+                    // Si esta celda ya es parte de una intersección, saltarla
+                    if (celdasIntersectadas.has(idCelda1)) {
+                        continue;
+                    }
+
+                    const centro1 = obtenerCoordenadasGlobalesCelda(calle1, c1, i1);
+
+                    // Iterar por cada celda de la calle 2
+                    for (let c2 = 0; c2 < calle2.carriles; c2++) {
+                        for (let i2 = 0; i2 < calle2.tamano; i2++) {
+                            const idCelda2 = `${k}-${c2}-${i2}`; // ID único para la celda 2
+
+                            // Si esta celda ya es parte de una intersección, saltarla
+                            if (celdasIntersectadas.has(idCelda2)) {
+                                continue;
+                            }
+
+                            const centro2 = obtenerCoordenadasGlobalesCelda(calle2, c2, i2);
+
+                            // Comprobar si los centros de las celdas están lo suficientemente cerca
+                            if (distancia(centro1, centro2) < umbralDistancia) {
+                                // ¡Intersección encontrada!
+                                const nuevaInterseccion = {
+                                    calle1: calle1,       // Referencia al objeto calle1
+                                    calle1Index: j,       // Índice de calle1 en el array `calles`
+                                    carril1: c1,          // Índice del carril en calle1
+                                    indice1: i1,          // Índice de la celda en el carril de calle1
+                                    calle2: calle2,       // Referencia al objeto calle2
+                                    calle2Index: k,       // Índice de calle2
+                                    carril2: c2,          // Índice del carril en calle2
+                                    indice2: i2,          // Índice de la celda en el carril de calle2
+                                    // Coordenada aproximada de la intersección (punto medio)
+                                    coords: { x: (centro1.x + centro2.x) / 2, y: (centro1.y + centro2.y) / 2 }
+                                };
+                                intersecciones.push(nuevaInterseccion);
+
+                                // Marcar ambas celdas como intersectadas para asegurar la relación 1 a 1
+                                celdasIntersectadas.add(idCelda1);
+                                celdasIntersectadas.add(idCelda2);
+
+                                console.log(`Intersección: Calle ${j}[${c1},${i1}] (${calle1.nombre}) con Calle ${k}[${c2},${i2}] (${calle2.nombre})`);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    console.log(`Detección finalizada. ${intersecciones.length} intersecciones encontradas.`);
+
+}
+
+// Construye un mapa de búsqueda rápida para intersecciones a partir del array intersecciones
+function construirMapaIntersecciones() {
+    mapaIntersecciones.clear(); // Limpiar por si se llama de nuevo
+    intersecciones.forEach(inter => {
+        // Crear IDs únicos para cada celda de la intersección
+        const id1 = `${inter.calle1Index}-${inter.carril1}-${inter.indice1}`;
+        const id2 = `${inter.calle2Index}-${inter.carril2}-${inter.indice2}`;
+
+        // Guardar la referencia cruzada en el mapa
+        // Clave: ID de celda 1 -> Valor: Info de celda 2
+        mapaIntersecciones.set(id1, {
+            calle: inter.calle2, // Referencia al objeto de la otra calle
+            carril: inter.carril2,
+            indice: inter.indice2
+        });
+        // Clave: ID de celda 2 -> Valor: Info de celda 1
+        mapaIntersecciones.set(id2, {
+            calle: inter.calle1, // Referencia al objeto de la otra calle
+            carril: inter.carril1,
+            indice: inter.indice1
+        });
+    });
+    console.log(`Mapa de lookup de intersecciones construido con ${mapaIntersecciones.size} entradas.`);
+}
+
+// Regresa un carro en caso de haber dos en la misma intersecciión
+function checarIntersecciones() {
+    intersecciones.forEach(inter => {
+        const { calle1Index, carril1, indice1, calle2Index, carril2, indice2 } = inter;
+
+        // Acceder a las calles y sus arreglos ACTUALIZADOS
+        const calle1 = calles[calle1Index];
+        const calle2 = calles[calle2Index];
+
+        // Validar acceso a datos necesarios
+        if (!calle1?.arreglo?.[carril1]?.[indice1] === undefined ||
+            !calle2?.arreglo?.[carril2]?.[indice2] === undefined) {
+             return; // Saltar si algo no existe
+        }
+
+        const estadoActualI1 = calle1.arreglo[carril1][indice1];
+        const estadoActualI2 = calle2.arreglo[carril2][indice2];
+
+        // ¿Conflicto detectado AHORA?
+        if (estadoActualI1 === 1 && estadoActualI2 === 1) {
+            if (prioridadPar) {
+                callePerdedora = calle2; carrilPerdedor = carril2; indicePerdedor = indice2;
+            } else {
+                callePerdedora = calle1; carrilPerdedor = carril1; indicePerdedor = indice1;
+            }
+
+            // Aplicar "Regreso" directamente sobre callePerdedora.arreglo
+            // 1. Poner celda de intersección del perdedor a 0
+            callePerdedora.arreglo[carrilPerdedor][indicePerdedor] = 0;
+
+            // 2. Poner celda ANTERIOR del perdedor a 1 (si existe)
+            let indiceAnteriorPerdedor = indicePerdedor - 1;
+            if (indiceAnteriorPerdedor >= 0) {
+                 if (callePerdedora.arreglo[carrilPerdedor]?.[indiceAnteriorPerdedor] !== undefined) {
+                     callePerdedora.arreglo[carrilPerdedor][indiceAnteriorPerdedor] = 1;
+                 } else {
+                 }
+            }
+        }
+    });
+}
+
+// Elimina un carro en las intersecciones sin regresos
+function suavizarIntersecciones() {
+    intersecciones.forEach(inter => {
+        const { calle1Index, carril1, indice1, calle2Index, carril2, indice2 } = inter;
+
+        // Acceder a las calles y sus arreglos ACTUALIZADOS
+        const calle1 = calles[calle1Index];
+        const calle2 = calles[calle2Index];
+
+        // Validar acceso a datos necesarios
+        if (!calle1?.arreglo?.[carril1]?.[indice1] === undefined ||
+            !calle2?.arreglo?.[carril2]?.[indice2] === undefined) {
+             return; // Saltar si algo no existe
+        }
+
+        const estadoActualI1 = calle1.arreglo[carril1][indice1];
+        const estadoActualI2 = calle2.arreglo[carril2][indice2];
+
+        // ¿Conflicto detectado AHORA?
+        if (estadoActualI1 === 1 && estadoActualI2 === 1) {
+            if (prioridadPar) {
+                callePerdedora = calle2; carrilPerdedor = carril2; indicePerdedor = indice2;
+            } else {
+                callePerdedora = calle1; carrilPerdedor = carril1; indicePerdedor = indice1;
+            }
+
+            // Aplicar "Regreso" directamente sobre callePerdedora.arreglo
+            // 1. Poner celda de intersección del perdedor a 0
+            callePerdedora.arreglo[carrilPerdedor][indicePerdedor] = 0;
+        }
+    });
+}
+
+// Función para conectar dos calles
+function conexion_calle_de_2(calle1, calle2) {
+    if (calle1.tipoFinal === "conexion" && calle2.tipoInicio === "conexion"
+     && calle1.carriles === calle2.carriles) { //Verificar que tengan el mismo numero de carriles
+        conexiones.push({ origen: calle1, destino: calle2 });
+    } else {
+        console.error("Las calles no son compatibles para conexión.");
+    }
+}
+function marcarCelulaEsperando(calle, carril, posicion) {
+    calle.celulasEsperando[carril][posicion] = true;
+}
+
+function tieneConexionSalida(calle, carril, posicion) {
+    return calle.conexionesSalida[carril].some(conexion => {
+        const posOrig = conexion.posOrigen === -1 ? calle.tamano - 1 : conexion.posOrigen;
+        if (posOrig === posicion) {
+            if (conexion.tipo === TIPOS_CONEXION.PROBABILISTICA) {
+                return calle.celulasEsperando[carril][posicion];
+            }
+            return true;
+        }
+        return false;
+    });
+}
+
+// AGREGAR: Función para generar células en arreglos GENERADOR
+function generarCelulas(calle) {
+    if (calle.tipo === TIPOS.GENERADOR) {
+        for (let carril = 0; carril < calle.carriles; carril++) {
+            if (calle.arreglo[carril][0] === 0 && Math.random() < calle.probabilidadGeneracion) {
+                calle.arreglo[carril][0] = 1;
+                console.log(`🏭 Generador "${calle.nombre}": Nueva célula en carril ${carril + 1}, posición 0`);
+            }
+        }
+    }
+}
+
+function actualizarCalle(calle, calleIndex) {
+    let nuevaCalle = [];
+    for (let c = 0; c < calle.carriles; c++) {
+        nuevaCalle.push([...calle.arreglo[c]]);
+    }
+
+    // YA NO generar aquí - se hace en paso() antes de aplicar reglas
+
+    // Aplicar reglas CA
+    for (let c = 0; c < calle.carriles; c++) {
+        if (!calle.arreglo?.[c] || !nuevaCalle?.[c] || calle.arreglo[c].length !== calle.tamano) continue;
+        if (calle.tamano <= 1) continue;
+
+        for (let i = 0; i < calle.tamano; i++) {
+            // Si hay una célula esperando, no aplicar reglas CA
+            if (calle.celulasEsperando[c][i]) {
+                nuevaCalle[c][i] = calle.arreglo[c][i];
+                continue;
+            }
+            
+            // Si tiene conexión de salida y hay célula activa, mantener
+            if (tieneConexionSalida(calle, c, i) && calle.arreglo[c][i] === 1) {
+                nuevaCalle[c][i] = calle.arreglo[c][i];
+                continue;
+            }
+            
+            const izq = i > 0 ? calle.arreglo[c][i - 1] : 0;
+            const centro = calle.arreglo[c][i];
+            const der = i < calle.tamano - 1 ? calle.arreglo[c][i + 1] : 0;
+
+            // Verificar intersecciones para vecino derecho
+            const idCeldaActual = `${calleIndex}-${c}-${i}`;
+            const infoIntersec = mapaIntersecciones.get(idCeldaActual);
+            let derechaReal = der;
+            if (infoIntersec && i === calle.tamano - 1) {
+                derechaReal = infoIntersec.calle.arreglo[infoIntersec.carril][infoIntersec.indice];
+            }
+            
+            const patron = `${izq},${centro},${derechaReal}`;
+            nuevaCalle[c][i] = reglas[patron] || 0;
+        }
+    }
+
+    calle.arreglo = nuevaCalle;
+    
+    // Limpiar células esperando
+    for (let c = 0; c < calle.carriles; c++) {
+        calle.celulasEsperando[c].fill(false);
+    }
+
+    // Devoración SOLO en DEVORADORES
+    if (calle.tipo === TIPOS.DEVORADOR) {
+        for (let c = 0; c < calle.carriles; c++) {
+            calle.arreglo[c][calle.tamano - 1] = 0;
+        }
+    }
+}
+
+function cambioCarril(calle) {
+    if (calle.carriles <= 1 || calle.probabilidadSaltoDeCarril <= 0) {
+        return;
+    }
+    
+    const cambios = [];
+    const espaciosReservados = new Set();
+    
+    for (let c = 0; c < calle.carriles; c++) {
+        for (let i = 1; i < calle.tamano - 1; i++) {
+            if (calle.arreglo[c][i] === 1 && !calle.celulasEsperando[c][i]) {
+                if (Math.random() < calle.probabilidadSaltoDeCarril) {
+                    const carrilesDisponibles = [];
+                    
+                    // Verificar carril superior
+                    if (c > 0) {
+                        const destinoSuperior = `${c - 1},${i}`;
+                        if (calle.arreglo[c - 1][i] === 0 && !espaciosReservados.has(destinoSuperior)) {
+                            carrilesDisponibles.push({carril: c - 1, key: destinoSuperior});
+                        }
+                    }
+                    
+                    // Verificar carril inferior
+                    if (c < calle.carriles - 1) {
+                        const destinoInferior = `${c + 1},${i}`;
+                        if (calle.arreglo[c + 1][i] === 0 && !espaciosReservados.has(destinoInferior)) {
+                            carrilesDisponibles.push({carril: c + 1, key: destinoInferior});
+                        }
+                    }
+                    
+                    if (carrilesDisponibles.length > 0) {
+                        const seleccion = carrilesDisponibles[Math.floor(Math.random() * carrilesDisponibles.length)];
+                        const nuevoCarril = seleccion.carril;
+                        
+                        espaciosReservados.add(seleccion.key);
+                        
+                        cambios.push({
+                            desde: {carril: c, posicion: i},
+                            hacia: {carril: nuevoCarril, posicion: i}
+                        });
+                    }
+                }
+            }
+        }
+    }
+    
+    // Aplicar cambios
+    cambios.forEach(cambio => {
+        calle.arreglo[cambio.desde.carril][cambio.desde.posicion] = 0;
+        calle.arreglo[cambio.hacia.carril][cambio.hacia.posicion] = 1;
+    });
+}
+
+// ========== EXPONER EDIFICIOS PARA EL EDITOR ==========
+window.edificios = edificios;
+window.edificioSeleccionado = null;
+
+// Función mejorada para dibujar edificios con selección visual
+function dibujarEdificios() {
+    edificios.forEach((edificio, index) => {
+        ctx.save();
+        ctx.translate(edificio.x, edificio.y);
+        ctx.rotate((edificio.angle || 0) * Math.PI / 180);
+        ctx.fillStyle = edificio.color;
+        ctx.fillRect(-edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
+        
+        // Resaltar edificio seleccionado
+        if (window.edificioSeleccionado && window.edificioSeleccionado.index === index) {
+            ctx.strokeStyle = "#FFD700"; // Dorado
+            ctx.lineWidth = 4 / escala;
+            ctx.setLineDash([10 / escala, 5 / escala]);
+            ctx.strokeRect(-edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
+            ctx.setLineDash([]);
+        }
+        
+        // Etiqueta del edificio
+        if (edificio.label) {
+            ctx.fillStyle = "white";
+            ctx.font = `${12 / escala}px Arial`;
+            ctx.textAlign = "center";
+            ctx.fillText(edificio.label, 0, 0);
+        }
+        
+        ctx.restore();
+    });
+}
+
+// Dibujar el fondo del canvas
+function dibujarFondo() {
+    ctx.fillStyle = "#c6cbcd"; // Color de fondo personalizado (verde oscuro)
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function dibujarCalles() {
+    calles.forEach(calle => {
+        ctx.save();
+        ctx.translate(calle.x, calle.y);
+        ctx.rotate(-calle.angulo * Math.PI / 180);
+
+        // Dibujar carriles
+        for (let c = 0; c < calle.carriles; c++) {
+            // Dibujar imagen de la carretera para cada carril
+             for (let i = 0; i < calle.tamano; i++) {
+                ctx.drawImage(carreteraImg, i * celda_tamano, c * celda_tamano, celda_tamano, celda_tamano);
+            }
+        }
+        // Dibujar rectángulo amarillo si la calle está seleccionada
+        if (calleSeleccionada && calle.nombre === calleSeleccionada.nombre) {
+            ctx.strokeStyle = "yellow";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, calle.tamano * celda_tamano, calle.carriles * celda_tamano); // Modificado para abarcar todos los carriles
+        }
+        ctx.restore();
+    });
+}
+
+function dibujarCarros() {
+    calles.forEach(calle => {
+        ctx.save();
+        ctx.translate(calle.x, calle.y);
+        ctx.rotate(-calle.angulo * Math.PI / 180);
+
+        // Dibujar carriles
+        for (let c = 0; c < calle.carriles; c++) {
+            calle.arreglo[c].forEach((celda, i) => {
+                if (celda === 1) {
+                    // Dibujar el carro en el carril y posición correctos
+                    ctx.drawImage(carroImg, i * celda_tamano, c * celda_tamano, celda_tamano, celda_tamano);
+                }
+            });
+        }
+        ctx.restore();
+    });
+}
+
+function dibujarInterseccionesDetectadas() {
+    if(!mostrarIntersecciones)
+        return;
+
+    ctx.save();
+    // Usar el estado de transformación actual (zoom/pan)
+    // ctx.setTransform(escala, 0, 0, escala, offsetX, offsetY); // No es necesario si se llama después de aplicar la transformación en renderizarCanvas
+  
+    ctx.fillStyle = "rgba(255, 0, 255, 0.5)"; // Magenta semi-transparente
+    const radio = celda_tamano / 2; // Un pequeño radio para el marcador
+  
+    intersecciones.forEach(inter => {
+        // Dibujar un círculo en el punto medio calculado de la intersección
+        ctx.beginPath();
+        ctx.arc(inter.coords.x, inter.coords.y, radio, 0, 2 * Math.PI);
+        ctx.fill();
+    });
+    ctx.restore();
+}
+
+// Función para dibujar todas las conexiones
+function dibujarConexionesDetectadas() {
+    if (!mostrarConexiones) return;
+
+    ctx.save();
+    
+    // Dibujar todas las conexiones
+    conexiones.forEach(conexion => {
+        if (conexion instanceof ConexionCA) {
+            conexion.dibujar();
+        }
+    });
+    
+    ctx.restore();
+}
+
+// Renderizar canvas
+function renderizarCanvas() {
+    ctx.fillStyle = "#c6cbcd"; // Color de fondo personalizado (gris oscuro)
+
+    // Restablecer la transformación antes de limpiar
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height); //Soluciona problema de tilling
+    ctx.fillRect(0, 0, canvas.width, canvas.height); //Rellena el esapcio
+
+    // Aplicar la transformación de escala y desplazamiento
+    ctx.setTransform(escala, 0, 0, escala, offsetX, offsetY);
+    //dibujarFondo();    // Dibuja el fondo personalizado
+    dibujarEdificios();
+    dibujarCalles();
+    dibujarCarros();
+    dibujarInterseccionesDetectadas();
+    dibujarConexionesDetectadas(); // AGREGAR ESTA LÍNEA
+    // Dibujar el minimapa después de renderizar el canvas principal
+    dibujarMinimapa();
+    
+}
+
+// Función para calcular el viewport visible
+// Función para calcular los límites del mapa
+function calcularLimitesMapa() {
+    if (calles.length === 0) {
+        return { minX: 0, minY: 0, maxX: 1000, maxY: 1000 };
+    }
+
+    let minX = Infinity, minY = Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+
+    calles.forEach(calle => {
+        const angle = -calle.angulo * Math.PI / 180;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+
+        // Calcular las 4 esquinas de la calle
+        const corners = [
+            { x: 0, y: 0 },
+            { x: calle.tamano * celda_tamano, y: 0 },
+            { x: 0, y: calle.carriles * celda_tamano },
+            { x: calle.tamano * celda_tamano, y: calle.carriles * celda_tamano }
+        ];
+
+        corners.forEach(corner => {
+            const globalX = calle.x + (corner.x * cos - corner.y * sin);
+            const globalY = calle.y + (corner.x * sin + corner.y * cos);
+
+            minX = Math.min(minX, globalX);
+            minY = Math.min(minY, globalY);
+            maxX = Math.max(maxX, globalX);
+            maxY = Math.max(maxY, globalY);
+        });
+    });
+
+    // Agregar margen
+    const margen = 200;
+    return {
+        minX: minX - margen,
+        minY: minY - margen,
+        maxX: maxX + margen,
+        maxY: maxY + margen
+    };
+}
+
+// Función para aplicar límites al offset
+function aplicarLimitesOffset() {
+    const limites = calcularLimitesMapa();
+    const viewportWidth = canvas.width / escala;
+    const viewportHeight = canvas.height / escala;
+
+    // Calcular los límites del offset basados en el tamaño del mapa y el viewport
+    const minOffsetX = -(limites.maxX * escala - canvas.width);
+    const maxOffsetX = -limites.minX * escala;
+    const minOffsetY = -(limites.maxY * escala - canvas.height);
+    const maxOffsetY = -limites.minY * escala;
+
+    // Aplicar los límites
+    offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, offsetX));
+    offsetY = Math.max(minOffsetY, Math.min(maxOffsetY, offsetY));
+}
+
+function calcularViewportVisible() {
+    const vistaX = -offsetX / escala;
+    const vistaY = -offsetY / escala;
+    const vistaAncho = canvas.width / escala;
+    const vistaAlto = canvas.height / escala;
+    return { x: vistaX, y: vistaY, ancho: vistaAncho, alto: vistaAlto };
+}
+
+function encontrarCeldaMasCercana(worldX, worldY) {
+    let celdaMasCercana = null;
+    let distanciaMinima = Infinity;
+    // const umbralDistancia = (Math.sqrt(2 * celda_tamano * celda_tamano)) / 2 * 1.5; // <-- Línea original comentada
+    const umbralDistancia = celda_tamano; // <-- NUEVA LÍNEA: Umbral más simple
+
+    // Añadimos calleIndex al forEach
+    calles.forEach((calle, calleIndex) => {
+        for (let carril = 0; carril < calle.carriles; carril++) {
+            for (let indice = 0; indice < calle.tamano; indice++) {
+                const centroCelda = obtenerCoordenadasGlobalesCelda(calle, carril, indice);
+                const dx = worldX - centroCelda.x;
+                const dy = worldY - centroCelda.y;
+                const distancia = Math.sqrt(dx * dx + dy * dy);
+
+                if (distancia < distanciaMinima) {
+                    distanciaMinima = distancia;
+                    // Incluir calleIndex en el objeto retornado
+                    celdaMasCercana = { calle, carril, indice, calleIndex }; // <-- MODIFICADO
+                }
+            }
+        }
+    });
+
+    if (celdaMasCercana && distanciaMinima < umbralDistancia) { // <-- Se usa el nuevo umbral aquí
+        // console.log(`Celda encontrada: ${celdaMasCercana.calle.nombre}[${celdaMasCercana.carril}][${celdaMasCercana.indice}], CalleIdx: ${celdaMasCercana.calleIndex}, Dist: ${distanciaMinima.toFixed(1)}`);
+        return celdaMasCercana; // <-- Ahora incluye calleIndex
+    } else {
+        // console.log(`Clic (${worldX.toFixed(1)}, ${worldY.toFixed(1)}) muy lejos. Dist mín: ${distanciaMinima.toFixed(1)}`);
+        return null;
+    }
+}
+
+function limpiarCeldas(){
+    calles.forEach(calle => {
+        for (let c = 0; c < calle.carriles; c++) {
+            const carrilActual = calle.arreglo[c];
+            if (carrilActual) { 
+                for (let i = 0; i < calle.tamano; i++) { 
+                    carrilActual[i] = 0; 
+                }
+            }
+        }
+        renderizarCanvas();
+    });
+}
+
+/**
+ * Crea conexiones lineales automáticas entre dos calles (1 a 1 entre carriles)
+ * @param {Object} origen - Calle de origen
+ * @param {Object} destino - Calle de destino
+ * @param {Number} numCarriles - Número de carriles a conectar (opcional, usa el mínimo si no se especifica)
+ * @param {Number} probabilidad - Probabilidad de transferencia (default: 1.0)
+ * @returns {Array} Array de conexiones creadas
+ */
+function crearConexionLineal(origen, destino, numCarriles = null, probabilidad = 1.0) {
+    const carriles = numCarriles || Math.min(origen.carriles, destino.carriles);
+    const conexionesCreadas = [];
+    
+    console.log(`🔗 Conexión LINEAL: ${origen.nombre} → ${destino.nombre} (${carriles} carriles)`);
+    
+    for (let carril = 0; carril < carriles; carril++) {
+        conexionesCreadas.push(new ConexionCA(
+            origen,
+            destino,
+            carril,
+            carril,
+            -1,
+            0,
+            probabilidad,
+            TIPOS_CONEXION.LINEAL
+        ));
+    }
+    
+    return conexionesCreadas;
+}
+
+/**
+ * Crea conexiones de incorporación (varios carriles a uno)
+ * @param {Object} origen - Calle de origen (múltiples carriles)
+ * @param {Object} destino - Calle de destino
+ * @param {Number} carrilDestino - Carril del destino donde se incorporan
+ * @param {Number} posicionInicial - Posición inicial en el destino donde empiezan las incorporaciones
+ * @param {Array} configuracion - Array de objetos {carrilOrigen, posDestino, probabilidad} o null para auto
+ * @returns {Array} Array de conexiones creadas
+ */
+function crearConexionIncorporacion(origen, destino, carrilDestino = 0, posicionInicial = 0, configuracion = null) {
+    const conexionesCreadas = [];
+    
+    console.log(`🔀 Conexión INCORPORACIÓN: ${origen.nombre} (${origen.carriles} carriles) → ${destino.nombre}[C${carrilDestino + 1}]`);
+    
+    if (configuracion === null) {
+        // Modo automático: distribuir todos los carriles del origen
+        for (let carril = 0; carril < origen.carriles; carril++) {
+            conexionesCreadas.push(new ConexionCA(
+                origen,
+                destino,
+                carril,
+                carrilDestino,
+                -1,
+                posicionInicial + carril,
+                1.0,
+                TIPOS_CONEXION.INCORPORACION
+            ));
+        }
+    } else {
+        // Modo manual: usar configuración específica
+        configuracion.forEach(config => {
+            conexionesCreadas.push(new ConexionCA(
+                origen,
+                destino,
+                config.carrilOrigen,
+                carrilDestino,
+                -1,
+                config.posDestino,
+                config.probabilidad || 1.0,
+                TIPOS_CONEXION.INCORPORACION
+            ));
+        });
+    }
+    
+    return conexionesCreadas;
+}
+
+/**
+ * Crea conexiones probabilísticas (un carril se divide en múltiples con probabilidades)
+ * @param {Object} origen - Calle de origen
+ * @param {Number} carrilOrigen - Carril específico del origen
+ * @param {Object} destino - Calle de destino
+ * @param {Array} distribucion - Array de {carrilDestino, posOrigen, probabilidad}
+ * @returns {Array} Array de conexiones creadas
+ */
+function crearConexionProbabilistica(origen, carrilOrigen, destino, distribucion) {
+    const conexionesCreadas = [];
+    
+    console.log(`🎲 Conexión PROBABILÍSTICA: ${origen.nombre}[C${carrilOrigen + 1}] → ${destino.nombre} (${distribucion.length} salidas)`);
+    
+    distribucion.forEach(dist => {
+        conexionesCreadas.push(new ConexionCA(
+            origen,
+            destino,
+            carrilOrigen,
+            dist.carrilDestino,
+            dist.posOrigen || -1,
+            dist.posDestino || 0,
+            dist.probabilidad,
+            TIPOS_CONEXION.PROBABILISTICA
+        ));
+        console.log(`   → Carril ${dist.carrilDestino + 1}: ${(dist.probabilidad * 100).toFixed(0)}% prob.`);
+    });
+    
+    return conexionesCreadas;
+}
+
+/**
+ * Registra todas las conexiones en el sistema
+ * @param {Array} conexionesArray - Array de conexiones a registrar
+ */
+function registrarConexiones(conexionesArray) {
+    // Inicializar arrays de conexiones de salida en cada calle
+    calles.forEach(calle => {
+        if (!calle.conexionesSalida) {
+            calle.conexionesSalida = [];
+            for (let carril = 0; carril < calle.carriles; carril++) {
+                calle.conexionesSalida[carril] = [];
+            }
+        }
+    });
+
+    // Registrar cada conexión en su calle de origen
+    conexionesArray.forEach(conexion => {
+        if (!conexion.origen.conexionesSalida[conexion.carrilOrigen]) {
+            conexion.origen.conexionesSalida[conexion.carrilOrigen] = [];
+        }
+        conexion.origen.conexionesSalida[conexion.carrilOrigen].push(conexion);
+    });
+    
+    console.log(`✅ ${conexionesArray.length} conexiones registradas`);
+}
+
+function iniciarSimulacion() {
+    // ==================== CREAR CALLES (formato simplificado) ====================
+    //Ejemplo de declaracion.
+    /*function iniciarSimulacion() {
+        const Avenida_Wilfrido_Massieu_1 = crearCalle(
+        "Av. Wilfrido Massieu 1",  // 1. nombre: Identificador de la calle
+        160,                        // 2. tamano: Longitud de la calle (número de celdas)
+        "generador",               // 3. tipoInicio: Tipo de inicio ("generador", "conexion")
+        "conexion",                // 4. tipoFinal: Tipo de final ("conexion", "devorador")
+        520,                       // 5. x: Posición X en el canvas (coordenada horizontal)
+        404,                       // 6. y: Posición Y en el canvas (coordenada vertical)
+        166,                       // 7. angulo: Ángulo de rotación de la calle en grados
+        0.2,                       // 8. probabilidadGeneracion: Probabilidad de generar carros (0.0 a 1.0)
+        3,                         // 9. carriles: Número de carriles de la calle
+        0.05                       // 10. probabilidadSaltoDeCarril: Probabilidad de cambio de carril (0.0 a 1.0)
+    );*/
+    // Sistema 1: Avenida Wilfrido Massieu (Generador → Conexión → Incorporación → Devorador)
+    const Avenida_Miguel_Othon_de_Mendizabal = crearCalle("Av. Miguel Othon de Mendizabal 1", 200, TIPOS.CONEXION, 145, 160, 22, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 380, 50, 25, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 380, 60, 29, 0.0, 3, 0.02);
+    
+    //140
+    const Avenida_Miguel_Othon_de_Mendizabal4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 250, TIPOS.CONEXION, 376, 62, 202, 0.0, 3, 0.02);
+    const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard", 190, TIPOS.CONEXION, 380, 67, -46, 0.0, 3, 0.01);
+    const Avenida_Miguel_Bernard_2 = crearCalle("Av. Miguel Bernard 2", 10, TIPOS.CONEXION, 380, 67, -46, 0.0, 3, 0.01);
+    
+    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 3", 195, TIPOS.CONEXION, 516, 203, 134, 0.0, 3, 0.01);
+    const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, TIPOS.GENERADOR, 114, 119, -70, 0.5, 3, 0.01);
+    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, TIPOS.CONEXION, 258, 475, 110, 0.0, 3, 0.01);
+    const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 204, 152, -10, 0.0, 3, 0.01);
+    const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz 2", 380, TIPOS.CONEXION, 584, 215, 170, 0.0, 2, 0.01);
+    const Avenida_IPN = crearCalle("Av. IPN", 320, TIPOS.CONEXION, 561, 190, -100, 0.0, 2, 0.01);
+    const Avenida_IPN2 = crearCalle("Av. IPN 2", 320, TIPOS.CONEXION, 509, 505, 80, 0.0, 2, 0.01);
+    const Avenida_Guanajuato = crearCalle("Av. Guanajuato", 100, TIPOS.CONEXION, 236, 407, -14, 0.0, 1, 0.01);
+    const Avenida_Montevideo = crearCalle("Av. Montevideo", 308, TIPOS.CONEXION, 246, 432, -12, 0.0, 3, 0.01);
+    const Avenida_Montevideo2 = crearCalle("Av. Montevideo 2", 308, TIPOS.CONEXION, 544, 492, 168, 0.0, 3, 0.01);
+    const Avenida_Otavalo = crearCalle("Av. Otavalo", 150, TIPOS.CONEXION, 353, 410, -11, 0.0, 1, 0.01);
+    const Avenida_17_de_mayo = crearCalle("Av. 17 de mayo", 122, TIPOS.CONEXION, 304, 479, 72, 0.0, 1, 0.01);
+    const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro 1", 202, TIPOS.CONEXION, 358, 360, 80, 0.0, 2, 0.01);
+    const Calle_Luis_Enrique_Erro_2 = crearCalle("Calle Luis Enrique Erro 2", 10, TIPOS.CONEXION, 393, 161, 65, 0.0, 2, 0.01);
+    const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro 3", 43, TIPOS.CONEXION, 397, 152, 46, 0.0, 2, 0.01);
+    const Calle_Luis_Enrique_Erro_6 = crearCalle("Calle Luis Enrique Erro 6", 174, TIPOS.CONEXION, 389, 160, -100, 0.0, 2, 0.01);
+    const Calle_Luis_Enrique_Erro_4 = crearCalle("Calle Luis Enrique Erro 4", 46, TIPOS.CONEXION, 425, 119, -134, 0.0, 2, 0.01);
+    const Calle_Luis_Enrique_Erro_5 = crearCalle("Calle Luis Enrique Erro 5", 10, TIPOS.CONEXION, 393, 152, -115, 0.0, 2, 0.01);
+    const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo", 185, TIPOS.CONEXION, 436, 383, 80, 0.0, 1, 0.01);
+    const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo 2", 183, TIPOS.CONEXION, 464, 200, -100, 0.0, 1, 0.01);
+    const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu 1", 160, TIPOS.CONEXION, 520, 404, 166, 0.0, 2, 0.01);
+    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 364, 365, 155, 0.0, 2, 0.01);
+    const Avenida_Wilfrido_Massieu_3 = crearCalle("Av. Wilfrido Massieu 3", 185, TIPOS.CONEXION, 197, 297, -24, 0.0, 2, 0.01);
+    const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 160, TIPOS.CONEXION, 365, 372, -14, 0.0, 2, 0.01);
+    const Avenida_Sierravista = crearCalle("Av. Sierravista", 50, TIPOS.CONEXION, 588, 289, 132, 0.0, 1, 0.01);
+    const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 569, 342, 134, 0.0, 1, 0.01);
+    const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 565, 419, 171, 0.0, 1, 0.01);
+    
+    /*const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu 1", 250, TIPOS.GENERADOR, 520, 404, 166, 0.2, 3, 0.05);
+    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 364, 365, 155, 0.0, 3, 0.08);
+    const Avenida_Wilfrido_Massieu_3 = crearCalle("Av. Wilfrido Massieu 3", 100, TIPOS.CONEXION, 200, 300, 145, 0.0, 1, 0.0);
+    const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 80, TIPOS.DEVORADOR, 150, 250, 145, 0.0, 1, 0.0);
+
+    // Sistema 2: Calle Luis Enrique Erro (con conexión probabilística)
+    const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro 1", 120, TIPOS.GENERADOR, 100, 100, 90, 1, 3, 0.02);
+    const Calle_Luis_Enrique_Erro_2 = crearCalle("Calle Luis Enrique Erro 2", 120, TIPOS.CONEXION, 110, 100, 90, 0.0, 3, 0.1);
+    const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro 2", 10, TIPOS.CONEXION, 120, 100, 90, 0.0, 3, 0.1);
+    const Calle_Luis_Enrique_Erro_4 = crearCalle("Calle Luis Enrique Erro 3", 10, TIPOS.DEVORADOR, 140, 100, 90, 0.0, 3, 0.0);
+    */
+    // ==================== CREAR CONEXIONES ====================
+    const conexionesCA = [];
+
+    // --- Sistema 1: Avenida Wilfrido Massieu ---
+    // GENERADOR → CONEXION (lineal 3 carriles)
+    conexionesCA.push(...crearConexionLineal(
+        Avenida_Miguel_Othon_de_Mendizabal, 
+        Avenida_Miguel_Bernard
+    ));
+    // GENERADOR → CONEXION (lineal 3 carriles)
+    conexionesCA.push(...crearConexionLineal(
+        Avenida_Wilfrido_Massieu_1, 
+        Avenida_Wilfrido_Massieu_2
+    ));
+    
+    // CONEXION → CONEXION (incorporación 3 a 1)
+    conexionesCA.push(...crearConexionIncorporacion(
+        Avenida_Wilfrido_Massieu_2,
+        Avenida_Wilfrido_Massieu_3,
+        0,      // carril destino
+        4       // posición inicial
+    ));
+    
+    // CONEXION → DEVORADOR (lineal 1 carril)
+    conexionesCA.push(...crearConexionLineal(
+        Avenida_Wilfrido_Massieu_3,
+        Avenida_Wilfrido_Massieu_4
+    ));
+
+    // --- Sistema 2: Calle Luis Enrique Erro ---
+    
+    // GENERADOR → CONEXION (lineal 2 carriles)
+    conexionesCA.push(...crearConexionLineal(
+        Calle_Luis_Enrique_Erro_1,
+        Calle_Luis_Enrique_Erro_2
+    ));
+    
+    // GENERADOR → CONEXION (probabilística desde carril 1)
+    conexionesCA.push(...crearConexionProbabilistica(
+        Calle_Luis_Enrique_Erro_2,
+        0,  // carril origen
+        Calle_Luis_Enrique_Erro_3,
+        [
+            { carrilDestino: 0, posOrigen: 4, posDestino: 0, probabilidad: 0.2 },
+            { carrilDestino: 1, posOrigen: 5, posDestino: 0, probabilidad: 0.9 },
+            { carrilDestino: 2, posOrigen: 6, posDestino: 0, probabilidad: 0.3 }
+        ]
+    ));
+    
+    // CONEXION → DEVORADOR (lineal 3 carriles)
+    conexionesCA.push(...crearConexionLineal(
+        Calle_Luis_Enrique_Erro_3,
+        Calle_Luis_Enrique_Erro_4
+    ));
+
+    // ==================== REGISTRAR CONEXIONES ====================
+    registrarConexiones(conexionesCA);
+    conexiones = conexionesCA;
+
+    // Estadísticas
+    //console.log(`\n📊 RESUMEN DE CONEXIONES:`);
+    //console.log(`   Total: ${conexiones.length}`);
+    //console.log(`   - Lineales: ${conexiones.filter(c => c.tipo === TIPOS_CONEXION.LINEAL).length}`);
+    //console.log(`   - Incorporación: ${conexiones.filter(c => c.tipo === TIPOS_CONEXION.INCORPORACION).length}`);
+    //console.log(`   - Probabilísticas: ${conexiones.filter(c => c.tipo === TIPOS_CONEXION.PROBABILISTICA).length}\n`);
+
+    // ==================== INICIALIZAR CÉLULAS DE PRUEBA ====================
+    //Avenida_Wilfrido_Massieu_1.arreglo[0][0] = 1;
+    //Avenida_Wilfrido_Massieu_1.arreglo[1][0] = 1;
+    //Avenida_Wilfrido_Massieu_1.arreglo[2][0] = 1;
+    
+    //Calle_Luis_Enrique_Erro_1.arreglo[0][0] = 1;
+    //Calle_Luis_Enrique_Erro_1.arreglo[1][0] = 1;
+
+    // ==================== RESTO DEL CÓDIGO DE UI (sin cambios) ====================
+    calles.forEach(calle => {
+        let option = document.createElement("option");
+        option.value = calles.indexOf(calle);
+        option.textContent = calle.nombre;
+        selectCalle.appendChild(option);
+    });
+
+    const btnPauseResume = document.getElementById('btnPauseResume');
+    const btnIntersecciones = document.getElementById('btnIntersecciones');
+    const btnConexiones = document.getElementById('btnConexiones');
+
+    const btnPaso = document.getElementById('btnPaso');
+    const velocidadSlider = document.getElementById('velocidadSlider');
+    const velocidadValorSpan = document.getElementById('velocidadValor');
+    const btnBorrar = document.getElementById('btnBorrar');
+    const btnRandom = document.getElementById('btnRandom');
+    const probabilidadSlider = document.getElementById('probabilidadSlider');
+    const probabilidadValor = document.getElementById('probabilidadValor');
+
+    function calcularIntervaloDesdeSlider(valorSlider) {
+        const rangoSlider = maxVelocidadSlider - minVelocidadSlider;
+        const rangoIntervalo = maxIntervalo - minIntervalo;
+        if (rangoSlider === 0) return intervaloDeseado;
+        const normalizado = (valorSlider - minVelocidadSlider) / rangoSlider;
+        return Math.round(maxIntervalo - (normalizado * rangoIntervalo));
+    }
+
+    function calcularSliderDesdeIntervalo(intervalo) {
+        const rangoSlider = maxVelocidadSlider - minVelocidadSlider;
+        const rangoIntervalo = maxIntervalo - minIntervalo;
+        if (rangoIntervalo === 0) return minVelocidadSlider;
+        const normalizado = (maxIntervalo - Math.max(minIntervalo, Math.min(maxIntervalo, intervalo))) / rangoIntervalo;
+        return Math.round(minVelocidadSlider + (normalizado * rangoSlider));
+    }
+
+    inicializarIntersecciones();
+    construirMapaIntersecciones();
+    intervaloDeseado = calcularIntervaloDesdeSlider(50);
+
+    btnActualizarCalle.addEventListener("click", () => {
+        const calleIndex = selectCalle.value;
+        const nuevaProbabilidad = parseFloat(inputProbabilidadGeneracion.value / 100);
+        const nuevaProbabilidadSalto = parseFloat(inputProbabilidadSalto.value / 100);
+        if (calleIndex !== "" && (!isNaN(nuevaProbabilidad) || !isNaN(nuevaProbabilidadSalto))) {
+            calles[calleIndex].probabilidadGeneracion = nuevaProbabilidad;
+            calles[calleIndex].probabilidadSaltoDeCarril = nuevaProbabilidadSalto;
+            console.log(`✏️ Actualizada ${calles[calleIndex].nombre}: Gen=${nuevaProbabilidad}, Salto=${nuevaProbabilidadSalto}`);
+        }
+    });
+
+        function paso() {
+        //console.log(`--- PASO ${metricsUpdateCounter + 1} ---`);
+        
+        // 1. Generar células en GENERADORES
+        //console.log("1. Generando células:");
+        calles.forEach(calle => {
+            if (calle.tipo === TIPOS.GENERADOR) {
+                generarCelulas(calle);
+            }
+        });
+        
+        // 2. Intentar transferencias en conexiones
+        //console.log("2. Intentando transferencias:");
+        let transferenciasExitosas = 0;
+        let transferenciasBloqueadas = 0;
+        
+        conexiones.forEach((conexion) => {
+            if (conexion instanceof ConexionCA) {
+                const resultado = conexion.transferir();
+                if (resultado === true) {
+                    transferenciasExitosas++;
+                } else if (conexion.bloqueada) {
+                    transferenciasBloqueadas++;
+                }
+            }
+        });
+        
+        //console.log(`📊 Transferencias exitosas: ${transferenciasExitosas}, Bloqueadas: ${transferenciasBloqueadas}`);
+
+        // 3. Aplicar cambios de carril
+        //console.log("3. Aplicando cambios de carril:");
+        calles.forEach(cambioCarril);
+
+        // 4. Aplicar reglas de CA
+        //console.log("4. Aplicando reglas de CA:");
+        calles.forEach((calle, index) => {
+            actualizarCalle(calle, index);
+        });
+
+        // 5. Verificar intersecciones
+        //console.log("5. Verificando intersecciones:");
+        checarIntersecciones();
+
+        // 6. Actualizar métricas y renderizar
+        updateMetrics();
+        renderizarCanvas();
+
+        prioridadPar = !prioridadPar;
+        
+        //console.log("------------------------");
+    }
+
+    function animate(tiempoActual) {
+        if (!tiempoAnterior) tiempoAnterior = tiempoActual;
+        const tiempoTranscurrido = tiempoActual - tiempoAnterior;
+        if (tiempoTranscurrido >= intervaloDeseado) {
+            paso();
+            tiempoAnterior = tiempoActual;
+        }
+        animationId = requestAnimationFrame(animate);
+    }
+
+    animationId = requestAnimationFrame(animate);
+
+    if (btnPauseResume) {
+        btnPauseResume.addEventListener('click', () => {
+            isPaused = !isPaused;
+            if (isPaused) {
+                cancelAnimationFrame(animationId);
+                btnPauseResume.textContent = 'Resume';
+                btnPaso.disabled = false;
+            } else {
+                tiempoAnterior = performance.now();
+                animationId = requestAnimationFrame(animate);
+                btnPauseResume.textContent = 'Pause';
+                btnPaso.disabled = true;
+            }
+        });
+    }
+
+    if (btnIntersecciones) {
+        btnIntersecciones.addEventListener('click', () => {
+            mostrarIntersecciones = !mostrarIntersecciones;
+            btnIntersecciones.textContent = mostrarIntersecciones ? 'Ocultar Intersecciones' : 'Mostrar Intersecciones';
+            renderizarCanvas();
+        });
+    }
+    if (btnConexiones) {
+        btnConexiones.addEventListener('click', () => {
+            mostrarConexiones = !mostrarConexiones;
+            btnConexiones.textContent = mostrarConexiones ? 'Ocultar Conexiones' : 'Mostrar Conexiones';
+            renderizarCanvas();
+        });
+    }
+
+    if (btnPaso) {
+        btnPaso.addEventListener('click', () => {
+            paso();
+        });
+    }
+
+    if (btnBorrar) {
+        btnBorrar.addEventListener('click', () => {
+            limpiarCeldas();
+        });
+    }
+
+    if (btnRandom) {
+        btnRandom.addEventListener('click', () => {
+            calles.forEach(calle => {
+                for (let c = 0; c < calle.carriles; c++) {
+                    const carrilActual = calle.arreglo[c];
+                    if (carrilActual) {
+                        for (let i = 0; i < calle.tamano; i++) {
+                            carrilActual[i] = Math.random() < probabilidadGeneracionGeneral ? 1 : 0;
+                        }
+                    }
+                }
+            });
+            suavizarIntersecciones();
+            renderizarCanvas();
+        });
+    }
+
+    if (velocidadSlider && velocidadValorSpan) {
+        const valorInicialSlider = calcularSliderDesdeIntervalo(intervaloDeseado);
+        velocidadSlider.value = valorInicialSlider;
+        velocidadValorSpan.textContent = valorInicialSlider;
+        velocidadSlider.addEventListener('input', () => {
+            const valorActualSlider = parseFloat(velocidadSlider.value);
+            intervaloDeseado = calcularIntervaloDesdeSlider(valorActualSlider);
+            velocidadValorSpan.textContent = valorActualSlider;
+        });
+    }
+
+    if (probabilidadSlider && probabilidadValor) {
+        const valorInicialPorcentaje = probabilidadGeneracionGeneral * 100;
+        probabilidadSlider.value = valorInicialPorcentaje;
+        probabilidadValor.textContent = valorInicialPorcentaje + '%';
+        probabilidadSlider.addEventListener('input', () => {
+            const valorSlider = probabilidadSlider.value;
+            const nuevaProbabilidad = parseFloat(valorSlider) / 100.0;
+            probabilidadGeneracionGeneral = nuevaProbabilidad;
+            probabilidadValor.textContent = valorSlider + '%';
+        });
+    }
+}
+
+// Zoom y Desplazamiento
+canvas.addEventListener("wheel", event => {
+    event.preventDefault(); // Evita el scroll de la página
+
+    // Factor de Zoom
+    // Usar Math.pow para un zoom más suave y consistente
+    const zoomIntensity = 1.1;
+    const direction = event.deltaY < 0 ? 1 : -1; // 1 para acercar, -1 para alejar
+
+    // Posición del Ratón Relativa al Canvas
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // Coordenadas del Mundo Bajo el Ratón (Antes del Zoom)
+    // (mx - offsetX) / escala = worldX  =>  worldX = (mouseX - offsetX) / escala
+    const worldX_before = (mouseX - offsetX) / escala;
+    const worldY_before = (mouseY - offsetY) / escala;
+
+    // Calcular Nueva Escala 
+    const escala_anterior = escala;
+    escala = escala_anterior * Math.pow(zoomIntensity, direction);
+
+    // Limitar la Escala 
+    const minEscala = 0.7;  // Límite mínimo de zoom
+    const maxEscala = 20.0; // Límite máximo de zoom
+    escala = Math.max(minEscala, Math.min(maxEscala, escala));
+    if (escala === escala_anterior) {
+        return;
+    }
+
+    // Calcular Nuevo Offset
+    offsetX = mouseX - worldX_before * escala;
+    offsetY = mouseY - worldY_before * escala;
+
+    // Aplicar límites
+    aplicarLimitesOffset();
+
+    renderizarCanvas();
+});
+
+canvas.addEventListener("mousedown", event => {
+    isDragging = true;
+    hasDragged = false; // Resetear la bandera en cada nuevo intento de clic/arrastre
+    startX = event.clientX - offsetX;
+    startY = event.clientY - offsetY;
+});
+
+canvas.addEventListener('click', (event) => {
+    // Evitar comportamiento si se está arrastrando
+    if (hasDragged) return; 
+
+    // 1. Obtener coordenadas del ratón relativas al borde CSS del canvas
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    // 2. ESCALAR las coordenadas del ratón para que coincidan con la resolución interna del canvas
+    //    Esto corrige discrepancias si el tamaño CSS no es igual a canvas.width/height
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const scaledMouseX = mouseX * scaleX;
+    const scaledMouseY = mouseY * scaleY;
+
+    // 3. Convertir las coordenadas ESCALADAS a coordenadas del mundo (considerando pan/zoom)
+    const worldX = (scaledMouseX - offsetX) / escala;
+    const worldY = (scaledMouseY - offsetY) / escala;
+
+    // 4. Encontrar la celda más cercana al punto del clic en el mundo
+    const celdaObjetivo = encontrarCeldaMasCercana(worldX, worldY);
+
+    // 5. Si se encontró una celda válida y está vacía, colocar un carro
+    if (celdaObjetivo) {
+        const { calle, carril, indice } = celdaObjetivo;
+        if (calle.arreglo[carril] !== undefined && calle.arreglo[carril][indice] === 0) {
+            calle.arreglo[carril][indice] = 1; 
+            renderizarCanvas();
+        } else if (calle.arreglo[carril] !== undefined && calle.arreglo[carril][indice] !== 0) {
+            calle.arreglo[carril][indice] = 0; 
+            renderizarCanvas();
+        } 
+    } 
+});
+
+canvas.addEventListener("mousemove", event => {
+    if (isDragging) {
+        hasDragged = true;
+
+        offsetX = (event.clientX - startX);
+        offsetY = (event.clientY - startY);
+
+        // Aplicar límites
+        aplicarLimitesOffset();
+
+        renderizarCanvas();
+    }
+});
+
+canvas.addEventListener("mouseup", () => isDragging = false);
+canvas.addEventListener("mouseleave", () => isDragging = false);
+
+canvas.addEventListener("touchstart", event => {
+    lastTouchX = event.touches[0].clientX;
+    lastTouchY = event.touches[0].clientY;
+});
+
+canvas.addEventListener("touchmove", event => {
+    event.preventDefault();
+    offsetX += (event.touches[0].clientX - lastTouchX);
+    offsetY += (event.touches[0].clientY - lastTouchY);
+    lastTouchX = event.touches[0].clientX;
+    lastTouchY = event.touches[0].clientY;
+
+    // Aplicar límites
+    aplicarLimitesOffset();
+
+    renderizarCanvas();
+});
+
+minimapaCanvas.addEventListener("click", (event) => {
+    const rect = minimapaCanvas.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const clickY = event.clientY - rect.top;
+
+    const viewport = calcularViewportVisible();
+    const centroX = (viewport.x + viewport.ancho / 2);
+    const centroY = (viewport.y + viewport.alto / 2);
+    const minimapaEscala = 0.1; // Asegúrate de que este valor sea el mismo que usas para dibujar el minimapa
+    const minimapaAncho = canvas.width * minimapaEscala;
+    const minimapaAlto = canvas.height * minimapaEscala;
+    const minimapaOffsetX = minimapaAncho / 2 - centroX * minimapaEscala;
+    const minimapaOffsetY = minimapaAlto / 2 - centroY * minimapaEscala;
+
+    const mapaX = (clickX - minimapaOffsetX) / minimapaEscala;
+    const mapaY = (clickY-10 - minimapaOffsetY) / minimapaEscala;
+
+    offsetX = -(mapaX * escala - canvas.width / 2);
+    offsetY = -(mapaY * escala - canvas.height / 2);
+
+    // Aplicar límites
+    aplicarLimitesOffset();
+
+    renderizarCanvas();
+});
+
+// Ajustar tamaño del canvas si cambia la ventana
+window.addEventListener("resize", () => {
+    resizeCanvas();
+    renderizarCanvas();
+});
+
+// ==================== SISTEMA DE MÉTRICAS Y GRÁFICAS ====================
+
+// Variables para almacenar datos históricos
+const metricsHistory = {
+    timestamps: [],
+    density: [],
+    flow: [],
+    speed: [],
+    maxDataPoints: 50
+};
+
+// Variables para tracking de flujo
+let previousCarCount = 0;
+let flowMeasureInterval = 1000;
+let lastFlowMeasure = Date.now();
+
+// Función para calcular métricas actuales
+function calculateMetrics() {
+    let totalCars = 0;
+    let totalCells = 0;
+    let carsInMotion = 0;
+
+    calles.forEach(calle => {
+        for (let c = 0; c < calle.carriles; c++) {
+            totalCells += calle.tamano;
+            for (let i = 0; i < calle.tamano; i++) {
+                if (calle.arreglo[c][i] === 1) {
+                    totalCars++;
+                    const nextIndex = (i + 1) % calle.tamano;
+                    if (calle.arreglo[c][nextIndex] === 0) {
+                        carsInMotion++;
+                    }
+                }
+            }
+        }
+    });
+
+    const density = totalCells > 0 ? (totalCars / totalCells) * 100 : 0;
+
+    const now = Date.now();
+    const timeDiff = (now - lastFlowMeasure) / 1000;
+    let flow = 0;
+
+    if (timeDiff >= 1) {
+        flow = Math.abs(totalCars - previousCarCount) / timeDiff;
+        previousCarCount = totalCars;
+        lastFlowMeasure = now;
+    }
+
+    const avgSpeed = totalCars > 0 ? (carsInMotion / totalCars) * 100 : 0;
+
+    return {
+        density: density.toFixed(2),
+        flow: flow.toFixed(2),
+        speed: avgSpeed.toFixed(2),
+        totalCars: totalCars
+    };
+}
+
+// Función para actualizar historial de métricas
+function updateMetricsHistory(metrics) {
+    const now = new Date();
+    const timeStr = now.getHours().toString().padStart(2, '0') + ':' +
+                    now.getMinutes().toString().padStart(2, '0') + ':' +
+                    now.getSeconds().toString().padStart(2, '0');
+
+    metricsHistory.timestamps.push(timeStr);
+    metricsHistory.density.push(parseFloat(metrics.density));
+    metricsHistory.flow.push(parseFloat(metrics.flow));
+    metricsHistory.speed.push(parseFloat(metrics.speed));
+
+    if (metricsHistory.timestamps.length > metricsHistory.maxDataPoints) {
+        metricsHistory.timestamps.shift();
+        metricsHistory.density.shift();
+        metricsHistory.flow.shift();
+        metricsHistory.speed.shift();
+    }
+}
+
+// Función para inicializar las gráficas
+function initializeCharts() {
+    const config = {
+        responsive: true,
+        displayModeBar: false
+    };
+
+    Plotly.newPlot('densityChart', [{
+        x: [],
+        y: [],
+        type: 'scatter',
+        mode: 'lines',
+        fill: 'tozeroy',
+        line: { color: '#0d6efd', width: 2 },
+        fillcolor: 'rgba(13, 110, 253, 0.2)'
+    }], {
+        margin: { t: 10, r: 10, b: 30, l: 40 },
+        xaxis: { title: '', showticklabels: false },
+        yaxis: { title: '% Ocupación', range: [0, 100] },
+        paper_bgcolor: '#f8f9fa',
+        plot_bgcolor: '#ffffff'
+    }, config);
+
+    Plotly.newPlot('flowChart', [{
+        x: [],
+        y: [],
+        type: 'scatter',
+        mode: 'lines',
+        line: { color: '#198754', width: 2 }
+    }], {
+        margin: { t: 10, r: 10, b: 30, l: 40 },
+        xaxis: { title: '', showticklabels: false },
+        yaxis: { title: 'Carros/seg', range: [0, 20] },
+        paper_bgcolor: '#f8f9fa',
+        plot_bgcolor: '#ffffff'
+    }, config);
+
+    Plotly.newPlot('speedChart', [{
+        x: [],
+        y: [],
+        type: 'scatter',
+        mode: 'lines',
+        fill: 'tozeroy',
+        line: { color: '#dc3545', width: 2 },
+        fillcolor: 'rgba(220, 53, 69, 0.2)'
+    }], {
+        margin: { t: 10, r: 10, b: 30, l: 40 },
+        xaxis: { title: 'Tiempo' },
+        yaxis: { title: '% Movimiento', range: [0, 100] },
+        paper_bgcolor: '#f8f9fa',
+        plot_bgcolor: '#ffffff'
+    }, config);
+}
+
+// Función para actualizar las gráficas
+function updateCharts() {
+    if (!window.Plotly) return;
+
+    Plotly.update('densityChart', {
+        x: [metricsHistory.timestamps],
+        y: [metricsHistory.density]
+    });
+
+    Plotly.update('flowChart', {
+        x: [metricsHistory.timestamps],
+        y: [metricsHistory.flow]
+    });
+
+    Plotly.update('speedChart', {
+        x: [metricsHistory.timestamps],
+        y: [metricsHistory.speed]
+    });
+}
+
+// Función para actualizar métricas periódicamente
+let metricsUpdateCounter = 0;
+function updateMetrics() {
+    metricsUpdateCounter++;
+
+    if (metricsUpdateCounter % 5 === 0) {
+        const metrics = calculateMetrics();
+        updateMetricsHistory(metrics);
+        updateCharts();
+    }
+}
+
+// Evento para toggle del sidebar (solo móvil)
+const sidebarToggle = document.getElementById('sidebarToggle');
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+        const sidebar = document.getElementById('sidebar');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        sidebar.classList.toggle('open');
+
+        if (sidebar.classList.contains('open')) {
+            toggleIcon.textContent = '✕';
+        } else {
+            toggleIcon.textContent = '📊';
+        }
+    });
+}
+
+// Inicializar gráficas cuando la página carga
+window.addEventListener('load', () => {
+    if (window.Plotly) {
+        initializeCharts();
+    }
+});
+// ========== EXPONER CALLES GLOBALMENTE PARA EL EDITOR ==========
+window.calles = calles;
+iniciarSimulacion();
+// Actualizar referencia global después de inicializar
+// ========== EXPONER VARIABLES GLOBALMENTE PARA EL EDITOR ==========
+window.calles = calles;
+window.edificios = edificios;
+window.calleSeleccionada = null;
+window.edificioSeleccionado = null;
+window.escala = escala;
+window.offsetX = offsetX;
+window.offsetY = offsetY;
+window.celda_tamano = celda_tamano;
+window.renderizarCanvas = renderizarCanvas;
+window.isPaused = isPaused;
+
+console.log('✅ Variables globales expuestas para el editor');
+
+// Actualizar variables globales cuando cambien
+const originalSelectCalleListener = selectCalle.onchange;
+selectCalle.addEventListener("change", () => {
+    window.calleSeleccionada = calleSeleccionada;
+});
+
+// Exponer funciones necesarias
+window.renderizarCanvas = renderizarCanvas;
+window.inicializarIntersecciones = inicializarIntersecciones;
+window.construirMapaIntersecciones = construirMapaIntersecciones;
+
+// Actualizar escala y offset en tiempo real
+canvas.addEventListener("wheel", () => {
+    window.escala = escala;
+    window.offsetX = offsetX;
+    window.offsetY = offsetY;
+});
+
+canvas.addEventListener("mousemove", () => {
+    if (isDragging) {
+        window.offsetX = offsetX;
+        window.offsetY = offsetY;
+    }
+});
