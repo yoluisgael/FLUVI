@@ -339,17 +339,17 @@ class ConexionCA {
             // Círculo con símbolo % y probabilidad
             ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
             ctx.beginPath();
-            ctx.arc(midX, midY, 10, 0, 2 * Math.PI); // CORREGIDO: más pequeño
+            ctx.arc(midX, midY, 1, 0, 2 * Math.PI); // CORREGIDO: más pequeño
             ctx.fill();
             
             ctx.strokeStyle = "#9966FF";
             ctx.lineWidth = 1; // CORREGIDO: borde delgado
             ctx.beginPath();
-            ctx.arc(midX, midY, 10, 0, 2 * Math.PI);
+            ctx.arc(midX, midY, 1, 0, 2 * Math.PI);
             ctx.stroke();
             
             ctx.fillStyle = "#9966FF";
-            ctx.font = "bold 8px Arial"; // CORREGIDO: texto más pequeño
+            ctx.font = "bold 1px Arial"; // CORREGIDO: texto más pequeño
             ctx.textAlign = "center";
             ctx.fillText("%", midX, midY + 3);
             
@@ -360,13 +360,13 @@ class ConexionCA {
             // Círculo con "I" para incorporación
             ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
             ctx.beginPath();
-            ctx.arc(midX, midY, 8, 0, 2 * Math.PI); // CORREGIDO: más pequeño
+            ctx.arc(midX, midY, 1, 0, 2 * Math.PI); // CORREGIDO: más pequeño
             ctx.fill();
             
             ctx.strokeStyle = "#FF8C00";
             ctx.lineWidth = 1; // CORREGIDO: borde delgado
             ctx.beginPath();
-            ctx.arc(midX, midY, 8, 0, 2 * Math.PI);
+            ctx.arc(midX, midY, 1, 0, 2 * Math.PI);
             ctx.stroke();
             
             ctx.fillStyle = "#FF8C00";
@@ -1130,7 +1130,7 @@ function iniciarSimulacion() {
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard", 190, TIPOS.CONEXION, 1863, 298, -46, 0.0, 3, 0.01);
     const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2", 195, TIPOS.CONEXION, 2527, 980, 133, 0.0, 3, 0.01);
     const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, TIPOS.CONEXION, 570, 595, -70, 0.0, 3, 0.01);
-    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, TIPOS.CONEXION, 1290, 2375, 110, 0.0, 3, 0.01);
+    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, TIPOS.CONEXION, 1290, 2375, 110, 0.9, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 1020, 760, -10, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz 2", 380, TIPOS.CONEXION, 2920, 1075, 170, 0.0, 2, 0.01);
     const Avenida_IPN = crearCalle("Av. IPN", 320, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
@@ -1208,6 +1208,18 @@ function iniciarSimulacion() {
         Avenida_Miguel_Othon_de_Mendizabal_5
     ));
 
+    // CONEXION → CONEXION (probabilística desde carril 2)
+    conexionesCA.push(...crearConexionProbabilistica(
+        Avenida_Cien_Metros2,
+        2,  // carril origen
+        Avenida_Miguel_Othon_de_Mendizabal_1,
+        [
+            { carrilDestino: 0, posOrigen: 334, posDestino: 0, probabilidad: 0.9 },
+            { carrilDestino: 1, posOrigen: 333, posDestino: 0, probabilidad: 0.9 },
+            { carrilDestino: 2, posOrigen: 332, posDestino: 0, probabilidad: 0.9 }
+        ]
+    ));
+
     // Montevideo a Cien Metros 
     conexionesCA.push(...crearConexionIncorporacion(
         Avenida_Montevideo2,
@@ -1260,7 +1272,7 @@ function iniciarSimulacion() {
     
     // GENERADOR → CONEXION (probabilística desde carril 1)
     conexionesCA.push(...crearConexionProbabilistica(
-        Calle_Luis_Enrique_Erro_2,
+        Calle_Luis_Enrique_Erro_1,
         0,  // carril origen
         Calle_Luis_Enrique_Erro_3,
         [
