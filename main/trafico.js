@@ -9,8 +9,17 @@ let mapaIntersecciones = new Map();
 let prioridadPar = true;
 
 // Ajustar tamaño inicial del canvas
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resizeCanvas() {
+    const sidebar = document.querySelector('.sidebar');
+    const header = document.querySelector('.header');
+    const sidebarWidth = window.innerWidth > 768 ? 380 : 0;
+    const headerHeight = header ? header.offsetHeight : 0;
+
+    canvas.width = window.innerWidth - sidebarWidth;
+    canvas.height = window.innerHeight - headerHeight;
+}
+
+resizeCanvas();
 
 // Reglas de tráfico
 const reglas = {
@@ -533,6 +542,66 @@ function renderizarCanvas() {
 }
 
 // Función para calcular el viewport visible
+// Función para calcular los límites del mapa
+function calcularLimitesMapa() {
+    if (calles.length === 0) {
+        return { minX: 0, minY: 0, maxX: 1000, maxY: 1000 };
+    }
+
+    let minX = Infinity, minY = Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+
+    calles.forEach(calle => {
+        const angle = -calle.angulo * Math.PI / 180;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+
+        // Calcular las 4 esquinas de la calle
+        const corners = [
+            { x: 0, y: 0 },
+            { x: calle.tamano * celda_tamano, y: 0 },
+            { x: 0, y: calle.carriles * celda_tamano },
+            { x: calle.tamano * celda_tamano, y: calle.carriles * celda_tamano }
+        ];
+
+        corners.forEach(corner => {
+            const globalX = calle.x + (corner.x * cos - corner.y * sin);
+            const globalY = calle.y + (corner.x * sin + corner.y * cos);
+
+            minX = Math.min(minX, globalX);
+            minY = Math.min(minY, globalY);
+            maxX = Math.max(maxX, globalX);
+            maxY = Math.max(maxY, globalY);
+        });
+    });
+
+    // Agregar margen
+    const margen = 200;
+    return {
+        minX: minX - margen,
+        minY: minY - margen,
+        maxX: maxX + margen,
+        maxY: maxY + margen
+    };
+}
+
+// Función para aplicar límites al offset
+function aplicarLimitesOffset() {
+    const limites = calcularLimitesMapa();
+    const viewportWidth = canvas.width / escala;
+    const viewportHeight = canvas.height / escala;
+
+    // Calcular los límites del offset basados en el tamaño del mapa y el viewport
+    const minOffsetX = -(limites.maxX * escala - canvas.width);
+    const maxOffsetX = -limites.minX * escala;
+    const minOffsetY = -(limites.maxY * escala - canvas.height);
+    const maxOffsetY = -limites.minY * escala;
+
+    // Aplicar los límites
+    offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, offsetX));
+    offsetY = Math.max(minOffsetY, Math.min(maxOffsetY, offsetY));
+}
+
 function calcularViewportVisible() {
     const vistaX = -offsetX / escala;
     const vistaY = -offsetY / escala;
@@ -712,6 +781,9 @@ function iniciarSimulacion() {
            }
        });
 
+       // Actualizar métricas
+       updateMetrics();
+
        renderizarCanvas();
 
        prioridadPar = !prioridadPar; // Cambiar prioridad de intersecciones
@@ -854,6 +926,9 @@ canvas.addEventListener("wheel", event => {
     offsetX = mouseX - worldX_before * escala;
     offsetY = mouseY - worldY_before * escala;
 
+    // Aplicar límites
+    aplicarLimitesOffset();
+
     renderizarCanvas();
 });
 
@@ -906,6 +981,10 @@ canvas.addEventListener("mousemove", event => {
 
         offsetX = (event.clientX - startX);
         offsetY = (event.clientY - startY);
+
+        // Aplicar límites
+        aplicarLimitesOffset();
+
         renderizarCanvas();
     }
 });
@@ -924,6 +1003,10 @@ canvas.addEventListener("touchmove", event => {
     offsetY += (event.touches[0].clientY - lastTouchY);
     lastTouchX = event.touches[0].clientX;
     lastTouchY = event.touches[0].clientY;
+
+    // Aplicar límites
+    aplicarLimitesOffset();
+
     renderizarCanvas();
 });
 
@@ -947,14 +1030,205 @@ minimapaCanvas.addEventListener("click", (event) => {
     offsetX = -(mapaX * escala - canvas.width / 2);
     offsetY = -(mapaY * escala - canvas.height / 2);
 
+    // Aplicar límites
+    aplicarLimitesOffset();
+
     renderizarCanvas();
 });
 
 // Ajustar tamaño del canvas si cambia la ventana
 window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    resizeCanvas();
     renderizarCanvas();
+});
+
+// ==================== SISTEMA DE MÉTRICAS Y GRÁFICAS ====================
+
+// Variables para almacenar datos históricos
+const metricsHistory = {
+    timestamps: [],
+    density: [],
+    flow: [],
+    speed: [],
+    maxDataPoints: 50
+};
+
+// Variables para tracking de flujo
+let previousCarCount = 0;
+let flowMeasureInterval = 1000;
+let lastFlowMeasure = Date.now();
+
+// Función para calcular métricas actuales
+function calculateMetrics() {
+    let totalCars = 0;
+    let totalCells = 0;
+    let carsInMotion = 0;
+
+    calles.forEach(calle => {
+        for (let c = 0; c < calle.carriles; c++) {
+            totalCells += calle.tamano;
+            for (let i = 0; i < calle.tamano; i++) {
+                if (calle.arreglo[c][i] === 1) {
+                    totalCars++;
+                    const nextIndex = (i + 1) % calle.tamano;
+                    if (calle.arreglo[c][nextIndex] === 0) {
+                        carsInMotion++;
+                    }
+                }
+            }
+        }
+    });
+
+    const density = totalCells > 0 ? (totalCars / totalCells) * 100 : 0;
+
+    const now = Date.now();
+    const timeDiff = (now - lastFlowMeasure) / 1000;
+    let flow = 0;
+
+    if (timeDiff >= 1) {
+        flow = Math.abs(totalCars - previousCarCount) / timeDiff;
+        previousCarCount = totalCars;
+        lastFlowMeasure = now;
+    }
+
+    const avgSpeed = totalCars > 0 ? (carsInMotion / totalCars) * 100 : 0;
+
+    return {
+        density: density.toFixed(2),
+        flow: flow.toFixed(2),
+        speed: avgSpeed.toFixed(2),
+        totalCars: totalCars
+    };
+}
+
+// Función para actualizar historial de métricas
+function updateMetricsHistory(metrics) {
+    const now = new Date();
+    const timeStr = now.getHours().toString().padStart(2, '0') + ':' +
+                    now.getMinutes().toString().padStart(2, '0') + ':' +
+                    now.getSeconds().toString().padStart(2, '0');
+
+    metricsHistory.timestamps.push(timeStr);
+    metricsHistory.density.push(parseFloat(metrics.density));
+    metricsHistory.flow.push(parseFloat(metrics.flow));
+    metricsHistory.speed.push(parseFloat(metrics.speed));
+
+    if (metricsHistory.timestamps.length > metricsHistory.maxDataPoints) {
+        metricsHistory.timestamps.shift();
+        metricsHistory.density.shift();
+        metricsHistory.flow.shift();
+        metricsHistory.speed.shift();
+    }
+}
+
+// Función para inicializar las gráficas
+function initializeCharts() {
+    const config = {
+        responsive: true,
+        displayModeBar: false
+    };
+
+    Plotly.newPlot('densityChart', [{
+        x: [],
+        y: [],
+        type: 'scatter',
+        mode: 'lines',
+        fill: 'tozeroy',
+        line: { color: '#0d6efd', width: 2 },
+        fillcolor: 'rgba(13, 110, 253, 0.2)'
+    }], {
+        margin: { t: 10, r: 10, b: 30, l: 40 },
+        xaxis: { title: '', showticklabels: false },
+        yaxis: { title: '% Ocupación', range: [0, 100] },
+        paper_bgcolor: '#f8f9fa',
+        plot_bgcolor: '#ffffff'
+    }, config);
+
+    Plotly.newPlot('flowChart', [{
+        x: [],
+        y: [],
+        type: 'scatter',
+        mode: 'lines',
+        line: { color: '#198754', width: 2 }
+    }], {
+        margin: { t: 10, r: 10, b: 30, l: 40 },
+        xaxis: { title: '', showticklabels: false },
+        yaxis: { title: 'Carros/seg', range: [0, 20] },
+        paper_bgcolor: '#f8f9fa',
+        plot_bgcolor: '#ffffff'
+    }, config);
+
+    Plotly.newPlot('speedChart', [{
+        x: [],
+        y: [],
+        type: 'scatter',
+        mode: 'lines',
+        fill: 'tozeroy',
+        line: { color: '#dc3545', width: 2 },
+        fillcolor: 'rgba(220, 53, 69, 0.2)'
+    }], {
+        margin: { t: 10, r: 10, b: 30, l: 40 },
+        xaxis: { title: 'Tiempo' },
+        yaxis: { title: '% Movimiento', range: [0, 100] },
+        paper_bgcolor: '#f8f9fa',
+        plot_bgcolor: '#ffffff'
+    }, config);
+}
+
+// Función para actualizar las gráficas
+function updateCharts() {
+    if (!window.Plotly) return;
+
+    Plotly.update('densityChart', {
+        x: [metricsHistory.timestamps],
+        y: [metricsHistory.density]
+    });
+
+    Plotly.update('flowChart', {
+        x: [metricsHistory.timestamps],
+        y: [metricsHistory.flow]
+    });
+
+    Plotly.update('speedChart', {
+        x: [metricsHistory.timestamps],
+        y: [metricsHistory.speed]
+    });
+}
+
+// Función para actualizar métricas periódicamente
+let metricsUpdateCounter = 0;
+function updateMetrics() {
+    metricsUpdateCounter++;
+
+    if (metricsUpdateCounter % 5 === 0) {
+        const metrics = calculateMetrics();
+        updateMetricsHistory(metrics);
+        updateCharts();
+    }
+}
+
+// Evento para toggle del sidebar (solo móvil)
+const sidebarToggle = document.getElementById('sidebarToggle');
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+        const sidebar = document.getElementById('sidebar');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        sidebar.classList.toggle('open');
+
+        if (sidebar.classList.contains('open')) {
+            toggleIcon.textContent = '✕';
+        } else {
+            toggleIcon.textContent = '📊';
+        }
+    });
+}
+
+// Inicializar gráficas cuando la página carga
+window.addEventListener('load', () => {
+    if (window.Plotly) {
+        initializeCharts();
+    }
 });
 
 iniciarSimulacion();
