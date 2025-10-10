@@ -112,16 +112,73 @@
         </div>
       </div>
 
-      <!-- Accordion 2: Configuración de Objetos -->
+      <!-- Accordion 2: Configuración de Calles -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingConfig">
           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfig" aria-expanded="true" aria-controls="collapseConfig">
-            ⚙️ Configuración de Objetos
+            ⚙️ Configuración de Calles
           </button>
         </h2>
         <div id="collapseConfig" class="accordion-collapse collapse show" aria-labelledby="headingConfig" data-bs-parent="#controlPanelAccordion">
           <div class="accordion-body">
-            
+
+            <!-- Selector de Calle -->
+            <label for="selectCalle" class="form-label">Seleccionar Calle:</label>
+            <select id="selectCalle" class="form-select mb-3">
+              <option value="">Seleccione una calle...</option>
+            </select>
+
+            <!-- Campos de probabilidad -->
+            <div id="calleConfigFields">
+              <label for="inputProbabilidadGeneracion" class="form-label">Probabilidad de Generación (%):</label>
+              <input type="number" id="inputProbabilidadGeneracion" class="form-control mb-3" min="0" max="100" step="1" placeholder="0-100">
+
+              <label for="inputProbabilidadSalto" class="form-label">Probabilidad de Cambio de Carril (%):</label>
+              <input type="number" id="inputProbabilidadSalto" class="form-control mb-3" min="0" max="100" step="1" placeholder="0-100">
+            </div>
+
+            <!-- Botón aplicar cambios -->
+            <div id="calleApplyButton">
+              <button id="btnActualizarCalle" class="btn btn-primary w-100">✓ Aplicar Cambios</button>
+            </div>
+
+            <div class="alert alert-info p-2 small mt-3 mb-0">
+              <strong>💡 Nota:</strong> Selecciona una calle para modificar sus probabilidades de generación y cambio de carril.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion 3: Constructor de Mapas -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingConstructor">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConstructor" aria-expanded="false" aria-controls="collapseConstructor">
+            🏗️ Constructor de Mapas
+          </button>
+        </h2>
+        <div id="collapseConstructor" class="accordion-collapse collapse" aria-labelledby="headingConstructor" data-bs-parent="#controlPanelAccordion">
+          <div class="accordion-body">
+            <h6 class="mb-3">🗺️ Gestión de Simulación</h6>
+
+            <!-- Botones de gestión de archivo -->
+            <div class="d-grid gap-2 mb-3">
+              <button id="btnNuevaSimulacion" class="btn btn-success btn-sm">
+                ➕ Nueva Simulación
+              </button>
+              <button id="btnGuardarSimulacion" class="btn btn-primary btn-sm">
+                💾 Guardar Simulación
+              </button>
+              <button id="btnCargarSimulacion" class="btn btn-info btn-sm">
+                📂 Cargar Simulación
+              </button>
+              <input type="file" id="inputCargarSimulacion" accept=".json" style="display: none;">
+            </div>
+
+            <hr class="my-3">
+
+            <h6 class="mb-3">🛠️ Modo Edición Visual</h6>
+
             <!-- Selector de tipo de objeto -->
             <label for="selectTipoObjeto" class="form-label">Tipo de Objeto:</label>
             <select id="selectTipoObjeto" class="form-select mb-3">
@@ -131,9 +188,9 @@
             </select>
 
             <!-- Selector de Calle -->
-            <div id="calleSelector" style="display: none;">
-              <label for="selectCalle" class="form-label">Calle:</label>
-              <select id="selectCalle" class="form-select mb-3">
+            <div id="calleEditorSelector" style="display: none;">
+              <label for="selectCalleEditor" class="form-label">Calle:</label>
+              <select id="selectCalleEditor" class="form-select mb-3">
                 <option value="">Seleccione una calle...</option>
               </select>
             </div>
@@ -144,15 +201,6 @@
               <select id="selectEdificio" class="form-select mb-3">
                 <option value="">Seleccione un edificio...</option>
               </select>
-            </div>
-
-            <!-- Campos de probabilidad (solo para calles) -->
-            <div id="calleConfigFields" style="display: none;">
-              <label for="inputProbabilidadGeneracion" class="form-label">Probabilidad de Generación (%):</label>
-              <input type="number" id="inputProbabilidadGeneracion" class="form-control mb-3" min="0" max="100" step="1" placeholder="0-100">
-
-              <label for="inputProbabilidadSalto" class="form-label">Probabilidad de Cambio de Carril (%):</label>
-              <input type="number" id="inputProbabilidadSalto" class="form-control mb-3" min="0" max="100" step="1" placeholder="0-100">
             </div>
 
             <!-- Botón de modo edición -->
@@ -211,11 +259,6 @@
               </div>
             </div>
 
-            <!-- Botón aplicar cambios (solo para calles) -->
-            <div id="calleApplyButton" style="display: none;">
-              <button id="btnActualizarCalle" class="btn btn-primary mt-3 w-100">✓ Aplicar Cambios</button>
-            </div>
-
             <!-- NUEVO: Sección de Modo Curva (solo para calles) -->
             <div id="curvaModeSection" style="display: none;">
               <div class="mt-3 border-top pt-3">
@@ -237,35 +280,6 @@
               </div>
             </div>
 
-          </div>
-        </div>
-      </div>
-
-      <!-- Accordion 3: Constructor de Mapas -->
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="headingConstructor">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConstructor" aria-expanded="false" aria-controls="collapseConstructor">
-            🏗️ Constructor de Mapas
-          </button>
-        </h2>
-        <div id="collapseConstructor" class="accordion-collapse collapse" aria-labelledby="headingConstructor" data-bs-parent="#controlPanelAccordion">
-          <div class="accordion-body">
-            <h6 class="mb-3">🗺️ Gestión de Simulación</h6>
-
-            <!-- Botones de gestión de archivo -->
-            <div class="d-grid gap-2 mb-3">
-              <button id="btnNuevaSimulacion" class="btn btn-success btn-sm">
-                ➕ Nueva Simulación
-              </button>
-              <button id="btnGuardarSimulacion" class="btn btn-primary btn-sm">
-                💾 Guardar Simulación
-              </button>
-              <button id="btnCargarSimulacion" class="btn btn-info btn-sm">
-                📂 Cargar Simulación
-              </button>
-              <input type="file" id="inputCargarSimulacion" accept=".json" style="display: none;">
-            </div>
-
             <hr class="my-3">
 
             <h6 class="mb-3">🛣️ Agregar Elementos</h6>
@@ -275,12 +289,31 @@
               <button id="btnAgregarCalle" class="btn btn-outline-primary btn-sm">
                 ➕ Agregar Calle
               </button>
+              <button id="btnAgregarEdificio" class="btn btn-outline-success btn-sm">
+                🏢 Agregar Edificio
+              </button>
               <button id="btnAgregarConexion" class="btn btn-outline-secondary btn-sm">
                 🔗 Agregar Conexión
               </button>
-              <button id="btnEliminarCalle" class="btn btn-outline-danger btn-sm">
-                🗑️ Eliminar Calle Seleccionada
+              <button id="btnEliminarObjeto" class="btn btn-outline-danger btn-sm">
+                🗑️ Eliminar Objeto Seleccionado
               </button>
+            </div>
+
+            <hr class="my-3">
+
+            <h6 class="mb-3">🔗 Gestión de Conexiones</h6>
+
+            <!-- Botón para mostrar lista de conexiones -->
+            <button id="btnMostrarListaConexiones" class="btn btn-outline-info w-100 mb-2">
+              📋 Ver Conexiones Existentes
+            </button>
+
+            <!-- Lista de conexiones (inicialmente oculta) -->
+            <div id="listaConexionesContainer" style="display: none;" class="mt-2">
+              <div id="listaConexiones" class="list-group small" style="max-height: 300px; overflow-y: auto;">
+                <!-- Las conexiones se insertarán aquí dinámicamente -->
+              </div>
             </div>
 
             <hr class="my-3">
@@ -288,8 +321,10 @@
             <div class="alert alert-info p-2 small mb-0">
               <strong>💡 Cómo usar:</strong>
               <ul class="mb-0 mt-1 ps-3">
-                <li>Crea calles con "Agregar Calle"</li>
+                <li>Crea calles y edificios con los botones</li>
+                <li>Usa el modo edición para posicionarlos</li>
                 <li>Conecta calles con "Agregar Conexión"</li>
+                <li>Gestiona conexiones existentes con "Ver Conexiones"</li>
                 <li>Guarda tu mapa como archivo JSON</li>
                 <li>Carga mapas guardados anteriormente</li>
               </ul>
@@ -480,6 +515,236 @@
     </div>
   </div>
 
+  <!-- Modal Nueva Calle -->
+  <div class="modal fade" id="modalNuevaCalle" tabindex="-1" aria-labelledby="modalNuevaCalleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="modalNuevaCalleLabel">➕ Agregar Nueva Calle</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="inputNombreCalle" class="form-label">Nombre:</label>
+            <input type="text" class="form-control" id="inputNombreCalle" placeholder="Ej: Calle Principal">
+          </div>
+          <div class="mb-3">
+            <label for="inputTamanoCalle" class="form-label">Tamaño (celdas):</label>
+            <input type="number" class="form-control" id="inputTamanoCalle" placeholder="100" min="1" value="100">
+          </div>
+          <div class="mb-3">
+            <label for="selectTipoCalle" class="form-label">Tipo:</label>
+            <select class="form-select" id="selectTipoCalle">
+              <option value="GENERADOR">🚗 Generador</option>
+              <option value="CONEXION" selected>🛣️ Conexión</option>
+              <option value="DEVORADOR">🏁 Devorador</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="inputCarrilesCalle" class="form-label">Número de Carriles:</label>
+            <input type="number" class="form-control" id="inputCarrilesCalle" placeholder="3" min="1" value="3">
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="inputXCalle" class="form-label">Posición X:</label>
+              <input type="number" class="form-control" id="inputXCalle" placeholder="500" value="500">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="inputYCalle" class="form-label">Posición Y:</label>
+              <input type="number" class="form-control" id="inputYCalle" placeholder="500" value="500">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="inputAnguloCalle" class="form-label">Ángulo (°):</label>
+              <input type="number" class="form-control" id="inputAnguloCalle" placeholder="0" min="0" max="360" value="0">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="inputProbGenCalle" class="form-label">Probabilidad de Generación (0-1):</label>
+            <input type="number" class="form-control" id="inputProbGenCalle" placeholder="0.5" min="0" max="1" step="0.01" value="0.5">
+          </div>
+          <div class="mb-3">
+            <label for="inputProbSaltoCalle" class="form-label">Probabilidad de Cambio de Carril (0-1):</label>
+            <input type="number" class="form-control" id="inputProbSaltoCalle" placeholder="0.02" min="0" max="1" step="0.01" value="0.02">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btnConfirmarNuevaCalle">✓ Crear Calle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nuevo Edificio -->
+  <div class="modal fade" id="modalNuevoEdificio" tabindex="-1" aria-labelledby="modalNuevoEdificioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="modalNuevoEdificioLabel">🏢 Agregar Nuevo Edificio</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="inputNombreEdificio" class="form-label">Nombre:</label>
+            <input type="text" class="form-control" id="inputNombreEdificio" placeholder="Ej: Edificio Central">
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="inputXEdificio" class="form-label">Posición X:</label>
+              <input type="number" class="form-control" id="inputXEdificio" placeholder="500" value="500">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="inputYEdificio" class="form-label">Posición Y:</label>
+              <input type="number" class="form-control" id="inputYEdificio" placeholder="500" value="500">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="inputWidthEdificio" class="form-label">Ancho:</label>
+              <input type="number" class="form-control" id="inputWidthEdificio" placeholder="100" min="1" value="100">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="inputHeightEdificio" class="form-label">Alto:</label>
+              <input type="number" class="form-control" id="inputHeightEdificio" placeholder="100" min="1" value="100">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="inputAnguloEdificio" class="form-label">Ángulo (°):</label>
+            <input type="number" class="form-control" id="inputAnguloEdificio" placeholder="0" min="0" max="360" value="0">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" id="btnConfirmarNuevoEdificio">✓ Crear Edificio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nueva Conexión -->
+  <div class="modal fade" id="modalNuevaConexion" tabindex="-1" aria-labelledby="modalNuevaConexionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-secondary text-white">
+          <h5 class="modal-title" id="modalNuevaConexionLabel">🔗 Agregar Nueva Conexión</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="selectCalleOrigen" class="form-label">Calle Origen:</label>
+            <select class="form-select" id="selectCalleOrigen">
+              <option value="">Selecciona calle origen...</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="selectCalleDestino" class="form-label">Calle Destino:</label>
+            <select class="form-select" id="selectCalleDestino">
+              <option value="">Selecciona calle destino...</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="selectTipoConexion" class="form-label">Tipo de Conexión:</label>
+            <select class="form-select" id="selectTipoConexion">
+              <option value="LINEAL" selected>🟢 Lineal (1 a 1)</option>
+              <option value="INCORPORACION">🟠 Incorporación (varios a uno)</option>
+              <option value="PROBABILISTICA">🟣 Probabilística</option>
+            </select>
+          </div>
+
+          <!-- Campos específicos para INCORPORACION -->
+          <div id="camposIncorporacion" style="display: none;">
+            <div class="mb-3">
+              <label for="inputCarrilDestino" class="form-label">Carril Destino:</label>
+              <input type="number" class="form-control" id="inputCarrilDestino" placeholder="0" min="0" value="0">
+            </div>
+            <div class="mb-3">
+              <label for="inputPosInicial" class="form-label">Posición Inicial:</label>
+              <input type="number" class="form-control" id="inputPosInicial" placeholder="0" min="0" value="0">
+            </div>
+          </div>
+
+          <!-- Campos específicos para PROBABILISTICA -->
+          <div id="camposProbabilistica" style="display: none;">
+            <div class="mb-3">
+              <label for="inputCarrilOrigen" class="form-label">Carril Origen:</label>
+              <input type="number" class="form-control" id="inputCarrilOrigen" placeholder="0" min="0" value="0">
+            </div>
+            <div class="mb-3">
+              <label for="inputCarrilDestinoPro b" class="form-label">Carril Destino:</label>
+              <input type="number" class="form-control" id="inputCarrilDestinoProb" placeholder="0" min="0" value="0">
+            </div>
+            <div class="mb-3">
+              <label for="inputProbabilidad" class="form-label">Probabilidad (0-1):</label>
+              <input type="number" class="form-control" id="inputProbabilidad" placeholder="0.5" min="0" max="1" step="0.01" value="0.5">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btnConfirmarNuevaConexion">✓ Crear Conexión</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Conexión -->
+  <div class="modal fade" id="modalEditarConexion" tabindex="-1" aria-labelledby="modalEditarConexionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title" id="modalEditarConexionLabel">✏️ Editar Conexión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info small mb-3">
+            <strong>Conexión:</strong> <span id="editConexionInfo"></span>
+          </div>
+
+          <div class="mb-3">
+            <label for="editSelectTipoConexion" class="form-label">Tipo de Conexión:</label>
+            <select class="form-select" id="editSelectTipoConexion">
+              <option value="LINEAL">🟢 Lineal (1 a 1)</option>
+              <option value="INCORPORACION">🟠 Incorporación (varios a uno)</option>
+              <option value="PROBABILISTICA">🟣 Probabilística</option>
+            </select>
+          </div>
+
+          <!-- Campos específicos para INCORPORACION -->
+          <div id="editCamposIncorporacion" style="display: none;">
+            <div class="mb-3">
+              <label for="editInputCarrilDestino" class="form-label">Carril Destino:</label>
+              <input type="number" class="form-control" id="editInputCarrilDestino" placeholder="0" min="0" value="0">
+            </div>
+            <div class="mb-3">
+              <label for="editInputPosInicial" class="form-label">Posición Inicial:</label>
+              <input type="number" class="form-control" id="editInputPosInicial" placeholder="0" min="0" value="0">
+            </div>
+          </div>
+
+          <!-- Campos específicos para PROBABILISTICA -->
+          <div id="editCamposProbabilistica" style="display: none;">
+            <div class="mb-3">
+              <label for="editInputCarrilOrigen" class="form-label">Carril Origen:</label>
+              <input type="number" class="form-control" id="editInputCarrilOrigen" placeholder="0" min="0" value="0">
+            </div>
+            <div class="mb-3">
+              <label for="editInputCarrilDestinoProb" class="form-label">Carril Destino:</label>
+              <input type="number" class="form-control" id="editInputCarrilDestinoProb" placeholder="0" min="0" value="0">
+            </div>
+            <div class="mb-3">
+              <label for="editInputProbabilidad" class="form-label">Probabilidad (0-1):</label>
+              <input type="number" class="form-control" id="editInputProbabilidad" placeholder="0.5" min="0" max="1" step="0.01" value="0.5">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-warning" id="btnConfirmarEditarConexion">✓ Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Content -->
   <div class="main-content">
     <div class="header">
@@ -587,41 +852,6 @@
       }, 15000);
     })();
 
-    // ========== MANEJO DE VISIBILIDAD DE SECCIONES ==========
-    document.addEventListener('DOMContentLoaded', function() {
-      const selectTipoObjeto = document.getElementById('selectTipoObjeto');
-      const calleSelector = document.getElementById('calleSelector');
-      const edificioSelector = document.getElementById('edificioSelector');
-      const calleConfigFields = document.getElementById('calleConfigFields');
-      const calleApplyButton = document.getElementById('calleApplyButton');
-      const curvaModeSection = document.getElementById('curvaModeSection');
-
-      if (selectTipoObjeto) {
-        selectTipoObjeto.addEventListener('change', function() {
-          const tipo = this.value;
-          
-          if (tipo === 'calle') {
-            calleSelector.style.display = 'block';
-            edificioSelector.style.display = 'none';
-            calleConfigFields.style.display = 'block';
-            calleApplyButton.style.display = 'block';
-            curvaModeSection.style.display = 'block';
-          } else if (tipo === 'edificio') {
-            calleSelector.style.display = 'none';
-            edificioSelector.style.display = 'block';
-            calleConfigFields.style.display = 'none';
-            calleApplyButton.style.display = 'none';
-            curvaModeSection.style.display = 'none';
-          } else {
-            calleSelector.style.display = 'none';
-            edificioSelector.style.display = 'none';
-            calleConfigFields.style.display = 'none';
-            calleApplyButton.style.display = 'none';
-            curvaModeSection.style.display = 'none';
-          }
-        });
-      }
-    });
   </script>
 
   <script src="trafico.js"></script>

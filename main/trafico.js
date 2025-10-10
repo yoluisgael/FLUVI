@@ -73,6 +73,7 @@ let probabilidadGeneracionGeneral = 0.5;
 
 // Variables globales expuestas para el editor
 window.calles = calles;
+window.conexiones = conexiones; // IMPORTANTE: Exponer para que constructor.js pueda acceder
 window.calleSeleccionada = null;
 window.isPaused = false;
 window.escala = escala;
@@ -82,6 +83,7 @@ window.celda_tamano = celda_tamano;
 window.renderizarCanvas = renderizarCanvas;
 window.inicializarIntersecciones = inicializarIntersecciones;
 window.construirMapaIntersecciones = construirMapaIntersecciones;
+window.modoSeleccion = "configuracion"; // Para diferenciar entre "configuracion" y "constructor"
 
 // Cargar la imagen del carro
 const carroImg = new Image();
@@ -992,7 +994,8 @@ function dibujarEdificios() {
         
         // Resaltar edificio seleccionado
         if (window.edificioSeleccionado && window.edificioSeleccionado.index === index) {
-            ctx.strokeStyle = "#FFD700"; // Dorado
+            // Naranja para Constructor, dorado para Configuración
+            ctx.strokeStyle = window.modoSeleccion === "constructor" ? "#FFA500" : "#FFD700";
             ctx.lineWidth = 4 / escala;
             ctx.setLineDash([10 / escala, 5 / escala]);
             ctx.strokeRect(-edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
@@ -1029,9 +1032,10 @@ function dibujarCalles() {
                 }
             }
             
-            // Dibujar rectángulo amarillo si la calle está seleccionada
-            if (calleSeleccionada && calle.nombre === calleSeleccionada.nombre) {
-                ctx.strokeStyle = "yellow";
+            // Dibujar borde si la calle está seleccionada
+            if (window.calleSeleccionada && calle.nombre === window.calleSeleccionada.nombre) {
+                // Naranja para Constructor, amarillo para Configuración
+                ctx.strokeStyle = window.modoSeleccion === "constructor" ? "#FFA500" : "yellow";
                 ctx.lineWidth = 1;
                 ctx.strokeRect(0, 0, calle.tamano * celda_tamano, calle.carriles * celda_tamano);
             }
@@ -1057,11 +1061,12 @@ function dibujarCalleConCurva(calle) {
     }
     
     // Dibujar selección si está seleccionada
-    if (calleSeleccionada && calle.nombre === calleSeleccionada.nombre) {
-        ctx.strokeStyle = "yellow";
+    if (window.calleSeleccionada && calle.nombre === window.calleSeleccionada.nombre) {
+        // Naranja para Constructor, amarillo para Configuración
+        ctx.strokeStyle = window.modoSeleccion === "constructor" ? "#FFA500" : "yellow";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        
+
         for (let i = 0; i < calle.tamano; i++) {
             const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, i);
             if (i === 0) {
@@ -1502,10 +1507,10 @@ function iniciarSimulacion() {
     const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal 5", 219, TIPOS.CONEXION, 1739, 367, 202, 0.0, 3, 0.02);
     const Avenida_Miguel_Othon_de_Mendizabal_6 = crearCalle("Av. Miguel Othon de Mendizabal 6", 10, TIPOS.CONEXION, 1780, 345, 208, 0.0, 3, 0.02);
     const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 10, TIPOS.CONEXION, 1872, 278, 221, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 13, TIPOS.CONEXION, 1884, 268, 221, 0.0, 3, 0.02);
 
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard", 190, TIPOS.CONEXION, 1863, 298, -46, 0.0, 3, 0.01);
-    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2", 195, TIPOS.CONEXION, 2527, 980, 133, 0.0, 3, 0.01);
+    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
     const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, TIPOS.CONEXION, 570, 595, -70, 0.0, 3, 0.01);
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, TIPOS.CONEXION, 1290, 2375, 110, 0.9, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 1020, 760, -10, 0.0, 3, 0.01);
@@ -1555,6 +1560,12 @@ function iniciarSimulacion() {
         Avenida_Miguel_Othon_de_Mendizabal_3,
         Avenida_Miguel_Bernard,
         2,
+        0
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(
+        Avenida_Miguel_Bernard2,
+        Avenida_Miguel_Othon_de_Mendizabal_8,
+        0,
         0
     ));
 
@@ -1717,7 +1728,7 @@ function iniciarSimulacion() {
             actualizarCalle(calle, index);
         });
 
-        checarIntersecciones();
+        //checarIntersecciones();
 
         updateMetrics();
         renderizarCanvas();
@@ -2199,6 +2210,8 @@ window.addEventListener('load', () => {
 iniciarSimulacion();
 
 // ========== EXPONER VARIABLES PARA EL EDITOR ==========
+// IMPORTANTE: Actualizar referencia a conexiones después de inicializar la simulación
+window.conexiones = conexiones;
 window.calleSeleccionada = calleSeleccionada;
 window.escala = escala;
 window.offsetX = offsetX;
@@ -2223,6 +2236,7 @@ window.crearConexionProbabilistica = crearConexionProbabilistica;
 window.registrarConexiones = registrarConexiones;
 window.TIPOS = TIPOS;
 window.TIPOS_CONEXION = TIPOS_CONEXION;
+window.ConexionCA = ConexionCA; // Exponer clase ConexionCA para el constructor
 
 selectCalle.addEventListener("change", () => {
     window.calleSeleccionada = calleSeleccionada;
