@@ -31,10 +31,13 @@ class EditorCalles {
         
         // Selectores
         this.selectTipoObjeto = document.getElementById('selectTipoObjeto');
-        this.calleSelector = document.getElementById('calleSelector');
+        this.calleEditorSelector = document.getElementById('calleEditorSelector');
         this.edificioSelector = document.getElementById('edificioSelector');
-        this.selectCalle = document.getElementById('selectCalle');
+        this.selectCalleEditor = document.getElementById('selectCalleEditor');
         this.selectEdificio = document.getElementById('selectEdificio');
+
+        // Selector de configuración de calles (en el otro acordeón)
+        this.selectCalle = document.getElementById('selectCalle');
         
         // Ajustes avanzados
         this.btnAjustesAvanzados = document.getElementById('btnAjustesAvanzados');
@@ -65,8 +68,8 @@ class EditorCalles {
     
     inicializarSelectores() {
         console.log('🔧 Inicializando selectores...');
-        
-        // Poblar selector de calles
+
+        // Poblar selector de calles en configuración
         if (this.selectCalle && window.calles) {
             this.selectCalle.innerHTML = '<option value="">Selecciona una calle</option>';
             window.calles.forEach((calle, index) => {
@@ -75,9 +78,21 @@ class EditorCalles {
                 option.textContent = calle.nombre || `Calle ${index + 1}`;
                 this.selectCalle.appendChild(option);
             });
-            console.log(`✅ ${window.calles.length} calles agregadas al selector`);
+            console.log(`✅ ${window.calles.length} calles agregadas al selector de configuración`);
         }
-        
+
+        // Poblar selector de calles en editor (constructor)
+        if (this.selectCalleEditor && window.calles) {
+            this.selectCalleEditor.innerHTML = '<option value="">Selecciona una calle</option>';
+            window.calles.forEach((calle, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = calle.nombre || `Calle ${index + 1}`;
+                this.selectCalleEditor.appendChild(option);
+            });
+            console.log(`✅ ${window.calles.length} calles agregadas al selector del editor`);
+        }
+
         // Poblar selector de edificios
         if (this.selectEdificio && window.edificios) {
             this.selectEdificio.innerHTML = '<option value="">Selecciona un edificio</option>';
@@ -100,24 +115,36 @@ class EditorCalles {
             this.advancedArrow.textContent = this.advancedSettings.classList.contains('show') ? '▲' : '▼';
         });
         
-        // Cambio de tipo de objeto
+        // Cambio de tipo de objeto (en Constructor de Mapas)
         this.selectTipoObjeto?.addEventListener('change', () => {
             const tipo = this.selectTipoObjeto.value;
             console.log('📋 Tipo seleccionado:', tipo);
-            
+
             if (tipo === 'calle') {
-                this.calleSelector.style.display = 'block';
+                this.calleEditorSelector.style.display = 'block';
                 this.edificioSelector.style.display = 'none';
                 this.selectEdificio.value = '';
+
+                // Mostrar modo curva para calles
+                const curvaModeSection = document.getElementById('curvaModeSection');
+                if (curvaModeSection) curvaModeSection.style.display = 'block';
             } else if (tipo === 'edificio') {
-                this.calleSelector.style.display = 'none';
+                this.calleEditorSelector.style.display = 'none';
                 this.edificioSelector.style.display = 'block';
-                this.selectCalle.value = '';
+                this.selectCalleEditor.value = '';
+
+                // Ocultar modo curva para edificios
+                const curvaModeSection = document.getElementById('curvaModeSection');
+                if (curvaModeSection) curvaModeSection.style.display = 'none';
             } else {
-                this.calleSelector.style.display = 'none';
+                this.calleEditorSelector.style.display = 'none';
                 this.edificioSelector.style.display = 'none';
+
+                // Ocultar modo curva
+                const curvaModeSection = document.getElementById('curvaModeSection');
+                if (curvaModeSection) curvaModeSection.style.display = 'none';
             }
-            
+
             window.calleSeleccionada = null;
             window.edificioSeleccionado = null;
             this.actualizarInputsPosicion();
@@ -125,28 +152,43 @@ class EditorCalles {
             if (window.renderizarCanvas) window.renderizarCanvas();
         });
         
-        // Selección de calle
+        // Selección de calle en Configuración de Calles (solo muestra info, no activa edición)
         this.selectCalle?.addEventListener('change', () => {
             const calleIndex = this.selectCalle.value;
-            console.log('🛣️ Calle seleccionada:', calleIndex);
-            
+            console.log('🛣️ Calle seleccionada en configuración:', calleIndex);
+
+            if (calleIndex !== "") {
+                window.calleSeleccionada = window.calles[calleIndex];
+                console.log('✅ Calle activa para configuración:', window.calleSeleccionada.nombre);
+            } else {
+                window.calleSeleccionada = null;
+            }
+
+            if (window.renderizarCanvas) window.renderizarCanvas();
+        });
+
+        // Selección de calle en Constructor de Mapas (para edición)
+        this.selectCalleEditor?.addEventListener('change', () => {
+            const calleIndex = this.selectCalleEditor.value;
+            console.log('🛣️ Calle seleccionada en editor:', calleIndex);
+
             if (calleIndex !== "") {
                 window.calleSeleccionada = window.calles[calleIndex];
                 window.edificioSeleccionado = null;
                 this.actualizarInputsPosicion();
-                console.log('✅ Calle activa:', window.calleSeleccionada.nombre);
+                console.log('✅ Calle activa para edición:', window.calleSeleccionada.nombre);
             } else {
                 window.calleSeleccionada = null;
             }
             this.actualizarEstadoBotonEdicion();
-            
+
             // Si estamos en modo edición, cambiar a la nueva calle
             if (this.modoEdicion && window.calleSeleccionada) {
                 this.objetoEditando = window.calleSeleccionada;
                 this.tipoObjetoEditando = 'calle';
                 this.actualizarPosicionHandles();
             }
-            
+
             if (window.renderizarCanvas) window.renderizarCanvas();
         });
         

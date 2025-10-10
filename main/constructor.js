@@ -40,6 +40,12 @@ function configurarEventosConstructor() {
         btnAgregarCalle.addEventListener('click', mostrarDialogoNuevaCalle);
     }
 
+    // Botón Agregar Edificio
+    const btnAgregarEdificio = document.getElementById('btnAgregarEdificio');
+    if (btnAgregarEdificio) {
+        btnAgregarEdificio.addEventListener('click', mostrarDialogoNuevoEdificio);
+    }
+
     // Botón Agregar Conexión
     const btnAgregarConexion = document.getElementById('btnAgregarConexion');
     if (btnAgregarConexion) {
@@ -72,49 +78,74 @@ function configurarEventosConstructor() {
         btnNuevaSimulacion.addEventListener('click', nuevaSimulacion);
     }
 
-    // Botón Eliminar Calle
-    const btnEliminarCalle = document.getElementById('btnEliminarCalle');
-    if (btnEliminarCalle) {
-        btnEliminarCalle.addEventListener('click', eliminarCalleSeleccionada);
+    // Botón Eliminar Objeto (calle o edificio)
+    const btnEliminarObjeto = document.getElementById('btnEliminarObjeto');
+    if (btnEliminarObjeto) {
+        btnEliminarObjeto.addEventListener('click', eliminarObjetoSeleccionado);
     }
 }
 
 // ==================== DIÁLOGO NUEVA CALLE ====================
 
 function mostrarDialogoNuevaCalle() {
-    const nombre = prompt("Nombre de la calle:", "Nueva Calle");
-    if (!nombre) return;
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('modalNuevaCalle'));
+    modal.show();
 
-    const tamano = parseInt(prompt("Tamaño (número de celdas):", "100"));
-    if (isNaN(tamano) || tamano <= 0) {
-        alert("Tamaño inválido");
-        return;
-    }
+    // Configurar evento del botón confirmar (solo una vez)
+    const btnConfirmar = document.getElementById('btnConfirmarNuevaCalle');
+    const nuevoHandler = function() {
+        const nombre = document.getElementById('inputNombreCalle').value;
+        const tamano = parseInt(document.getElementById('inputTamanoCalle').value);
+        const tipo = document.getElementById('selectTipoCalle').value;
+        const carriles = parseInt(document.getElementById('inputCarrilesCalle').value);
+        const x = parseFloat(document.getElementById('inputXCalle').value);
+        const y = parseFloat(document.getElementById('inputYCalle').value);
+        const angulo = parseFloat(document.getElementById('inputAnguloCalle').value);
+        const probGen = parseFloat(document.getElementById('inputProbGenCalle').value);
+        const probSalto = parseFloat(document.getElementById('inputProbSaltoCalle').value);
 
-    const tipo = prompt("Tipo (GENERADOR, CONEXION, DEVORADOR):", "CONEXION").toUpperCase();
-    if (!["GENERADOR", "CONEXION", "DEVORADOR"].includes(tipo)) {
-        alert("Tipo inválido");
-        return;
-    }
+        // Validaciones
+        if (!nombre || nombre.trim() === '') {
+            alert("❌ El nombre es obligatorio");
+            return;
+        }
 
-    const x = parseFloat(prompt("Posición X:", "500"));
-    const y = parseFloat(prompt("Posición Y:", "500"));
-    const angulo = parseFloat(prompt("Ángulo (grados):", "0"));
-    const carriles = parseInt(prompt("Número de carriles:", "3"));
-    const probGen = parseFloat(prompt("Probabilidad de generación (0-1):", "0.5"));
-    const probSalto = parseFloat(prompt("Probabilidad de cambio de carril (0-1):", "0.02"));
+        if (isNaN(tamano) || tamano <= 0) {
+            alert("❌ Tamaño inválido");
+            return;
+        }
 
-    if (isNaN(x) || isNaN(y) || isNaN(angulo) || isNaN(carriles) || isNaN(probGen) || isNaN(probSalto)) {
-        alert("Valores inválidos");
-        return;
-    }
+        if (isNaN(x) || isNaN(y) || isNaN(angulo) || isNaN(carriles) || isNaN(probGen) || isNaN(probSalto)) {
+            alert("❌ Valores inválidos. Verifica todos los campos numéricos.");
+            return;
+        }
 
-    agregarCalle(nombre, tamano, tipo, x, y, angulo, probGen, carriles, probSalto);
+        if (probGen < 0 || probGen > 1 || probSalto < 0 || probSalto > 1) {
+            alert("❌ Las probabilidades deben estar entre 0 y 1");
+            return;
+        }
+
+        // Agregar calle
+        agregarCalle(nombre, tamano, tipo, x, y, angulo, probGen, carriles, probSalto);
+
+        // Cerrar modal
+        modal.hide();
+
+        // Limpiar formulario
+        document.getElementById('inputNombreCalle').value = '';
+
+        // Remover listener
+        btnConfirmar.removeEventListener('click', nuevoHandler);
+    };
+
+    btnConfirmar.removeEventListener('click', nuevoHandler);
+    btnConfirmar.addEventListener('click', nuevoHandler);
 }
 
 // ==================== AGREGAR CALLE ====================
 
-function agregarCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion, carriles, probabilidadSaltoDeCarril) {
+function agregarCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion, carriles, probabilidadSaltoDeCarril, silencioso = false) {
     // Mapear tipo string a constante
     const TIPOS = {
         GENERADOR: "generador",
@@ -160,10 +191,19 @@ function agregarCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion
         }
 
         console.log(`✅ Calle "${nombre}" agregada a la simulación`);
-        alert(`Calle "${nombre}" agregada exitosamente`);
+
+        // Solo mostrar alerta si no es silencioso (para evitar alertas múltiples al cargar archivo)
+        if (!silencioso) {
+            alert(`Calle "${nombre}" agregada exitosamente`);
+        }
+
+        return true;
     } else {
         console.error("❌ Función crearCalle no disponible");
-        alert("Error: No se puede crear la calle");
+        if (!silencioso) {
+            alert("Error: No se puede crear la calle");
+        }
+        return false;
     }
 }
 
@@ -171,84 +211,166 @@ function agregarCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion
 
 function mostrarDialogoNuevaConexion() {
     if (!window.calles || window.calles.length < 2) {
-        alert("Necesitas al menos 2 calles para crear una conexión");
+        alert("❌ Necesitas al menos 2 calles para crear una conexión");
         return;
     }
 
-    // Mostrar lista de calles
-    let listaCalles = "Calles disponibles:\n";
+    // Poblar selectores de calles
+    const selectOrigen = document.getElementById('selectCalleOrigen');
+    const selectDestino = document.getElementById('selectCalleDestino');
+
+    selectOrigen.innerHTML = '<option value="">Selecciona calle origen...</option>';
+    selectDestino.innerHTML = '<option value="">Selecciona calle destino...</option>';
+
     window.calles.forEach((calle, index) => {
-        listaCalles += `${index}: ${calle.nombre}\n`;
+        const optionOrigen = document.createElement('option');
+        optionOrigen.value = index;
+        optionOrigen.textContent = `${index}: ${calle.nombre}`;
+        selectOrigen.appendChild(optionOrigen);
+
+        const optionDestino = document.createElement('option');
+        optionDestino.value = index;
+        optionDestino.textContent = `${index}: ${calle.nombre}`;
+        selectDestino.appendChild(optionDestino);
     });
 
-    const origenIdx = parseInt(prompt(listaCalles + "\nÍndice de calle origen:", "0"));
-    if (isNaN(origenIdx) || origenIdx < 0 || origenIdx >= window.calles.length) {
-        alert("Índice de origen inválido");
-        return;
-    }
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('modalNuevaConexion'));
+    modal.show();
 
-    const destinoIdx = parseInt(prompt("Índice de calle destino:", "1"));
-    if (isNaN(destinoIdx) || destinoIdx < 0 || destinoIdx >= window.calles.length) {
-        alert("Índice de destino inválido");
-        return;
-    }
+    // Configurar cambio de tipo de conexión para mostrar/ocultar campos
+    const selectTipoConexion = document.getElementById('selectTipoConexion');
+    const camposIncorporacion = document.getElementById('camposIncorporacion');
+    const camposProbabilistica = document.getElementById('camposProbabilistica');
 
-    const tipo = prompt("Tipo de conexión (LINEAL, INCORPORACION, PROBABILISTICA):", "LINEAL").toUpperCase();
-    if (!["LINEAL", "INCORPORACION", "PROBABILISTICA"].includes(tipo)) {
-        alert("Tipo de conexión inválido");
-        return;
-    }
+    selectTipoConexion.addEventListener('change', function() {
+        const tipo = this.value;
+        camposIncorporacion.style.display = tipo === 'INCORPORACION' ? 'block' : 'none';
+        camposProbabilistica.style.display = tipo === 'PROBABILISTICA' ? 'block' : 'none';
+    });
 
-    const origen = window.calles[origenIdx];
-    const destino = window.calles[destinoIdx];
+    // Configurar evento del botón confirmar
+    const btnConfirmar = document.getElementById('btnConfirmarNuevaConexion');
+    const nuevoHandler = function() {
+        const origenIdx = parseInt(selectOrigen.value);
+        const destinoIdx = parseInt(selectDestino.value);
+        const tipo = selectTipoConexion.value;
 
-    let conexionesCreadas = [];
-
-    if (tipo === "LINEAL") {
-        conexionesCreadas = crearConexionLinealSimple(origen, destino);
-    } else if (tipo === "INCORPORACION") {
-        const carrilDestino = parseInt(prompt("Carril destino (0-" + (destino.carriles - 1) + "):", "0"));
-        const posInicial = parseInt(prompt("Posición inicial en destino:", "0"));
-
-        if (isNaN(carrilDestino) || isNaN(posInicial)) {
-            alert("Valores inválidos");
+        // Validaciones básicas
+        if (isNaN(origenIdx) || origenIdx < 0 || origenIdx >= window.calles.length) {
+            alert("❌ Selecciona una calle de origen válida");
             return;
         }
 
-        conexionesCreadas = crearConexionIncorporacionSimple(origen, destino, carrilDestino, posInicial);
-    } else if (tipo === "PROBABILISTICA") {
-        const carrilOrigen = parseInt(prompt("Carril origen (0-" + (origen.carriles - 1) + "):", "0"));
-        const carrilDestino = parseInt(prompt("Carril destino (0-" + (destino.carriles - 1) + "):", "0"));
-        const probabilidad = parseFloat(prompt("Probabilidad (0-1):", "0.5"));
-
-        if (isNaN(carrilOrigen) || isNaN(carrilDestino) || isNaN(probabilidad)) {
-            alert("Valores inválidos");
+        if (isNaN(destinoIdx) || destinoIdx < 0 || destinoIdx >= window.calles.length) {
+            alert("❌ Selecciona una calle de destino válida");
             return;
         }
 
-        conexionesCreadas = crearConexionProbabilisticaSimple(origen, carrilOrigen, destino, carrilDestino, probabilidad);
-    }
-
-    if (conexionesCreadas && conexionesCreadas.length > 0) {
-        // Guardar en simulación actual
-        simulacionActual.conexiones.push({
-            origenIdx,
-            destinoIdx,
-            tipo,
-            detalles: conexionesCreadas.map(c => ({
-                carrilOrigen: c.carrilOrigen,
-                carrilDestino: c.carrilDestino,
-                probabilidad: c.probabilidadTransferencia
-            }))
-        });
-
-        console.log(`✅ Conexión ${tipo} creada entre "${origen.nombre}" y "${destino.nombre}"`);
-        alert(`Conexión ${tipo} creada exitosamente`);
-
-        if (window.renderizarCanvas) {
-            window.renderizarCanvas();
+        if (origenIdx === destinoIdx) {
+            alert("❌ La calle de origen y destino no pueden ser la misma");
+            return;
         }
-    }
+
+        const origen = window.calles[origenIdx];
+        const destino = window.calles[destinoIdx];
+        let conexionesCreadas = [];
+
+        if (tipo === "LINEAL") {
+            conexionesCreadas = crearConexionLinealSimple(origen, destino);
+        } else if (tipo === "INCORPORACION") {
+            const carrilDestino = parseInt(document.getElementById('inputCarrilDestino').value);
+            const posInicial = parseInt(document.getElementById('inputPosInicial').value);
+
+            if (isNaN(carrilDestino) || isNaN(posInicial)) {
+                alert("❌ Valores inválidos para incorporación");
+                return;
+            }
+
+            if (carrilDestino < 0 || carrilDestino >= destino.carriles) {
+                alert(`❌ El carril destino debe estar entre 0 y ${destino.carriles - 1}`);
+                return;
+            }
+
+            conexionesCreadas = crearConexionIncorporacionSimple(origen, destino, carrilDestino, posInicial);
+        } else if (tipo === "PROBABILISTICA") {
+            const carrilOrigen = parseInt(document.getElementById('inputCarrilOrigen').value);
+            const carrilDestino = parseInt(document.getElementById('inputCarrilDestinoProb').value);
+            const probabilidad = parseFloat(document.getElementById('inputProbabilidad').value);
+
+            if (isNaN(carrilOrigen) || isNaN(carrilDestino) || isNaN(probabilidad)) {
+                alert("❌ Valores inválidos para conexión probabilística");
+                return;
+            }
+
+            if (carrilOrigen < 0 || carrilOrigen >= origen.carriles) {
+                alert(`❌ El carril origen debe estar entre 0 y ${origen.carriles - 1}`);
+                return;
+            }
+
+            if (carrilDestino < 0 || carrilDestino >= destino.carriles) {
+                alert(`❌ El carril destino debe estar entre 0 y ${destino.carriles - 1}`);
+                return;
+            }
+
+            if (probabilidad < 0 || probabilidad > 1) {
+                alert("❌ La probabilidad debe estar entre 0 y 1");
+                return;
+            }
+
+            conexionesCreadas = crearConexionProbabilisticaSimple(origen, carrilOrigen, destino, carrilDestino, probabilidad);
+        }
+
+        if (conexionesCreadas && conexionesCreadas.length > 0) {
+            // Guardar en simulación actual
+            simulacionActual.conexiones.push({
+                origenIdx,
+                destinoIdx,
+                tipo,
+                detalles: conexionesCreadas.map(c => ({
+                    carrilOrigen: c.carrilOrigen,
+                    carrilDestino: c.carrilDestino,
+                    probabilidad: c.probabilidadTransferencia
+                }))
+            });
+
+            // IMPORTANTE: Reinicializar intersecciones para que la simulación reconozca las nuevas conexiones
+            if (window.inicializarIntersecciones) {
+                window.inicializarIntersecciones();
+                console.log('🔄 Intersecciones reinicializadas');
+            }
+
+            if (window.construirMapaIntersecciones) {
+                window.construirMapaIntersecciones();
+                console.log('🗺️ Mapa de intersecciones reconstruido');
+            }
+
+            // Renderizar canvas
+            if (window.renderizarCanvas) {
+                window.renderizarCanvas();
+            }
+
+            console.log(`✅ Conexión ${tipo} creada entre "${origen.nombre}" y "${destino.nombre}"`);
+            console.log('📊 Detalles de conexión:', conexionesCreadas);
+            alert(`✅ Conexión ${tipo} creada exitosamente\n\nLa simulación está lista para usar la nueva conexión.`);
+
+            // Cerrar modal
+            modal.hide();
+
+            // Resetear formulario
+            selectOrigen.value = '';
+            selectDestino.value = '';
+            selectTipoConexion.value = 'LINEAL';
+            camposIncorporacion.style.display = 'none';
+            camposProbabilistica.style.display = 'none';
+
+            // Remover listener
+            btnConfirmar.removeEventListener('click', nuevoHandler);
+        }
+    };
+
+    btnConfirmar.removeEventListener('click', nuevoHandler);
+    btnConfirmar.addEventListener('click', nuevoHandler);
 }
 
 // ==================== FUNCIONES AUXILIARES DE CONEXIÓN ====================
@@ -311,63 +433,218 @@ function crearConexionProbabilisticaSimple(origen, carrilOrigen, destino, carril
     return [];
 }
 
-// ==================== ACTUALIZAR SELECTOR DE CALLES ====================
+// ==================== DIÁLOGO NUEVO EDIFICIO ====================
+
+function mostrarDialogoNuevoEdificio() {
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('modalNuevoEdificio'));
+    modal.show();
+
+    // Configurar evento del botón confirmar
+    const btnConfirmar = document.getElementById('btnConfirmarNuevoEdificio');
+    const nuevoHandler = function() {
+        const label = document.getElementById('inputNombreEdificio').value;
+        const x = parseFloat(document.getElementById('inputXEdificio').value);
+        const y = parseFloat(document.getElementById('inputYEdificio').value);
+        const width = parseFloat(document.getElementById('inputWidthEdificio').value);
+        const height = parseFloat(document.getElementById('inputHeightEdificio').value);
+        const angle = parseFloat(document.getElementById('inputAnguloEdificio').value);
+
+        // Validaciones
+        if (!label || label.trim() === '') {
+            alert("❌ El nombre es obligatorio");
+            return;
+        }
+
+        if (isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height) || isNaN(angle)) {
+            alert("❌ Valores inválidos. Verifica todos los campos numéricos.");
+            return;
+        }
+
+        if (width <= 0 || height <= 0) {
+            alert("❌ El ancho y alto deben ser mayores a 0");
+            return;
+        }
+
+        // Agregar edificio
+        agregarEdificio(label, x, y, width, height, angle);
+
+        // Cerrar modal
+        modal.hide();
+
+        // Limpiar formulario
+        document.getElementById('inputNombreEdificio').value = '';
+
+        // Remover listener
+        btnConfirmar.removeEventListener('click', nuevoHandler);
+    };
+
+    btnConfirmar.removeEventListener('click', nuevoHandler);
+    btnConfirmar.addEventListener('click', nuevoHandler);
+}
+
+// ==================== AGREGAR EDIFICIO ====================
+
+function agregarEdificio(label, x, y, width, height, angle) {
+    // Inicializar array de edificios si no existe
+    if (!window.edificios) {
+        window.edificios = [];
+    }
+
+    // Crear edificio
+    const edificio = {
+        label: label,
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+        angle: angle || 0,
+        color: '#8B4513' // Color café por defecto
+    };
+
+    // Agregar a la lista global
+    window.edificios.push(edificio);
+
+    // Agregar a simulación actual
+    simulacionActual.edificios.push(edificio);
+
+    // Actualizar selectores
+    actualizarSelectorEdificios();
+
+    // Renderizar
+    if (window.renderizarCanvas) {
+        window.renderizarCanvas();
+    }
+
+    console.log(`✅ Edificio "${label}" agregado a la simulación`);
+    alert(`Edificio "${label}" agregado exitosamente`);
+}
+
+// ==================== ACTUALIZAR SELECTORES ====================
 
 function actualizarSelectorCalles() {
     const selectCalle = document.getElementById('selectCalle');
-    if (!selectCalle || !window.calles) return;
+    const selectCalleEditor = document.getElementById('selectCalleEditor');
 
-    // Limpiar opciones existentes (excepto la primera)
-    while (selectCalle.options.length > 1) {
-        selectCalle.remove(1);
+    // Actualizar selector en Configuración de Calles
+    if (selectCalle && window.calles) {
+        // Limpiar opciones existentes (excepto la primera)
+        while (selectCalle.options.length > 1) {
+            selectCalle.remove(1);
+        }
+
+        // Agregar todas las calles
+        window.calles.forEach((calle, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = calle.nombre;
+            selectCalle.appendChild(option);
+        });
     }
 
-    // Agregar todas las calles
-    window.calles.forEach((calle, index) => {
+    // Actualizar selector en Constructor de Mapas
+    if (selectCalleEditor && window.calles) {
+        // Limpiar opciones existentes (excepto la primera)
+        while (selectCalleEditor.options.length > 1) {
+            selectCalleEditor.remove(1);
+        }
+
+        // Agregar todas las calles
+        window.calles.forEach((calle, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = calle.nombre;
+            selectCalleEditor.appendChild(option);
+        });
+    }
+}
+
+function actualizarSelectorEdificios() {
+    const selectEdificio = document.getElementById('selectEdificio');
+    if (!selectEdificio || !window.edificios) return;
+
+    // Limpiar opciones existentes (excepto la primera)
+    while (selectEdificio.options.length > 1) {
+        selectEdificio.remove(1);
+    }
+
+    // Agregar todos los edificios
+    window.edificios.forEach((edificio, index) => {
         const option = document.createElement('option');
         option.value = index;
-        option.textContent = calle.nombre;
-        selectCalle.appendChild(option);
+        option.textContent = edificio.label || `Edificio ${index + 1}`;
+        selectEdificio.appendChild(option);
     });
 }
 
-// ==================== ELIMINAR CALLE ====================
+// ==================== ELIMINAR OBJETO SELECCIONADO ====================
 
-function eliminarCalleSeleccionada() {
-    if (!window.calleSeleccionada) {
-        alert("No hay ninguna calle seleccionada");
+function eliminarObjetoSeleccionado() {
+    const calle = window.calleSeleccionada;
+    const edificio = window.edificioSeleccionado;
+
+    if (!calle && !edificio) {
+        alert("No hay ningún objeto seleccionado. Selecciona una calle o edificio primero.");
         return;
     }
 
-    const confirmacion = confirm(`¿Eliminar la calle "${window.calleSeleccionada.nombre}"?`);
-    if (!confirmacion) return;
+    if (calle) {
+        const confirmacion = confirm(`¿Eliminar la calle "${calle.nombre}"?`);
+        if (!confirmacion) return;
 
-    const index = window.calles.findIndex(c => c.nombre === window.calleSeleccionada.nombre);
-    if (index !== -1) {
-        // Eliminar calle
-        window.calles.splice(index, 1);
+        const index = window.calles.findIndex(c => c.nombre === calle.nombre);
+        if (index !== -1) {
+            // Eliminar calle
+            window.calles.splice(index, 1);
 
-        // Eliminar de simulación actual
-        simulacionActual.calles = simulacionActual.calles.filter(c => c.nombre !== window.calleSeleccionada.nombre);
+            // Eliminar de simulación actual
+            simulacionActual.calles = simulacionActual.calles.filter(c => c.nombre !== calle.nombre);
 
-        // Limpiar selección
-        window.calleSeleccionada = null;
+            // Limpiar selección
+            window.calleSeleccionada = null;
 
-        // Actualizar selector
-        actualizarSelectorCalles();
+            // Actualizar selectores
+            actualizarSelectorCalles();
 
-        // Reinicializar intersecciones
-        if (window.inicializarIntersecciones) {
-            window.inicializarIntersecciones();
+            // Reinicializar intersecciones
+            if (window.inicializarIntersecciones) {
+                window.inicializarIntersecciones();
+            }
+
+            // Renderizar
+            if (window.renderizarCanvas) {
+                window.renderizarCanvas();
+            }
+
+            console.log(`🗑️ Calle "${calle.nombre}" eliminada`);
+            alert("Calle eliminada exitosamente");
         }
+    } else if (edificio) {
+        const confirmacion = confirm(`¿Eliminar el edificio "${edificio.label}"?`);
+        if (!confirmacion) return;
 
-        // Renderizar
-        if (window.renderizarCanvas) {
-            window.renderizarCanvas();
+        const index = window.edificios.findIndex(e => e === edificio);
+        if (index !== -1) {
+            // Eliminar edificio
+            window.edificios.splice(index, 1);
+
+            // Eliminar de simulación actual
+            simulacionActual.edificios = simulacionActual.edificios.filter(e => e.label !== edificio.label);
+
+            // Limpiar selección
+            window.edificioSeleccionado = null;
+
+            // Actualizar selector
+            actualizarSelectorEdificios();
+
+            // Renderizar
+            if (window.renderizarCanvas) {
+                window.renderizarCanvas();
+            }
+
+            console.log(`🗑️ Edificio "${edificio.label}" eliminado`);
+            alert("Edificio eliminado exitosamente");
         }
-
-        console.log(`🗑️ Calle eliminada`);
-        alert("Calle eliminada exitosamente");
     }
 }
 
@@ -445,9 +722,12 @@ function cargarSimulacion(event) {
             // Limpiar simulación actual
             limpiarSimulacionActual();
 
-            // Cargar calles
+            // Cargar calles (silenciosamente, sin alertas individuales)
+            let callesExitosas = 0;
+            let callesFallidas = 0;
+
             datosSimulacion.calles.forEach(calleData => {
-                agregarCalle(
+                const exito = agregarCalle(
                     calleData.nombre,
                     calleData.tamano,
                     calleData.tipo.toUpperCase(),
@@ -456,16 +736,22 @@ function cargarSimulacion(event) {
                     calleData.angulo,
                     calleData.probabilidadGeneracion,
                     calleData.carriles,
-                    calleData.probabilidadSaltoDeCarril
+                    calleData.probabilidadSaltoDeCarril,
+                    true  // silencioso = true
                 );
 
-                // Restaurar vértices si existen
-                if (calleData.vertices && calleData.vertices.length > 0) {
-                    const calleCreada = window.calles[window.calles.length - 1];
-                    if (calleCreada) {
-                        calleCreada.vertices = calleData.vertices;
-                        calleCreada.esCurva = calleData.esCurva || false;
+                if (exito) {
+                    callesExitosas++;
+                    // Restaurar vértices si existen
+                    if (calleData.vertices && calleData.vertices.length > 0) {
+                        const calleCreada = window.calles[window.calles.length - 1];
+                        if (calleCreada) {
+                            calleCreada.vertices = calleData.vertices;
+                            calleCreada.esCurva = calleData.esCurva || false;
+                        }
                     }
+                } else {
+                    callesFallidas++;
                 }
             });
 
@@ -523,11 +809,23 @@ function cargarSimulacion(event) {
 
             simulacionActual = datosSimulacion;
 
-            alert(`Simulación "${datosSimulacion.nombre}" cargada exitosamente`);
+            // Mostrar resumen de la carga
+            let mensaje = `✅ Simulación "${datosSimulacion.nombre}" cargada exitosamente\n\n`;
+            mensaje += `📊 Resumen:\n`;
+            mensaje += `  • Calles: ${callesExitosas} cargadas`;
+            if (callesFallidas > 0) {
+                mensaje += ` (${callesFallidas} fallidas)`;
+            }
+            mensaje += `\n  • Edificios: ${window.edificios ? window.edificios.length : 0} cargados\n`;
+            mensaje += `  • Conexiones: ${datosSimulacion.conexiones ? datosSimulacion.conexiones.length : 0} configuradas`;
+
+            alert(mensaje);
+
+            console.log(`✅ Simulación "${datosSimulacion.nombre}" cargada completamente`);
 
         } catch (error) {
             console.error("❌ Error al cargar simulación:", error);
-            alert(`Error al cargar simulación: ${error.message}`);
+            alert(`❌ Error al cargar simulación: ${error.message}`);
         }
     };
 
