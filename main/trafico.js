@@ -73,6 +73,7 @@ let probabilidadGeneracionGeneral = 0.5;
 
 // Variables globales expuestas para el editor
 window.calles = calles;
+window.conexiones = conexiones; // IMPORTANTE: Exponer para que constructor.js pueda acceder
 window.calleSeleccionada = null;
 window.isPaused = false;
 window.escala = escala;
@@ -82,6 +83,7 @@ window.celda_tamano = celda_tamano;
 window.renderizarCanvas = renderizarCanvas;
 window.inicializarIntersecciones = inicializarIntersecciones;
 window.construirMapaIntersecciones = construirMapaIntersecciones;
+window.modoSeleccion = "configuracion"; // Para diferenciar entre "configuracion" y "constructor"
 
 // Cargar la imagen del carro
 const carroImg = new Image();
@@ -992,7 +994,8 @@ function dibujarEdificios() {
         
         // Resaltar edificio seleccionado
         if (window.edificioSeleccionado && window.edificioSeleccionado.index === index) {
-            ctx.strokeStyle = "#FFD700"; // Dorado
+            // Naranja para Constructor, dorado para Configuración
+            ctx.strokeStyle = window.modoSeleccion === "constructor" ? "#FFA500" : "#FFD700";
             ctx.lineWidth = 4 / escala;
             ctx.setLineDash([10 / escala, 5 / escala]);
             ctx.strokeRect(-edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
@@ -1029,9 +1032,10 @@ function dibujarCalles() {
                 }
             }
             
-            // Dibujar rectángulo amarillo si la calle está seleccionada
-            if (calleSeleccionada && calle.nombre === calleSeleccionada.nombre) {
-                ctx.strokeStyle = "yellow";
+            // Dibujar borde si la calle está seleccionada
+            if (window.calleSeleccionada && calle.nombre === window.calleSeleccionada.nombre) {
+                // Naranja para Constructor, amarillo para Configuración
+                ctx.strokeStyle = window.modoSeleccion === "constructor" ? "#FFA500" : "yellow";
                 ctx.lineWidth = 1;
                 ctx.strokeRect(0, 0, calle.tamano * celda_tamano, calle.carriles * celda_tamano);
             }
@@ -1057,11 +1061,12 @@ function dibujarCalleConCurva(calle) {
     }
     
     // Dibujar selección si está seleccionada
-    if (calleSeleccionada && calle.nombre === calleSeleccionada.nombre) {
-        ctx.strokeStyle = "yellow";
+    if (window.calleSeleccionada && calle.nombre === window.calleSeleccionada.nombre) {
+        // Naranja para Constructor, amarillo para Configuración
+        ctx.strokeStyle = window.modoSeleccion === "constructor" ? "#FFA500" : "yellow";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        
+
         for (let i = 0; i < calle.tamano; i++) {
             const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, i);
             if (i === 0) {
@@ -2235,6 +2240,8 @@ window.addEventListener('load', () => {
 iniciarSimulacion();
 
 // ========== EXPONER VARIABLES PARA EL EDITOR ==========
+// IMPORTANTE: Actualizar referencia a conexiones después de inicializar la simulación
+window.conexiones = conexiones;
 window.calleSeleccionada = calleSeleccionada;
 window.escala = escala;
 window.offsetX = offsetX;
@@ -2259,6 +2266,7 @@ window.crearConexionProbabilistica = crearConexionProbabilistica;
 window.registrarConexiones = registrarConexiones;
 window.TIPOS = TIPOS;
 window.TIPOS_CONEXION = TIPOS_CONEXION;
+window.ConexionCA = ConexionCA; // Exponer clase ConexionCA para el constructor
 
 selectCalle.addEventListener("change", () => {
     window.calleSeleccionada = calleSeleccionada;

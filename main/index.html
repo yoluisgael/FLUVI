@@ -302,12 +302,29 @@
 
             <hr class="my-3">
 
+            <h6 class="mb-3">🔗 Gestión de Conexiones</h6>
+
+            <!-- Botón para mostrar lista de conexiones -->
+            <button id="btnMostrarListaConexiones" class="btn btn-outline-info w-100 mb-2">
+              📋 Ver Conexiones Existentes
+            </button>
+
+            <!-- Lista de conexiones (inicialmente oculta) -->
+            <div id="listaConexionesContainer" style="display: none;" class="mt-2">
+              <div id="listaConexiones" class="list-group small" style="max-height: 300px; overflow-y: auto;">
+                <!-- Las conexiones se insertarán aquí dinámicamente -->
+              </div>
+            </div>
+
+            <hr class="my-3">
+
             <div class="alert alert-info p-2 small mb-0">
               <strong>💡 Cómo usar:</strong>
               <ul class="mb-0 mt-1 ps-3">
                 <li>Crea calles y edificios con los botones</li>
                 <li>Usa el modo edición para posicionarlos</li>
                 <li>Conecta calles con "Agregar Conexión"</li>
+                <li>Gestiona conexiones existentes con "Ver Conexiones"</li>
                 <li>Guarda tu mapa como archivo JSON</li>
                 <li>Carga mapas guardados anteriormente</li>
               </ul>
@@ -665,6 +682,64 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="button" class="btn btn-primary" id="btnConfirmarNuevaConexion">✓ Crear Conexión</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Conexión -->
+  <div class="modal fade" id="modalEditarConexion" tabindex="-1" aria-labelledby="modalEditarConexionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title" id="modalEditarConexionLabel">✏️ Editar Conexión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info small mb-3">
+            <strong>Conexión:</strong> <span id="editConexionInfo"></span>
+          </div>
+
+          <div class="mb-3">
+            <label for="editSelectTipoConexion" class="form-label">Tipo de Conexión:</label>
+            <select class="form-select" id="editSelectTipoConexion">
+              <option value="LINEAL">🟢 Lineal (1 a 1)</option>
+              <option value="INCORPORACION">🟠 Incorporación (varios a uno)</option>
+              <option value="PROBABILISTICA">🟣 Probabilística</option>
+            </select>
+          </div>
+
+          <!-- Campos específicos para INCORPORACION -->
+          <div id="editCamposIncorporacion" style="display: none;">
+            <div class="mb-3">
+              <label for="editInputCarrilDestino" class="form-label">Carril Destino:</label>
+              <input type="number" class="form-control" id="editInputCarrilDestino" placeholder="0" min="0" value="0">
+            </div>
+            <div class="mb-3">
+              <label for="editInputPosInicial" class="form-label">Posición Inicial:</label>
+              <input type="number" class="form-control" id="editInputPosInicial" placeholder="0" min="0" value="0">
+            </div>
+          </div>
+
+          <!-- Campos específicos para PROBABILISTICA -->
+          <div id="editCamposProbabilistica" style="display: none;">
+            <div class="mb-3">
+              <label for="editInputCarrilOrigen" class="form-label">Carril Origen:</label>
+              <input type="number" class="form-control" id="editInputCarrilOrigen" placeholder="0" min="0" value="0">
+            </div>
+            <div class="mb-3">
+              <label for="editInputCarrilDestinoProb" class="form-label">Carril Destino:</label>
+              <input type="number" class="form-control" id="editInputCarrilDestinoProb" placeholder="0" min="0" value="0">
+            </div>
+            <div class="mb-3">
+              <label for="editInputProbabilidad" class="form-label">Probabilidad (0-1):</label>
+              <input type="number" class="form-control" id="editInputProbabilidad" placeholder="0.5" min="0" max="1" step="0.01" value="0.5">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-warning" id="btnConfirmarEditarConexion">✓ Guardar Cambios</button>
         </div>
       </div>
     </div>
