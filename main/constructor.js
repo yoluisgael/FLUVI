@@ -90,6 +90,42 @@ function configurarEventosConstructor() {
         btnMostrarListaConexiones.addEventListener('click', toggleListaConexiones);
     }
 
+    // Botón Descargar Métricas CSV
+    const btnDescargarCSV = document.getElementById('btnDescargarCSV');
+    if (btnDescargarCSV) {
+        btnDescargarCSV.addEventListener('click', () => {
+            if (typeof descargarMetricasCSV !== 'undefined') {
+                descargarMetricasCSV();
+            } else {
+                console.error('Función descargarMetricasCSV no encontrada');
+            }
+        });
+    }
+
+    // Botón Descargar Métricas JSON
+    const btnDescargarJSON = document.getElementById('btnDescargarJSON');
+    if (btnDescargarJSON) {
+        btnDescargarJSON.addEventListener('click', () => {
+            if (typeof descargarMetricasJSON !== 'undefined') {
+                descargarMetricasJSON();
+            } else {
+                console.error('Función descargarMetricasJSON no encontrada');
+            }
+        });
+    }
+
+    // Botón Limpiar Métricas
+    const btnLimpiarMetricas = document.getElementById('btnLimpiarMetricas');
+    if (btnLimpiarMetricas) {
+        btnLimpiarMetricas.addEventListener('click', () => {
+            if (typeof limpiarMetricas !== 'undefined') {
+                limpiarMetricas();
+            } else {
+                console.error('Función limpiarMetricas no encontrada');
+            }
+        });
+    }
+
 }
 
 // ==================== DIÁLOGO NUEVA CALLE ====================

@@ -1753,12 +1753,12 @@ function iniciarSimulacion() {
             isPaused = !isPaused;
             if (isPaused) {
                 cancelAnimationFrame(animationId);
-                btnPauseResume.textContent = 'Resume';
+                btnPauseResume.textContent = '▶️';
                 btnPaso.disabled = false;
             } else {
                 tiempoAnterior = performance.now();
                 animationId = requestAnimationFrame(animate);
-                btnPauseResume.textContent = 'Pause';
+                btnPauseResume.textContent = '⏸';
                 btnPaso.disabled = true;
             }
         });
@@ -2172,6 +2172,132 @@ function updateCharts() {
         x: [metricsHistory.timestamps],
         y: [metricsHistory.speed]
     });
+}
+
+// Función para descargar métricas en formato CSV
+function descargarMetricasCSV() {
+    if (metricsHistory.timestamps.length === 0) {
+        alert('No hay métricas para exportar. Ejecuta la simulación primero.');
+        return;
+    }
+
+    // Función auxiliar para calcular estadísticas
+    const calcularEstadisticas = (arr) => {
+        if (arr.length === 0) return { avg: 0, min: 0, max: 0 };
+        const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
+        const min = Math.min(...arr);
+        const max = Math.max(...arr);
+        return { avg: avg.toFixed(2), min: min.toFixed(2), max: max.toFixed(2) };
+    };
+
+    // Calcular estadísticas
+    const densityStats = calcularEstadisticas(metricsHistory.density);
+    const flowStats = calcularEstadisticas(metricsHistory.flow);
+    const speedStats = calcularEstadisticas(metricsHistory.speed);
+
+    // Encabezado de datos
+    let csvContent = 'Timestamp,Density (%),Flow (cars/sec),Speed (% movement)\n';
+
+    // Datos de series temporales
+    for (let i = 0; i < metricsHistory.timestamps.length; i++) {
+        csvContent += `${metricsHistory.timestamps[i]},${metricsHistory.density[i]},${metricsHistory.flow[i]},${metricsHistory.speed[i]}\n`;
+    }
+
+    // Agregar línea en blanco y sección de estadísticas
+    csvContent += '\n';
+    csvContent += 'STATISTICS\n';
+    csvContent += 'Metric,Average,Minimum,Maximum\n';
+    csvContent += `Density (%),${densityStats.avg},${densityStats.min},${densityStats.max}\n`;
+    csvContent += `Flow (cars/sec),${flowStats.avg},${flowStats.min},${flowStats.max}\n`;
+    csvContent += `Speed (% movement),${speedStats.avg},${speedStats.min},${speedStats.max}\n`;
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    const now = new Date();
+    const fileName = `metricas_trafico_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}.csv`;
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    console.log(`Métricas exportadas a CSV: ${fileName}`);
+}
+
+// Función para descargar métricas en formato JSON
+function descargarMetricasJSON() {
+    if (metricsHistory.timestamps.length === 0) {
+        alert('No hay métricas para exportar. Ejecuta la simulación primero.');
+        return;
+    }
+
+    const calcularEstadisticas = (arr) => {
+        if (arr.length === 0) return { avg: 0, min: 0, max: 0 };
+        const avg = arr.reduce((a, b) => a + b, 0) / arr.length;
+        const min = Math.min(...arr);
+        const max = Math.max(...arr);
+        return { avg: avg.toFixed(2), min: min.toFixed(2), max: max.toFixed(2) };
+    };
+
+    const exportData = {
+        metadata: {
+            version: '1.0',
+            exportDate: new Date().toISOString(),
+            simulationName: 'FLUVI Traffic Simulation',
+            totalDataPoints: metricsHistory.timestamps.length
+        },
+        metrics: {
+            timestamps: metricsHistory.timestamps,
+            density: metricsHistory.density,
+            flow: metricsHistory.flow,
+            speed: metricsHistory.speed
+        },
+        statistics: {
+            density: calcularEstadisticas(metricsHistory.density),
+            flow: calcularEstadisticas(metricsHistory.flow),
+            speed: calcularEstadisticas(metricsHistory.speed)
+        }
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    const now = new Date();
+    const fileName = `metricas_trafico_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}.json`;
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    console.log(`Métricas exportadas a JSON: ${fileName}`);
+}
+
+// Función para limpiar el historial de métricas
+function limpiarMetricas() {
+    if (metricsHistory.timestamps.length === 0) {
+        alert('No hay métricas para limpiar.');
+        return;
+    }
+
+    if (confirm('¿Estás seguro de que deseas limpiar todas las métricas? Esta acción no se puede deshacer.')) {
+        metricsHistory.timestamps = [];
+        metricsHistory.density = [];
+        metricsHistory.flow = [];
+        metricsHistory.speed = [];
+
+        updateCharts();
+
+        console.log('Métricas limpiadas exitosamente');
+        alert('Métricas limpiadas exitosamente');
+    }
 }
 
 let metricsUpdateCounter = 0;

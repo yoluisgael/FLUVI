@@ -15,7 +15,7 @@
   <div id="loadingScreen">
     <div class="loading-content">
       <div class="loading-header">
-        <h1>🚦 Simulador de Tráfico FLUVI</h1>
+        <h1>Simulador de Tráfico FLUVI</h1>
         <p>Cargando simulación...</p>
       </div>
 
@@ -85,14 +85,14 @@
 
   <!-- Sidebar Panel -->
   <div class="sidebar" id="sidebar">
-    <h4>📊 Panel de Control</h4>
+    <h4>Panel de Control</h4>
 
     <!-- Indicador de modo edición -->
     <div id="editModeBadge" class="edit-mode-badge">
       🔧 MODO EDICIÓN ACTIVO
     </div>
 
-    <!-- ========== ACCORDIONS ========== -->
+    <!-- ========= ACCORDIONS ========== -->
     <div class="accordion" id="controlPanelAccordion">
 
       <!-- Accordion 1: Instrucciones -->
@@ -343,18 +343,33 @@
         <div id="collapseMetrics" class="accordion-collapse collapse" aria-labelledby="headingMetrics" data-bs-parent="#controlPanelAccordion">
           <div class="accordion-body p-2">
             <div class="chart-container mb-3">
-              <h6>🚗 Densidad de Tráfico</h6>
+              <h6>Densidad de Tráfico</h6>
               <div id="densityChart" style="height: 180px;"></div>
             </div>
 
             <div class="chart-container mb-3">
-              <h6>🌊 Flujo Vehicular</h6>
+              <h6>Flujo Vehicular</h6>
               <div id="flowChart" style="height: 180px;"></div>
             </div>
 
-            <div class="chart-container">
-              <h6>⚡ Velocidad Promedio</h6>
+            <div class="chart-container mb-3">
+              <h6>Velocidad Promedio</h6>
               <div id="speedChart" style="height: 180px;"></div>
+            </div>
+
+            <hr class="my-3">
+
+            <h6 class="mb-3">💾 Exportar Métricas</h6>
+            <div class="d-grid gap-2">
+              <button id="btnDescargarCSV" class="btn btn-success btn-sm">
+                Descargar CSV
+              </button>
+              <button id="btnDescargarJSON" class="btn btn-info btn-sm">
+                Descargar JSON
+              </button>
+              <button id="btnLimpiarMetricas" class="btn btn-danger btn-sm">
+                Limpiar Métricas
+              </button>
             </div>
           </div>
         </div>
@@ -759,11 +774,11 @@
       <div id="canvasControlBar">
         <div id="controlBar" class="d-flex align-items-center">
           <button id="btnConexiones" class="btn btn-info">Mostrar Conexiones</button>
-          <button id="btnPauseResume" class="btn btn-secondary me-2">⏸ Pause</button>
-          <button id="btnPaso" class="btn btn-success me-2" disabled>⏭ Paso</button>
-          <button id="btnIntersecciones" class="btn btn-info me-2">🚦 Intersecciones</button>
-          <button id="btnBorrar" class="btn btn-danger me-2">🗑️ Borrar</button>
-          <button id="btnRandom" class="btn btn-warning me-3">🎲 Aleatorio</button>
+          <button id="btnPauseResume" class="btn btn-secondary me-2">⏸</button>
+          <button id="btnPaso" class="btn btn-success me-2" disabled>⏭</button>
+          <button id="btnIntersecciones" class="btn btn-info me-2">Intersecciones</button>
+          <button id="btnBorrar" class="btn btn-danger me-2">🗑️</button>
+          <button id="btnRandom" class="btn btn-warning me-3">Aleatorio</button>
           <label for="velocidadSlider" class="form-label me-2 mb-0">Velocidad:</label>
           <input type="range" class="form-range me-2" id="velocidadSlider" min="1" max="100" step="1" style="width: 100px;">
           <span id="velocidadValor" class="badge bg-primary">10</span>
