@@ -2102,76 +2102,198 @@ function updateMetricsHistory(metrics) {
     }
 }
 
+// Variables globales para las instancias de Chart.js
+let densityChartInstance = null;
+let flowChartInstance = null;
+let speedChartInstance = null;
+
 function initializeCharts() {
-    const config = {
+    if (!window.Chart) {
+        console.error('Chart.js no está cargado');
+        return;
+    }
+
+    // Configuración común para todas las gráficas
+    const commonOptions = {
         responsive: true,
-        displayModeBar: false
+        maintainAspectRatio: false,
+        animation: false, // Desactivar animaciones para mejor rendimiento en tiempo real
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                enabled: true,
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                padding: 8,
+                displayColors: false
+            }
+        },
+        scales: {
+            x: {
+                display: true,
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    maxTicksLimit: 6,
+                    font: {
+                        size: 10
+                    }
+                }
+            },
+            y: {
+                display: true,
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                },
+                ticks: {
+                    font: {
+                        size: 10
+                    }
+                }
+            }
+        }
     };
 
-    Plotly.newPlot('densityChart', [{
-        x: [],
-        y: [],
-        type: 'scatter',
-        mode: 'lines',
-        fill: 'tozeroy',
-        line: { color: '#0d6efd', width: 2 },
-        fillcolor: 'rgba(13, 110, 253, 0.2)'
-    }], {
-        margin: { t: 10, r: 10, b: 30, l: 40 },
-        xaxis: { title: '', showticklabels: false },
-        yaxis: { title: '% Ocupación', range: [0, 100] },
-        paper_bgcolor: '#f8f9fa',
-        plot_bgcolor: '#ffffff'
-    }, config);
+    // Gráfica de Densidad
+    const densityCtx = document.getElementById('densityChart');
+    if (densityCtx) {
+        densityChartInstance = new Chart(densityCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: '% Ocupación',
+                    data: [],
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    ...commonOptions.scales,
+                    y: {
+                        ...commonOptions.scales.y,
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            ...commonOptions.scales.y.ticks,
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 
-    Plotly.newPlot('flowChart', [{
-        x: [],
-        y: [],
-        type: 'scatter',
-        mode: 'lines',
-        line: { color: '#198754', width: 2 }
-    }], {
-        margin: { t: 10, r: 10, b: 30, l: 40 },
-        xaxis: { title: '', showticklabels: false },
-        yaxis: { title: 'Carros/seg', range: [0, 20] },
-        paper_bgcolor: '#f8f9fa',
-        plot_bgcolor: '#ffffff'
-    }, config);
+    // Gráfica de Flujo
+    const flowCtx = document.getElementById('flowChart');
+    if (flowCtx) {
+        flowChartInstance = new Chart(flowCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Carros/seg',
+                    data: [],
+                    borderColor: '#198754',
+                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.3,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    ...commonOptions.scales,
+                    y: {
+                        ...commonOptions.scales.y,
+                        min: 0,
+                        suggestedMax: 20
+                    }
+                }
+            }
+        });
+    }
 
-    Plotly.newPlot('speedChart', [{
-        x: [],
-        y: [],
-        type: 'scatter',
-        mode: 'lines',
-        fill: 'tozeroy',
-        line: { color: '#dc3545', width: 2 },
-        fillcolor: 'rgba(220, 53, 69, 0.2)'
-    }], {
-        margin: { t: 10, r: 10, b: 30, l: 40 },
-        xaxis: { title: 'Tiempo' },
-        yaxis: { title: '% Movimiento', range: [0, 100] },
-        paper_bgcolor: '#f8f9fa',
-        plot_bgcolor: '#ffffff'
-    }, config);
+    // Gráfica de Velocidad
+    const speedCtx = document.getElementById('speedChart');
+    if (speedCtx) {
+        speedChartInstance = new Chart(speedCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: '% Movimiento',
+                    data: [],
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    ...commonOptions.scales,
+                    y: {
+                        ...commonOptions.scales.y,
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            ...commonOptions.scales.y.ticks,
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    console.log('✅ Gráficas de Chart.js inicializadas correctamente');
 }
 
 function updateCharts() {
-    if (!window.Plotly) return;
+    if (!window.Chart) return;
 
-    Plotly.update('densityChart', {
-        x: [metricsHistory.timestamps],
-        y: [metricsHistory.density]
-    });
+    // Actualizar gráfica de densidad
+    if (densityChartInstance) {
+        densityChartInstance.data.labels = metricsHistory.timestamps;
+        densityChartInstance.data.datasets[0].data = metricsHistory.density;
+        densityChartInstance.update('none'); // 'none' evita animaciones
+    }
 
-    Plotly.update('flowChart', {
-        x: [metricsHistory.timestamps],
-        y: [metricsHistory.flow]
-    });
+    // Actualizar gráfica de flujo
+    if (flowChartInstance) {
+        flowChartInstance.data.labels = metricsHistory.timestamps;
+        flowChartInstance.data.datasets[0].data = metricsHistory.flow;
+        flowChartInstance.update('none');
+    }
 
-    Plotly.update('speedChart', {
-        x: [metricsHistory.timestamps],
-        y: [metricsHistory.speed]
-    });
+    // Actualizar gráfica de velocidad
+    if (speedChartInstance) {
+        speedChartInstance.data.labels = metricsHistory.timestamps;
+        speedChartInstance.data.datasets[0].data = metricsHistory.speed;
+        speedChartInstance.update('none');
+    }
 }
 
 // Función para descargar métricas en formato CSV
@@ -2328,8 +2450,10 @@ if (sidebarToggle) {
 }
 
 window.addEventListener('load', () => {
-    if (window.Plotly) {
+    if (window.Chart) {
         initializeCharts();
+    } else {
+        console.error('Chart.js no se cargó correctamente');
     }
 });
 

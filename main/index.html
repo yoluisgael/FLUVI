@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador de Calles Dinámicas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="estilos.css">
   <link rel="stylesheet" href="minimapa.css">
 </head>
@@ -343,18 +343,24 @@
         <div id="collapseMetrics" class="accordion-collapse collapse" aria-labelledby="headingMetrics" data-bs-parent="#controlPanelAccordion">
           <div class="accordion-body p-2">
             <div class="chart-container mb-3">
-              <h6>Densidad de Tráfico</h6>
-              <div id="densityChart" style="height: 180px;"></div>
+              <h6>🚗 Densidad de Tráfico</h6>
+              <div style="position: relative; height: 180px;">
+                <canvas id="densityChart"></canvas>
+              </div>
             </div>
 
             <div class="chart-container mb-3">
-              <h6>Flujo Vehicular</h6>
-              <div id="flowChart" style="height: 180px;"></div>
+              <h6>🌊 Flujo Vehicular</h6>
+              <div style="position: relative; height: 180px;">
+                <canvas id="flowChart"></canvas>
+              </div>
             </div>
 
             <div class="chart-container mb-3">
-              <h6>Velocidad Promedio</h6>
-              <div id="speedChart" style="height: 180px;"></div>
+              <h6>⚡ Velocidad Promedio</h6>
+              <div style="position: relative; height: 180px;">
+                <canvas id="speedChart"></canvas>
+              </div>
             </div>
 
             <hr class="my-3">
