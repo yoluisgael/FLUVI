@@ -1502,10 +1502,10 @@ function iniciarSimulacion() {
     const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal 5", 219, TIPOS.CONEXION, 1739, 367, 202, 0.0, 3, 0.02);
     const Avenida_Miguel_Othon_de_Mendizabal_6 = crearCalle("Av. Miguel Othon de Mendizabal 6", 10, TIPOS.CONEXION, 1780, 345, 208, 0.0, 3, 0.02);
     const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 10, TIPOS.CONEXION, 1872, 278, 221, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 13, TIPOS.CONEXION, 1884, 268, 221, 0.0, 3, 0.02);
 
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard", 190, TIPOS.CONEXION, 1863, 298, -46, 0.0, 3, 0.01);
-    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2", 195, TIPOS.CONEXION, 2527, 980, 133, 0.0, 3, 0.01);
+    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
     const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, TIPOS.CONEXION, 570, 595, -70, 0.0, 3, 0.01);
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, TIPOS.CONEXION, 1290, 2375, 110, 0.9, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 1020, 760, -10, 0.0, 3, 0.01);
@@ -1555,6 +1555,12 @@ function iniciarSimulacion() {
         Avenida_Miguel_Othon_de_Mendizabal_3,
         Avenida_Miguel_Bernard,
         2,
+        0
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(
+        Avenida_Miguel_Bernard2,
+        Avenida_Miguel_Othon_de_Mendizabal_8,
+        0,
         0
     ));
 
@@ -1717,7 +1723,7 @@ function iniciarSimulacion() {
             actualizarCalle(calle, index);
         });
 
-        checarIntersecciones();
+        //checarIntersecciones();
 
         updateMetrics();
         renderizarCanvas();
