@@ -83,6 +83,13 @@ function configurarEventosConstructor() {
     if (btnEliminarObjeto) {
         btnEliminarObjeto.addEventListener('click', eliminarObjetoSeleccionado);
     }
+
+    // Botón Mostrar Lista de Conexiones
+    const btnMostrarListaConexiones = document.getElementById('btnMostrarListaConexiones');
+    if (btnMostrarListaConexiones) {
+        btnMostrarListaConexiones.addEventListener('click', toggleListaConexiones);
+    }
+
 }
 
 // ==================== DIÁLOGO NUEVA CALLE ====================
@@ -322,7 +329,7 @@ function mostrarDialogoNuevaConexion() {
         }
 
         if (conexionesCreadas && conexionesCreadas.length > 0) {
-            // Guardar en simulación actual
+            // Guardar en simulación actual con todos los detalles necesarios
             simulacionActual.conexiones.push({
                 origenIdx,
                 destinoIdx,
@@ -330,6 +337,8 @@ function mostrarDialogoNuevaConexion() {
                 detalles: conexionesCreadas.map(c => ({
                     carrilOrigen: c.carrilOrigen,
                     carrilDestino: c.carrilDestino,
+                    posOrigen: c.posOrigen,
+                    posDestino: c.posDestino,
                     probabilidad: c.probabilidadTransferencia
                 }))
             });
@@ -352,6 +361,13 @@ function mostrarDialogoNuevaConexion() {
 
             console.log(`✅ Conexión ${tipo} creada entre "${origen.nombre}" y "${destino.nombre}"`);
             console.log('📊 Detalles de conexión:', conexionesCreadas);
+
+            // Actualizar lista de conexiones si está visible
+            const listaContainer = document.getElementById('listaConexionesContainer');
+            if (listaContainer && listaContainer.style.display !== 'none') {
+                actualizarListaConexiones();
+            }
+
             alert(`✅ Conexión ${tipo} creada exitosamente\n\nLa simulación está lista para usar la nueva conexión.`);
 
             // Cerrar modal
@@ -375,7 +391,7 @@ function mostrarDialogoNuevaConexion() {
 
 // ==================== FUNCIONES AUXILIARES DE CONEXIÓN ====================
 
-function crearConexionLinealSimple(origen, destino) {
+function crearConexionLinealSimple(origen, destino, noPush = false) {
     if (typeof window.crearConexionLineal === 'function') {
         const conexiones = window.crearConexionLineal(origen, destino);
 
@@ -383,7 +399,8 @@ function crearConexionLinealSimple(origen, destino) {
             window.registrarConexiones(conexiones);
         }
 
-        if (window.conexiones) {
+        // Solo agregar a window.conexiones si no se especifica noPush
+        if (!noPush && window.conexiones) {
             window.conexiones.push(...conexiones);
         }
 
@@ -392,7 +409,7 @@ function crearConexionLinealSimple(origen, destino) {
     return [];
 }
 
-function crearConexionIncorporacionSimple(origen, destino, carrilDestino, posInicial) {
+function crearConexionIncorporacionSimple(origen, destino, carrilDestino, posInicial, noPush = false) {
     if (typeof window.crearConexionIncorporacion === 'function') {
         const conexiones = window.crearConexionIncorporacion(origen, destino, carrilDestino, posInicial);
 
@@ -400,7 +417,8 @@ function crearConexionIncorporacionSimple(origen, destino, carrilDestino, posIni
             window.registrarConexiones(conexiones);
         }
 
-        if (window.conexiones) {
+        // Solo agregar a window.conexiones si no se especifica noPush
+        if (!noPush && window.conexiones) {
             window.conexiones.push(...conexiones);
         }
 
@@ -409,7 +427,7 @@ function crearConexionIncorporacionSimple(origen, destino, carrilDestino, posIni
     return [];
 }
 
-function crearConexionProbabilisticaSimple(origen, carrilOrigen, destino, carrilDestino, probabilidad) {
+function crearConexionProbabilisticaSimple(origen, carrilOrigen, destino, carrilDestino, probabilidad, noPush = false) {
     if (typeof window.crearConexionProbabilistica === 'function') {
         const distribucion = [{
             carrilDestino: carrilDestino,
@@ -424,7 +442,8 @@ function crearConexionProbabilisticaSimple(origen, carrilOrigen, destino, carril
             window.registrarConexiones(conexiones);
         }
 
-        if (window.conexiones) {
+        // Solo agregar a window.conexiones si no se especifica noPush
+        if (!noPush && window.conexiones) {
             window.conexiones.push(...conexiones);
         }
 
@@ -676,7 +695,24 @@ function guardarSimulacion() {
             vertices: calle.vertices || [],
             esCurva: calle.esCurva || false
         })) : [],
-        conexiones: simulacionActual.conexiones,
+        conexiones: window.conexiones ? window.conexiones.map(c => {
+            // Encontrar los índices de las calles origen y destino
+            const origenIdx = window.calles.findIndex(calle => calle === c.origen);
+            const destinoIdx = window.calles.findIndex(calle => calle === c.destino);
+
+            return {
+                origenIdx,
+                destinoIdx,
+                tipo: c.tipo === 'lineal' ? 'LINEAL' : (c.tipo === 'incorporacion' ? 'INCORPORACION' : 'PROBABILISTICA'),
+                detalles: [{
+                    carrilOrigen: c.carrilOrigen,
+                    carrilDestino: c.carrilDestino,
+                    posOrigen: c.posOrigen,
+                    posDestino: c.posDestino,
+                    probabilidad: c.probabilidadTransferencia
+                }]
+            };
+        }) : [],
         edificios: window.edificios || []
     };
 
@@ -763,6 +799,15 @@ function cargarSimulacion(event) {
             // Cargar conexiones (en segundo paso para asegurar que las calles existan)
             if (datosSimulacion.conexiones && Array.isArray(datosSimulacion.conexiones)) {
                 setTimeout(() => {
+                    // Asegurarse de que la clase ConexionCA y los tipos estén disponibles
+                    if (!window.ConexionCA || !window.TIPOS_CONEXION) {
+                        console.error("❌ ConexionCA o TIPOS_CONEXION no están disponibles");
+                        return;
+                    }
+
+                    const conexionesCreadas = [];
+
+                    // Crear cada conexión individualmente desde los detalles del JSON
                     datosSimulacion.conexiones.forEach(conexionData => {
                         const origen = window.calles[conexionData.origenIdx];
                         const destino = window.calles[conexionData.destinoIdx];
@@ -772,22 +817,53 @@ function cargarSimulacion(event) {
                             return;
                         }
 
-                        if (conexionData.tipo === "LINEAL") {
-                            crearConexionLinealSimple(origen, destino);
-                        } else if (conexionData.tipo === "INCORPORACION" && conexionData.detalles && conexionData.detalles[0]) {
-                            const detalle = conexionData.detalles[0];
-                            crearConexionIncorporacionSimple(origen, destino, detalle.carrilDestino, 0);
-                        } else if (conexionData.tipo === "PROBABILISTICA" && conexionData.detalles && conexionData.detalles[0]) {
-                            const detalle = conexionData.detalles[0];
-                            crearConexionProbabilisticaSimple(
-                                origen,
-                                detalle.carrilOrigen,
-                                destino,
-                                detalle.carrilDestino,
-                                detalle.probabilidad
-                            );
+                        // Verificar que haya detalles
+                        if (!conexionData.detalles || conexionData.detalles.length === 0) {
+                            console.warn(`⚠️ Conexión omitida: no hay detalles`);
+                            return;
                         }
+
+                        // Mapear tipo string a constante
+                        let tipoConexion = window.TIPOS_CONEXION.LINEAL;
+                        if (conexionData.tipo === "INCORPORACION") {
+                            tipoConexion = window.TIPOS_CONEXION.INCORPORACION;
+                        } else if (conexionData.tipo === "PROBABILISTICA") {
+                            tipoConexion = window.TIPOS_CONEXION.PROBABILISTICA;
+                        }
+
+                        // Crear UNA conexión por cada detalle guardado
+                        conexionData.detalles.forEach(detalle => {
+                            // Crear instancia de ConexionCA directamente con los datos exactos del JSON
+                            const nuevaConexion = new window.ConexionCA(
+                                origen,
+                                destino,
+                                detalle.carrilOrigen,
+                                detalle.carrilDestino,
+                                detalle.posOrigen !== undefined ? detalle.posOrigen : -1,
+                                detalle.posDestino !== undefined ? detalle.posDestino : 0,
+                                detalle.probabilidad !== undefined ? detalle.probabilidad : 1.0,
+                                tipoConexion
+                            );
+
+                            // Agregar a la lista temporal
+                            conexionesCreadas.push(nuevaConexion);
+
+                            console.log(`📥 Conexión cargada: ${origen.nombre}[C${detalle.carrilOrigen}] → ${destino.nombre}[C${detalle.carrilDestino}] (${conexionData.tipo})`);
+                        });
                     });
+
+                    // Registrar todas las conexiones creadas
+                    if (typeof window.registrarConexiones === 'function') {
+                        window.registrarConexiones(conexionesCreadas);
+                    }
+
+                    // Agregar a window.conexiones
+                    if (!window.conexiones) {
+                        window.conexiones = [];
+                    }
+                    window.conexiones.push(...conexionesCreadas);
+
+                    console.log(`✅ Total de conexiones cargadas: ${conexionesCreadas.length}`);
 
                     // Inicializar intersecciones
                     if (window.inicializarIntersecciones) {
@@ -871,19 +947,342 @@ function limpiarSimulacionActual() {
         window.intersecciones.length = 0;
     }
 
+    // Limpiar edificios
+    if (window.edificios) {
+        window.edificios.length = 0;
+    }
+
     // Limpiar selección
     window.calleSeleccionada = null;
+    window.edificioSeleccionado = null;
 
-    // Actualizar selector
+    // Actualizar selectores
     actualizarSelectorCalles();
+    actualizarSelectorEdificios();
 
     // Renderizar
     if (window.renderizarCanvas) {
         window.renderizarCanvas();
     }
 
-    console.log("🧹 Simulación limpiada");
+    console.log("🧹 Simulación limpiada (calles, conexiones, intersecciones y edificios)");
 }
+
+// ==================== GESTIÓN DE CONEXIONES ====================
+
+let conexionEditandoIndex = -1;
+let handlerConfirmarEdicion = null; // Variable global para el handler del botón confirmar
+let handlerCambioTipo = null; // Variable global para el handler del select tipo
+
+// Toggle para mostrar/ocultar lista de conexiones
+function toggleListaConexiones() {
+    const container = document.getElementById('listaConexionesContainer');
+    const btn = document.getElementById('btnMostrarListaConexiones');
+
+    if (container.style.display === 'none') {
+        actualizarListaConexiones();
+        container.style.display = 'block';
+        btn.textContent = '🔼 Ocultar Conexiones';
+    } else {
+        container.style.display = 'none';
+        btn.textContent = '📋 Ver Conexiones Existentes';
+    }
+}
+
+// Actualizar la lista de conexiones en el UI
+function actualizarListaConexiones() {
+    const listaDiv = document.getElementById('listaConexiones');
+    listaDiv.innerHTML = '';
+
+    if (!window.conexiones || window.conexiones.length === 0) {
+        listaDiv.innerHTML = '<div class="list-group-item text-muted text-center">No hay conexiones creadas</div>';
+        return;
+    }
+
+    window.conexiones.forEach((conexion, index) => {
+        if (!conexion || !conexion.origen || !conexion.destino) return;
+
+        const origenNombre = conexion.origen.nombre || `Calle ${index}`;
+        const destinoNombre = conexion.destino.nombre || `Calle ${index}`;
+
+        let tipoIcono = '🟢';
+        let tipoTexto = 'Lineal';
+        if (conexion.tipo === 'incorporacion') {
+            tipoIcono = '🟠';
+            tipoTexto = 'Incorporación';
+        } else if (conexion.tipo === 'probabilistica') {
+            tipoIcono = '🟣';
+            tipoTexto = 'Probabilística';
+        }
+
+        const item = document.createElement('div');
+        item.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
+
+        let detallesConexion = `${tipoIcono} <strong>${origenNombre}</strong> [C${conexion.carrilOrigen + 1}] → <strong>${destinoNombre}</strong> [C${conexion.carrilDestino + 1}]`;
+
+        if (conexion.tipo === 'probabilistica') {
+            const prob = Math.round(conexion.probabilidadTransferencia * 100);
+            detallesConexion += ` <span class="badge bg-secondary">${prob}%</span>`;
+        }
+
+        item.innerHTML = `
+            <div class="small">${detallesConexion}</div>
+            <div class="btn-group btn-group-sm" role="group">
+                <button class="btn btn-outline-warning btn-sm" onclick="editarConexion(${index})" title="Editar">
+                    ✏️
+                </button>
+                <button class="btn btn-outline-danger btn-sm" onclick="eliminarConexion(${index})" title="Eliminar">
+                    🗑️
+                </button>
+            </div>
+        `;
+
+        listaDiv.appendChild(item);
+    });
+
+    console.log(`📋 Lista de conexiones actualizada: ${window.conexiones.length} conexiones`);
+}
+
+// Editar una conexión existente
+function editarConexion(index) {
+    if (!window.conexiones || index < 0 || index >= window.conexiones.length) {
+        alert('❌ Conexión no encontrada');
+        return;
+    }
+
+    const conexion = window.conexiones[index];
+    conexionEditandoIndex = index;
+
+    // Mostrar información de la conexión
+    const infoSpan = document.getElementById('editConexionInfo');
+    infoSpan.textContent = `${conexion.origen.nombre} → ${conexion.destino.nombre}`;
+
+    // Configurar tipo de conexión
+    const selectTipo = document.getElementById('editSelectTipoConexion');
+    let tipo = 'LINEAL';
+    if (conexion.tipo === 'incorporacion') tipo = 'INCORPORACION';
+    else if (conexion.tipo === 'probabilistica') tipo = 'PROBABILISTICA';
+    selectTipo.value = tipo;
+
+    // Mostrar campos según tipo
+    const camposIncorp = document.getElementById('editCamposIncorporacion');
+    const camposProb = document.getElementById('editCamposProbabilistica');
+
+    camposIncorp.style.display = 'none';
+    camposProb.style.display = 'none';
+
+    if (tipo === 'INCORPORACION') {
+        camposIncorp.style.display = 'block';
+        document.getElementById('editInputCarrilDestino').value = conexion.carrilDestino;
+        document.getElementById('editInputPosInicial').value = conexion.posDestino || 0;
+    } else if (tipo === 'PROBABILISTICA') {
+        camposProb.style.display = 'block';
+        document.getElementById('editInputCarrilOrigen').value = conexion.carrilOrigen;
+        document.getElementById('editInputCarrilDestinoProb').value = conexion.carrilDestino;
+        document.getElementById('editInputProbabilidad').value = conexion.probabilidadTransferencia;
+    }
+
+    // Configurar evento de cambio de tipo
+    // Remover handler anterior si existe
+    if (handlerCambioTipo !== null) {
+        selectTipo.removeEventListener('change', handlerCambioTipo);
+    }
+
+    // Crear y guardar el nuevo handler
+    handlerCambioTipo = function() {
+        camposIncorp.style.display = this.value === 'INCORPORACION' ? 'block' : 'none';
+        camposProb.style.display = this.value === 'PROBABILISTICA' ? 'block' : 'none';
+    };
+
+    selectTipo.addEventListener('change', handlerCambioTipo);
+
+    // Configurar botón de confirmación
+    const btnConfirmar = document.getElementById('btnConfirmarEditarConexion');
+
+    // Remover el handler anterior si existe
+    if (handlerConfirmarEdicion !== null) {
+        btnConfirmar.removeEventListener('click', handlerConfirmarEdicion);
+    }
+
+    // Crear y guardar el nuevo handler
+    handlerConfirmarEdicion = function() {
+        guardarCambiosConexion(index);
+    };
+
+    // Agregar el nuevo handler
+    btnConfirmar.addEventListener('click', handlerConfirmarEdicion);
+
+    // Abrir modal
+    const modal = new bootstrap.Modal(document.getElementById('modalEditarConexion'));
+    modal.show();
+}
+
+// Guardar cambios en una conexión (modifica directamente la conexión existente)
+function guardarCambiosConexion(index) {
+    if (!window.conexiones || index < 0 || index >= window.conexiones.length) {
+        alert('❌ Error al guardar cambios');
+        return;
+    }
+
+    const conexion = window.conexiones[index];
+    const tipoNuevo = document.getElementById('editSelectTipoConexion').value;
+
+    // Guardar carril origen actual para mover en conexionesSalida si cambia
+    const carrilOrigenAntiguo = conexion.carrilOrigen;
+
+    // Extraer valores del formulario según el tipo
+    if (tipoNuevo === 'PROBABILISTICA') {
+        const prob = parseFloat(document.getElementById('editInputProbabilidad').value);
+        const carrilOrigen = parseInt(document.getElementById('editInputCarrilOrigen').value);
+        const carrilDestino = parseInt(document.getElementById('editInputCarrilDestinoProb').value);
+
+        if (isNaN(prob) || prob < 0 || prob > 1) {
+            alert('❌ La probabilidad debe estar entre 0 y 1');
+            return;
+        }
+        if (isNaN(carrilOrigen) || isNaN(carrilDestino)) {
+            alert('❌ Los carriles deben ser números válidos');
+            return;
+        }
+
+        // Validar carriles
+        if (carrilOrigen < 0 || carrilOrigen >= conexion.origen.carriles) {
+            alert(`❌ El carril origen debe estar entre 0 y ${conexion.origen.carriles - 1}`);
+            return;
+        }
+        if (carrilDestino < 0 || carrilDestino >= conexion.destino.carriles) {
+            alert(`❌ El carril destino debe estar entre 0 y ${conexion.destino.carriles - 1}`);
+            return;
+        }
+
+        // Modificar propiedades directamente
+        conexion.tipo = window.TIPOS_CONEXION.PROBABILISTICA;
+        conexion.carrilOrigen = carrilOrigen;
+        conexion.carrilDestino = carrilDestino;
+        conexion.probabilidadTransferencia = prob;
+
+    } else if (tipoNuevo === 'INCORPORACION') {
+        const carrilDestino = parseInt(document.getElementById('editInputCarrilDestino').value);
+        const posInicial = parseInt(document.getElementById('editInputPosInicial').value);
+
+        if (isNaN(carrilDestino) || isNaN(posInicial)) {
+            alert('❌ Valores inválidos para incorporación');
+            return;
+        }
+        if (carrilDestino < 0 || carrilDestino >= conexion.destino.carriles) {
+            alert(`❌ El carril destino debe estar entre 0 y ${conexion.destino.carriles - 1}`);
+            return;
+        }
+
+        // Modificar propiedades directamente
+        conexion.tipo = window.TIPOS_CONEXION.INCORPORACION;
+        conexion.carrilDestino = carrilDestino;
+        conexion.posDestino = posInicial;
+        conexion.probabilidadTransferencia = 1.0;
+
+    } else if (tipoNuevo === 'LINEAL') {
+        // Para conexión lineal, los carriles permanecen iguales
+        conexion.tipo = window.TIPOS_CONEXION.LINEAL;
+        conexion.probabilidadTransferencia = 1.0;
+        conexion.posDestino = 0;
+    }
+
+    // Si cambió el carril origen, mover la conexión en conexionesSalida
+    if (carrilOrigenAntiguo !== conexion.carrilOrigen) {
+        const origen = conexion.origen;
+
+        // Remover del carril antiguo
+        if (origen.conexionesSalida && origen.conexionesSalida[carrilOrigenAntiguo]) {
+            const idx = origen.conexionesSalida[carrilOrigenAntiguo].indexOf(conexion);
+            if (idx !== -1) {
+                origen.conexionesSalida[carrilOrigenAntiguo].splice(idx, 1);
+            }
+        }
+
+        // Agregar al nuevo carril
+        if (!origen.conexionesSalida[conexion.carrilOrigen]) {
+            origen.conexionesSalida[conexion.carrilOrigen] = [];
+        }
+        origen.conexionesSalida[conexion.carrilOrigen].push(conexion);
+    }
+
+    // Reinicializar intersecciones
+    if (window.inicializarIntersecciones) {
+        window.inicializarIntersecciones();
+    }
+    if (window.construirMapaIntersecciones) {
+        window.construirMapaIntersecciones();
+    }
+
+    // Actualizar vista
+    actualizarListaConexiones();
+    if (window.renderizarCanvas) {
+        window.renderizarCanvas();
+    }
+
+    // Cerrar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarConexion'));
+    if (modal) modal.hide();
+
+    // Limpiar los handlers globales
+    const btnConfirmar = document.getElementById('btnConfirmarEditarConexion');
+    const selectTipo = document.getElementById('editSelectTipoConexion');
+
+    if (handlerConfirmarEdicion !== null) {
+        btnConfirmar.removeEventListener('click', handlerConfirmarEdicion);
+        handlerConfirmarEdicion = null;
+    }
+
+    if (handlerCambioTipo !== null) {
+        selectTipo.removeEventListener('change', handlerCambioTipo);
+        handlerCambioTipo = null;
+    }
+
+    console.log(`✏️ Conexión ${index} editada: ${conexion.origen.nombre}[${conexion.carrilOrigen}] → ${conexion.destino.nombre}[${conexion.carrilDestino}] (${tipoNuevo})`);
+    alert('✅ Cambios aplicados correctamente a la simulación.');
+}
+
+// Eliminar una conexión (aplica cambios inmediatamente)
+function eliminarConexion(index) {
+    if (!window.conexiones || index < 0 || index >= window.conexiones.length) {
+        alert('❌ Conexión no encontrada');
+        return;
+    }
+
+    const conexion = window.conexiones[index];
+    const confirmacion = confirm(`¿Eliminar conexión de "${conexion.origen.nombre}" a "${conexion.destino.nombre}"?`);
+
+    if (!confirmacion) return;
+
+    // Eliminar de conexionesSalida de la calle origen
+    if (conexion.origen.conexionesSalida && conexion.origen.conexionesSalida[conexion.carrilOrigen]) {
+        const idx = conexion.origen.conexionesSalida[conexion.carrilOrigen].indexOf(conexion);
+        if (idx !== -1) {
+            conexion.origen.conexionesSalida[conexion.carrilOrigen].splice(idx, 1);
+        }
+    }
+
+    // Remover de window.conexiones
+    window.conexiones.splice(index, 1);
+
+    // Reinicializar intersecciones
+    if (window.inicializarIntersecciones) {
+        window.inicializarIntersecciones();
+    }
+    if (window.construirMapaIntersecciones) {
+        window.construirMapaIntersecciones();
+    }
+
+    // Actualizar vista
+    actualizarListaConexiones();
+    if (window.renderizarCanvas) {
+        window.renderizarCanvas();
+    }
+
+    console.log(`🗑️ Conexión ${index} eliminada de la simulación`);
+    alert('✅ Conexión eliminada correctamente.');
+}
+
 
 // ==================== EXPONER FUNCIONES GLOBALMENTE ====================
 
@@ -893,6 +1292,12 @@ window.guardarSimulacion = guardarSimulacion;
 window.cargarSimulacion = cargarSimulacion;
 window.nuevaSimulacion = nuevaSimulacion;
 window.simulacionActual = simulacionActual;
+
+// Exponer funciones de gestión de conexiones
+window.toggleListaConexiones = toggleListaConexiones;
+window.actualizarListaConexiones = actualizarListaConexiones;
+window.editarConexion = editarConexion;
+window.eliminarConexion = eliminarConexion;
 
 // Inicializar cuando el DOM esté listo
 if (document.readyState === 'loading') {
