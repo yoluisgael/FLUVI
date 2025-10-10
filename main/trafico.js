@@ -2190,36 +2190,6 @@ if (sidebarToggle) {
     });
 }
 
-function downloadMetricsCSV() {
-    if (metricsHistory.timestamps.length === 0) {
-        alert('No hay datos disponibles para descargar. Ejecuta la simulación primero.');
-        return;
-    }
-
-    // Crear encabezados CSV
-    let csv = 'Tiempo,Densidad (%),Flujo (carros/seg),Velocidad (%)\n';
-
-    // Agregar datos
-    for (let i = 0; i < metricsHistory.timestamps.length; i++) {
-        csv += `${metricsHistory.timestamps[i]},${metricsHistory.density[i]},${metricsHistory.flow[i]},${metricsHistory.speed[i]}\n`;
-    }
-
-    // Crear blob y descargar
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-
-    const now = new Date();
-    const filename = `metricas_trafico_${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}_${now.getHours().toString().padStart(2,'0')}-${now.getMinutes().toString().padStart(2,'0')}.csv`;
-
-    link.setAttribute('href', url);
-    link.setAttribute('download', filename);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
 window.addEventListener('load', () => {
     if (window.Plotly) {
         initializeCharts();
