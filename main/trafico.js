@@ -1383,6 +1383,80 @@ function encontrarCeldaMasCercana(worldX, worldY) {
     }
 }
 
+// Función para detectar si un punto está sobre una calle (para selección por clic)
+function encontrarCalleEnPunto(worldX, worldY) {
+    // Iterar sobre todas las calles en orden inverso (las de arriba primero)
+    for (let i = calles.length - 1; i >= 0; i--) {
+        const calle = calles[i];
+
+        // Si la calle tiene curvas, usar método de detección por celdas
+        if (calle.esCurva && calle.vertices && calle.vertices.length > 0) {
+            for (let carril = 0; carril < calle.carriles; carril++) {
+                for (let indice = 0; indice < calle.tamano; indice++) {
+                    const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, carril, indice);
+                    const dx = worldX - coords.x;
+                    const dy = worldY - coords.y;
+                    const distancia = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distancia < celda_tamano) {
+                        return { calle, calleIndex: i };
+                    }
+                }
+            }
+        } else {
+            // Para calles rectas, usar transformación geométrica
+            const angle = -calle.angulo * Math.PI / 180;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+
+            // Transformar el punto al sistema de coordenadas local de la calle
+            const dx = worldX - calle.x;
+            const dy = worldY - calle.y;
+            const localX = dx * cos + dy * sin;
+            const localY = -dx * sin + dy * cos;
+
+            // Verificar si el punto está dentro del rectángulo de la calle
+            const width = calle.tamano * celda_tamano;
+            const height = calle.carriles * celda_tamano;
+
+            if (localX >= 0 && localX <= width && localY >= 0 && localY <= height) {
+                return { calle, calleIndex: i };
+            }
+        }
+    }
+
+    return null;
+}
+
+// Función para detectar si un punto está sobre un edificio (para selección por clic)
+function encontrarEdificioEnPunto(worldX, worldY) {
+    // Iterar sobre todos los edificios en orden inverso (los de arriba primero)
+    for (let i = edificios.length - 1; i >= 0; i--) {
+        const edificio = edificios[i];
+
+        // Transformar el punto al sistema de coordenadas local del edificio
+        const angle = -(edificio.angle || 0) * Math.PI / 180;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+
+        const dx = worldX - edificio.x;
+        const dy = worldY - edificio.y;
+        const localX = dx * cos + dy * sin;
+        const localY = -dx * sin + dy * cos;
+
+        // Verificar si el punto está dentro del rectángulo del edificio
+        const halfWidth = edificio.width / 2;
+        const halfHeight = edificio.height / 2;
+
+        if (localX >= -halfWidth && localX <= halfWidth &&
+            localY >= -halfHeight && localY <= halfHeight) {
+            return { edificio, edificioIndex: i };
+        }
+    }
+
+    return null;
+}
+
 function limpiarCeldas(){
     calles.forEach(calle => {
         for (let c = 0; c < calle.carriles; c++) {
@@ -1916,6 +1990,88 @@ canvas.addEventListener('click', (event) => {
     const worldX = (scaledMouseX - offsetX) / escala;
     const worldY = (scaledMouseY - offsetY) / escala;
 
+    // Si se presiona Ctrl (Windows/Linux) o Cmd (Mac), seleccionar calle o edificio
+    if (event.ctrlKey || event.metaKey) {
+        // Intentar detectar edificio primero (están arriba de las calles visualmente)
+        const resultadoEdificio = encontrarEdificioEnPunto(worldX, worldY);
+        const resultadoCalle = encontrarCalleEnPunto(worldX, worldY);
+
+        if (resultadoEdificio) {
+            const { edificio, edificioIndex } = resultadoEdificio;
+
+            // Limpiar selección de calle
+            window.calleSeleccionada = null;
+            calleSeleccionada = null;
+
+            // Actualizar selección de edificio
+            window.edificioSeleccionado = edificio;
+            window.edificioSeleccionado.index = edificioIndex;
+
+            // Actualizar selector de Configuración de Calles (volver a default)
+            selectCalle.value = '';
+
+            // Actualizar selectores del Constructor
+            const selectTipoObjeto = document.getElementById('selectTipoObjeto');
+            const selectEdificio = document.getElementById('selectEdificio');
+
+            if (selectTipoObjeto && selectEdificio) {
+                window.modoSeleccion = "constructor";
+                selectTipoObjeto.value = 'edificio';
+
+                // Disparar evento change para mostrar el selector correcto
+                selectTipoObjeto.dispatchEvent(new Event('change'));
+
+                // Seleccionar el edificio
+                selectEdificio.value = edificioIndex;
+                selectEdificio.dispatchEvent(new Event('change'));
+            }
+
+            renderizarCanvas();
+            console.log(`🖱️ Edificio seleccionado por clic: ${edificio.label || 'Edificio ' + (edificioIndex + 1)}`);
+
+        } else if (resultadoCalle) {
+            const { calle, calleIndex } = resultadoCalle;
+
+            // Limpiar selección de edificio
+            window.edificioSeleccionado = null;
+
+            // Actualizar la selección de calle
+            calleSeleccionada = calle;
+            window.calleSeleccionada = calle;
+
+            // SIEMPRE actualizar AMBOS selectores de calle
+
+            // 1. Actualizar selector de Configuración de Calles
+            selectCalle.value = calleIndex;
+            // Actualizar los campos de probabilidad
+            inputProbabilidadGeneracion.value = calle.probabilidadGeneracion * 100;
+            inputProbabilidadSalto.value = calle.probabilidadSaltoDeCarril * 100;
+
+            // 2. Actualizar selectores del Constructor de Mapas
+            const selectTipoObjeto = document.getElementById('selectTipoObjeto');
+            const selectCalleEditor = document.getElementById('selectCalleEditor');
+
+            if (selectTipoObjeto && selectCalleEditor) {
+                selectTipoObjeto.value = 'calle';
+
+                // Disparar evento change para mostrar el selector correcto
+                selectTipoObjeto.dispatchEvent(new Event('change'));
+
+                // Seleccionar la calle en el selector del constructor
+                selectCalleEditor.value = calleIndex;
+                selectCalleEditor.dispatchEvent(new Event('change'));
+            }
+
+            // Establecer modo basado en el acordeón abierto, pero la calle está seleccionada en ambos
+            window.modoSeleccion = "configuracion";
+
+            renderizarCanvas();
+            console.log(`🖱️ Calle seleccionada por clic: ${calle.nombre} (actualizado en ambos selectores)`);
+        }
+        return;
+    }
+
+    // Comportamiento normal: agregar/quitar vehículos
     const celdaObjetivo = encontrarCeldaMasCercana(worldX, worldY);
 
     if (celdaObjetivo) {
@@ -1942,6 +2098,15 @@ canvas.addEventListener("mousemove", event => {
 
     const worldX = (scaledMouseX - offsetX) / escala;
     const worldY = (scaledMouseY - offsetY) / escala;
+
+    // Cambiar cursor si se presiona Ctrl/Cmd
+    if (event.ctrlKey || event.metaKey) {
+        const resultadoEdificio = encontrarEdificioEnPunto(worldX, worldY);
+        const resultadoCalle = encontrarCalleEnPunto(worldX, worldY);
+        canvas.style.cursor = (resultadoEdificio || resultadoCalle) ? 'pointer' : 'default';
+    } else {
+        canvas.style.cursor = isDragging ? 'grabbing' : 'grab';
+    }
 
     // Si estamos controlando un vértice
     if (controlandoVertice && verticeSeleccionado) {
@@ -1994,6 +2159,19 @@ canvas.addEventListener("touchmove", event => {
     aplicarLimitesOffset();
 
     renderizarCanvas();
+});
+
+// Event listeners para cambiar el cursor cuando se presiona/suelta Ctrl/Cmd
+document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey || event.metaKey) {
+        canvas.style.cursor = 'pointer';
+    }
+});
+
+document.addEventListener("keyup", (event) => {
+    if (!event.ctrlKey && !event.metaKey) {
+        canvas.style.cursor = 'grab';
+    }
 });
 
 minimapaCanvas.addEventListener("click", (event) => {
