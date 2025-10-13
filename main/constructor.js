@@ -203,7 +203,7 @@ function agregarCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion
         const calle = window.crearCalle(
             nombre,
             tamano,
-            { nombre: tipoMapeado },
+            tipoMapeado,
             x,
             y,
             angulo,
@@ -820,6 +820,7 @@ function cargarSimulacion(event) {
                         if (calleCreada) {
                             calleCreada.vertices = calleData.vertices;
                             calleCreada.esCurva = calleData.esCurva || false;
+                            console.log(`✅ Vértices y curva restaurados para calle "${calleData.nombre}": ${calleData.vertices.length} vértices, esCurva: ${calleCreada.esCurva}`);
                         }
                     }
                 } else {
@@ -830,6 +831,16 @@ function cargarSimulacion(event) {
             // Cargar edificios si existen
             if (datosSimulacion.edificios && Array.isArray(datosSimulacion.edificios)) {
                 window.edificios = datosSimulacion.edificios;
+
+                // IMPORTANTE: Actualizar selector de edificios después de cargar
+                actualizarSelectorEdificios();
+
+                // IMPORTANTE: Renderizar inmediatamente para mostrar los edificios
+                if (window.renderizarCanvas) {
+                    window.renderizarCanvas();
+                }
+
+                console.log(`✅ ${window.edificios.length} edificios cargados, selector actualizado y renderizados`);
             }
 
             // Cargar conexiones (en segundo paso para asegurar que las calles existan)

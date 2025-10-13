@@ -300,23 +300,34 @@ function crearCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion, 
 // Función para inicializar vértices de una calle
 function inicializarVertices(calle) {
     if (calle.tipo !== TIPOS.CONEXION) return;
-    
+
     calle.vertices = [];
     const segmentoSize = 10; // Cada 10 celdas
     const numSegmentos = Math.floor(calle.tamano / segmentoSize);
-    
+
     // Crear vértices en los puntos de división
     for (let i = 0; i <= numSegmentos; i++) {
         const indiceCelda = Math.min(i * segmentoSize, calle.tamano - 1);
-        
+
         calle.vertices.push({
             indiceCelda: indiceCelda,
             anguloOffset: 0, // Desviación angular respecto al ángulo base (±10° máx)
             // Posición se calculará dinámicamente
         });
     }
-    
-    console.log(`✨ Inicializados ${calle.vertices.length} vértices (puntos de curvatura) para ${calle.nombre}`);
+
+    // ASEGURAR que siempre haya un vértice al final
+    const ultimaCelda = calle.tamano - 1;
+    const ultimoVertice = calle.vertices[calle.vertices.length - 1];
+
+    if (ultimoVertice.indiceCelda !== ultimaCelda) {
+        calle.vertices.push({
+            indiceCelda: ultimaCelda,
+            anguloOffset: 0,
+        });
+    }
+
+    console.log(`✨ Inicializados ${calle.vertices.length} vértices (puntos de curvatura) para ${calle.nombre}: [0, cada 10, ${ultimaCelda}]`);
 }
 
 // Función para calcular la posición de un vértice en coordenadas mundo
@@ -985,7 +996,9 @@ window.edificioSeleccionado = null;
 
 // Función mejorada para dibujar edificios con selección visual
 function dibujarEdificios() {
-    edificios.forEach((edificio, index) => {
+    // Usar window.edificios si existe, sino usar la constante local edificios como fallback
+    const edificiosADibujar = window.edificios || edificios;
+    edificiosADibujar.forEach((edificio, index) => {
         ctx.save();
         ctx.translate(edificio.x, edificio.y);
         ctx.rotate((edificio.angle || 0) * Math.PI / 180);
@@ -1060,23 +1073,157 @@ function dibujarCalleConCurva(calle) {
         }
     }
     
-    // Dibujar selección si está seleccionada
+    // Dibujar contorno completo si está seleccionada
     if (window.calleSeleccionada && calle.nombre === window.calleSeleccionada.nombre) {
-        // Naranja para Constructor, amarillo para Configuración
-        ctx.strokeStyle = window.modoSeleccion === "constructor" ? "#FFA500" : "yellow";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-
-        for (let i = 0; i < calle.tamano; i++) {
-            const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, i);
-            if (i === 0) {
-                ctx.moveTo(coords.x, coords.y);
-            } else {
-                ctx.lineTo(coords.x, coords.y);
-            }
-        }
-        ctx.stroke();
+        dibujarContornoCalleCurva(calle);
     }
+}
+
+// Función para dibujar el contorno completo de una calle con curvas
+function dibujarContornoCalleCurva(calle) {
+    // Naranja para Constructor, amarillo para Configuración
+    ctx.strokeStyle = window.modoSeleccion === "constructor" ? "#FFA500" : "yellow";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]); // Línea punteada para mejor visibilidad
+
+    // Dibujar contorno superior (carril 0)
+    ctx.beginPath();
+    for (let i = 0; i < calle.tamano; i++) {
+        const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, i);
+        const anguloRad = -coords.angulo * Math.PI / 180;
+
+        // Offset perpendicular hacia arriba (lado superior de la calle)
+        const offsetX = -Math.sin(anguloRad) * (celda_tamano / 2);
+        const offsetY = Math.cos(anguloRad) * (celda_tamano / 2);
+
+        const puntoX = coords.x + offsetX;
+        const puntoY = coords.y + offsetY;
+
+        if (i === 0) {
+            ctx.moveTo(puntoX, puntoY);
+        } else {
+            ctx.lineTo(puntoX, puntoY);
+        }
+    }
+    ctx.stroke();
+
+    // Dibujar contorno inferior (último carril)
+    ctx.beginPath();
+    const ultimoCarril = calle.carriles - 1;
+    for (let i = 0; i < calle.tamano; i++) {
+        const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, ultimoCarril, i);
+        const anguloRad = -coords.angulo * Math.PI / 180;
+
+        // Offset perpendicular hacia abajo (lado inferior de la calle)
+        const offsetX = Math.sin(anguloRad) * (celda_tamano / 2);
+        const offsetY = -Math.cos(anguloRad) * (celda_tamano / 2);
+
+        const puntoX = coords.x + offsetX;
+        const puntoY = coords.y + offsetY;
+
+        if (i === 0) {
+            ctx.moveTo(puntoX, puntoY);
+        } else {
+            ctx.lineTo(puntoX, puntoY);
+        }
+    }
+    ctx.stroke();
+
+    // Dibujar líneas laterales (inicio y final)
+    // Lado izquierdo (inicio de la calle)
+    ctx.beginPath();
+    const coordsInicio0 = obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, 0);
+    const coordsInicioN = obtenerCoordenadasGlobalesCeldaConCurva(calle, ultimoCarril, 0);
+    const anguloInicioRad = -coordsInicio0.angulo * Math.PI / 180;
+
+    const offsetInicioSupX = -Math.sin(anguloInicioRad) * (celda_tamano / 2);
+    const offsetInicioSupY = Math.cos(anguloInicioRad) * (celda_tamano / 2);
+    const offsetInicioInfX = Math.sin(anguloInicioRad) * (celda_tamano / 2);
+    const offsetInicioInfY = -Math.cos(anguloInicioRad) * (celda_tamano / 2);
+
+    ctx.moveTo(coordsInicio0.x + offsetInicioSupX, coordsInicio0.y + offsetInicioSupY);
+    ctx.lineTo(coordsInicioN.x + offsetInicioInfX, coordsInicioN.y + offsetInicioInfY);
+    ctx.stroke();
+
+    // Lado derecho (final de la calle)
+    ctx.beginPath();
+    const ultimoIndice = calle.tamano - 1;
+    const coordsFinal0 = obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, ultimoIndice);
+    const coordsFinalN = obtenerCoordenadasGlobalesCeldaConCurva(calle, ultimoCarril, ultimoIndice);
+    const anguloFinalRad = -coordsFinal0.angulo * Math.PI / 180;
+
+    const offsetFinalSupX = -Math.sin(anguloFinalRad) * (celda_tamano / 2);
+    const offsetFinalSupY = Math.cos(anguloFinalRad) * (celda_tamano / 2);
+    const offsetFinalInfX = Math.sin(anguloFinalRad) * (celda_tamano / 2);
+    const offsetFinalInfY = -Math.cos(anguloFinalRad) * (celda_tamano / 2);
+
+    ctx.moveTo(coordsFinal0.x + offsetFinalSupX, coordsFinal0.y + offsetFinalSupY);
+    ctx.lineTo(coordsFinalN.x + offsetFinalInfX, coordsFinalN.y + offsetFinalInfY);
+    ctx.stroke();
+
+    ctx.setLineDash([]); // Restaurar línea sólida
+}
+
+// Función para calcular el centro de una calle con curvas
+function calcularCentroCalleCurva(calle) {
+    if (!calle.esCurva || !calle.vertices || calle.vertices.length < 2) {
+        // Para calles rectas, usar el cálculo tradicional
+        return {
+            x: calle.x + (calle.tamano * celda_tamano) / 2,
+            y: calle.y + (calle.carriles * celda_tamano) / 2
+        };
+    }
+
+    // Para calles con curvas, calcular el centro promediando puntos de la trayectoria
+    let sumaX = 0;
+    let sumaY = 0;
+    let numPuntos = 0;
+
+    // Tomar varios puntos a lo largo de la calle para calcular el centro promedio
+    const pasos = Math.min(10, calle.tamano); // Máximo 10 puntos de muestra
+    const incremento = Math.max(1, Math.floor(calle.tamano / pasos));
+
+    for (let i = 0; i < calle.tamano; i += incremento) {
+        // Promedio entre todos los carriles en este punto
+        let sumaXCarriles = 0;
+        let sumaYCarriles = 0;
+
+        for (let carril = 0; carril < calle.carriles; carril++) {
+            const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, carril, i);
+            sumaXCarriles += coords.x;
+            sumaYCarriles += coords.y;
+        }
+
+        sumaX += sumaXCarriles / calle.carriles;
+        sumaY += sumaYCarriles / calle.carriles;
+        numPuntos++;
+    }
+
+    return {
+        x: sumaX / numPuntos,
+        y: sumaY / numPuntos
+    };
+}
+
+// Función para calcular el punto final de una calle con curvas (para handle de rotación)
+function calcularPuntoFinalCalleCurva(calle) {
+    if (!calle.esCurva || !calle.vertices || calle.vertices.length < 2) {
+        // Para calles rectas, usar el cálculo tradicional
+        return {
+            x: calle.x + (calle.tamano * celda_tamano),
+            y: calle.y
+        };
+    }
+
+    // Para calles con curvas, obtener el punto final real
+    const ultimoIndice = calle.tamano - 1;
+    const carrilCentral = Math.floor(calle.carriles / 2);
+    const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, carrilCentral, ultimoIndice);
+
+    return {
+        x: coords.x,
+        y: coords.y
+    };
 }
 
 // Función para dibujar vértices editables
@@ -1430,9 +1577,11 @@ function encontrarCalleEnPunto(worldX, worldY) {
 
 // Función para detectar si un punto está sobre un edificio (para selección por clic)
 function encontrarEdificioEnPunto(worldX, worldY) {
+    // Usar window.edificios si existe, sino usar la constante local edificios como fallback
+    const edificiosABuscar = window.edificios || edificios;
     // Iterar sobre todos los edificios en orden inverso (los de arriba primero)
-    for (let i = edificios.length - 1; i >= 0; i--) {
-        const edificio = edificios[i];
+    for (let i = edificiosABuscar.length - 1; i >= 0; i--) {
+        const edificio = edificiosABuscar[i];
 
         // Transformar el punto al sistema de coordenadas local del edificio
         const angle = -(edificio.angle || 0) * Math.PI / 180;
@@ -1573,17 +1722,18 @@ function registrarConexiones(conexionesArray) {
 
 function iniciarSimulacion() {
     // Sistema 1: Avenida Wilfrido Massieu
-    const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal 1", 220, TIPOS.CONEXION, 731, 796, 22, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal_4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 9, TIPOS.CONEXION, 1745, 386, 28, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal 1", 247, TIPOS.CONEXION, 730, 805, 22, 0.0, 3, 0.02);
     
-    const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal 5", 219, TIPOS.CONEXION, 1739, 367, 202, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal_6 = crearCalle("Av. Miguel Othon de Mendizabal 6", 10, TIPOS.CONEXION, 1780, 345, 208, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
-    const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 13, TIPOS.CONEXION, 1884, 268, 221, 0.0, 3, 0.02);
+    //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
+    //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
+    //const Avenida_Miguel_Othon_de_Mendizabal_4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 9, TIPOS.CONEXION, 1745, 386, 28, 0.0, 3, 0.02);
+    
+    const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal 5", 255, TIPOS.CONEXION, 1907, 300, 202, 0.0, 3, 0.02);
+    //const Avenida_Miguel_Othon_de_Mendizabal_6 = crearCalle("Av. Miguel Othon de Mendizabal 6", 10, TIPOS.CONEXION, 1780, 345, 208, 0.0, 3, 0.02);
+    //const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
+    //const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 13, TIPOS.CONEXION, 1884, 268, 221, 0.0, 3, 0.02);
 
-    const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard", 190, TIPOS.CONEXION, 1863, 298, -46, 0.0, 3, 0.01);
+    const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard", 180, TIPOS.CONEXION, 1873, 312, -46, 0.0, 3, 0.01);
     const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
     const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, TIPOS.CONEXION, 570, 595, -70, 0.0, 3, 0.01);
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, TIPOS.CONEXION, 1290, 2375, 110, 0.9, 3, 0.01);
@@ -1617,6 +1767,7 @@ function iniciarSimulacion() {
     
     const conexionesCA = [];
 
+    /*
     conexionesCA.push(...crearConexionLineal(
         Avenida_Miguel_Othon_de_Mendizabal_1, 
         Avenida_Miguel_Othon_de_Mendizabal_4
@@ -1636,6 +1787,7 @@ function iniciarSimulacion() {
         2,
         0
     ));
+    
     conexionesCA.push(...crearConexionIncorporacion(
         Avenida_Miguel_Bernard2,
         Avenida_Miguel_Othon_de_Mendizabal_8,
@@ -1655,7 +1807,7 @@ function iniciarSimulacion() {
         Avenida_Miguel_Othon_de_Mendizabal_6, 
         Avenida_Miguel_Othon_de_Mendizabal_5
     ));
-
+    */
     conexionesCA.push(...crearConexionProbabilistica(
         Avenida_Cien_Metros2,
         2,
@@ -1936,6 +2088,11 @@ canvas.addEventListener("wheel", event => {
 
     aplicarLimitesOffset();
 
+    // Actualizar handles del editor si está disponible y en modo edición
+    if (window.editorCalles && window.editorCalles.modoEdicion) {
+        window.editorCalles.actualizarPosicionHandles();
+    }
+
     renderizarCanvas();
 });
 
@@ -2126,6 +2283,12 @@ canvas.addEventListener("mousemove", event => {
         offsetX = (event.clientX - startX);
         offsetY = (event.clientY - startY);
         aplicarLimitesOffset();
+
+        // Actualizar handles del editor si está disponible y en modo edición
+        if (window.editorCalles && window.editorCalles.modoEdicion) {
+            window.editorCalles.actualizarPosicionHandles();
+        }
+
         renderizarCanvas();
     }
 });
@@ -2655,6 +2818,8 @@ window.obtenerAnguloEnPunto = obtenerAnguloEnPunto;
 window.actualizarAnguloVertice = actualizarAnguloVertice;
 window.actualizarVerticePorArrastre = actualizarVerticePorArrastre;
 window.obtenerCoordenadasGlobalesCeldaConCurva = obtenerCoordenadasGlobalesCeldaConCurva;
+window.calcularCentroCalleCurva = calcularCentroCalleCurva;
+window.calcularPuntoFinalCalleCurva = calcularPuntoFinalCalleCurva;
 
 // EXPOSICIONES PARA EL CONSTRUCTOR
 window.crearCalle = crearCalle;

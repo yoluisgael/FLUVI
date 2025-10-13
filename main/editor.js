@@ -28,6 +28,12 @@ class EditorCalles {
         this.inputPosY = document.getElementById('inputPosY');
         this.inputAngulo = document.getElementById('inputAngulo');
         this.btnAplicarPosicion = document.getElementById('btnAplicarPosicion');
+
+        // Inputs de dimensiones
+        this.dimensionesCalleSection = document.getElementById('dimensionesCalleSection');
+        this.inputTamanoEditar = document.getElementById('inputTamanoEditar');
+        this.inputCarrilesEditar = document.getElementById('inputCarrilesEditar');
+        this.btnAplicarDimensiones = document.getElementById('btnAplicarDimensiones');
         
         // Selectores
         this.selectTipoObjeto = document.getElementById('selectTipoObjeto');
@@ -225,23 +231,52 @@ class EditorCalles {
         this.btnAplicarPosicion?.addEventListener('click', () => {
             const objeto = window.calleSeleccionada || window.edificioSeleccionado;
             if (!objeto) return;
-            
+
             const x = parseFloat(this.inputPosX.value);
             const y = parseFloat(this.inputPosY.value);
             const angulo = parseFloat(this.inputAngulo.value);
-            
+
             if (!isNaN(x)) objeto.x = x;
             if (!isNaN(y)) objeto.y = y;
-            
+
             if (window.calleSeleccionada) {
                 if (!isNaN(angulo)) objeto.angulo = angulo % 360;
             } else if (window.edificioSeleccionado) {
                 if (!isNaN(angulo)) objeto.angle = angulo % 360;
             }
-            
+
             this.actualizarInputsPosicion();
             this.actualizarPosicionHandles();
             if (window.renderizarCanvas) window.renderizarCanvas();
+        });
+
+        // Aplicar dimensiones de calle
+        this.btnAplicarDimensiones?.addEventListener('click', () => {
+            if (!window.calleSeleccionada) return;
+
+            const nuevoTamano = parseInt(this.inputTamanoEditar.value);
+            const nuevosCarriles = parseInt(this.inputCarrilesEditar.value);
+
+            if (isNaN(nuevoTamano) || isNaN(nuevosCarriles)) {
+                alert('⚠️ Por favor ingresa valores válidos para tamaño y carriles');
+                return;
+            }
+
+            if (nuevoTamano < 10 || nuevoTamano > 500) {
+                alert('⚠️ El tamaño debe estar entre 10 y 500 celdas');
+                return;
+            }
+
+            if (nuevosCarriles < 1 || nuevosCarriles > 10) {
+                alert('⚠️ Los carriles deben estar entre 1 y 10');
+                return;
+            }
+
+            const confirmar = confirm(`⚠️ Cambiar las dimensiones eliminará todos los vehículos de la calle.\n\n¿Continuar?\n\nTamaño: ${window.calleSeleccionada.tamano} → ${nuevoTamano} celdas\nCarriles: ${window.calleSeleccionada.carriles} → ${nuevosCarriles} carriles`);
+
+            if (confirmar) {
+                this.aplicarNuevasDimensiones(window.calleSeleccionada, nuevoTamano, nuevosCarriles);
+            }
         });
         
         // Entrar a modo edición
@@ -455,19 +490,143 @@ class EditorCalles {
             if (this.inputPosX) this.inputPosX.value = '';
             if (this.inputPosY) this.inputPosY.value = '';
             if (this.inputAngulo) this.inputAngulo.value = '';
+            this.ocultarSeccionDimensiones();
             return;
         }
-        
+
         if (this.inputPosX) this.inputPosX.value = Math.round(objeto.x);
         if (this.inputPosY) this.inputPosY.value = Math.round(objeto.y);
-        
+
         if (window.calleSeleccionada) {
             if (this.inputAngulo) this.inputAngulo.value = Math.round(objeto.angulo);
+            this.mostrarSeccionDimensiones();
+            this.actualizarInputsDimensiones();
         } else if (window.edificioSeleccionado) {
             if (this.inputAngulo) this.inputAngulo.value = Math.round(objeto.angle || 0);
+            this.ocultarSeccionDimensiones();
         }
     }
-    
+
+    mostrarSeccionDimensiones() {
+        if (this.dimensionesCalleSection) {
+            this.dimensionesCalleSection.style.display = 'block';
+        }
+    }
+
+    ocultarSeccionDimensiones() {
+        if (this.dimensionesCalleSection) {
+            this.dimensionesCalleSection.style.display = 'none';
+        }
+    }
+
+    actualizarInputsDimensiones() {
+        if (!window.calleSeleccionada) return;
+
+        if (this.inputTamanoEditar) {
+            this.inputTamanoEditar.value = window.calleSeleccionada.tamano;
+        }
+        if (this.inputCarrilesEditar) {
+            this.inputCarrilesEditar.value = window.calleSeleccionada.carriles;
+        }
+    }
+
+    aplicarNuevasDimensiones(calle, nuevoTamano, nuevosCarriles) {
+        console.log(`📏 Redimensionando calle: ${calle.nombre}`);
+        console.log(`   Anterior: ${calle.tamano}x${calle.carriles}`);
+        console.log(`   Nuevo: ${nuevoTamano}x${nuevosCarriles}`);
+
+        // Guardar configuración actual
+        const configuracionAnterior = {
+            tamano: calle.tamano,
+            carriles: calle.carriles
+        };
+
+        // Actualizar dimensiones
+        calle.tamano = nuevoTamano;
+        calle.carriles = nuevosCarriles;
+
+        // Crear nuevo arreglo bidimensional vacío
+        calle.arreglo = [];
+        for (let carril = 0; carril < nuevosCarriles; carril++) {
+            calle.arreglo[carril] = [];
+            for (let celda = 0; celda < nuevoTamano; celda++) {
+                calle.arreglo[carril][celda] = 0; // Vacío
+            }
+        }
+
+        // Reinicializar células esperando
+        if (calle.celulasEsperando) {
+            calle.celulasEsperando = [];
+            for (let carril = 0; carril < nuevosCarriles; carril++) {
+                calle.celulasEsperando[carril] = [];
+                for (let celda = 0; celda < nuevoTamano; celda++) {
+                    calle.celulasEsperando[carril][celda] = false;
+                }
+            }
+        }
+
+        // Reinicializar vértices si existen
+        if (calle.vertices && calle.vertices.length > 0) {
+            // Reemplazar todos los vértices con nuevos valores por defecto
+            calle.vertices = [];
+            for (let i = 0; i < nuevoTamano; i++) {
+                calle.vertices.push({ indice: i, angulo: 0 });
+            }
+        }
+
+        // Limpiar conexiones que ahora son inválidas
+        if (window.conexiones) {
+            const conexionesValidas = [];
+            for (const conexion of window.conexiones) {
+                let esValida = true;
+
+                // Verificar si las conexiones están dentro de los nuevos límites
+                if (conexion.calleOrigen === calle) {
+                    if (conexion.carrilOrigen >= nuevosCarriles || conexion.posOrigen >= nuevoTamano) {
+                        esValida = false;
+                        console.log(`🗑️ Conexión eliminada: carril/posición fuera de límites en calle origen`);
+                    }
+                }
+
+                if (conexion.calleDestino === calle) {
+                    if (conexion.carrilDestino >= nuevosCarriles || conexion.posDestino >= nuevoTamano) {
+                        esValida = false;
+                        console.log(`🗑️ Conexión eliminada: carril/posición fuera de límites en calle destino`);
+                    }
+                }
+
+                if (esValida) {
+                    conexionesValidas.push(conexion);
+                }
+            }
+
+            window.conexiones = conexionesValidas;
+        }
+
+        // Actualizar inputs con los nuevos valores
+        this.actualizarInputsDimensiones();
+
+        // Recalcular intersecciones y reinicializar sistemas
+        if (window.inicializarIntersecciones) {
+            window.inicializarIntersecciones();
+        }
+        if (window.construirMapaIntersecciones) {
+            window.construirMapaIntersecciones();
+        }
+
+        // Actualizar selectores si es necesario
+        this.inicializarSelectores();
+
+        // Renderizar canvas
+        if (window.renderizarCanvas) {
+            window.renderizarCanvas();
+        }
+
+        alert(`✅ Dimensiones aplicadas correctamente:\n\nCalle: ${calle.nombre}\nTamaño: ${configuracionAnterior.tamano} → ${nuevoTamano} celdas\nCarriles: ${configuracionAnterior.carriles} → ${nuevosCarriles} carriles\n\n⚠️ Vehículos existentes eliminados\n📊 Conexiones inválidas eliminadas`);
+
+        console.log(`✅ Calle redimensionada exitosamente`);
+    }
+
     // ==================== FUNCIONES DE MODO EDICIÓN ====================
     
     entrarModoEdicion() {
@@ -632,48 +791,202 @@ class EditorCalles {
             console.log('⚠️ No hay objeto editando');
             return;
         }
-        
+
         const escala = window.escala || 1;
         const offsetX = window.offsetX || 0;
         const offsetY = window.offsetY || 0;
         const celda_tamano = window.celda_tamano || 5;
-        
+
+        // Obtener las dimensiones reales del canvas (ventana del usuario)
+        const canvas = document.getElementById('simuladorCanvas');
+        if (!canvas) {
+            console.log('⚠️ No se encuentra el canvas');
+            return;
+        }
+
+        // Configuración de handles
+        const handleRadius = 20; // Radio del handle en px
+        const margen = 25; // Margen desde los bordes de la ventana del usuario
+        const separacionMinima = 50; // Distancia mínima entre handles para evitar traslape
+
+        // Calcular límites reales del área disponible para handles
+        // SIEMPRE dentro de la ventana visible del usuario (canvas)
+        const areaMinX = margen;
+        const areaMaxX = canvas.width - handleRadius * 2 - margen;
+        const areaMinY = margen;
+        const areaMaxY = canvas.height - handleRadius * 2 - margen;
+
+        // Calcular posiciones ideales de los handles
         let centroX, centroY, rotX, rotY;
-        
+
         if (this.tipoObjetoEditando === 'calle') {
-            const screenX = this.objetoEditando.x * escala + offsetX;
-            const screenY = this.objetoEditando.y * escala + offsetY;
-        
-            centroX = screenX + (this.objetoEditando.tamano * celda_tamano * escala) / 2;
-            centroY = screenY + (this.objetoEditando.carriles * celda_tamano * escala) / 2;
-            
-            rotX = screenX + (this.objetoEditando.tamano * celda_tamano * escala);
-            rotY = screenY;
-            
+            // Verificar si la calle tiene curvas para usar el cálculo apropiado
+            if (this.objetoEditando.esCurva && window.calcularCentroCalleCurva) {
+                // Para calles curvadas, usar el centro calculado de la trayectoria
+                const centroCalleCurva = window.calcularCentroCalleCurva(this.objetoEditando);
+                centroX = centroCalleCurva.x * escala + offsetX;
+                centroY = centroCalleCurva.y * escala + offsetY;
+
+                // Para la rotación, usar el punto final de la curva
+                if (window.calcularPuntoFinalCalleCurva) {
+                    const puntoFinalCurva = window.calcularPuntoFinalCalleCurva(this.objetoEditando);
+                    rotX = puntoFinalCurva.x * escala + offsetX;
+                    rotY = puntoFinalCurva.y * escala + offsetY;
+                } else {
+                    // Fallback si no está disponible la función
+                    rotX = centroX + 50;
+                    rotY = centroY;
+                }
+            } else {
+                // Para calles rectas, usar el cálculo tradicional
+                const screenX = this.objetoEditando.x * escala + offsetX;
+                const screenY = this.objetoEditando.y * escala + offsetY;
+
+                centroX = screenX + (this.objetoEditando.tamano * celda_tamano * escala) / 2;
+                centroY = screenY + (this.objetoEditando.carriles * celda_tamano * escala) / 2;
+
+                rotX = screenX + (this.objetoEditando.tamano * celda_tamano * escala);
+                rotY = screenY;
+            }
+
         } else if (this.tipoObjetoEditando === 'edificio') {
             const screenX = this.objetoEditando.x * escala + offsetX;
             const screenY = this.objetoEditando.y * escala + offsetY;
-            
+
             centroX = screenX;
             centroY = screenY;
-            
+
             const angle = (this.objetoEditando.angle || 0) * Math.PI / 180;
             const offsetRotX = (this.objetoEditando.width / 2) * Math.cos(angle) * escala;
             const offsetRotY = (this.objetoEditando.width / 2) * Math.sin(angle) * escala;
-            
+
             rotX = screenX + offsetRotX;
             rotY = screenY + offsetRotY;
         }
-        
+
+        // Calcular posiciones ideales de los handles (donde "quieren" estar)
+        let idealMoveX = centroX - handleRadius;
+        let idealMoveY = centroY - handleRadius;
+        let idealRotX = rotX - handleRadius;
+        let idealRotY = rotY - handleRadius;
+
+        // Inicializar posiciones finales con las ideales
+        let finalMoveX = idealMoveX;
+        let finalMoveY = idealMoveY;
+        let finalRotX = idealRotX;
+        let finalRotY = idealRotY;
+
+        // Función auxiliar para reposicionar handle inteligentemente
+        const reposicionarHandle = (idealX, idealY, areaMinX, areaMaxX, areaMinY, areaMaxY) => {
+            let finalX = idealX;
+            let finalY = idealY;
+
+            // Si está fuera del área visible
+            if (idealX < areaMinX || idealX > areaMaxX || idealY < areaMinY || idealY > areaMaxY) {
+
+                // Calcular el centro del área visible
+                const centroAreaX = (areaMinX + areaMaxX) / 2;
+                const centroAreaY = (areaMinY + areaMaxY) / 2;
+
+                // Calcular vector desde el centro del área hacia la posición ideal
+                const vectorX = idealX - centroAreaX;
+                const vectorY = idealY - centroAreaY;
+                const vectorLength = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+
+                if (vectorLength > 0) {
+                    // Normalizar el vector
+                    const normX = vectorX / vectorLength;
+                    const normY = vectorY / vectorLength;
+
+                    // Proyectar desde el centro hacia el borde en esa dirección
+                    const maxDistX = normX > 0 ? areaMaxX - centroAreaX : centroAreaX - areaMinX;
+                    const maxDistY = normY > 0 ? areaMaxY - centroAreaY : centroAreaY - areaMinY;
+
+                    // Usar la distancia más restrictiva
+                    const maxDist = Math.min(Math.abs(maxDistX / normX), Math.abs(maxDistY / normY));
+
+                    finalX = centroAreaX + normX * Math.max(0, maxDist - 10); // -10 para margen
+                    finalY = centroAreaY + normY * Math.max(0, maxDist - 10);
+
+                    // Asegurar que está dentro de los límites
+                    finalX = Math.max(areaMinX, Math.min(areaMaxX, finalX));
+                    finalY = Math.max(areaMinY, Math.min(areaMaxY, finalY));
+                } else {
+                    // Si están en el mismo punto, usar el centro del área
+                    finalX = centroAreaX;
+                    finalY = centroAreaY;
+                }
+            }
+
+            return { x: finalX, y: finalY };
+        };
+
+        // Reposicionar handles usando la lógica inteligente
+        const posMoveHandle = reposicionarHandle(idealMoveX, idealMoveY, areaMinX, areaMaxX, areaMinY, areaMaxY);
+        finalMoveX = posMoveHandle.x;
+        finalMoveY = posMoveHandle.y;
+
+        const posRotHandle = reposicionarHandle(idealRotX, idealRotY, areaMinX, areaMaxX, areaMinY, areaMaxY);
+        finalRotX = posRotHandle.x;
+        finalRotY = posRotHandle.y;
+
+        // Verificar y resolver traslapes entre handles
+        const distanciaX = Math.abs(finalMoveX - finalRotX);
+        const distanciaY = Math.abs(finalMoveY - finalRotY);
+        const distanciaTotal = Math.sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
+
+        if (distanciaTotal < separacionMinima) {
+            console.log('🔧 Resolviendo traslape de handles...');
+
+            // Calcular vector de separación
+            const dx = finalRotX - finalMoveX;
+            const dy = finalRotY - finalMoveY;
+            const longitud = Math.sqrt(dx * dx + dy * dy);
+
+            if (longitud > 0) {
+                // Normalizar vector de separación
+                const nx = dx / longitud;
+                const ny = dy / longitud;
+
+                // Aplicar separación mínima
+                const separacionNecesaria = (separacionMinima - longitud) / 2;
+
+                finalMoveX -= nx * separacionNecesaria;
+                finalMoveY -= ny * separacionNecesaria;
+                finalRotX += nx * separacionNecesaria;
+                finalRotY += ny * separacionNecesaria;
+
+                // Asegurar que siguen dentro del área después del ajuste
+                finalMoveX = Math.max(areaMinX, Math.min(areaMaxX, finalMoveX));
+                finalMoveY = Math.max(areaMinY, Math.min(areaMaxY, finalMoveY));
+                finalRotX = Math.max(areaMinX, Math.min(areaMaxX, finalRotX));
+                finalRotY = Math.max(areaMinY, Math.min(areaMaxY, finalRotY));
+            } else {
+                // Si están exactamente en la misma posición, separar horizontalmente
+                finalMoveX = Math.max(areaMinX, finalMoveX - separacionMinima / 2);
+                finalRotX = Math.min(areaMaxX, finalRotX + separacionMinima / 2);
+            }
+        }
+
+        // Aplicar posiciones finales
         if (this.moveHandle) {
-            this.moveHandle.style.left = `${centroX - 20}px`;
-            this.moveHandle.style.top = `${centroY - 20}px`;
+            this.moveHandle.style.left = `${finalMoveX}px`;
+            this.moveHandle.style.top = `${finalMoveY}px`;
         }
-        
+
         if (this.rotationHandle) {
-            this.rotationHandle.style.left = `${rotX - 20}px`;
-            this.rotationHandle.style.top = `${rotY - 20}px`;
+            this.rotationHandle.style.left = `${finalRotX}px`;
+            this.rotationHandle.style.top = `${finalRotY}px`;
         }
+
+        // Debug opcional (descomenta para debugging)
+        // console.log('🔧 Handles actualizados:', {
+        //     objeto: { x: this.objetoEditando.x, y: this.objetoEditando.y },
+        //     ideal: { moveX: idealMoveX, moveY: idealMoveY, rotX: idealRotX, rotY: idealRotY },
+        //     final: { moveX: finalMoveX, moveY: finalMoveY, rotX: finalRotX, rotY: finalRotY },
+        //     area: { minX: areaMinX, maxX: areaMaxX, minY: areaMinY, maxY: areaMaxY },
+        //     distancia: Math.sqrt((finalRotX-finalMoveX)**2 + (finalRotY-finalMoveY)**2)
+        // });
     }
     
     iniciarArrastreMovimiento(e) {
@@ -788,9 +1101,11 @@ let editorCalles;
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         editorCalles = new EditorCalles();
+        window.editorCalles = editorCalles; // Exponer globalmente
         console.log('✅ Editor de calles y edificios inicializado');
     });
 } else {
     editorCalles = new EditorCalles();
+    window.editorCalles = editorCalles; // Exponer globalmente
     console.log('🚀 Editor de calles y edificios cargado');
 }
