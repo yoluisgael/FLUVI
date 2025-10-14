@@ -7,6 +7,8 @@ const celdasIntersectadas = new Set();
 let mapaIntersecciones = new Map(); 
 
 let mostrarConexiones = false; // NUEVO: Variable para controlar visualización de conexiones
+let mostrarEtiquetas = true; // Variable para controlar visualización de etiquetas de nombres
+let colorFondoCanvas = "#c6cbcd"; // Color de fondo del canvas (almacenado para detección automática)
 let prioridadPar = true;
 
 // Ajustar tamaño inicial del canvas
@@ -332,17 +334,28 @@ function inicializarVertices(calle) {
 
 // Función para calcular la posición de un vértice en coordenadas mundo
 function calcularPosicionVertice(calle, vertice) {
+    // Si la calle tiene curvas activas, usar la función de coordenadas con curva
+    if (calle.esCurva && calle.vertices && calle.vertices.length >= 2) {
+        const carrilCentral = Math.floor(calle.carriles / 2);
+        const coordenadas = obtenerCoordenadasGlobalesCeldaConCurva(calle, carrilCentral, vertice.indiceCelda);
+        return {
+            x: coordenadas.x,
+            y: coordenadas.y
+        };
+    }
+
+    // Para calles rectas, usar cálculo tradicional
     const localX = vertice.indiceCelda * celda_tamano;
     const localY = (calle.carriles * celda_tamano) / 2;
-    
+
     // Aplicar rotación base de la calle
     const anguloBase = -calle.angulo * Math.PI / 180;
     const cos = Math.cos(anguloBase);
     const sin = Math.sin(anguloBase);
-    
+
     const rotadoX = localX * cos - localY * sin;
     const rotadoY = localX * sin + localY * cos;
-    
+
     return {
         x: calle.x + rotadoX,
         y: calle.y + rotadoY
@@ -392,20 +405,20 @@ let controlandoVertice = false;
 function actualizarAnguloVertice(calle, indiceVertice, nuevoAnguloOffset) {
     if (indiceVertice < 0 || indiceVertice >= calle.vertices.length) return false;
 
-    // Limitar a ±30 grados
-    nuevoAnguloOffset = Math.max(-30, Math.min(30, nuevoAnguloOffset));
+    // Limitar a ±40 grados
+    nuevoAnguloOffset = Math.max(-40, Math.min(40, nuevoAnguloOffset));
 
     // Validar diferencia con vértice anterior
     if (indiceVertice > 0) {
         const anguloAnterior = calle.vertices[indiceVertice - 1].anguloOffset;
         const diferencia = Math.abs(nuevoAnguloOffset - anguloAnterior);
 
-        if (diferencia > 30) {
-            // Ajustar para mantener máximo 30° de diferencia
+        if (diferencia > 40) {
+            // Ajustar para mantener máximo 40° de diferencia
             if (nuevoAnguloOffset > anguloAnterior) {
-                nuevoAnguloOffset = anguloAnterior + 30;
+                nuevoAnguloOffset = anguloAnterior + 40;
             } else {
-                nuevoAnguloOffset = anguloAnterior - 30;
+                nuevoAnguloOffset = anguloAnterior - 40;
             }
         }
     }
@@ -415,12 +428,12 @@ function actualizarAnguloVertice(calle, indiceVertice, nuevoAnguloOffset) {
         const anguloSiguiente = calle.vertices[indiceVertice + 1].anguloOffset;
         const diferencia = Math.abs(nuevoAnguloOffset - anguloSiguiente);
 
-        if (diferencia > 30) {
-            // Ajustar para mantener máximo 30° de diferencia
+        if (diferencia > 40) {
+            // Ajustar para mantener máximo 40° de diferencia
             if (nuevoAnguloOffset > anguloSiguiente) {
-                nuevoAnguloOffset = anguloSiguiente + 30;
+                nuevoAnguloOffset = anguloSiguiente + 40;
             } else {
-                nuevoAnguloOffset = anguloSiguiente - 30;
+                nuevoAnguloOffset = anguloSiguiente - 40;
             }
         }
     }
@@ -451,12 +464,12 @@ function actualizarVerticePorArrastre(calle, indiceVertice, mouseX, mouseY) {
     const distanciaPerp = dx * perpX + dy * perpY;
 
     // Convertir distancia perpendicular a ángulo
-    // Usamos una escala: cada 50 píxeles = 30 grados
+    // Usamos una escala: cada 50 píxeles = 40 grados
     const escalaDistancia = 50; // píxeles para llegar al máximo
-    let nuevoOffset = (distanciaPerp / escalaDistancia) * 30;
+    let nuevoOffset = (distanciaPerp / escalaDistancia) * 40;
 
-    // Limitar a ±30 grados
-    nuevoOffset = Math.max(-30, Math.min(30, nuevoOffset));
+    // Limitar a ±40 grados
+    nuevoOffset = Math.max(-40, Math.min(40, nuevoOffset));
 
     // Aplicar con validación
     return actualizarAnguloVertice(calle, indiceVertice, nuevoOffset);
@@ -1240,13 +1253,31 @@ function dibujarVertices() {
 
             // Dibujar línea guía entre vértices
             if (index > 0) {
-                const posAnterior = calcularPosicionVertice(calle, calle.vertices[index - 1]);
+                const verticeAnterior = calle.vertices[index - 1];
+                const posAnterior = calcularPosicionVertice(calle, verticeAnterior);
+
                 ctx.strokeStyle = "rgba(255, 165, 0, 0.4)";
                 ctx.lineWidth = 1;
                 ctx.setLineDash([5, 5]);
                 ctx.beginPath();
                 ctx.moveTo(posAnterior.x, posAnterior.y);
-                ctx.lineTo(pos.x, pos.y);
+
+                // Si la calle tiene curvas activas, dibujar siguiendo la curva real
+                if (calle.esCurva && calle.vertices.length >= 2) {
+                    const carrilCentral = Math.floor(calle.carriles / 2);
+                    const pasos = Math.max(5, Math.floor((vertice.indiceCelda - verticeAnterior.indiceCelda) / 5));
+
+                    for (let i = 1; i <= pasos; i++) {
+                        const t = i / pasos;
+                        const indiceCeldaIntermedia = Math.floor(verticeAnterior.indiceCelda + t * (vertice.indiceCelda - verticeAnterior.indiceCelda));
+                        const coordIntermedia = obtenerCoordenadasGlobalesCeldaConCurva(calle, carrilCentral, indiceCeldaIntermedia);
+                        ctx.lineTo(coordIntermedia.x, coordIntermedia.y);
+                    }
+                } else {
+                    // Para calles rectas, línea directa
+                    ctx.lineTo(pos.x, pos.y);
+                }
+
                 ctx.stroke();
                 ctx.setLineDash([]);
             }
@@ -1259,7 +1290,11 @@ function dibujarVertices() {
             // Si es el vértice activo, dibujar control visual mejorado
             if (esVerticeActivo) {
                 // Línea perpendicular para mostrar dirección de arrastre
-                const anguloBaseRad = -calle.angulo * Math.PI / 180;
+                // Usar el ángulo real en este punto de la curva
+                const anguloEnPuntoActual = calle.esCurva && calle.vertices.length >= 2
+                    ? obtenerAnguloEnPunto(calle, vertice.indiceCelda)
+                    : calle.angulo;
+                const anguloBaseRad = -anguloEnPuntoActual * Math.PI / 180;
                 const perpX = -Math.sin(anguloBaseRad);
                 const perpY = Math.cos(anguloBaseRad);
 
@@ -1435,8 +1470,254 @@ function renderizarCanvas() {
     dibujarInterseccionesDetectadas();
     dibujarConexionesDetectadas();
     dibujarVertices();
+    dibujarEtiquetasCalles();
     dibujarMinimapa();
 }
+
+// ============ SISTEMA DE ETIQUETAS DE CALLES ============
+
+// Función para detectar si un color es oscuro o claro
+function esColorOscuro(colorHex) {
+    // Convertir hex a RGB
+    const hex = colorHex.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+
+    // Calcular luminosidad relativa según fórmula W3C
+    const luminosidad = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    // Si luminosidad < 0.5 es oscuro, sino es claro
+    return luminosidad < 0.5;
+}
+
+// Función para obtener el color del texto según el fondo
+function obtenerColorTextoSegunFondo() {
+    // Usar la variable global que almacena el color de fondo
+    return esColorOscuro(colorFondoCanvas) ? "#FFFFFF" : "#000000";
+}
+
+// Función para calcular una posición específica en una calle
+// posicion: valor entre 0 y 1, donde 0.5 es el centro
+function calcularPosicionEnCalle(calle, posicion = 0.5) {
+    if (calle.esCurva && calle.vertices && calle.vertices.length >= 2) {
+        // Para calles curvas, usar el punto según posición
+        const indice = Math.floor(calle.tamano * posicion);
+        const indiceSeguro = Math.max(0, Math.min(calle.tamano - 1, indice));
+        const carrilCentral = Math.floor(calle.carriles / 2);
+        const coordenadas = obtenerCoordenadasGlobalesCeldaConCurva(calle, carrilCentral, indiceSeguro);
+        return {
+            x: coordenadas.x,
+            y: coordenadas.y,
+            angulo: coordenadas.angulo
+        };
+    } else {
+        // Para calles rectas, calcular según posición
+        const angle = -calle.angulo * Math.PI / 180;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+
+        const posX = (calle.tamano * celda_tamano) * posicion;
+        const centroY = (calle.carriles * celda_tamano) / 2;
+
+        return {
+            x: calle.x + (posX * cos - centroY * sin),
+            y: calle.y + (posX * sin + centroY * cos),
+            angulo: calle.angulo
+        };
+    }
+}
+
+// Función para calcular el offset perpendicular para posicionar texto fuera de la calle
+function calcularOffsetExterno(calle, anguloEnGrados) {
+    // Distancia fija desde el borde de la calle
+    const distanciaDesdeCalleBase = 8; // píxeles
+    const anchoCallePixels = calle.carriles * celda_tamano;
+    const distanciaTotal = (anchoCallePixels / 2) + distanciaDesdeCalleBase;
+
+    // Convertir ángulo a radianes y calcular perpendicular
+    const anguloRad = -anguloEnGrados * Math.PI / 180;
+    const perpX = -Math.sin(anguloRad);
+    const perpY = Math.cos(anguloRad);
+
+    return {
+        offsetX: perpX * distanciaTotal,
+        offsetY: perpY * distanciaTotal
+    };
+}
+
+// Función principal para dibujar etiquetas de calles
+function dibujarEtiquetasCalles() {
+    if (!mostrarEtiquetas) return;
+
+    ctx.save();
+
+    // Obtener color de texto según fondo
+    const colorTexto = obtenerColorTextoSegunFondo();
+    ctx.fillStyle = colorTexto;
+    ctx.strokeStyle = colorTexto === "#FFFFFF" ? "#000000" : "#FFFFFF";
+    ctx.lineWidth = 3;
+
+    // Configurar fuente
+    const tamanoFuenteBase = 14;
+    const tamanoFuente = tamanoFuenteBase / escala; // Ajustar por zoom
+    ctx.font = `${tamanoFuente}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    calles.forEach(calle => {
+        // Calcular número de repeticiones según el tamaño de la calle
+        const umbralRepeticion = 200; // Repetir cada 200 celdas
+        const numRepeticiones = Math.max(1, Math.ceil(calle.tamano / umbralRepeticion));
+
+        // Calcular posiciones donde dibujar las etiquetas
+        const posiciones = [];
+        if (numRepeticiones === 1) {
+            posiciones.push(0.5); // Centro
+        } else {
+            // Distribuir uniformemente
+            for (let i = 0; i < numRepeticiones; i++) {
+                const posicion = (i + 1) / (numRepeticiones + 1);
+                posiciones.push(posicion);
+            }
+        }
+
+        // Dibujar etiqueta en cada posición
+        posiciones.forEach(posicion => {
+            if (calle.esCurva && calle.vertices && calle.vertices.length >= 2) {
+                // Para calles curvas: dibujar texto siguiendo la curva
+                dibujarEtiquetaSiguiendoCurva(calle, colorTexto, tamanoFuente, posicion);
+            } else {
+                // Para calles rectas: dibujar texto simple
+                dibujarEtiquetaRecta(calle, colorTexto, tamanoFuente, posicion);
+            }
+        });
+    });
+
+    ctx.restore();
+}
+
+// Función para dibujar etiqueta en calle recta
+// posicionRelativa: valor entre 0 y 1 indicando dónde dibujar (0.5 = centro)
+function dibujarEtiquetaRecta(calle, colorTexto, tamanoFuente, posicionRelativa = 0.5) {
+    const posicion = calcularPosicionEnCalle(calle, posicionRelativa);
+    const offset = calcularOffsetExterno(calle, posicion.angulo);
+
+    const x = posicion.x + offset.offsetX;
+    const y = posicion.y + offset.offsetY;
+
+    ctx.save();
+
+    // Trasladar al punto y rotar
+    ctx.translate(x, y);
+
+    // Ajustar rotación del texto para que sea legible
+    let anguloTexto = -posicion.angulo * Math.PI / 180;
+
+    // Evitar texto al revés (entre 90 y 270 grados)
+    if (posicion.angulo > 90 && posicion.angulo < 270) {
+        anguloTexto += Math.PI;
+    }
+
+    ctx.rotate(anguloTexto);
+
+    // Fondo semi-transparente para mejor legibilidad
+    ctx.globalAlpha = 0.7;
+    const textoMedida = ctx.measureText(calle.nombre);
+    const padding = 4;
+    ctx.fillStyle = colorTexto === "#FFFFFF" ? "#000000" : "#FFFFFF";
+    ctx.fillRect(
+        -textoMedida.width / 2 - padding,
+        -tamanoFuente / 2 - padding / 2,
+        textoMedida.width + padding * 2,
+        tamanoFuente + padding
+    );
+
+    // Dibujar texto
+    ctx.globalAlpha = 1.0;
+    ctx.fillStyle = colorTexto;
+    ctx.fillText(calle.nombre, 0, 0);
+
+    ctx.restore();
+}
+
+// Función para dibujar etiqueta siguiendo curva
+// posicionRelativa: valor entre 0 y 1 indicando dónde dibujar (0.5 = centro)
+function dibujarEtiquetaSiguiendoCurva(calle, colorTexto, tamanoFuente, posicionRelativa = 0.5) {
+    // Calcular posición inicial según posicionRelativa
+    const longitudTexto = ctx.measureText(calle.nombre).width;
+    const indiceCentro = Math.floor(calle.tamano * posicionRelativa);
+    const carrilCentral = Math.floor(calle.carriles / 2);
+
+    // Estimar cuántas celdas ocupa el texto
+    const celdasPorLetra = longitudTexto / (calle.nombre.length * celda_tamano);
+    const indiceInicio = Math.max(0, Math.floor(indiceCentro - celdasPorLetra * calle.nombre.length / 2));
+
+    // Determinar la dirección del texto basándose en el ángulo inicial
+    // Esto evita que las letras se inviertan individualmente en las curvas
+    const coordenadasInicio = obtenerCoordenadasGlobalesCeldaConCurva(calle, carrilCentral, Math.max(0, indiceInicio));
+    const debeInvertir = coordenadasInicio.angulo > 90 && coordenadasInicio.angulo < 270;
+
+    // Si debemos invertir, invertir el orden de las letras para que se lean correctamente
+    const textoADibujar = debeInvertir ? calle.nombre.split('').reverse().join('') : calle.nombre;
+
+    // Dibujar cada letra siguiendo la curva
+    let distanciaAcumulada = 0;
+    const espaciado = longitudTexto / calle.nombre.length;
+
+    for (let i = 0; i < textoADibujar.length; i++) {
+        const letra = textoADibujar[i];
+
+        // Calcular índice de celda para esta letra
+        const factorAvance = distanciaAcumulada / longitudTexto;
+        const indiceActual = Math.min(
+            calle.tamano - 1,
+            Math.floor(indiceInicio + factorAvance * calle.nombre.length * 2)
+        );
+
+        const coordenadas = obtenerCoordenadasGlobalesCeldaConCurva(calle, carrilCentral, indiceActual);
+        const offset = calcularOffsetExterno(calle, coordenadas.angulo);
+
+        const x = coordenadas.x + offset.offsetX;
+        const y = coordenadas.y + offset.offsetY;
+
+        ctx.save();
+        ctx.translate(x, y);
+
+        // Ajustar rotación del texto usando la dirección determinada al inicio
+        let anguloTexto = -coordenadas.angulo * Math.PI / 180;
+
+        // Aplicar inversión consistente para toda la etiqueta
+        if (debeInvertir) {
+            anguloTexto += Math.PI;
+        }
+
+        ctx.rotate(anguloTexto);
+
+        // Fondo semi-transparente para cada letra
+        ctx.globalAlpha = 0.7;
+        const letraMedida = ctx.measureText(letra);
+        const padding = 2;
+        ctx.fillStyle = colorTexto === "#FFFFFF" ? "#000000" : "#FFFFFF";
+        ctx.fillRect(
+            -letraMedida.width / 2 - padding,
+            -tamanoFuente / 2 - padding / 2,
+            letraMedida.width + padding * 2,
+            tamanoFuente + padding
+        );
+
+        // Dibujar letra
+        ctx.globalAlpha = 1.0;
+        ctx.fillStyle = colorTexto;
+        ctx.fillText(letra, 0, 0);
+
+        ctx.restore();
+
+        distanciaAcumulada += espaciado;
+    }
+}
+
+// ============ FIN SISTEMA DE ETIQUETAS ============
 
 // Función para calcular los límites del mapa
 function calcularLimitesMapa() {
@@ -1722,21 +2003,21 @@ function registrarConexiones(conexionesArray) {
 
 function iniciarSimulacion() {
     // Sistema 1: Avenida Wilfrido Massieu
-    const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal 1", 247, TIPOS.CONEXION, 730, 805, 22, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal →", 247, TIPOS.CONEXION, 734, 803, 22, 0.0, 3, 0.02);
     
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 9, TIPOS.CONEXION, 1745, 386, 28, 0.0, 3, 0.02);
     
-    const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal 5", 255, TIPOS.CONEXION, 1907, 300, 202, 0.0, 3, 0.02);
+    const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal ←", 258, TIPOS.CONEXION, 1907, 256, 202, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_6 = crearCalle("Av. Miguel Othon de Mendizabal 6", 10, TIPOS.CONEXION, 1780, 345, 208, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 13, TIPOS.CONEXION, 1884, 268, 221, 0.0, 3, 0.02);
 
-    const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard", 180, TIPOS.CONEXION, 1873, 312, -46, 0.0, 3, 0.01);
-    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard 2", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
-    const Avenida_Cien_Metros = crearCalle("Av. Cien Metros", 382, TIPOS.CONEXION, 570, 595, -70, 0.0, 3, 0.01);
-    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros 2", 382, TIPOS.CONEXION, 1290, 2375, 110, 0.9, 3, 0.01);
+    const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 180, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
+    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard ←", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
+    const Avenida_Cien_Metros = crearCalle("Av. Cien Metros →", 382, TIPOS.CONEXION, 570, 595, -70, 0.0, 3, 0.01);
+    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 382, TIPOS.CONEXION, 1290, 2375, 110, 0.9, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 1020, 760, -10, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz 2", 380, TIPOS.CONEXION, 2920, 1075, 170, 0.0, 2, 0.01);
     const Avenida_IPN = crearCalle("Av. IPN", 320, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
@@ -1754,19 +2035,146 @@ function iniciarSimulacion() {
     const Calle_Luis_Enrique_Erro_5 = crearCalle("Calle Luis Enrique Erro 5", 10, TIPOS.CONEXION, 1965, 760, -115, 0.0, 2, 0.01);
     const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo", 185, TIPOS.CONEXION, 2180, 1915, 80, 0.0, 1, 0.01);
     const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo 2", 183, TIPOS.CONEXION, 2320, 1000, -100, 0.0, 1, 0.01);
-    const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu 1", 160, TIPOS.CONEXION, 2600, 2020, 166, 0.0, 2, 0.01);
-    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 1820, 1825, 155, 0.0, 2, 0.01);
-    const Avenida_Wilfrido_Massieu_3 = crearCalle("Av. Wilfrido Massieu 3", 185, TIPOS.CONEXION, 985, 1485, -24, 0.0, 2, 0.01);
-    const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 160, TIPOS.CONEXION, 1825, 1860, -14, 0.0, 2, 0.01);
+    const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu ←", 346, TIPOS.CONEXION, 2605, 2027, 166, 0.0, 2, 0.01);
+    //const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 1820, 1825, 155, 0.0, 2, 0.01);
+    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 185, TIPOS.CONEXION, 985, 1485, -24, 0.0, 2, 0.01);
+    //const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 160, TIPOS.CONEXION, 1825, 1860, -14, 0.0, 2, 0.01);
     const Avenida_Sierravista = crearCalle("Av. Sierravista", 50, TIPOS.CONEXION, 2940, 1445, 132, 0.0, 1, 0.01);
     const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
     const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 2825, 2095, 171, 0.0, 1, 0.01);
     
-    const Devorador = crearCalle("Salida Cien Metros 2", 4, TIPOS.DEVORADOR, 638, 584, 110, 0.5, 3, 0.01);
-    const Generador_1 = crearCalle("Entrada a Cien Metros 1", 4, TIPOS.GENERADOR, 565, 580, -70, 0.3, 3, 0.01);
+    const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 638, 584, 110, 0.5, 3, 0.01);
+    const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 565, 580, -70, 0.3, 3, 0.01);
+    // Vértices para Av. Miguel Othon de Mendizabal →
+    Avenida_Miguel_Othon_de_Mendizabal_1.vertices = [
+        { indiceCelda: 0, anguloOffset: 0 },
+        { indiceCelda: 10, anguloOffset: 0 },
+        { indiceCelda: 20, anguloOffset: 0 },
+        { indiceCelda: 30, anguloOffset: 0 },
+        { indiceCelda: 40, anguloOffset: 0 },
+        { indiceCelda: 50, anguloOffset: 0 },
+        { indiceCelda: 60, anguloOffset: 0 },
+        { indiceCelda: 70, anguloOffset: 0 },
+        { indiceCelda: 80, anguloOffset: 0 },
+        { indiceCelda: 90, anguloOffset: 0 },
+        { indiceCelda: 100, anguloOffset: 0 },
+        { indiceCelda: 110, anguloOffset: 0 },
+        { indiceCelda: 120, anguloOffset: 0 },
+        { indiceCelda: 130, anguloOffset: 0 },
+        { indiceCelda: 140, anguloOffset: 0 },
+        { indiceCelda: 150, anguloOffset: 0 },
+        { indiceCelda: 160, anguloOffset: 0 },
+        { indiceCelda: 170, anguloOffset: 0 },
+        { indiceCelda: 180, anguloOffset: 0 },
+        { indiceCelda: 190, anguloOffset: 0 },
+        { indiceCelda: 200, anguloOffset: 15.782577335816946 },
+        { indiceCelda: 210, anguloOffset: 5.405854354182056 },
+        { indiceCelda: 220, anguloOffset: 16.08041053597891 },
+        { indiceCelda: 230, anguloOffset: 5.828495352842338 },
+        { indiceCelda: 240, anguloOffset: -15.330152643963826 },
+        { indiceCelda: 246, anguloOffset: -31.67142247899585 }
+    ];
+    Avenida_Miguel_Othon_de_Mendizabal_1.esCurva = true;
+
     
+
+    // Vértices para Av. Miguel Bernard ←
+    Avenida_Miguel_Bernard2.vertices = [
+        { indiceCelda: 0, anguloOffset: 0 },
+        { indiceCelda: 10, anguloOffset: 0 },
+        { indiceCelda: 20, anguloOffset: 0 },
+        { indiceCelda: 30, anguloOffset: 0 },
+        { indiceCelda: 40, anguloOffset: 0 },
+        { indiceCelda: 50, anguloOffset: 0 },
+        { indiceCelda: 60, anguloOffset: 0 },
+        { indiceCelda: 70, anguloOffset: 0 },
+        { indiceCelda: 80, anguloOffset: 0 },
+        { indiceCelda: 90, anguloOffset: 0 },
+        { indiceCelda: 100, anguloOffset: 0 },
+        { indiceCelda: 110, anguloOffset: 0 },
+        { indiceCelda: 120, anguloOffset: 0 },
+        { indiceCelda: 130, anguloOffset: 0 },
+        { indiceCelda: 140, anguloOffset: 0 },
+        { indiceCelda: 150, anguloOffset: 0 },
+        { indiceCelda: 160, anguloOffset: 0 },
+        { indiceCelda: 170, anguloOffset: 0 },
+        { indiceCelda: 180, anguloOffset: -14.205962673951502 },
+        { indiceCelda: 190, anguloOffset: -23.537916581209004 },
+        { indiceCelda: 194, anguloOffset: -21.51222188728547 }
+    ];
+    Avenida_Miguel_Bernard2.esCurva = true;
+
+    Avenida_Miguel_Bernard.vertices = [
+        { indiceCelda: 0, anguloOffset: 29.183651591046115 },
+        { indiceCelda: 10, anguloOffset: -1.0407776280136602 },
+        { indiceCelda: 20, anguloOffset: 0 },
+        { indiceCelda: 30, anguloOffset: 0 },
+        { indiceCelda: 40, anguloOffset: 0 },
+        { indiceCelda: 50, anguloOffset: 0 },
+        { indiceCelda: 60, anguloOffset: 0 },
+        { indiceCelda: 70, anguloOffset: 0 },
+        { indiceCelda: 80, anguloOffset: 0 },
+        { indiceCelda: 90, anguloOffset: 0 },
+        { indiceCelda: 100, anguloOffset: 0 },
+        { indiceCelda: 110, anguloOffset: 0 },
+        { indiceCelda: 120, anguloOffset: 0 },
+        { indiceCelda: 130, anguloOffset: 0 },
+        { indiceCelda: 140, anguloOffset: 0 },
+        { indiceCelda: 150, anguloOffset: 0 },
+        { indiceCelda: 160, anguloOffset: 0 },
+        { indiceCelda: 170, anguloOffset: 0 },
+        { indiceCelda: 179, anguloOffset: 0 }
+    ];
+    Avenida_Miguel_Bernard.esCurva = true;
+    
+    // Vértices para Av. Wilfrido Massieu ←
+Avenida_Wilfrido_Massieu_1.vertices = [
+    { indiceCelda: 0, anguloOffset: 0 },
+    { indiceCelda: 10, anguloOffset: 0 },
+    { indiceCelda: 20, anguloOffset: 0 },
+    { indiceCelda: 30, anguloOffset: 0 },
+    { indiceCelda: 40, anguloOffset: 0 },
+    { indiceCelda: 50, anguloOffset: 0 },
+    { indiceCelda: 60, anguloOffset: 0 },
+    { indiceCelda: 70, anguloOffset: 0 },
+    { indiceCelda: 80, anguloOffset: 0 },
+    { indiceCelda: 90, anguloOffset: 0 },
+    { indiceCelda: 100, anguloOffset: 0 },
+    { indiceCelda: 110, anguloOffset: 0 },
+    { indiceCelda: 120, anguloOffset: 0 },
+    { indiceCelda: 130, anguloOffset: 0 },
+    { indiceCelda: 140, anguloOffset: 0 },
+    { indiceCelda: 150, anguloOffset: 0 },
+    { indiceCelda: 160, anguloOffset: 0 },
+    { indiceCelda: 170, anguloOffset: -11.009098478730472 },
+    { indiceCelda: 180, anguloOffset: -11.407038740359418 },
+    { indiceCelda: 190, anguloOffset: -11.663564370295632 },
+    { indiceCelda: 200, anguloOffset: -6.575739493312889 },
+    { indiceCelda: 210, anguloOffset: -11.606703150263227 },
+    { indiceCelda: 220, anguloOffset: -14.044688014277959 },
+    { indiceCelda: 230, anguloOffset: -11.926764002101764 },
+    { indiceCelda: 240, anguloOffset: -9.308916375838844 },
+    { indiceCelda: 250, anguloOffset: -8.62069360411787 },
+    { indiceCelda: 260, anguloOffset: -11.797253613314432 },
+    { indiceCelda: 270, anguloOffset: -8.451094990844364 },
+    { indiceCelda: 280, anguloOffset: -10.873446369255475 },
+    { indiceCelda: 290, anguloOffset: -10.148863339446716 },
+    { indiceCelda: 300, anguloOffset: -12.044049971264982 },
+    { indiceCelda: 310, anguloOffset: -9.734523874663381 },
+    { indiceCelda: 320, anguloOffset: -11.155215416939388 },
+    { indiceCelda: 330, anguloOffset: -8.107048185852282 },
+    { indiceCelda: 340, anguloOffset: 0.07275865577794495 },
+    { indiceCelda: 345, anguloOffset: 32.42406150399883 }
+];
+Avenida_Wilfrido_Massieu_1.esCurva = true;
+
     const conexionesCA = [];
 
+    conexionesCA.push(...crearConexionLineal(
+        Avenida_Miguel_Othon_de_Mendizabal_1, 
+        Avenida_Miguel_Bernard
+    ));
+    
     /*
     conexionesCA.push(...crearConexionLineal(
         Avenida_Miguel_Othon_de_Mendizabal_1, 
@@ -1826,12 +2234,6 @@ function iniciarSimulacion() {
         49
     ));
     conexionesCA.push(...crearConexionIncorporacion(
-        Avenida_Wilfrido_Massieu_2,
-        Avenida_Cien_Metros2,
-        2,
-        201
-    ));
-    conexionesCA.push(...crearConexionIncorporacion(
         Avenida_Miguel_Othon_de_Mendizabal_5,
         Avenida_Cien_Metros2,
         2,
@@ -1842,16 +2244,7 @@ function iniciarSimulacion() {
         Generador_1, 
         Avenida_Cien_Metros
     ));
-
-    conexionesCA.push(...crearConexionLineal(
-        Avenida_Wilfrido_Massieu_1, 
-        Avenida_Wilfrido_Massieu_2
-    ));
     
-    conexionesCA.push(...crearConexionLineal(
-        Avenida_Wilfrido_Massieu_3,
-        Avenida_Wilfrido_Massieu_4
-    ));
 
     conexionesCA.push(...crearConexionLineal(
         Calle_Luis_Enrique_Erro_1,
@@ -2002,6 +2395,15 @@ function iniciarSimulacion() {
             mostrarConexiones = !mostrarConexiones;
             window.mostrarConexiones = mostrarConexiones;
             btnConexiones.textContent = mostrarConexiones ? 'Ocultar Conexiones' : 'Mostrar Conexiones';
+            renderizarCanvas();
+        });
+    }
+
+    const btnEtiquetas = document.getElementById('btnEtiquetas');
+    if (btnEtiquetas) {
+        btnEtiquetas.addEventListener('click', () => {
+            mostrarEtiquetas = !mostrarEtiquetas;
+            btnEtiquetas.textContent = mostrarEtiquetas ? '🏷️ Ocultar Etiquetas' : '🏷️ Mostrar Etiquetas';
             renderizarCanvas();
         });
     }
