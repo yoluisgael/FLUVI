@@ -87,9 +87,25 @@ window.inicializarIntersecciones = inicializarIntersecciones;
 window.construirMapaIntersecciones = construirMapaIntersecciones;
 window.modoSeleccion = "configuracion"; // Para diferenciar entre "configuracion" y "constructor"
 
-// Cargar la imagen del carro
-const carroImg = new Image();
-carroImg.src = "carro.png";
+// Cargar las imágenes de los 6 tipos de carros
+const carroImgs = [];
+for (let i = 1; i <= 6; i++) {
+    const img = new Image();
+    img.src = i === 1 ? "carro.png" : `carro${i}.png`;
+    carroImgs.push(img);
+}
+
+// Función para obtener la imagen según el tipo de vehículo
+function obtenerImagenVehiculo(tipo) {
+    const indice = tipo - 1; // tipo 1 = índice 0, tipo 6 = índice 5
+    if (indice >= 0 && indice < carroImgs.length) {
+        return carroImgs[indice];
+    }
+    return carroImgs[0]; // Fallback a carro.png
+}
+
+// Mantener compatibilidad con código antiguo
+const carroImg = carroImgs[0];
 
 // Cargar la imagen del carretera
 const carreteraImg = new Image();
@@ -315,28 +331,31 @@ class ConexionCA {
 
     transferir() {
         const posOrig = this.posOrigen === -1 ? this.origen.tamano - 1 : this.posOrigen;
-        
+
         this.bloqueada = false;
-        
-        if (this.origen.arreglo[this.carrilOrigen][posOrig] === 1) {
-            
+
+        const vehiculoOrigen = this.origen.arreglo[this.carrilOrigen][posOrig];
+
+        if (vehiculoOrigen > 0) {
+
             // Para conexiones probabilísticas, aplicar probabilidad
             if (this.tipo === TIPOS_CONEXION.PROBABILISTICA) {
                 const seTransfiere = Math.random() < this.probabilidadTransferencia;
-                
+
                 if (!seTransfiere) {
                     return false;
                 }
             }
-            
+
             // Verificar si destino está ocupado
-            if (this.destino.arreglo[this.carrilDestino][this.posDestino] === 1) {
+            if (this.destino.arreglo[this.carrilDestino][this.posDestino] > 0) {
                 this.bloqueada = true;
                 this.origen.celulasEsperando[this.carrilOrigen][posOrig] = true;
                 return false;
             } else {
                 if (!this.origen.celulasEsperando[this.carrilOrigen][posOrig]) {
-                    this.destino.arreglo[this.carrilDestino][this.posDestino] = 1;
+                    // Transferir el tipo de vehículo
+                    this.destino.arreglo[this.carrilDestino][this.posDestino] = vehiculoOrigen;
                     this.origen.arreglo[this.carrilOrigen][posOrig] = 0;
                     return true;
                 } else {
@@ -587,11 +606,14 @@ function checarIntersecciones() {
         const estadoActualI1 = calle1.arreglo[carril1][indice1];
         const estadoActualI2 = calle2.arreglo[carril2][indice2];
 
-        if (estadoActualI1 === 1 && estadoActualI2 === 1) {
+        if (estadoActualI1 > 0 && estadoActualI2 > 0) {
+            let vehiculoPerdedor;
             if (prioridadPar) {
                 callePerdedora = calle2; carrilPerdedor = carril2; indicePerdedor = indice2;
+                vehiculoPerdedor = estadoActualI2;
             } else {
                 callePerdedora = calle1; carrilPerdedor = carril1; indicePerdedor = indice1;
+                vehiculoPerdedor = estadoActualI1;
             }
 
             callePerdedora.arreglo[carrilPerdedor][indicePerdedor] = 0;
@@ -599,7 +621,8 @@ function checarIntersecciones() {
             let indiceAnteriorPerdedor = indicePerdedor - 1;
             if (indiceAnteriorPerdedor >= 0) {
                  if (callePerdedora.arreglo[carrilPerdedor]?.[indiceAnteriorPerdedor] !== undefined) {
-                     callePerdedora.arreglo[carrilPerdedor][indiceAnteriorPerdedor] = 1;
+                     // Preservar el tipo de vehículo al retroceder
+                     callePerdedora.arreglo[carrilPerdedor][indiceAnteriorPerdedor] = vehiculoPerdedor;
                  }
             }
         }
@@ -622,7 +645,7 @@ function suavizarIntersecciones() {
         const estadoActualI1 = calle1.arreglo[carril1][indice1];
         const estadoActualI2 = calle2.arreglo[carril2][indice2];
 
-        if (estadoActualI1 === 1 && estadoActualI2 === 1) {
+        if (estadoActualI1 > 0 && estadoActualI2 > 0) {
             if (prioridadPar) {
                 callePerdedora = calle2; carrilPerdedor = carril2; indicePerdedor = indice2;
             } else {
@@ -656,8 +679,10 @@ function generarCelulas(calle) {
     if (calle.tipo === TIPOS.GENERADOR) {
         for (let carril = 0; carril < calle.carriles; carril++) {
             if (calle.arreglo[carril][0] === 0 && Math.random() < calle.probabilidadGeneracion) {
-                calle.arreglo[carril][0] = 1;
-                console.log(`🏭 Generador "${calle.nombre}": Nueva célula en carril ${carril + 1}, posición 0`);
+                // Generar tipo aleatorio de vehículo (1-6)
+                const tipoVehiculo = Math.floor(Math.random() * 6) + 1;
+                calle.arreglo[carril][0] = tipoVehiculo;
+                console.log(`🏭 Generador "${calle.nombre}": Vehículo tipo ${tipoVehiculo} en carril ${carril + 1}, posición 0`);
             }
         }
     }
@@ -680,11 +705,11 @@ function actualizarCalle(calle, calleIndex) {
                 continue;
             }
             
-            if (tieneConexionSalida(calle, c, i) && calle.arreglo[c][i] === 1) {
+            if (tieneConexionSalida(calle, c, i) && calle.arreglo[c][i] > 0) {
                 nuevaCalle[c][i] = calle.arreglo[c][i];
                 continue;
             }
-            
+
             const izq = i > 0 ? calle.arreglo[c][i - 1] : 0;
             const centro = calle.arreglo[c][i];
             const der = i < calle.tamano - 1 ? calle.arreglo[c][i + 1] : 0;
@@ -695,9 +720,21 @@ function actualizarCalle(calle, calleIndex) {
             if (infoIntersec && i === calle.tamano - 1) {
                 derechaReal = infoIntersec.calle.arreglo[infoIntersec.carril][infoIntersec.indice];
             }
-            
-            const patron = `${izq},${centro},${derechaReal}`;
-            nuevaCalle[c][i] = reglas[patron] || 0;
+
+            // Convertir a binario para aplicar reglas (0 = vacío, 1 = ocupado)
+            const izqBin = izq > 0 ? 1 : 0;
+            const centroBin = centro > 0 ? 1 : 0;
+            const derBin = derechaReal > 0 ? 1 : 0;
+
+            const patron = `${izqBin},${centroBin},${derBin}`;
+            const resultadoRegla = reglas[patron] || 0;
+
+            // Si la regla dice que hay un vehículo, preservar el tipo del vehículo de la izquierda
+            if (resultadoRegla === 1 && izq > 0) {
+                nuevaCalle[c][i] = izq; // Preservar tipo del vehículo que se mueve
+            } else {
+                nuevaCalle[c][i] = 0; // Celda vacía
+            }
         }
     }
 
@@ -724,43 +761,45 @@ function cambioCarril(calle) {
     
     for (let c = 0; c < calle.carriles; c++) {
         for (let i = 1; i < calle.tamano - 1; i++) {
-            if (calle.arreglo[c][i] === 1 && !calle.celulasEsperando[c][i]) {
+            const vehiculo = calle.arreglo[c][i];
+            if (vehiculo > 0 && !calle.celulasEsperando[c][i]) {
                 if (Math.random() < calle.probabilidadSaltoDeCarril) {
                     const carrilesDisponibles = [];
-                    
+
                     if (c > 0) {
                         const destinoSuperior = `${c - 1},${i}`;
                         if (calle.arreglo[c - 1][i] === 0 && !espaciosReservados.has(destinoSuperior)) {
                             carrilesDisponibles.push({carril: c - 1, key: destinoSuperior});
                         }
                     }
-                    
+
                     if (c < calle.carriles - 1) {
                         const destinoInferior = `${c + 1},${i}`;
                         if (calle.arreglo[c + 1][i] === 0 && !espaciosReservados.has(destinoInferior)) {
                             carrilesDisponibles.push({carril: c + 1, key: destinoInferior});
                         }
                     }
-                    
+
                     if (carrilesDisponibles.length > 0) {
                         const seleccion = carrilesDisponibles[Math.floor(Math.random() * carrilesDisponibles.length)];
                         const nuevoCarril = seleccion.carril;
-                        
+
                         espaciosReservados.add(seleccion.key);
-                        
+
                         cambios.push({
                             desde: {carril: c, posicion: i},
-                            hacia: {carril: nuevoCarril, posicion: i}
+                            hacia: {carril: nuevoCarril, posicion: i},
+                            tipoVehiculo: vehiculo
                         });
                     }
                 }
             }
         }
     }
-    
+
     cambios.forEach(cambio => {
         calle.arreglo[cambio.desde.carril][cambio.desde.posicion] = 0;
-        calle.arreglo[cambio.hacia.carril][cambio.hacia.posicion] = 1;
+        calle.arreglo[cambio.hacia.carril][cambio.hacia.posicion] = cambio.tipoVehiculo;
     });
 }
 
@@ -1075,15 +1114,28 @@ function dibujarVertices() {
     ctx.restore();
 }
 
+// Función para obtener el color según el tipo de vehículo
+function obtenerColorVehiculo(tipo) {
+    const colores = {
+        1: '#FF5733', // Rojo-naranja
+        2: '#3498DB', // Azul
+        3: '#2ECC71', // Verde
+        4: '#F39C12', // Amarillo-naranja
+        5: '#9B59B6', // Púrpura
+        6: '#E74C3C'  // Rojo
+    };
+    return colores[tipo] || '#FF5733';
+}
+
 function dibujarCarros() {
     calles.forEach(calle => {
         ctx.save();
-        
+
         if (calle.esCurva && calle.vertices.length >= 2) {
             // Dibujar carros en calle curva
             for (let c = 0; c < calle.carriles; c++) {
                 calle.arreglo[c].forEach((celda, i) => {
-                    if (celda === 1) {
+                    if (celda > 0) {
                         const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, c, i);
                         
                         ctx.save();
@@ -1099,7 +1151,15 @@ function dibujarCarros() {
                         }
                         
                         ctx.rotate(-angulo * Math.PI / 180);
-                        ctx.drawImage(carroImg, -celda_tamano / 2, -celda_tamano / 2, celda_tamano, celda_tamano);
+                        // Obtener la imagen según el tipo de vehículo
+                        const imgVehiculo = obtenerImagenVehiculo(celda);
+                        // Dibujar imagen o rectángulo de color como fallback
+                        if (imgVehiculo && imgVehiculo.complete && imgVehiculo.naturalHeight !== 0) {
+                            ctx.drawImage(imgVehiculo, -celda_tamano / 2, -celda_tamano / 2, celda_tamano, celda_tamano);
+                        } else {
+                            ctx.fillStyle = obtenerColorVehiculo(celda);
+                            ctx.fillRect(-celda_tamano / 2, -celda_tamano / 2, celda_tamano, celda_tamano);
+                        }
                         ctx.restore();
                     }
                 });
@@ -1111,8 +1171,16 @@ function dibujarCarros() {
 
             for (let c = 0; c < calle.carriles; c++) {
                 calle.arreglo[c].forEach((celda, i) => {
-                    if (celda === 1) {
-                        ctx.drawImage(carroImg, i * celda_tamano, c * celda_tamano, celda_tamano, celda_tamano);
+                    if (celda > 0) {
+                        // Obtener la imagen según el tipo de vehículo
+                        const imgVehiculo = obtenerImagenVehiculo(celda);
+                        // Dibujar imagen o rectángulo de color como fallback
+                        if (imgVehiculo && imgVehiculo.complete && imgVehiculo.naturalHeight !== 0) {
+                            ctx.drawImage(imgVehiculo, i * celda_tamano, c * celda_tamano, celda_tamano, celda_tamano);
+                        } else {
+                            ctx.fillStyle = obtenerColorVehiculo(celda);
+                            ctx.fillRect(i * celda_tamano, c * celda_tamano, celda_tamano, celda_tamano);
+                        }
                     }
                 });
             }
