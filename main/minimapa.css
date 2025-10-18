@@ -1,19 +1,51 @@
 
-/* Estilos para el minimapa en pantallas grandes */
+/* Estilos para el minimapa - RESPONSIVO */
 #minimapa {
     position: absolute;
     top: 10px;
     right: 10px;
     border: 1px solid #0d6efd;
     border-width: 2px;
-    width: 200px; /* Tamaño original para pantallas grandes */
-    height: 150px; /* Tamaño original para pantallas grandes */
+    /* Tamaño adaptativo basado en el viewport */
+    max-width: min(250px, 20vw); /* Máximo 250px o 20% del ancho de la ventana */
+    max-height: min(200px, 20vh); /* Máximo 200px o 20% del alto de la ventana */
+    overflow: hidden; /* Ocultar cualquier contenido que salga del minimapa */
+    cursor: default; /* Cursor por defecto */
+    /* Mantener relación de aspecto 4:3 */
+    aspect-ratio: 4 / 3;
 }
 
-/* Media query para pantallas pequeñas (por ejemplo, teléfonos) */
-@media (max-width: 600px) { 
+/* Media query para pantallas grandes (más espacio disponible) */
+@media (min-width: 1920px) {
     #minimapa {
-        width: 125px; /* Nuevo tamaño para teléfonos */
-        height: 85px;  /* Nuevo tamaño para teléfonos */
+        max-width: min(300px, 15vw);
+        max-height: min(225px, 15vh);
+    }
+}
+
+/* Media query para pantallas medianas (tablets en horizontal) */
+@media (max-width: 1366px) {
+    #minimapa {
+        max-width: min(200px, 18vw);
+        max-height: min(150px, 18vh);
+    }
+}
+
+/* Media query para pantallas pequeñas (tablets en vertical) */
+@media (max-width: 768px) {
+    #minimapa {
+        max-width: min(150px, 22vw);
+        max-height: min(113px, 22vh);
+    }
+}
+
+/* Media query para pantallas muy pequeñas (móviles) */
+@media (max-width: 600px) {
+    #minimapa {
+        max-width: min(120px, 25vw);
+        max-height: min(90px, 25vh);
+        top: 5px;
+        right: 5px;
+        border-width: 1px;
     }
 }

@@ -276,39 +276,83 @@ const edificios = [
     // Centro Cultural JTB
     { x: 2306, y: 1754, width: 90, height: 60, color: "#8b4513", angle: 10, label: "CENTRO CULTURAL JTB" },
     { x: 2399, y: 1904, width: 200, height: 50, color: "#29293aff", angle: 15, label: "ESTACIONAMIENTO" },
-    
-
-   
-   
-
-
-    
-    
 ];
 
 // Obtener el contexto del minimapa
 const minimapaCanvas = document.getElementById("minimapa");
 const minimapaCtx = minimapaCanvas.getContext("2d");
 
-// Función para dibujar el minimapa (con los cambios anteriores)
-function dibujarMinimapa() {
-    // Ajustar el tamaño del minimapa según la escala del canvas principal
-    const minimapaEscala = 0.1; 
-    const minimapaAncho = canvas.width * minimapaEscala + 150;
-    const minimapaAlto = canvas.height * minimapaEscala + 100;
-    minimapaCanvas.width = minimapaAncho;
-    minimapaCanvas.height = minimapaAlto;
+// Función auxiliar para calcular parámetros del minimapa (usado por dibujo y detección)
+function calcularParametrosMinimapa() {
+    // Obtener el tamaño real del elemento HTML del minimapa (definido por CSS responsivo)
+    const rect = minimapaCanvas.getBoundingClientRect();
+    const minimapaAncho = rect.width;
+    const minimapaAlto = rect.height;
 
-    // Calcular las coordenadas del viewport visible
+    // Calcular la escala del minimapa dinámicamente para que todo el contenido quepa
     const viewport = calcularViewportVisible();
 
-    // Centrar el minimapa en el viewport visible
-    const centroX = viewport.x + viewport.ancho / 2;
-    const centroY = viewport.y + viewport.alto / 2;
+    // Determinar los límites del mundo (todas las calles)
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    calles.forEach(calle => {
+        const puntos = [
+            { x: calle.x, y: calle.y },
+            { x: calle.x + calle.tamano * celda_tamano * Math.cos(-calle.angulo * Math.PI / 180),
+              y: calle.y + calle.tamano * celda_tamano * Math.sin(-calle.angulo * Math.PI / 180) }
+        ];
+        puntos.forEach(p => {
+            minX = Math.min(minX, p.x);
+            minY = Math.min(minY, p.y);
+            maxX = Math.max(maxX, p.x);
+            maxY = Math.max(maxY, p.y);
+        });
+    });
 
-    // Ajustar el desplazamiento del minimapa
-    const minimapaOffsetX = minimapaAncho / 2 - centroX * minimapaEscala;
-    const minimapaOffsetY = minimapaAlto / 2 - centroY * minimapaEscala;
+    // Agregar margen
+    const margen = 200;
+    minX -= margen;
+    minY -= margen;
+    maxX += margen;
+    maxY += margen;
+
+    const mundoAncho = maxX - minX;
+    const mundoAlto = maxY - minY;
+
+    // Calcular escala para que quepa todo el contenido con margen
+    const minimapaEscala = Math.min(
+        (minimapaAncho * 0.8) / mundoAncho,
+        (minimapaAlto * 0.8) / mundoAlto
+    );
+
+    // Centrar el mundo en el minimapa
+    const centroMundoX = (minX + maxX) / 2;
+    const centroMundoY = (minY + maxY) / 2;
+    const minimapaOffsetX = minimapaAncho / 2 - centroMundoX * minimapaEscala;
+    const minimapaOffsetY = minimapaAlto / 2 - centroMundoY * minimapaEscala;
+
+    return {
+        minimapaAncho,
+        minimapaAlto,
+        minimapaEscala,
+        minimapaOffsetX,
+        minimapaOffsetY,
+        viewport
+    };
+}
+
+// Función para dibujar el minimapa (con los cambios anteriores)
+function dibujarMinimapa() {
+    const params = calcularParametrosMinimapa();
+    const { minimapaAncho, minimapaAlto, minimapaEscala, minimapaOffsetX, minimapaOffsetY, viewport } = params;
+
+    // Ajustar la resolución interna del canvas para que coincida con su tamaño en pantalla
+    // Usar devicePixelRatio para mantener calidad en pantallas de alta densidad
+    const dpr = window.devicePixelRatio || 1;
+    minimapaCanvas.width = minimapaAncho * dpr;
+    minimapaCanvas.height = minimapaAlto * dpr;
+
+    // Escalar el contexto para compensar el devicePixelRatio
+    minimapaCtx.scale(dpr, dpr);
 
     // Limpiar el minimapa
     minimapaCtx.clearRect(0, 0, minimapaAncho, minimapaAlto);
@@ -331,8 +375,38 @@ function dibujarMinimapa() {
     });
 
     // Dibujar el rectángulo de la vista
+    const rectAncho = viewport.ancho * minimapaEscala;
+    const rectAlto = viewport.alto * minimapaEscala;
+    const rectX = viewport.x * minimapaEscala;
+    const rectY = viewport.y * minimapaEscala;
+
+    // Si el rectángulo es muy pequeño, dibujar un área de detección visual COMPLETA
+    if (rectAncho < 40 || rectAlto < 40) {
+        const areaDeteccionAncho = Math.max(rectAncho, 40);
+        const areaDeteccionAlto = Math.max(rectAlto, 40);
+        const areaX = rectX - (areaDeteccionAncho - rectAncho) / 2;
+        const areaY = rectY - (areaDeteccionAlto - rectAlto) / 2;
+        
+        // Dibujar área de detección RELLENA con semi-transparencia
+        minimapaCtx.fillStyle = "rgba(255, 100, 100, 0.3)";
+        minimapaCtx.fillRect(areaX, areaY, areaDeteccionAncho, areaDeteccionAlto);
+
+        // Dibujar borde del área de detección
+        minimapaCtx.strokeStyle = "rgba(255, 100, 100, 0.7)";
+        minimapaCtx.lineWidth = 1;
+        minimapaCtx.setLineDash([4, 4]);
+        minimapaCtx.strokeRect(areaX, areaY, areaDeteccionAncho, areaDeteccionAlto);
+        minimapaCtx.setLineDash([]);
+    }
+
+    // Dibujar relleno semi-transparente del rectángulo real para indicar que es arrastrable
+    minimapaCtx.fillStyle = "rgba(255, 0, 0, 0.2)";
+    minimapaCtx.fillRect(rectX, rectY, rectAncho, rectAlto);
+
+    // Dibujar el contorno del rectángulo de la vista
     minimapaCtx.strokeStyle = "red";
-    minimapaCtx.strokeRect(viewport.x * minimapaEscala, viewport.y * minimapaEscala, viewport.ancho * minimapaEscala, viewport.alto * minimapaEscala);
+    minimapaCtx.lineWidth = 2;
+    minimapaCtx.strokeRect(rectX, rectY, rectAncho, rectAlto);
 
     minimapaCtx.restore();
 }
@@ -457,12 +531,30 @@ class ConexionCA {
 
     dibujar() {
         const posOrig = this.posOrigen === -1 ? this.origen.tamano - 1 : this.posOrigen;
-        
-        // Calcular coordenadas del origen
-        const coordOrigen = obtenerCoordenadasGlobalesCelda(this.origen, this.carrilOrigen, posOrig);
-        
-        // Calcular coordenadas del destino
-        const coordDestino = obtenerCoordenadasGlobalesCelda(this.destino, this.carrilDestino, this.posDestino);
+
+        // Calcular coordenadas del origen (usar función correcta según si es curva o no)
+        let coordOrigen;
+        if (this.origen.esCurva && this.origen.vertices && this.origen.vertices.length > 0) {
+            if (typeof window.obtenerCoordenadasGlobalesCeldaConCurva === 'function') {
+                coordOrigen = window.obtenerCoordenadasGlobalesCeldaConCurva(this.origen, this.carrilOrigen, posOrig);
+            } else {
+                coordOrigen = obtenerCoordenadasGlobalesCelda(this.origen, this.carrilOrigen, posOrig);
+            }
+        } else {
+            coordOrigen = obtenerCoordenadasGlobalesCelda(this.origen, this.carrilOrigen, posOrig);
+        }
+
+        // Calcular coordenadas del destino (usar función correcta según si es curva o no)
+        let coordDestino;
+        if (this.destino.esCurva && this.destino.vertices && this.destino.vertices.length > 0) {
+            if (typeof window.obtenerCoordenadasGlobalesCeldaConCurva === 'function') {
+                coordDestino = window.obtenerCoordenadasGlobalesCeldaConCurva(this.destino, this.carrilDestino, this.posDestino);
+            } else {
+                coordDestino = obtenerCoordenadasGlobalesCelda(this.destino, this.carrilDestino, this.posDestino);
+            }
+        } else {
+            coordDestino = obtenerCoordenadasGlobalesCelda(this.destino, this.carrilDestino, this.posDestino);
+        }
         
         const x1 = coordOrigen.x;
         const y1 = coordOrigen.y;
@@ -2635,29 +2727,147 @@ document.addEventListener("keyup", (event) => {
     }
 });
 
-minimapaCanvas.addEventListener("click", (event) => {
+// Variables para el arrastre del rectángulo del minimapa
+let arrastandoMinimapa = false;
+let minimapaInicialMouseX = 0;
+let minimapaInicialMouseY = 0;
+let minimapaInicialOffsetX = 0;
+let minimapaInicialOffsetY = 0;
+
+// Función auxiliar para verificar si el mouse está sobre el rectángulo rojo del minimapa
+function estaEnRectanguloMinimapa(mouseX, mouseY) {
+    const params = calcularParametrosMinimapa();
+    const { minimapaEscala, minimapaOffsetX, minimapaOffsetY, viewport } = params;
+
+    // Calcular los límites del rectángulo rojo en coordenadas relativas al mundo
+    const rectX = viewport.x * minimapaEscala;
+    const rectY = viewport.y * minimapaEscala;
+    const rectAncho = viewport.ancho * minimapaEscala;
+    const rectAlto = viewport.alto * minimapaEscala;
+
+    // Área de detección expandida: mínimo 40px
+    const areaDeteccionAncho = Math.max(rectAncho, 40);
+    const areaDeteccionAlto = Math.max(rectAlto, 40);
+
+    // Centrar el área expandida sobre el rectángulo real (en coordenadas relativas)
+    const areaXRelativo = rectX - (areaDeteccionAncho - rectAncho) / 2;
+    const areaYRelativo = rectY - (areaDeteccionAlto - rectAlto) / 2;
+
+    // Convertir área de detección a coordenadas absolutas del canvas
+    // (aplicando el mismo translate que se usa en dibujarMinimapa)
+    const areaXAbsoluto = minimapaOffsetX + areaXRelativo;
+    const areaYAbsoluto = minimapaOffsetY + areaYRelativo;
+
+    // Comparar mouse (en coordenadas absolutas) con área (en coordenadas absolutas)
+    return mouseX >= areaXAbsoluto && mouseX <= areaXAbsoluto + areaDeteccionAncho &&
+           mouseY >= areaYAbsoluto && mouseY <= areaYAbsoluto + areaDeteccionAlto;
+}
+
+minimapaCanvas.addEventListener("mousedown", (event) => {
     const rect = minimapaCanvas.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
 
-    const viewport = calcularViewportVisible();
-    const centroX = (viewport.x + viewport.ancho / 2);
-    const centroY = (viewport.y + viewport.alto / 2);
-    const minimapaEscala = 0.1;
-    const minimapaAncho = canvas.width * minimapaEscala;
-    const minimapaAlto = canvas.height * minimapaEscala;
-    const minimapaOffsetX = minimapaAncho / 2 - centroX * minimapaEscala;
-    const minimapaOffsetY = minimapaAlto / 2 - centroY * minimapaEscala;
+    if (estaEnRectanguloMinimapa(mouseX, mouseY)) {
+        arrastandoMinimapa = true;
+        minimapaInicialMouseX = mouseX;
+        minimapaInicialMouseY = mouseY;
+        minimapaInicialOffsetX = offsetX;
+        minimapaInicialOffsetY = offsetY;
+        minimapaCanvas.style.cursor = 'grabbing';
+        document.body.style.cursor = 'grabbing'; // Cambiar cursor de toda la página
+        event.preventDefault();
+        event.stopPropagation();
+    }
+});
 
-    const mapaX = (clickX - minimapaOffsetX) / minimapaEscala;
-    const mapaY = (clickY-10 - minimapaOffsetY) / minimapaEscala;
+minimapaCanvas.addEventListener("mousemove", (event) => {
+    const rect = minimapaCanvas.getBoundingClientRect();
+    let mouseX = event.clientX - rect.left;
+    let mouseY = event.clientY - rect.top;
 
-    offsetX = -(mapaX * escala - canvas.width / 2);
-    offsetY = -(mapaY * escala - canvas.height / 2);
+    if (arrastandoMinimapa) {
+        // Restringir las coordenadas del mouse dentro del minimapa
+        mouseX = Math.max(0, Math.min(mouseX, rect.width));
+        mouseY = Math.max(0, Math.min(mouseY, rect.height));
 
-    aplicarLimitesOffset();
+        // Obtener la escala actual del minimapa (dinámica)
+        const params = calcularParametrosMinimapa();
+        const minimapaEscala = params.minimapaEscala;
 
-    renderizarCanvas();
+        const deltaX = mouseX - minimapaInicialMouseX;
+        const deltaY = mouseY - minimapaInicialMouseY;
+
+        // Convertir el delta del minimapa a coordenadas del mundo
+        const worldDeltaX = deltaX / minimapaEscala;
+        const worldDeltaY = deltaY / minimapaEscala;
+
+        // Actualizar el offset (el movimiento en el minimapa es directo, no inverso)
+        offsetX = minimapaInicialOffsetX - worldDeltaX * escala;
+        offsetY = minimapaInicialOffsetY - worldDeltaY * escala;
+
+        aplicarLimitesOffset();
+        renderizarCanvas();
+
+        // Prevenir la selección de texto mientras se arrastra
+        event.preventDefault();
+    } else {
+        // Cambiar el cursor si está sobre el rectángulo
+        if (estaEnRectanguloMinimapa(mouseX, mouseY)) {
+            minimapaCanvas.style.cursor = 'grab';
+        } else {
+            minimapaCanvas.style.cursor = 'default';
+        }
+    }
+});
+
+minimapaCanvas.addEventListener("mouseup", () => {
+    if (arrastandoMinimapa) {
+        arrastandoMinimapa = false;
+        minimapaCanvas.style.cursor = 'grab';
+        document.body.style.cursor = 'default'; // Restaurar cursor de la página
+    }
+});
+
+// Eventos globales para capturar el arrastre cuando el mouse sale del minimapa
+document.addEventListener("mousemove", (event) => {
+    if (arrastandoMinimapa) {
+        const rect = minimapaCanvas.getBoundingClientRect();
+        let mouseX = event.clientX - rect.left;
+        let mouseY = event.clientY - rect.top;
+
+        // Restringir las coordenadas del mouse dentro del minimapa
+        mouseX = Math.max(0, Math.min(mouseX, rect.width));
+        mouseY = Math.max(0, Math.min(mouseY, rect.height));
+
+        // Obtener la escala actual del minimapa (dinámica)
+        const params = calcularParametrosMinimapa();
+        const minimapaEscala = params.minimapaEscala;
+
+        const deltaX = mouseX - minimapaInicialMouseX;
+        const deltaY = mouseY - minimapaInicialMouseY;
+
+        // Convertir el delta del minimapa a coordenadas del mundo
+        const worldDeltaX = deltaX / minimapaEscala;
+        const worldDeltaY = deltaY / minimapaEscala;
+
+        // Actualizar el offset (el movimiento en el minimapa es directo, no inverso)
+        offsetX = minimapaInicialOffsetX - worldDeltaX * escala;
+        offsetY = minimapaInicialOffsetY - worldDeltaY * escala;
+
+        aplicarLimitesOffset();
+        renderizarCanvas();
+
+        event.preventDefault();
+    }
+});
+
+document.addEventListener("mouseup", () => {
+    if (arrastandoMinimapa) {
+        arrastandoMinimapa = false;
+        minimapaCanvas.style.cursor = 'default';
+        document.body.style.cursor = 'default'; // Restaurar cursor de la página
+    }
 });
 
 // Ajustar tamaño del canvas si cambia la ventana
