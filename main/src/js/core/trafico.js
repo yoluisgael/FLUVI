@@ -2383,6 +2383,11 @@ function iniciarSimulacion() {
         updateMetrics();
         renderizarCanvas();
 
+        // Actualizar información en tiempo real (barra estilo Golly)
+        if (window.updateSimulationInfo) {
+            window.updateSimulationInfo();
+        }
+
         prioridadPar = !prioridadPar;
     }
 
@@ -2475,10 +2480,18 @@ function iniciarSimulacion() {
         const valorInicialSlider = calcularSliderDesdeIntervalo(intervaloDeseado);
         velocidadSlider.value = valorInicialSlider;
         velocidadValorSpan.textContent = valorInicialSlider;
+
+        // Calcular y exponer velocidad de simulación normalizada (1x = baseline)
+        // A 1000ms (1 segundo) = velocidad 1x, a 10ms = velocidad 100x
+        window.velocidadSimulacion = maxIntervalo / intervaloDeseado;
+
         velocidadSlider.addEventListener('input', () => {
             const valorActualSlider = parseFloat(velocidadSlider.value);
             intervaloDeseado = calcularIntervaloDesdeSlider(valorActualSlider);
             velocidadValorSpan.textContent = valorActualSlider;
+
+            // Actualizar velocidad de simulación normalizada
+            window.velocidadSimulacion = maxIntervalo / intervaloDeseado;
         });
     }
 

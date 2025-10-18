@@ -97,19 +97,68 @@ body {
   }
 }
 
-.header {
-  background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
-  color: white;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+/* ========== BARRA DE INFORMACIÓN ESTILO GOLLY ========== */
+.info-bar {
+  background: #fffacd; /* Amarillo claro estilo Golly */
+  border-bottom: 2px solid #daa520;
+  padding: 8px 15px;
+  font-family: 'Courier New', Consolas, Monaco, monospace;
+  font-size: 14px;
+  color: #000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 600;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+.info-bar-content {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrar contenido */
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.info-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.info-value {
+  color: #000;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 2px 6px;
+  border-radius: 3px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.info-separator {
+  color: #999;
+  padding: 0 4px;
+  font-weight: bold;
+}
+
+/* Responsive para info bar */
+@media (max-width: 768px) {
+  .info-bar {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .info-value {
+    min-width: 40px;
+    font-size: 10px;
+  }
+
+  .info-bar-content {
+    gap: 4px;
+  }
 }
 
 /* ========== CANVAS Y WRAPPER ========== */
@@ -748,7 +797,7 @@ body {
 .sidebar-toggle-float {
   position: fixed;
   left: 0;
-  top: 70px; /* Justo debajo del header que tiene ~60-65px de altura */
+  top: 45px; /* Justo debajo de la info-bar que tiene ~40-45px de altura */
   z-index: 1001;
   background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
   color: white;
@@ -799,17 +848,17 @@ body {
   }
 
   .sidebar-toggle-float {
-    top: 65px; /* Ajuste para móviles */
+    top: 40px; /* Ajuste para info-bar en móviles */
     width: 45px;
     height: 60px;
     font-size: 20px;
   }
 }
 
-/* Ajuste fino para diferentes tamaños de header */
+/* Ajuste fino para pantallas muy pequeñas */
 @media (max-width: 480px) {
   .sidebar-toggle-float {
-    top: 60px; /* Header más pequeño en móviles muy pequeños */
+    top: 38px; /* Info-bar más compacta en móviles pequeños */
   }
 }
 
@@ -891,9 +940,24 @@ body.dark-mode .main-content {
     background: #252525;
 }
 
-body.dark-mode .header {
-    background: linear-gradient(135deg, #1e3a5f 0%, #15283d 100%);
+/* Info bar en modo oscuro */
+body.dark-mode .info-bar {
+    background: #2a2a1a;
+    border-bottom-color: #555;
     color: #e0e0e0;
+}
+
+body.dark-mode .info-label {
+    color: #aaa;
+}
+
+body.dark-mode .info-value {
+    background: rgba(0, 0, 0, 0.3);
+    color: #e0e0e0;
+}
+
+body.dark-mode .info-separator {
+    color: #666;
 }
 
 /* Canvas y wrapper en modo oscuro */

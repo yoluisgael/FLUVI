@@ -1274,8 +1274,34 @@
 
   <!-- Main Content -->
   <div class="main-content">
-    <div class="header">
-      <h1>🚦 Simulador de Tráfico FLUVI</h1>
+    <!-- Barra de Información estilo Golly -->
+    <div class="info-bar">
+      <div class="info-bar-content">
+        <span class="info-item">
+          <span class="info-label">Generation:</span>
+          <span id="infoGeneration" class="info-value">0</span>
+        </span>
+        <span class="info-separator">|</span>
+        <span class="info-item">
+          <span class="info-label">Population:</span>
+          <span id="infoPopulation" class="info-value">0</span>
+        </span>
+        <span class="info-separator">|</span>
+        <span class="info-item">
+          <span class="info-label">Rule:</span>
+          <span id="infoRule" class="info-value">184</span>
+        </span>
+        <span class="info-separator">|</span>
+        <span class="info-item">
+          <span class="info-label">Time/Frame:</span>
+          <span id="infoTimePerFrame" class="info-value">1.0s</span>
+        </span>
+        <span class="info-separator">|</span>
+        <span class="info-item">
+          <span class="info-label">Sim. Time:</span>
+          <span id="infoSimulatedDateTime" class="info-value">--/--/---- --:--:--</span>
+        </span>
+      </div>
     </div>
 
     <div class="canvas-wrapper">
@@ -1607,6 +1633,137 @@
 
       console.log('✓ Sistema de toggle del sidebar inicializado (Ctrl+B para toggle)');
     });
+  </script>
+
+  <!-- Sistema de Información en Tiempo Real (estilo Golly) -->
+  <script>
+    (function() {
+      // Variables globales para el sistema de información
+      let generation = 0;
+      let lastFrameTime = Date.now();
+      let frameCount = 0;
+      let totalFrameTime = 0;
+      let avgTimePerFrame = 1.0; // segundos por frame
+
+      // Tiempo simulado
+      let simulatedStartDate = new Date();
+      let simulatedCurrentDate = new Date(simulatedStartDate);
+
+      // Referencias a elementos del DOM
+      const infoGeneration = document.getElementById('infoGeneration');
+      const infoPopulation = document.getElementById('infoPopulation');
+      const infoRule = document.getElementById('infoRule');
+      const infoTimePerFrame = document.getElementById('infoTimePerFrame');
+      const infoSimulatedDateTime = document.getElementById('infoSimulatedDateTime');
+
+      // Función para calcular la población (vehículos en todas las calles)
+      // Cuenta todos los vehículos de tipo 1, 2, 3, 4, 5, 6
+      function calculatePopulation() {
+        if (!window.calles || window.calles.length === 0) return 0;
+
+        let total = 0;
+        window.calles.forEach(calle => {
+          if (calle.arreglo && Array.isArray(calle.arreglo)) {
+            calle.arreglo.forEach(carril => {
+              if (Array.isArray(carril)) {
+                // Contar todas las celdas con valor >= 1 y <= 6 (todos los tipos de vehículos)
+                total += carril.filter(cell => cell >= 1 && cell <= 6).length;
+              }
+            });
+          }
+        });
+        return total;
+      }
+
+      // Función para formatear fecha y hora combinadas
+      function formatDateTime(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+      }
+
+      // Constantes físicas para el cálculo de tiempo simulado
+      const CELL_LENGTH_METERS = 5; // Cada celda representa 5 metros
+      // Velocidad promedio urbana: 40 km/h = 11.11 m/s
+      // Tiempo para recorrer 5 metros a 11.11 m/s = 5 / 11.11 = 0.45 segundos
+      const REAL_TIME_PER_CELL_SECONDS = 0.45; // Tiempo real que tarda un vehículo en avanzar 5m
+
+      // Función para actualizar la información
+      function updateInfo() {
+        // Actualizar generación
+        generation++;
+        infoGeneration.textContent = generation.toLocaleString();
+
+        // Calcular tiempo real por frame (cuánto tarda el navegador)
+        const currentTime = Date.now();
+        const frameTime = (currentTime - lastFrameTime) / 1000; // en segundos
+        lastFrameTime = currentTime;
+
+        // Promedio móvil de los últimos 10 frames
+        frameCount++;
+        totalFrameTime += frameTime;
+        if (frameCount > 10) {
+          totalFrameTime -= avgTimePerFrame;
+          frameCount = 10;
+        }
+        avgTimePerFrame = totalFrameTime / frameCount;
+
+        // Actualizar tiempo real por frame (tiempo de procesamiento)
+        infoTimePerFrame.textContent = `${avgTimePerFrame.toFixed(3)}s`;
+
+        // Actualizar población
+        const population = calculatePopulation();
+        infoPopulation.textContent = population.toLocaleString();
+
+        // Calcular tiempo simulado físicamente correcto
+        // Cada generación representa el avance de una celda (5 metros)
+        // A velocidad urbana promedio (40 km/h = 11.11 m/s), recorrer 5m toma 0.45 segundos
+        // Este tiempo se escala según la velocidad de simulación actual
+
+        // Obtener velocidad de simulación (si existe control de velocidad)
+        const simulationSpeed = window.velocidadSimulacion || 1.0; // 1x por defecto
+
+        // Tiempo simulado que avanza en cada frame:
+        // - A velocidad 1x: 0.45 segundos por frame (tiempo real)
+        // - A velocidad 2x: 0.90 segundos por frame (el doble de rápido)
+        // - A velocidad 0.5x: 0.225 segundos por frame (mitad de velocidad)
+        const simulatedTimeIncrement = REAL_TIME_PER_CELL_SECONDS * simulationSpeed * 1000; // en milisegundos
+
+        // Actualizar tiempo simulado
+        simulatedCurrentDate = new Date(simulatedCurrentDate.getTime() + simulatedTimeIncrement);
+        infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+      }
+
+      // Función para resetear la información
+      function resetInfo() {
+        generation = 0;
+        frameCount = 0;
+        totalFrameTime = 0;
+        avgTimePerFrame = 1.0;
+        lastFrameTime = Date.now();
+        simulatedStartDate = new Date();
+        simulatedCurrentDate = new Date(simulatedStartDate);
+
+        infoGeneration.textContent = '0';
+        infoPopulation.textContent = '0';
+        infoTimePerFrame.textContent = '1.0s';
+        infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+      }
+
+      // Exponer funciones globalmente
+      window.updateSimulationInfo = updateInfo;
+      window.resetSimulationInfo = resetInfo;
+
+      // Inicializar con fecha y hora actuales
+      document.addEventListener('DOMContentLoaded', function() {
+        infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+        console.log('✓ Sistema de información en tiempo real inicializado');
+      });
+    })();
   </script>
 </body>
 </html>
