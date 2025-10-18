@@ -1887,10 +1887,9 @@ function iniciarSimulacion() {
     const Avenida_Montevideo2 = crearCalle("Av. Montevideo 2", 308, TIPOS.CONEXION, 2720, 2460, 168, 0.0, 3, 0.01);
     const Avenida_Otavalo = crearCalle("Av. Otavalo", 150, TIPOS.CONEXION, 1765, 2050, -11, 0.0, 1, 0.01);
     const Avenida_17_de_mayo = crearCalle("Av. 17 de mayo", 122, TIPOS.CONEXION, 1520, 2395, 72, 0.0, 1, 0.01);
-    const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro 1", 202, TIPOS.CONEXION, 1790, 1800, 80, 0.0, 2, 0.01);
-    const Calle_Luis_Enrique_Erro_2 = crearCalle("Calle Luis Enrique Erro 2", 10, TIPOS.CONEXION, 1965, 805, 65, 0.0, 2, 0.01);
-    const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro 3", 43, TIPOS.CONEXION, 1985, 760, 46, 0.0, 2, 0.01);
-    const Calle_Luis_Enrique_Erro_6 = crearCalle("Calle Luis Enrique Erro 6", 174, TIPOS.CONEXION, 1945, 800, -100, 0.0, 2, 0.01);
+    const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro →", 178, TIPOS.CONEXION, 1783, 1814, 80, 0.0, 2, 0.01);
+    const Calle_Luis_Enrique_Erro_2 = crearCalle("Calle Luis Enrique Erro Tramo 2 →", 67, TIPOS.CONEXION, 1952, 894, 80, 0.0, 2, 0.01);
+    const Calle_Luis_Enrique_Erro_6 = crearCalle("Calle Luis Enrique Erro 6", 176, TIPOS.CONEXION, 1919, 934, 260, 0.0, 2, 0.01);
     const Calle_Luis_Enrique_Erro_4 = crearCalle("Calle Luis Enrique Erro 4", 46, TIPOS.CONEXION, 2125, 595, -134, 0.0, 2, 0.01);
     const Calle_Luis_Enrique_Erro_5 = crearCalle("Calle Luis Enrique Erro 5", 10, TIPOS.CONEXION, 1965, 760, -115, 0.0, 2, 0.01);
     const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo", 185, TIPOS.CONEXION, 2180, 1915, 80, 0.0, 1, 0.01);
@@ -1963,7 +1962,7 @@ function iniciarSimulacion() {
         { indiceCelda: 194, anguloOffset: -21.51222188728547 }
     ];
     Avenida_Miguel_Bernard2.esCurva = true;
-
+    
     Avenida_Miguel_Bernard.vertices = [
         { indiceCelda: 0, anguloOffset: 29.183651591046115 },
         { indiceCelda: 10, anguloOffset: -1.0407776280136602 },
@@ -1988,46 +1987,81 @@ function iniciarSimulacion() {
     Avenida_Miguel_Bernard.esCurva = true;
     
     // Vértices para Av. Wilfrido Massieu ←
-Avenida_Wilfrido_Massieu_1.vertices = [
-    { indiceCelda: 0, anguloOffset: 0 },
-    { indiceCelda: 10, anguloOffset: 0 },
-    { indiceCelda: 20, anguloOffset: 0 },
-    { indiceCelda: 30, anguloOffset: 0 },
-    { indiceCelda: 40, anguloOffset: 0 },
-    { indiceCelda: 50, anguloOffset: 0 },
-    { indiceCelda: 60, anguloOffset: 0 },
-    { indiceCelda: 70, anguloOffset: 0 },
-    { indiceCelda: 80, anguloOffset: 0 },
-    { indiceCelda: 90, anguloOffset: 0 },
-    { indiceCelda: 100, anguloOffset: 0 },
-    { indiceCelda: 110, anguloOffset: 0 },
-    { indiceCelda: 120, anguloOffset: 0 },
-    { indiceCelda: 130, anguloOffset: 0 },
-    { indiceCelda: 140, anguloOffset: 0 },
-    { indiceCelda: 150, anguloOffset: 0 },
-    { indiceCelda: 160, anguloOffset: 0 },
-    { indiceCelda: 170, anguloOffset: -11.009098478730472 },
-    { indiceCelda: 180, anguloOffset: -11.407038740359418 },
-    { indiceCelda: 190, anguloOffset: -11.663564370295632 },
-    { indiceCelda: 200, anguloOffset: -6.575739493312889 },
-    { indiceCelda: 210, anguloOffset: -11.606703150263227 },
-    { indiceCelda: 220, anguloOffset: -14.044688014277959 },
-    { indiceCelda: 230, anguloOffset: -11.926764002101764 },
-    { indiceCelda: 240, anguloOffset: -9.308916375838844 },
-    { indiceCelda: 250, anguloOffset: -8.62069360411787 },
-    { indiceCelda: 260, anguloOffset: -11.797253613314432 },
-    { indiceCelda: 270, anguloOffset: -8.451094990844364 },
-    { indiceCelda: 280, anguloOffset: -10.873446369255475 },
-    { indiceCelda: 290, anguloOffset: -10.148863339446716 },
-    { indiceCelda: 300, anguloOffset: -12.044049971264982 },
-    { indiceCelda: 310, anguloOffset: -9.734523874663381 },
-    { indiceCelda: 320, anguloOffset: -11.155215416939388 },
-    { indiceCelda: 330, anguloOffset: -8.107048185852282 },
-    { indiceCelda: 340, anguloOffset: 0.07275865577794495 },
-    { indiceCelda: 345, anguloOffset: 32.42406150399883 }
-];
-Avenida_Wilfrido_Massieu_1.esCurva = true;
+    Avenida_Wilfrido_Massieu_1.vertices = [
+        { indiceCelda: 0, anguloOffset: 0 },
+        { indiceCelda: 10, anguloOffset: 0 },
+        { indiceCelda: 20, anguloOffset: 0 },
+        { indiceCelda: 30, anguloOffset: 0 },
+        { indiceCelda: 40, anguloOffset: 0 },
+        { indiceCelda: 50, anguloOffset: 0 },
+        { indiceCelda: 60, anguloOffset: 0 },
+        { indiceCelda: 70, anguloOffset: 0 },
+        { indiceCelda: 80, anguloOffset: 0 },
+        { indiceCelda: 90, anguloOffset: 0 },
+        { indiceCelda: 100, anguloOffset: 0 },
+        { indiceCelda: 110, anguloOffset: 0 },
+        { indiceCelda: 120, anguloOffset: 0 },
+        { indiceCelda: 130, anguloOffset: 0 },
+        { indiceCelda: 140, anguloOffset: 0 },
+        { indiceCelda: 150, anguloOffset: 0 },
+        { indiceCelda: 160, anguloOffset: 0 },
+        { indiceCelda: 170, anguloOffset: -11.009098478730472 },
+        { indiceCelda: 180, anguloOffset: -11.407038740359418 },
+        { indiceCelda: 190, anguloOffset: -11.663564370295632 },
+        { indiceCelda: 200, anguloOffset: -6.575739493312889 },
+        { indiceCelda: 210, anguloOffset: -11.606703150263227 },
+        { indiceCelda: 220, anguloOffset: -14.044688014277959 },
+        { indiceCelda: 230, anguloOffset: -11.926764002101764 },
+        { indiceCelda: 240, anguloOffset: -9.308916375838844 },
+        { indiceCelda: 250, anguloOffset: -8.62069360411787 },
+        { indiceCelda: 260, anguloOffset: -11.797253613314432 },
+        { indiceCelda: 270, anguloOffset: -8.451094990844364 },
+        { indiceCelda: 280, anguloOffset: -10.873446369255475 },
+        { indiceCelda: 290, anguloOffset: -10.148863339446716 },
+        { indiceCelda: 300, anguloOffset: -12.044049971264982 },
+        { indiceCelda: 310, anguloOffset: -9.734523874663381 },
+        { indiceCelda: 320, anguloOffset: -11.155215416939388 },
+        { indiceCelda: 330, anguloOffset: -8.107048185852282 },
+        { indiceCelda: 340, anguloOffset: 0.07275865577794495 },
+        { indiceCelda: 345, anguloOffset: 32.42406150399883 }
+    ];
+    Avenida_Wilfrido_Massieu_1.esCurva = true;
 
+    Calle_Luis_Enrique_Erro_6.vertices = [
+        { indiceCelda: 0, anguloOffset: 0 },
+        { indiceCelda: 10, anguloOffset: 0 },
+        { indiceCelda: 20, anguloOffset: 0 },
+        { indiceCelda: 30, anguloOffset: 0 },
+        { indiceCelda: 40, anguloOffset: 0 },
+        { indiceCelda: 50, anguloOffset: 0 },
+        { indiceCelda: 60, anguloOffset: 0 },
+        { indiceCelda: 70, anguloOffset: 0 },
+        { indiceCelda: 80, anguloOffset: 0 },
+        { indiceCelda: 90, anguloOffset: 0 },
+        { indiceCelda: 100, anguloOffset: 0 },
+        { indiceCelda: 110, anguloOffset: 0 },
+        { indiceCelda: 120, anguloOffset: 0 },
+        { indiceCelda: 130, anguloOffset: 0 },
+        { indiceCelda: 140, anguloOffset: 0 },
+        { indiceCelda: 150, anguloOffset: 0 },
+        { indiceCelda: 160, anguloOffset: 0 },
+        { indiceCelda: 170, anguloOffset: -21.272052818937706 },
+        { indiceCelda: 175, anguloOffset: -14.129242266463017 }
+    ];
+    Calle_Luis_Enrique_Erro_6.esCurva = true;
+
+    Calle_Luis_Enrique_Erro_2.vertices = [
+        { indiceCelda: 0, anguloOffset: 0 },
+        { indiceCelda: 10, anguloOffset: 0 },
+        { indiceCelda: 20, anguloOffset: -17.39769742368201 },
+        { indiceCelda: 30, anguloOffset: -29.394106807931976 },
+        { indiceCelda: 40, anguloOffset: -31.74029755024812 },
+        { indiceCelda: 50, anguloOffset: -34.93502217043735 },
+        { indiceCelda: 60, anguloOffset: -35.75625427003757 },
+        { indiceCelda: 66, anguloOffset: -31.556673587417112 }
+    ];
+
+    Calle_Luis_Enrique_Erro_2.esCurva = true;
     const conexionesCA = [];
 
     conexionesCA.push(...crearConexionLineal(
@@ -2110,22 +2144,7 @@ Avenida_Wilfrido_Massieu_1.esCurva = true;
         Calle_Luis_Enrique_Erro_1,
         Calle_Luis_Enrique_Erro_2
     ));
-    
-    conexionesCA.push(...crearConexionProbabilistica(
-        Calle_Luis_Enrique_Erro_1,
-        0,
-        Calle_Luis_Enrique_Erro_3,
-        [
-            { carrilDestino: 0, posOrigen: 4, posDestino: 0, probabilidad: 0.2 },
-            { carrilDestino: 1, posOrigen: 5, posDestino: 0, probabilidad: 0.9 },
-            { carrilDestino: 2, posOrigen: 6, posDestino: 0, probabilidad: 0.3 }
-        ]
-    ));
-    
-    conexionesCA.push(...crearConexionLineal(
-        Calle_Luis_Enrique_Erro_3,
-        Calle_Luis_Enrique_Erro_4
-    ));
+
 
     registrarConexiones(conexionesCA);
     conexiones = conexionesCA;
