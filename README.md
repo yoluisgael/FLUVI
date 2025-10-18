@@ -35,7 +35,6 @@ T3/
 │       ├── buildings/                 # Texturas de edificios
 │       ├── roads/                     # Texturas de carreteras
 │       └── objects/                   # Objetos varios
-└── .claude/                           # Configuración de Claude Code
 ```
 
 ## 🎮 Características Principales
