@@ -25,7 +25,7 @@ function inicializarVertices(calle) {
 
         calle.vertices.push({
             indiceCelda: indiceCelda,
-            anguloOffset: 0, // Desviación angular respecto al ángulo base (±40° máx)
+            anguloOffset: 0, // Desviación angular respecto al ángulo base (±45° máx)
             // Posición se calculará dinámicamente
         });
     }
@@ -115,19 +115,19 @@ function actualizarAnguloVertice(calle, indiceVertice, nuevoAnguloOffset) {
     if (indiceVertice < 0 || indiceVertice >= calle.vertices.length) return false;
 
     // Limitar a ±40 grados
-    nuevoAnguloOffset = Math.max(-40, Math.min(40, nuevoAnguloOffset));
+    nuevoAnguloOffset = Math.max(-45, Math.min(45, nuevoAnguloOffset));
 
     // Validar diferencia con vértice anterior
     if (indiceVertice > 0) {
         const anguloAnterior = calle.vertices[indiceVertice - 1].anguloOffset;
         const diferencia = Math.abs(nuevoAnguloOffset - anguloAnterior);
 
-        if (diferencia > 40) {
-            // Ajustar para mantener máximo 40° de diferencia
+        if (diferencia > 45) {
+            // Ajustar para mantener máximo 45° de diferencia
             if (nuevoAnguloOffset > anguloAnterior) {
-                nuevoAnguloOffset = anguloAnterior + 40;
+                nuevoAnguloOffset = anguloAnterior + 45;
             } else {
-                nuevoAnguloOffset = anguloAnterior - 40;
+                nuevoAnguloOffset = anguloAnterior - 45;
             }
         }
     }
@@ -137,12 +137,12 @@ function actualizarAnguloVertice(calle, indiceVertice, nuevoAnguloOffset) {
         const anguloSiguiente = calle.vertices[indiceVertice + 1].anguloOffset;
         const diferencia = Math.abs(nuevoAnguloOffset - anguloSiguiente);
 
-        if (diferencia > 40) {
-            // Ajustar para mantener máximo 40° de diferencia
+        if (diferencia > 45) {
+            // Ajustar para mantener máximo 45° de diferencia
             if (nuevoAnguloOffset > anguloSiguiente) {
-                nuevoAnguloOffset = anguloSiguiente + 40;
+                nuevoAnguloOffset = anguloSiguiente + 45;
             } else {
-                nuevoAnguloOffset = anguloSiguiente - 40;
+                nuevoAnguloOffset = anguloSiguiente - 45;
             }
         }
     }
@@ -173,12 +173,12 @@ function actualizarVerticePorArrastre(calle, indiceVertice, mouseX, mouseY) {
     const distanciaPerp = dx * perpX + dy * perpY;
 
     // Convertir distancia perpendicular a ángulo
-    // Usamos una escala: cada 50 píxeles = 40 grados
+    // Usamos una escala: cada 50 píxeles = 45 grados
     const escalaDistancia = 50; // píxeles para llegar al máximo
-    let nuevoOffset = (distanciaPerp / escalaDistancia) * 40;
+    let nuevoOffset = (distanciaPerp / escalaDistancia) * 45;
 
-    // Limitar a ±40 grados
-    nuevoOffset = Math.max(-40, Math.min(40, nuevoOffset));
+    // Limitar a ±45 grados
+    nuevoOffset = Math.max(-45, Math.min(45, nuevoOffset));
 
     // Aplicar con validación
     return actualizarAnguloVertice(calle, indiceVertice, nuevoOffset);
