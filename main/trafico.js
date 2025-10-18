@@ -2361,7 +2361,8 @@ function iniciarSimulacion() {
     if (btnIntersecciones) {
         btnIntersecciones.addEventListener('click', () => {
             mostrarIntersecciones = !mostrarIntersecciones;
-            btnIntersecciones.textContent = mostrarIntersecciones ? 'Ocultar Intersecciones' : 'Mostrar Intersecciones';
+            // Solo emoji, el tooltip ya explica la función
+            btnIntersecciones.textContent = mostrarIntersecciones ? '✖️' : '✖️';
             renderizarCanvas();
         });
     }
@@ -2369,7 +2370,8 @@ function iniciarSimulacion() {
         btnConexiones.addEventListener('click', () => {
             mostrarConexiones = !mostrarConexiones;
             window.mostrarConexiones = mostrarConexiones;
-            btnConexiones.textContent = mostrarConexiones ? 'Ocultar Conexiones' : 'Mostrar Conexiones';
+            // Solo emoji, el tooltip ya explica la función
+            btnConexiones.textContent = mostrarConexiones ? '🔗' : '🔗';
             renderizarCanvas();
         });
     }
@@ -2378,7 +2380,8 @@ function iniciarSimulacion() {
     if (btnEtiquetas) {
         btnEtiquetas.addEventListener('click', () => {
             mostrarEtiquetas = !mostrarEtiquetas;
-            btnEtiquetas.textContent = mostrarEtiquetas ? '🏷️ Ocultar Etiquetas' : '🏷️ Mostrar Etiquetas';
+            // Cambiar entre etiqueta visible y etiqueta tachada
+            btnEtiquetas.textContent = mostrarEtiquetas ? '🏷️' : '🚫';
             renderizarCanvas();
         });
     }
@@ -3421,4 +3424,87 @@ selectCalle.addEventListener('change', () => {
     if (btnResetVertices) {
         btnResetVertices.disabled = !hayCalleSeleccionada || calleSeleccionada.tipo !== TIPOS.CONEXION;
     }
+});
+
+// ============================================================================
+// MODO OSCURO / MODO CLARO (Dark Mode / Light Mode)
+// ============================================================================
+
+// Obtener el switch del modo oscuro
+const switchModoOscuro = document.getElementById('switchModoOscuro');
+const labelModoOscuro = document.getElementById('labelModoOscuro');
+
+// Función para actualizar colores de las gráficas según el modo
+function actualizarColoresGraficas(modoOscuro) {
+    if (!densityChartInstance || !flowChartInstance || !speedChartInstance) return;
+
+    const gridColor = modoOscuro ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+    const tickColor = modoOscuro ? '#c0c0c0' : '#666';
+
+    // Actualizar Densidad
+    if (densityChartInstance) {
+        densityChartInstance.options.scales.x.ticks.color = tickColor;
+        densityChartInstance.options.scales.y.ticks.color = tickColor;
+        densityChartInstance.options.scales.y.grid.color = gridColor;
+        densityChartInstance.data.datasets[0].borderColor = modoOscuro ? '#5a9fd4' : '#0d6efd';
+        densityChartInstance.data.datasets[0].backgroundColor = modoOscuro ? 'rgba(90, 159, 212, 0.2)' : 'rgba(13, 110, 253, 0.2)';
+        densityChartInstance.update('none');
+    }
+
+    // Actualizar Flujo
+    if (flowChartInstance) {
+        flowChartInstance.options.scales.x.ticks.color = tickColor;
+        flowChartInstance.options.scales.y.ticks.color = tickColor;
+        flowChartInstance.options.scales.y.grid.color = gridColor;
+        flowChartInstance.data.datasets[0].borderColor = modoOscuro ? '#6dc98d' : '#198754';
+        flowChartInstance.data.datasets[0].backgroundColor = modoOscuro ? 'rgba(109, 201, 141, 0.1)' : 'rgba(25, 135, 84, 0.1)';
+        flowChartInstance.update('none');
+    }
+
+    // Actualizar Velocidad
+    if (speedChartInstance) {
+        speedChartInstance.options.scales.x.ticks.color = tickColor;
+        speedChartInstance.options.scales.y.ticks.color = tickColor;
+        speedChartInstance.options.scales.y.grid.color = gridColor;
+        speedChartInstance.data.datasets[0].borderColor = modoOscuro ? '#e8c888' : '#ffc107';
+        speedChartInstance.data.datasets[0].backgroundColor = modoOscuro ? 'rgba(232, 200, 136, 0.1)' : 'rgba(255, 193, 7, 0.1)';
+        speedChartInstance.update('none');
+    }
+}
+
+// Función para aplicar el modo oscuro
+function aplicarModoOscuro(activar) {
+    if (activar) {
+        document.body.classList.add('dark-mode');
+        labelModoOscuro.textContent = '☀️ Modo Claro';
+        localStorage.setItem('modoOscuro', 'true');
+    } else {
+        document.body.classList.remove('dark-mode');
+        labelModoOscuro.textContent = '🌙 Modo Oscuro';
+        localStorage.setItem('modoOscuro', 'false');
+    }
+
+    // Actualizar colores de las gráficas
+    actualizarColoresGraficas(activar);
+}
+
+// Cargar preferencia guardada del usuario al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+    const modoOscuroGuardado = localStorage.getItem('modoOscuro');
+
+    if (modoOscuroGuardado === 'true') {
+        switchModoOscuro.checked = true;
+        aplicarModoOscuro(true);
+    } else {
+        switchModoOscuro.checked = false;
+        aplicarModoOscuro(false);
+    }
+});
+
+// Event listener para el switch
+switchModoOscuro.addEventListener('change', (event) => {
+    aplicarModoOscuro(event.target.checked);
+
+    // Renderizar el canvas para actualizar colores si es necesario
+    renderizarCanvas();
 });

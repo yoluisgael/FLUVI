@@ -112,7 +112,33 @@
         </div>
       </div>
 
-      <!-- Accordion 2: Configuración de Calles -->
+      <!-- Accordion 2: Configuración de FLUVI -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingConfigFLUVI">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfigFLUVI" aria-expanded="false" aria-controls="collapseConfigFLUVI">
+            🎨 Configuración de FLUVI
+          </button>
+        </h2>
+        <div id="collapseConfigFLUVI" class="accordion-collapse collapse" aria-labelledby="headingConfigFLUVI" data-bs-parent="#controlPanelAccordion">
+          <div class="accordion-body">
+            <h6 class="mb-3">Apariencia</h6>
+
+            <!-- Switch Modo Oscuro -->
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="switchModoOscuro">
+              <label class="form-check-label" for="switchModoOscuro">
+                <span id="labelModoOscuro">🌙 Modo Oscuro</span>
+              </label>
+            </div>
+
+            <div class="alert alert-info p-2 small mt-3 mb-0">
+              <strong>💡 Consejo:</strong> El modo oscuro es ideal para trabajar en ambientes con poca luz y reduce la fatiga visual.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion 3: Configuración de Calles -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingConfig">
           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfig" aria-expanded="true" aria-controls="collapseConfig">
@@ -150,7 +176,25 @@
         </div>
       </div>
 
-      <!-- Accordion 3: Constructor de Mapas -->
+      <!-- Accordion 4: Configuración de Escenarios -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingEscenarios">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEscenarios" aria-expanded="false" aria-controls="collapseEscenarios">
+            🎬 Configuración de Escenarios
+          </button>
+        </h2>
+        <div id="collapseEscenarios" class="accordion-collapse collapse" aria-labelledby="headingEscenarios" data-bs-parent="#controlPanelAccordion">
+          <div class="accordion-body">
+            <p class="text-muted small mb-3">Aquí podrás configurar escenarios y situaciones especiales de tráfico.</p>
+
+            <div class="alert alert-warning p-2 small mb-0">
+              <strong>⚠️ En desarrollo:</strong> Esta sección estará disponible próximamente con funcionalidades avanzadas de configuración de escenarios.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion 5: Constructor de Mapas -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingConstructor">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConstructor" aria-expanded="false" aria-controls="collapseConstructor">
@@ -352,7 +396,7 @@
         </div>
       </div>
 
-      <!-- Accordion 4: Métricas en Tiempo Real -->
+      <!-- Accordion 6: Métricas en Tiempo Real -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingMetrics">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMetrics" aria-expanded="false" aria-controls="collapseMetrics">
@@ -395,6 +439,51 @@
               <button id="btnLimpiarMetricas" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-title="Borrar todos los datos de métricas recolectados y reiniciar gráficas">
                 Limpiar Métricas
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion 7: Analizador de Métricas -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingAnalyzer">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnalyzer" aria-expanded="false" aria-controls="collapseAnalyzer">
+            🔬 Analizador de Métricas
+          </button>
+        </h2>
+        <div id="collapseAnalyzer" class="accordion-collapse collapse" aria-labelledby="headingAnalyzer" data-bs-parent="#controlPanelAccordion">
+          <div class="accordion-body">
+            <p class="text-muted small mb-3">Herramientas avanzadas para análisis y comparación de métricas.</p>
+
+            <div class="alert alert-warning p-2 small mb-0">
+              <strong>⚠️ En desarrollo:</strong> Esta sección estará disponible próximamente con análisis estadístico y comparativas.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion 8: Acerca de FLUVI -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingAbout">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAbout" aria-expanded="false" aria-controls="collapseAbout">
+            ℹ️ Acerca de FLUVI
+          </button>
+        </h2>
+        <div id="collapseAbout" class="accordion-collapse collapse" aria-labelledby="headingAbout" data-bs-parent="#controlPanelAccordion">
+          <div class="accordion-body">
+            <h6 class="mb-3">Simulador de Sistema de Gestión del Flujo Vehicular en Vialidades Cercanas a Áreas Académicas de IPN - ESCOM</h6>
+
+            <p class="text-muted small mb-3">Sistema de simulación basado en autómatas celulares para el análisis de tráfico vehicular.</p>
+
+            <button class="btn btn-info w-100" data-bs-toggle="modal" data-bs-target="#aboutModal" data-bs-title="Ver información completa sobre el proyecto FLUVI">
+              📖 Ver Información Completa
+            </button>
+
+            <div class="mt-3">
+              <small class="text-muted">
+                <strong>Versión:</strong> 1.0.0<br>
+                <strong>Año:</strong> 2025
+              </small>
             </div>
           </div>
         </div>
@@ -785,6 +874,387 @@
     </div>
   </div>
 
+  <!-- Modal Acerca de FLUVI -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="aboutModalLabel">ℹ️ Acerca de FLUVI</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+
+            <!-- Título del Proyecto -->
+            <div class="text-center mb-4">
+              <h4 class="text-primary fw-bold">FLUVI</h4>
+              <p class="lead">Simulador de Sistema de Gestión del Flujo Vehicular en Vialidades Cercanas a Áreas Académicas de IPN - ESCOM</p>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Introduction -->
+            <section class="mb-5">
+              <h5 class="text-primary mb-3">
+                <span class="badge bg-primary me-2">1</span>
+                Introduction
+              </h5>
+              <div class="card">
+                <div class="card-body">
+                  <p>
+                    FLUVI es un simulador de tráfico vehicular basado en <strong>autómatas celulares</strong> diseñado específicamente para analizar y optimizar el flujo de vehículos en vialidades cercanas a áreas académicas del Instituto Politécnico Nacional, con enfoque en la Escuela Superior de Cómputo (ESCOM).
+                  </p>
+                  <p>
+                    El sistema permite modelar escenarios complejos de tráfico urbano, incluyendo:
+                  </p>
+                  <ul>
+                    <li>Múltiples carriles y calles interconectadas</li>
+                    <li>Generación dinámica de vehículos</li>
+                    <li>Cambios de carril con probabilidades configurables</li>
+                    <li>Detección y resolución de intersecciones</li>
+                    <li>Visualización en tiempo real de métricas de tráfico</li>
+                    <li>Calles con curvaturas personalizables</li>
+                  </ul>
+                  <p>
+                    Este proyecto surge de la necesidad de comprender y mejorar la circulación vehicular en zonas académicas, permitiendo a investigadores y planificadores urbanos simular diferentes escenarios antes de implementar cambios en la infraestructura real.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Algorithms -->
+            <section class="mb-5">
+              <h5 class="text-primary mb-3">
+                <span class="badge bg-primary me-2">2</span>
+                Algorithms
+              </h5>
+              <div class="card">
+                <div class="card-body">
+                  <h6 class="fw-bold mb-3">Regla 184 de Autómatas Celulares</h6>
+                  <p>
+                    FLUVI implementa una versión modificada de la <strong>Regla 184</strong>, un autómata celular unidimensional que simula el flujo de tráfico de manera eficiente.
+                  </p>
+
+                  <div class="alert alert-info">
+                    <h6 class="alert-heading">📚 ¿Qué es la Regla 184?</h6>
+                    <p class="mb-0">
+                      La Regla 184 es un autómata celular que modela el tráfico vehicular donde cada celda puede estar vacía (0) o ocupada por un vehículo (1). Los vehículos se mueven hacia adelante si la celda siguiente está vacía, creando un flujo natural de tráfico.
+                    </p>
+                  </div>
+
+                  <h6 class="fw-bold mt-4 mb-3">Funcionamiento Básico de la Regla 184</h6>
+                  <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                      <thead class="table-primary">
+                        <tr>
+                          <th>Izquierda</th>
+                          <th>Centro</th>
+                          <th>Derecha</th>
+                          <th>→</th>
+                          <th>Nuevo Estado (Centro)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td>1</td>
+                          <td>1</td>
+                          <td>→</td>
+                          <td class="fw-bold">1</td>
+                        </tr>
+                        <tr>
+                          <td>1</td>
+                          <td>1</td>
+                          <td>0</td>
+                          <td>→</td>
+                          <td class="fw-bold">0</td>
+                        </tr>
+                        <tr>
+                          <td>1</td>
+                          <td>0</td>
+                          <td>1</td>
+                          <td>→</td>
+                          <td class="fw-bold">1</td>
+                        </tr>
+                        <tr>
+                          <td>1</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>→</td>
+                          <td class="fw-bold">0</td>
+                        </tr>
+                        <tr>
+                          <td>0</td>
+                          <td>1</td>
+                          <td>1</td>
+                          <td>→</td>
+                          <td class="fw-bold">1</td>
+                        </tr>
+                        <tr>
+                          <td>0</td>
+                          <td>1</td>
+                          <td>0</td>
+                          <td>→</td>
+                          <td class="fw-bold">1</td>
+                        </tr>
+                        <tr>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>1</td>
+                          <td>→</td>
+                          <td class="fw-bold">0</td>
+                        </tr>
+                        <tr>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>0</td>
+                          <td>→</td>
+                          <td class="fw-bold">0</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <h6 class="fw-bold mt-4 mb-3">🔧 Modificaciones Implementadas en FLUVI</h6>
+                  <p>Hemos adaptado y extendido la Regla 184 clásica para soportar escenarios de tráfico más complejos y realistas:</p>
+
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="card border-primary">
+                        <div class="card-body">
+                          <h6 class="card-title text-primary">1️⃣ Multi-carril</h6>
+                          <p class="card-text small">
+                            Expandimos la regla unidimensional a un sistema de <strong>múltiples carriles</strong>, permitiendo que los vehículos cambien de carril basándose en probabilidades configurables.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="card border-success">
+                        <div class="card-body">
+                          <h6 class="card-title text-success">2️⃣ Celdas de Espera</h6>
+                          <p class="card-text small">
+                            Introducimos el concepto de <strong>celdas en espera</strong> para manejar bloqueos temporales (como intersecciones o conexiones congestionadas), previniendo colisiones.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="card border-warning">
+                        <div class="card-body">
+                          <h6 class="card-title text-warning">3️⃣ Conexiones entre Calles</h6>
+                          <p class="card-text small">
+                            Implementamos tres tipos de conexiones: <strong>lineales</strong> (1-a-1), <strong>incorporación</strong> (N-a-1) y <strong>probabilísticas</strong> (1-a-N con distribución).
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="card border-danger">
+                        <div class="card-body">
+                          <h6 class="card-title text-danger">4️⃣ Resolución de Intersecciones</h6>
+                          <p class="card-text small">
+                            Agregamos un sistema de <strong>prioridad alternante</strong> para resolver conflictos en intersecciones, simulando semáforos o reglas de paso.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="card border-info">
+                        <div class="card-body">
+                          <h6 class="card-title text-info">5️⃣ Prevención de Cruces en X</h6>
+                          <p class="card-text small">
+                            Implementamos lógica para <strong>prevenir cambios de carril cruzados</strong> (patrón X) donde dos vehículos adyacentes intentan intercambiar carriles simultáneamente.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="card border-secondary">
+                        <div class="card-body">
+                          <h6 class="card-title text-secondary">6️⃣ Calles Curvas</h6>
+                          <p class="card-text small">
+                            Extendimos el modelo a <strong>geometrías no lineales</strong> mediante sistema de vértices con interpolación angular para calles con curvaturas.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="alert alert-success mt-4">
+                    <h6 class="alert-heading">✅ Resultado</h6>
+                    <p class="mb-0">
+                      Estas modificaciones permiten simular escenarios de tráfico urbano complejos manteniendo la eficiencia computacional de los autómatas celulares, con actualizaciones en tiempo real y soporte para miles de vehículos simultáneos.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- File Formats -->
+            <section class="mb-5">
+              <h5 class="text-primary mb-3">
+                <span class="badge bg-primary me-2">3</span>
+                File Formats
+              </h5>
+              <div class="card">
+                <div class="card-body">
+                  <p>FLUVI utiliza formato <strong>JSON</strong> para guardar y cargar simulaciones completas.</p>
+
+                  <h6 class="fw-bold mt-3 mb-2">Estructura del archivo JSON:</h6>
+                  <pre class="bg-light p-3 rounded"><code>{
+  "version": "1.0",
+  "nombre": "Nombre de la Simulación",
+  "fecha": "2024-01-01T12:00:00.000Z",
+  "calles": [
+    {
+      "nombre": "Calle Principal",
+      "tamano": 100,
+      "tipo": "CONEXION",
+      "carriles": 3,
+      "x": 500,
+      "y": 300,
+      "angulo": 0,
+      "probabilidadGeneracion": 0.5,
+      "probabilidadSaltoDeCarril": 0.02,
+      "esCurva": false,
+      "vertices": []
+    }
+  ],
+  "conexiones": [
+    {
+      "tipo": "LINEAL",
+      "origen": "Calle1",
+      "destino": "Calle2",
+      "carrilOrigen": 0,
+      "carrilDestino": 0
+    }
+  ],
+  "edificios": [
+    {
+      "label": "ESCOM",
+      "x": 1000,
+      "y": 500,
+      "width": 200,
+      "height": 150
+    }
+  ]
+}</code></pre>
+
+                  <div class="alert alert-info mt-3">
+                    <strong>💡 Consejo:</strong> Puedes exportar tu simulación actual usando el botón "Guardar Simulación" en el Constructor de Mapas.
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Known Problems -->
+            <section class="mb-5">
+              <h5 class="text-primary mb-3">
+                <span class="badge bg-primary me-2">4</span>
+                Known Problems
+              </h5>
+              <div class="card">
+                <div class="card-body">
+                  <p>Algunos problemas conocidos y limitaciones actuales del sistema:</p>
+                  <ul>
+                    <li><strong>Rendimiento en simulaciones muy grandes:</strong> Simulaciones con más de 50 calles largas pueden experimentar caídas de FPS.</li>
+                    <li><strong>Colisiones en curvas muy cerradas:</strong> Curvaturas extremas (±40°) pueden generar ocasionalmente solapamientos visuales.</li>
+                    <li><strong>Compatibilidad con navegadores antiguos:</strong> Requiere soporte de ES6+ y Canvas API.</li>
+                  </ul>
+
+                  <div class="alert alert-warning">
+                    <strong>⚠️ Nota:</strong> Estamos trabajando continuamente en mejoras y correcciones. Si encuentras algún problema, por favor repórtalo al equipo de desarrollo.
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Credits -->
+            <section class="mb-4">
+              <h5 class="text-primary mb-3">
+                <span class="badge bg-primary me-2">5</span>
+                Credits
+              </h5>
+              <div class="card">
+                <div class="card-body">
+                  <h6 class="fw-bold mb-3">👥 Equipo de Desarrollo</h6>
+
+                  <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                      <div class="card border-primary">
+                        <div class="card-body text-center">
+                          <div class="mb-2">👨‍💻</div>
+                          <h6 class="card-title">Connor Urbano Mendoza</h6>
+                          <p class="card-text small text-muted">Desarrollador</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <div class="card border-primary">
+                        <div class="card-body text-center">
+                          <div class="mb-2">👨‍💻</div>
+                          <h6 class="card-title">Luis Gael Molina Figueroa</h6>
+                          <p class="card-text small text-muted">Desarrollador</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <div class="card border-primary">
+                        <div class="card-body text-center">
+                          <div class="mb-2">👩‍💻</div>
+                          <h6 class="card-title">Denisse Marques Morales</h6>
+                          <p class="card-text small text-muted">Desarrolladora</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h6 class="fw-bold mb-3">🎓 Directores del Proyecto</h6>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <div class="card border-success">
+                        <div class="card-body text-center">
+                          <div class="mb-2">👨‍🏫</div>
+                          <h6 class="card-title">Juárez Martínez Genaro</h6>
+                          <p class="card-text small text-muted">Director</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <div class="card border-success">
+                        <div class="card-body text-center">
+                          <div class="mb-2">👩‍🏫</div>
+                          <h6 class="card-title">Maldonado Castillo Idalia</h6>
+                          <p class="card-text small text-muted">Directora</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="alert alert-info mt-4 mb-0">
+                    <h6 class="alert-heading">🏛️ Institución</h6>
+                    <p class="mb-1"><strong>Instituto Politécnico Nacional (IPN)</strong></p>
+                    <p class="mb-0">Escuela Superior de Cómputo (ESCOM)</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Content -->
   <div class="main-content">
     <div class="header">
@@ -798,13 +1268,13 @@
       <!-- Control Bar -->
       <div id="canvasControlBar">
         <div id="controlBar" class="d-flex align-items-center">
-          <button id="btnConexiones" class="btn btn-info" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las conexiones entre calles en el canvas">Mostrar Conexiones</button>
+          <button id="btnConexiones" class="btn btn-info" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las conexiones entre calles en el canvas">🔗</button>
           <button id="btnPauseResume" class="btn btn-secondary me-2" data-bs-toggle="tooltip" data-bs-title="Pausar o reanudar la simulación de tráfico">⏸</button>
           <button id="btnPaso" class="btn btn-success me-2" disabled data-bs-toggle="tooltip" data-bs-title="Avanzar un paso de la simulación (solo disponible cuando está en pausa)">⏭</button>
-          <button id="btnIntersecciones" class="btn btn-info me-2" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los puntos de intersección entre calles">Intersecciones</button>
-          <button id="btnEtiquetas" class="btn btn-info me-2" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las etiquetas con nombres de calles y edificios">🏷️ Ocultar Etiquetas</button>
+          <button id="btnIntersecciones" class="btn btn-info me-2" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los puntos de intersección entre calles">✖️</button>
+          <button id="btnEtiquetas" class="btn btn-info me-2" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las etiquetas con nombres de calles y edificios">🏷️</button>
           <button id="btnBorrar" class="btn btn-danger me-2" data-bs-toggle="tooltip" data-bs-title="Borrar todos los vehículos de todas las calles">🗑️</button>
-          <button id="btnRandom" class="btn btn-warning me-3" data-bs-toggle="tooltip" data-bs-title="Llenar las calles con vehículos aleatorios">Aleatorio</button>
+          <button id="btnRandom" class="btn btn-warning me-3" data-bs-toggle="tooltip" data-bs-title="Llenar las calles con vehículos aleatorios">🎲</button>
           <label for="velocidadSlider" class="form-label me-2 mb-0">Velocidad:</label>
           <input type="range" class="form-range me-2" id="velocidadSlider" min="1" max="100" step="1" style="width: 100px;">
           <span id="velocidadValor" class="badge bg-primary">10</span>

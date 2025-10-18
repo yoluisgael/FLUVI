@@ -350,8 +350,10 @@ body {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   padding: 40px;
-  max-width: 800px;
+  max-width: min(900px, 85vw);
+  max-height: 90vh;
   width: 90%;
+  overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.6s ease-out;
 }
@@ -374,14 +376,14 @@ body {
 
 .loading-header h1 {
   color: #667eea;
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   margin-bottom: 10px;
   font-weight: 700;
 }
 
 .loading-header p {
   color: #6c757d;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2vw, 1.1rem);
 }
 
 .loading-spinner {
@@ -406,14 +408,14 @@ body {
 
 .instructions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+  gap: 15px;
   margin-top: 30px;
 }
 
 .instruction-card {
   background: #f8f9fa;
-  padding: 20px;
+  padding: 15px;
   border-radius: 12px;
   border-left: 4px solid #667eea;
   transition: transform 0.2s;
@@ -425,7 +427,7 @@ body {
 
 .instruction-card h3 {
   color: #667eea;
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
   margin-bottom: 10px;
   display: flex;
   align-items: center;
@@ -434,7 +436,7 @@ body {
 
 .instruction-card p {
   color: #495057;
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 1.5vw, 0.95rem);
   margin: 0;
   line-height: 1.5;
 }
@@ -470,6 +472,75 @@ body {
   color: #6c757d;
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+/* Media queries para pantalla de carga responsive */
+@media (min-width: 1920px) {
+  .loading-content {
+    max-width: 900px;
+    padding: 40px;
+  }
+
+  .loading-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .instructions {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .loading-content {
+    padding: 25px;
+    max-width: 95vw;
+  }
+
+  .loading-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .loading-header p {
+    font-size: 1rem;
+  }
+
+  .instructions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .instruction-card {
+    padding: 12px;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-content {
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .loading-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .loading-header p {
+    font-size: 0.9rem;
+  }
+
+  .instruction-card h3 {
+    font-size: 0.95rem;
+  }
+
+  .instruction-card p {
+    font-size: 0.85rem;
+  }
 }
 
 /* ========== ACCORDIONS ========== */
@@ -639,4 +710,616 @@ body {
 .vertex-hover {
     filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8));
     cursor: grab;
+}
+
+/* ========================================== */
+/* ========== MODO OSCURO (DARK MODE) ====== */
+/* ========================================== */
+
+/* Clase principal para modo oscuro */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+/* Sidebar en modo oscuro */
+body.dark-mode .sidebar {
+    background: linear-gradient(180deg, #2b2b2b 0%, #1f1f1f 100%);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+}
+
+body.dark-mode .sidebar::-webkit-scrollbar-track {
+    background: #1f1f1f;
+}
+
+body.dark-mode .sidebar::-webkit-scrollbar-thumb {
+    background: #5a9fd4;
+    border-radius: 4px;
+}
+
+body.dark-mode .sidebar h4 {
+    color: #5a9fd4;
+    border-bottom: 3px solid #5a9fd4;
+}
+
+body.dark-mode .sidebar h5 {
+    color: #b8b8b8;
+}
+
+body.dark-mode .sidebar h6 {
+    color: #9a9a9a;
+}
+
+/* Main content en modo oscuro */
+body.dark-mode .main-content {
+    background: #252525;
+}
+
+body.dark-mode .header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #15283d 100%);
+    color: #e0e0e0;
+}
+
+/* Canvas y wrapper en modo oscuro */
+body.dark-mode .canvas-container {
+    border: 1px solid #444;
+    background-color: #1a1a1a;
+}
+
+body.dark-mode #simuladorCanvas {
+    background-color: #2a2a2a;
+}
+
+/* Acordeón en modo oscuro */
+body.dark-mode .accordion-item {
+    background-color: #2b2b2b;
+    border-color: #444;
+}
+
+body.dark-mode .accordion-button {
+    background-color: #333;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode .accordion-button:not(.collapsed) {
+    background-color: #3d5a80;
+    color: #fff;
+}
+
+body.dark-mode .accordion-button:hover {
+    background-color: #3a3a3a;
+}
+
+body.dark-mode .accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(90, 159, 212, 0.25);
+}
+
+body.dark-mode .accordion-body {
+    background-color: #2b2b2b;
+    color: #d0d0d0;
+}
+
+/* Formularios en modo oscuro */
+body.dark-mode .form-label {
+    color: #c0c0c0;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #333;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+    background-color: #3a3a3a;
+    border-color: #5a9fd4;
+    color: #e0e0e0;
+    box-shadow: 0 0 0 0.25rem rgba(90, 159, 212, 0.25);
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #888;
+}
+
+/* Botones en modo oscuro */
+body.dark-mode .btn-primary {
+    background-color: #3d5a80;
+    border-color: #3d5a80;
+}
+
+body.dark-mode .btn-primary:hover {
+    background-color: #5a9fd4;
+    border-color: #5a9fd4;
+}
+
+body.dark-mode .btn-danger {
+    background-color: #8b3838;
+    border-color: #8b3838;
+}
+
+body.dark-mode .btn-danger:hover {
+    background-color: #b84848;
+    border-color: #b84848;
+}
+
+body.dark-mode .btn-success {
+    background-color: #2d5a3d;
+    border-color: #2d5a3d;
+}
+
+body.dark-mode .btn-success:hover {
+    background-color: #3d7a4d;
+    border-color: #3d7a4d;
+}
+
+body.dark-mode .btn-info {
+    background-color: #2d4a5a;
+    border-color: #2d4a5a;
+}
+
+body.dark-mode .btn-info:hover {
+    background-color: #3d6a7a;
+    border-color: #3d6a7a;
+}
+
+body.dark-mode .btn-warning {
+    background-color: #8b6f38;
+    border-color: #8b6f38;
+}
+
+body.dark-mode .btn-warning:hover {
+    background-color: #b89f48;
+    border-color: #b89f48;
+}
+
+body.dark-mode .btn-secondary {
+    background-color: #4a4a4a;
+    border-color: #4a4a4a;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background-color: #5a5a5a;
+    border-color: #5a5a5a;
+}
+
+/* Alertas en modo oscuro */
+body.dark-mode .alert-info {
+    background-color: #1e3a4a;
+    border-color: #2d5a6a;
+    color: #c0d8e8;
+}
+
+body.dark-mode .alert-warning {
+    background-color: #4a3a1e;
+    border-color: #6a5a2d;
+    color: #e8d8c0;
+}
+
+body.dark-mode .alert-danger {
+    background-color: #4a1e1e;
+    border-color: #6a2d2d;
+    color: #e8c0c0;
+}
+
+body.dark-mode .alert-success {
+    background-color: #1e4a2d;
+    border-color: #2d6a3d;
+    color: #c0e8d0;
+}
+
+/* Badge de modo edición en modo oscuro */
+body.dark-mode .edit-mode-badge {
+    background-color: #3d5a80;
+    color: #fff;
+    border-color: #5a9fd4;
+}
+
+/* Handles de edición en modo oscuro */
+body.dark-mode .move-handle {
+    background-color: #3d5a80;
+    border-color: #5a9fd4;
+}
+
+body.dark-mode .rotate-handle {
+    background-color: #8b3838;
+    border-color: #b84848;
+}
+
+/* Sidebar toggle button en modo oscuro */
+body.dark-mode .sidebar-toggle {
+    background-color: #3d5a80;
+    color: #fff;
+}
+
+body.dark-mode .sidebar-toggle:hover {
+    background-color: #5a9fd4;
+}
+
+/* Text muted en modo oscuro */
+body.dark-mode .text-muted {
+    color: #888 !important;
+}
+
+/* KBD (keyboard tags) en modo oscuro */
+body.dark-mode kbd {
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    border: 1px solid #555;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.5);
+}
+
+/* Modal en modo oscuro */
+body.dark-mode .modal-content {
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode .modal-header {
+    background-color: #333;
+    border-bottom-color: #444;
+}
+
+body.dark-mode .modal-title {
+    color: #e0e0e0;
+}
+
+body.dark-mode .modal-footer {
+    background-color: #333;
+    border-top-color: #444;
+}
+
+body.dark-mode .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Pantalla de carga en modo oscuro */
+body.dark-mode #loadingScreen {
+    background: linear-gradient(135deg, #1e3a5f 0%, #15283d 100%);
+}
+
+body.dark-mode .loading-content {
+    background-color: rgba(43, 43, 43, 0.95);
+    border-color: #444;
+}
+
+body.dark-mode .loading-header h1 {
+    color: #5a9fd4;
+}
+
+body.dark-mode .loading-header p {
+    color: #b8b8b8;
+}
+
+body.dark-mode .instruction-card {
+    background-color: #333;
+    border-color: #444;
+}
+
+body.dark-mode .instruction-card h3 {
+    color: #5a9fd4;
+}
+
+body.dark-mode .instruction-card p {
+    color: #c0c0c0;
+}
+
+body.dark-mode .progress-bar-custom {
+    background-color: #333;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, #3d5a80, #5a9fd4);
+}
+
+body.dark-mode .loading-status {
+    color: #b8b8b8;
+}
+
+/* Switch de modo oscuro (custom styling) */
+body.dark-mode .form-check-input:checked {
+    background-color: #5a9fd4;
+    border-color: #5a9fd4;
+}
+
+body.dark-mode .form-check-input {
+    border-color: #555;
+    background-color: #3a3a3a;
+}
+
+body.dark-mode .form-check-label {
+    color: #d0d0d0;
+}
+
+/* Minimapa en modo oscuro */
+body.dark-mode #minimapa {
+    border-color: #5a9fd4;
+    box-shadow: 0 0 10px rgba(90, 159, 212, 0.3);
+}
+
+/* Barra de control del canvas en modo oscuro */
+body.dark-mode #canvasControlBar {
+    background: rgba(43, 43, 43, 0.95);
+    border: 1px solid #444;
+    backdrop-filter: blur(10px);
+}
+
+body.dark-mode #controlBar .btn {
+    color: #e0e0e0;
+}
+
+body.dark-mode #controlBar .form-label {
+    color: #c0c0c0;
+}
+
+body.dark-mode #controlBar .badge {
+    background-color: #3d5a80 !important;
+    color: #fff;
+}
+
+/* Botones específicos de la barra de control */
+body.dark-mode #controlBar .btn-info {
+    background-color: #2d4a5a;
+    border-color: #2d4a5a;
+    color: #e0e0e0;
+}
+
+body.dark-mode #controlBar .btn-info:hover {
+    background-color: #3d6a7a;
+    border-color: #3d6a7a;
+}
+
+body.dark-mode #controlBar .btn-secondary {
+    background-color: #4a4a4a;
+    border-color: #4a4a4a;
+    color: #e0e0e0;
+}
+
+body.dark-mode #controlBar .btn-secondary:hover {
+    background-color: #5a5a5a;
+    border-color: #5a5a5a;
+}
+
+body.dark-mode #controlBar .btn-success {
+    background-color: #2d5a3d;
+    border-color: #2d5a3d;
+    color: #e0e0e0;
+}
+
+body.dark-mode #controlBar .btn-success:hover {
+    background-color: #3d7a4d;
+    border-color: #3d7a4d;
+}
+
+body.dark-mode #controlBar .btn-danger {
+    background-color: #8b3838;
+    border-color: #8b3838;
+    color: #e0e0e0;
+}
+
+body.dark-mode #controlBar .btn-danger:hover {
+    background-color: #b84848;
+    border-color: #b84848;
+}
+
+body.dark-mode #controlBar .btn-warning {
+    background-color: #8b6f38;
+    border-color: #8b6f38;
+    color: #e0e0e0;
+}
+
+body.dark-mode #controlBar .btn-warning:hover {
+    background-color: #b89f48;
+    border-color: #b89f48;
+}
+
+/* Range sliders en modo oscuro */
+body.dark-mode #controlBar .form-range {
+    background-color: transparent;
+}
+
+body.dark-mode #controlBar .form-range::-webkit-slider-track {
+    background-color: #555;
+}
+
+body.dark-mode #controlBar .form-range::-webkit-slider-thumb {
+    background-color: #5a9fd4;
+}
+
+body.dark-mode #controlBar .form-range::-moz-range-track {
+    background-color: #555;
+}
+
+body.dark-mode #controlBar .form-range::-moz-range-thumb {
+    background-color: #5a9fd4;
+}
+
+/* Botones de acordeón - forzar color de texto */
+body.dark-mode .btn-info,
+body.dark-mode .btn-primary,
+body.dark-mode .btn-success,
+body.dark-mode .btn-warning,
+body.dark-mode .btn-danger {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .btn-info:hover,
+body.dark-mode .btn-primary:hover,
+body.dark-mode .btn-success:hover,
+body.dark-mode .btn-warning:hover,
+body.dark-mode .btn-danger:hover {
+    color: #ffffff !important;
+}
+
+/* Botones outline en modo oscuro */
+body.dark-mode .btn-outline-info {
+    color: #5a9fd4;
+    border-color: #5a9fd4;
+}
+
+body.dark-mode .btn-outline-info:hover {
+    background-color: #2d4a5a;
+    border-color: #3d6a7a;
+    color: #e0e0e0;
+}
+
+body.dark-mode .btn-outline-primary {
+    color: #5a9fd4;
+    border-color: #5a9fd4;
+}
+
+body.dark-mode .btn-outline-primary:hover {
+    background-color: #3d5a80;
+    border-color: #5a9fd4;
+    color: #e0e0e0;
+}
+
+body.dark-mode .btn-outline-secondary {
+    color: #888;
+    border-color: #555;
+}
+
+body.dark-mode .btn-outline-secondary:hover {
+    background-color: #4a4a4a;
+    border-color: #5a5a5a;
+    color: #e0e0e0;
+}
+
+/* Tablas y gráficas (si hay) en modo oscuro */
+body.dark-mode table {
+    color: #d0d0d0;
+    border-color: #444;
+}
+
+body.dark-mode table thead {
+    background-color: #333;
+    color: #e0e0e0;
+}
+
+body.dark-mode table tbody tr {
+    background-color: #2b2b2b;
+    border-color: #444;
+}
+
+body.dark-mode table tbody tr:hover {
+    background-color: #353535;
+}
+
+/* Cards en modo oscuro */
+body.dark-mode .card {
+    background-color: #2b2b2b;
+    border-color: #444;
+    color: #d0d0d0;
+}
+
+body.dark-mode .card-body {
+    color: #d0d0d0;
+}
+
+body.dark-mode .card-title {
+    color: #e0e0e0;
+}
+
+body.dark-mode .card-text {
+    color: #c0c0c0;
+}
+
+/* Cards con bordes de colores en modo oscuro */
+body.dark-mode .card.border-primary {
+    border-color: #5a9fd4 !important;
+}
+
+body.dark-mode .card.border-success {
+    border-color: #3d7a4d !important;
+}
+
+body.dark-mode .card.border-danger {
+    border-color: #b84848 !important;
+}
+
+body.dark-mode .card.border-warning {
+    border-color: #b89f48 !important;
+}
+
+body.dark-mode .card.border-info {
+    border-color: #3d6a7a !important;
+}
+
+/* Títulos de cards con colores en modo oscuro */
+body.dark-mode .card-title.text-primary {
+    color: #5a9fd4 !important;
+}
+
+body.dark-mode .card-title.text-success {
+    color: #6dc98d !important;
+}
+
+body.dark-mode .card-title.text-danger {
+    color: #e88888 !important;
+}
+
+body.dark-mode .card-title.text-warning {
+    color: #e8c888 !important;
+}
+
+body.dark-mode .card-title.text-info {
+    color: #6db8d4 !important;
+}
+
+/* Listas dentro de cards en modo oscuro */
+body.dark-mode .card ul li {
+    color: #c0c0c0;
+}
+
+body.dark-mode .card ul li strong {
+    color: #e0e0e0;
+}
+
+/* Cards con bg-light en modo oscuro */
+body.dark-mode .card.bg-light {
+    background-color: #2b2b2b !important;
+    border-color: #444;
+}
+
+body.dark-mode .card.bg-light .card-title {
+    color: #e0e0e0;
+}
+
+body.dark-mode .card.bg-light .card-body {
+    color: #d0d0d0;
+}
+
+/* Gráficas y Chart containers en modo oscuro */
+body.dark-mode .chart-container {
+    background-color: #2b2b2b;
+    border-color: #444;
+}
+
+body.dark-mode .chart-container h6 {
+    color: #e0e0e0;
+}
+
+body.dark-mode .chart-container:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* Pre y Code en modo oscuro */
+body.dark-mode pre {
+    background-color: #1e1e1e !important;
+    border: 1px solid #444;
+    color: #d4d4d4;
+}
+
+body.dark-mode pre code {
+    color: #d4d4d4;
+}
+
+body.dark-mode code {
+    background-color: #2d2d2d;
+    color: #e8c888;
+    padding: 2px 6px;
+    border-radius: 3px;
 }
