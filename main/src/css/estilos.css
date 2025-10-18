@@ -706,11 +706,9 @@ body {
   background: rgba(13, 110, 253, 0.1);
   color: #0d6efd;
   border: 2px solid #0d6efd;
-  padding: 8px 12px;
+  padding: 8px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 18px;
-  font-weight: bold;
   line-height: 1;
   transition: all 0.3s ease;
   width: 40px;
@@ -720,15 +718,31 @@ body {
   justify-content: center;
 }
 
+.sidebar-toggle-inner svg {
+  stroke: #0d6efd;
+  transition: stroke 0.3s ease, transform 0.3s ease;
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex-shrink: 0;
+  will-change: transform;
+}
+
 .sidebar-toggle-inner:hover {
   background: #0d6efd;
-  color: white;
   transform: scale(1.1);
+}
+
+.sidebar-toggle-inner:hover svg {
+  stroke: white;
 }
 
 .sidebar-toggle-inner:active {
   transform: scale(0.95);
 }
+
+/* El botón interno se mueve con el sidebar (no necesita ocultarse) */
+/* Se oculta automáticamente cuando el sidebar sale de la pantalla */
 
 /* ========== BOTÓN FLOTANTE (CUANDO SIDEBAR ESTÁ OCULTO) ========== */
 .sidebar-toggle-float {
@@ -1057,9 +1071,16 @@ body.dark-mode .sidebar-toggle-inner {
     border-color: #5d9fd4;
 }
 
+body.dark-mode .sidebar-toggle-inner svg {
+    stroke: #5d9fd4;
+}
+
 body.dark-mode .sidebar-toggle-inner:hover {
     background: #5d9fd4;
-    color: #1a1a2e;
+}
+
+body.dark-mode .sidebar-toggle-inner:hover svg {
+    stroke: #1a1a2e;
 }
 
 body.dark-mode .sidebar-toggle-float {

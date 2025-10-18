@@ -87,7 +87,11 @@
   <div class="sidebar" id="sidebar">
     <!-- Toggle button dentro del panel (esquina superior derecha) -->
     <button class="sidebar-toggle-inner" id="sidebarToggle" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Ocultar panel de control">
-      <span id="toggleIcon">✕</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="15" y2="12"></line>
+        <polyline points="10 5 3 12 10 19"></polyline>
+        <line x1="21" y1="4" x2="21" y2="20"></line>
+      </svg>
     </button>
 
     <h4>Panel de Control</h4>
@@ -1536,7 +1540,6 @@
       const mainContent = document.querySelector('.main-content');
       const toggleBtnInner = document.getElementById('sidebarToggle');
       const toggleBtnFloat = document.getElementById('sidebarToggleFloat');
-      const toggleIcon = document.getElementById('toggleIcon');
 
       // Estado del sidebar (inicialmente visible)
       let sidebarVisible = true;
@@ -1556,22 +1559,18 @@
           mainContent.classList.remove('expanded');
           document.body.classList.remove('sidebar-collapsed');
 
-          // Mostrar botón interno, ocultar botón flotante
-          toggleBtnInner.style.display = 'flex';
+          // Mostrar botón flotante = oculto
           toggleBtnFloat.style.display = 'none';
-
-          toggleIcon.textContent = '✕';
         } else {
           // Ocultar sidebar
           sidebar.classList.add('hidden');
           mainContent.classList.add('expanded');
           document.body.classList.add('sidebar-collapsed');
 
-          // Ocultar botón interno, mostrar botón flotante
+          // Mostrar botón flotante después de la animación
           setTimeout(() => {
-            toggleBtnInner.style.display = 'none';
             toggleBtnFloat.style.display = 'flex';
-          }, animate ? 400 : 0); // Esperar a que termine la animación
+          }, animate ? 400 : 0);
         }
 
         // Guardar estado en localStorage
