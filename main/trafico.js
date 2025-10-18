@@ -183,9 +183,17 @@ const carroImg = carroImgs[0];
 const carreteraImg = new Image();
 carreteraImg.src = "carretera.png";
 
+// Cargar la imagen del cono
+const conoImg = new Image();
+conoImg.src = "cono.png";
+
 // ========== LISTA DE EDIFICIOS COMPLETA (DESDE TRAFICO.TXT) ==========
 const edificios = [
     // ========== ZONA SUPERIOR IZQUIERDA (cerca de Av. Miguel Othon de Mendizabal) ==========
+        
+    // CONO
+    { x: 1937, y: 910, width: 45, height: 45, color: "#0d0e10ff", angle: 12, label: "CONO" },
+
     // ESCOM
     { x: 1083, y: 854, width: 100, height: 60, color: "#0047a3ff", angle: 12, label: "ESCOM" },
     
@@ -925,9 +933,16 @@ function dibujarEdificios() {
         ctx.save();
         ctx.translate(edificio.x, edificio.y);
         ctx.rotate((edificio.angle || 0) * Math.PI / 180);
-        ctx.fillStyle = edificio.color;
-        ctx.fillRect(-edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
-        
+
+        // Si es un CONO y la imagen está cargada, dibujar la imagen
+        if (edificio.label === "CONO" && conoImg.complete && conoImg.naturalHeight !== 0) {
+            ctx.drawImage(conoImg, -edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
+        } else {
+            // Dibujar rectángulo de color para otros edificios
+            ctx.fillStyle = edificio.color;
+            ctx.fillRect(-edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
+        }
+
         // Resaltar edificio seleccionado
         if (window.edificioSeleccionado && window.edificioSeleccionado.index === index) {
             // Naranja para Constructor, dorado para Configuración
@@ -937,15 +952,15 @@ function dibujarEdificios() {
             ctx.strokeRect(-edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
             ctx.setLineDash([]);
         }
-        
-        // Etiqueta del edificio
-        if (edificio.label) {
+
+        // Etiqueta del edificio (opcional, puedes comentar esta sección si no quieres el texto)
+        if (edificio.label && edificio.label !== "CONO") {
             ctx.fillStyle = "white";
             ctx.font = `${12 / escala}px Arial`;
             ctx.textAlign = "center";
             ctx.fillText(edificio.label, 0, 0);
         }
-        
+
         ctx.restore();
     });
 }
