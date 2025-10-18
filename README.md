@@ -66,9 +66,7 @@ T3/
 
 ## 📖 Documentación
 
-- Ver `docs/CLAUDE.md` para guía de desarrollo
 - Ver `docs/CONSTRUCTOR.md` para usar el constructor de mapas
-- Ver `docs/REFACTORING.md` para notas de refactorización
 
 ## 🎓 Créditos
 
