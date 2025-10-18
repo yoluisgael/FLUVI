@@ -1566,20 +1566,14 @@ function dibujarCarros() {
                 calle.arreglo[c].forEach((celda, i) => {
                     if (celda > 0) {
                         const coords = obtenerCoordenadasGlobalesCeldaConCurva(calle, c, i);
-                        
+
                         ctx.save();
                         ctx.translate(coords.x, coords.y);
-                        
-                        // Calcular rotación
-                        let angulo = calle.angulo;
-                        if (i < calle.tamano - 1) {
-                            const coordsSiguiente = obtenerCoordenadasGlobalesCeldaConCurva(calle, c, i + 1);
-                            const dx = coordsSiguiente.x - coords.x;
-                            const dy = coordsSiguiente.y - coords.y;
-                            angulo = Math.atan2(dy, dx) * 180 / Math.PI + 90;
-                        }
-                        
-                        ctx.rotate(-angulo * Math.PI / 180);
+
+                        // Usar el ángulo que ya viene calculado correctamente desde obtenerCoordenadasGlobalesCeldaConCurva
+                        // Este ángulo ya considera la curvatura de la calle en este punto específico
+                        ctx.rotate(-coords.angulo * Math.PI / 180);
+
                         // Obtener la imagen según el tipo de vehículo
                         const imgVehiculo = obtenerImagenVehiculo(celda);
                         // Dibujar imagen o rectángulo de color como fallback
