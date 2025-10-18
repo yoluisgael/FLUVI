@@ -26,8 +26,80 @@ resizeCanvas();
 
 // Reglas de tráfico
 const reglas = {
-    "0,0,0": 0, "0,0,1": 0, "0,1,0": 0, "0,1,1": 1,
-    "1,0,0": 1, "1,0,1": 1, "1,1,0": 0, "1,1,1": 1
+    // Reglas para vehículo tipo 1
+    "0,0,0": 0, "0,0,1": 0, "0,1,0": 0, "0,1,1": 1, "0,1,2": 1, "0,1,3": 1, "0,1,4": 1, "0,1,5": 1, "0,1,6": 1,
+    "1,0,0": 1, "1,0,1": 1, "1,0,2": 1, "1,0,3": 1, "1,0,4": 1, "1,0,5": 1, "1,0,6": 1,
+    "1,1,0": 0, "1,1,1": 1, "1,1,2": 1, "1,1,3": 1, "1,1,4": 1, "1,1,5": 1, "1,1,6": 1,
+    "2,1,0": 0, "2,1,1": 1, "2,1,2": 1, "2,1,3": 1, "2,1,4": 1, "2,1,5": 1, "2,1,6": 1,
+    "3,1,0": 0, "3,1,1": 1, "3,1,2": 1, "3,1,3": 1, "3,1,4": 1, "3,1,5": 1, "3,1,6": 1,
+    "4,1,0": 0, "4,1,1": 1, "4,1,2": 1, "4,1,3": 1, "4,1,4": 1, "4,1,5": 1, "4,1,6": 1,
+    "5,1,0": 0, "5,1,1": 1, "5,1,2": 1, "5,1,3": 1, "5,1,4": 1, "5,1,5": 1, "5,1,6": 1,
+    "6,1,0": 0, "6,1,1": 1, "6,1,2": 1, "6,1,3": 1, "6,1,4": 1, "6,1,5": 1, "6,1,6": 1,
+
+    // Reglas para vehículo tipo 2
+    "0,0,2": 0, "0,2,0": 0, "0,2,1": 2, "0,2,2": 2, "0,2,3": 2, "0,2,4": 2, "0,2,5": 2, "0,2,6": 2,
+    "1,2,0": 0, "1,2,1": 2, "1,2,2": 2, "1,2,3": 2, "1,2,4": 2, "1,2,5": 2, "1,2,6": 2,
+    "2,0,0": 2, "2,0,1": 2, "2,0,2": 2, "2,0,3": 2, "2,0,4": 2, "2,0,5": 2, "2,0,6": 2,
+    "2,2,0": 0, "2,2,1": 2, "2,2,2": 2, "2,2,3": 2, "2,2,4": 2, "2,2,5": 2, "2,2,6": 2,
+    "0,1,2": 1, "2,1,0": 0, "2,1,1": 1, "2,1,2": 1, "2,1,3": 1, "2,1,4": 1, "2,1,5": 1, "2,1,6": 1,
+    "3,2,0": 0, "3,2,1": 2, "3,2,2": 2, "3,2,3": 2, "3,2,4": 2, "3,2,5": 2, "3,2,6": 2,
+    "4,2,0": 0, "4,2,1": 2, "4,2,2": 2, "4,2,3": 2, "4,2,4": 2, "4,2,5": 2, "4,2,6": 2,
+    "5,2,0": 0, "5,2,1": 2, "5,2,2": 2, "5,2,3": 2, "5,2,4": 2, "5,2,5": 2, "5,2,6": 2,
+    "6,2,0": 0, "6,2,1": 2, "6,2,2": 2, "6,2,3": 2, "6,2,4": 2, "6,2,5": 2, "6,2,6": 2,
+
+    // Reglas para vehículo tipo 3
+    "0,0,3": 0, "0,3,0": 0, "0,3,1": 3, "0,3,2": 3, "0,3,3": 3, "0,3,4": 3, "0,3,5": 3, "0,3,6": 3,
+    "1,3,0": 0, "1,3,1": 3, "1,3,2": 3, "1,3,3": 3, "1,3,4": 3, "1,3,5": 3, "1,3,6": 3,
+    "2,3,0": 0, "2,3,1": 3, "2,3,2": 3, "2,3,3": 3, "2,3,4": 3, "2,3,5": 3, "2,3,6": 3,
+    "3,0,0": 3, "3,0,1": 3, "3,0,2": 3, "3,0,3": 3, "3,0,4": 3, "3,0,5": 3, "3,0,6": 3,
+    "3,3,0": 0, "3,3,1": 3, "3,3,2": 3, "3,3,3": 3, "3,3,4": 3, "3,3,5": 3, "3,3,6": 3,
+    "0,1,3": 1, "3,1,0": 0, "3,1,1": 1, "3,1,2": 1, "3,1,3": 1, "3,1,4": 1, "3,1,5": 1, "3,1,6": 1,
+    "0,2,3": 2, "3,2,0": 0, "3,2,1": 2, "3,2,2": 2, "3,2,3": 2, "3,2,4": 2, "3,2,5": 2, "3,2,6": 2,
+    "4,3,0": 0, "4,3,1": 3, "4,3,2": 3, "4,3,3": 3, "4,3,4": 3, "4,3,5": 3, "4,3,6": 3,
+    "5,3,0": 0, "5,3,1": 3, "5,3,2": 3, "5,3,3": 3, "5,3,4": 3, "5,3,5": 3, "5,3,6": 3,
+    "6,3,0": 0, "6,3,1": 3, "6,3,2": 3, "6,3,3": 3, "6,3,4": 3, "6,3,5": 3, "6,3,6": 3,
+
+    // Reglas para vehículo tipo 4
+    "0,0,4": 0, "0,4,0": 0, "0,4,1": 4, "0,4,2": 4, "0,4,3": 4, "0,4,4": 4, "0,4,5": 4, "0,4,6": 4,
+    "1,4,0": 0, "1,4,1": 4, "1,4,2": 4, "1,4,3": 4, "1,4,4": 4, "1,4,5": 4, "1,4,6": 4,
+    "2,4,0": 0, "2,4,1": 4, "2,4,2": 4, "2,4,3": 4, "2,4,4": 4, "2,4,5": 4, "2,4,6": 4,
+    "3,4,0": 0, "3,4,1": 4, "3,4,2": 4, "3,4,3": 4, "3,4,4": 4, "3,4,5": 4, "3,4,6": 4,
+    "4,0,0": 4, "4,0,1": 4, "4,0,2": 4, "4,0,3": 4, "4,0,4": 4, "4,0,5": 4, "4,0,6": 4,
+    "4,4,0": 0, "4,4,1": 4, "4,4,2": 4, "4,4,3": 4, "4,4,4": 4, "4,4,5": 4, "4,4,6": 4,
+    "0,1,4": 1, "4,1,0": 0, "4,1,1": 1, "4,1,2": 1, "4,1,3": 1, "4,1,4": 1, "4,1,5": 1, "4,1,6": 1,
+    "0,2,4": 2, "4,2,0": 0, "4,2,1": 2, "4,2,2": 2, "4,2,3": 2, "4,2,4": 2, "4,2,5": 2, "4,2,6": 2,
+    "0,3,4": 3, "4,3,0": 0, "4,3,1": 3, "4,3,2": 3, "4,3,3": 3, "4,3,4": 3, "4,3,5": 3, "4,3,6": 3,
+    "5,4,0": 0, "5,4,1": 4, "5,4,2": 4, "5,4,3": 4, "5,4,4": 4, "5,4,5": 4, "5,4,6": 4,
+    "6,4,0": 0, "6,4,1": 4, "6,4,2": 4, "6,4,3": 4, "6,4,4": 4, "6,4,5": 4, "6,4,6": 4,
+
+    // Reglas para vehículo tipo 5
+    "0,0,5": 0, "0,5,0": 0, "0,5,1": 5, "0,5,2": 5, "0,5,3": 5, "0,5,4": 5, "0,5,5": 5, "0,5,6": 5,
+    "1,5,0": 0, "1,5,1": 5, "1,5,2": 5, "1,5,3": 5, "1,5,4": 5, "1,5,5": 5, "1,5,6": 5,
+    "2,5,0": 0, "2,5,1": 5, "2,5,2": 5, "2,5,3": 5, "2,5,4": 5, "2,5,5": 5, "2,5,6": 5,
+    "3,5,0": 0, "3,5,1": 5, "3,5,2": 5, "3,5,3": 5, "3,5,4": 5, "3,5,5": 5, "3,5,6": 5,
+    "4,5,0": 0, "4,5,1": 5, "4,5,2": 5, "4,5,3": 5, "4,5,4": 5, "4,5,5": 5, "4,5,6": 5,
+    "5,0,0": 5, "5,0,1": 5, "5,0,2": 5, "5,0,3": 5, "5,0,4": 5, "5,0,5": 5, "5,0,6": 5,
+    "5,5,0": 0, "5,5,1": 5, "5,5,2": 5, "5,5,3": 5, "5,5,4": 5, "5,5,5": 5, "5,5,6": 5,
+    "0,1,5": 1, "5,1,0": 0, "5,1,1": 1, "5,1,2": 1, "5,1,3": 1, "5,1,4": 1, "5,1,5": 1, "5,1,6": 1,
+    "0,2,5": 2, "5,2,0": 0, "5,2,1": 2, "5,2,2": 2, "5,2,3": 2, "5,2,4": 2, "5,2,5": 2, "5,2,6": 2,
+    "0,3,5": 3, "5,3,0": 0, "5,3,1": 3, "5,3,2": 3, "5,3,3": 3, "5,3,4": 3, "5,3,5": 3, "5,3,6": 3,
+    "0,4,5": 4, "5,4,0": 0, "5,4,1": 4, "5,4,2": 4, "5,4,3": 4, "5,4,4": 4, "5,4,5": 4, "5,4,6": 4,
+    "6,5,0": 0, "6,5,1": 5, "6,5,2": 5, "6,5,3": 5, "6,5,4": 5, "6,5,5": 5, "6,5,6": 5,
+
+    // Reglas para vehículo tipo 6
+    "0,0,6": 0, "0,6,0": 0, "0,6,1": 6, "0,6,2": 6, "0,6,3": 6, "0,6,4": 6, "0,6,5": 6, "0,6,6": 6,
+    "1,6,0": 0, "1,6,1": 6, "1,6,2": 6, "1,6,3": 6, "1,6,4": 6, "1,6,5": 6, "1,6,6": 6,
+    "2,6,0": 0, "2,6,1": 6, "2,6,2": 6, "2,6,3": 6, "2,6,4": 6, "2,6,5": 6, "2,6,6": 6,
+    "3,6,0": 0, "3,6,1": 6, "3,6,2": 6, "3,6,3": 6, "3,6,4": 6, "3,6,5": 6, "3,6,6": 6,
+    "4,6,0": 0, "4,6,1": 6, "4,6,2": 6, "4,6,3": 6, "4,6,4": 6, "4,6,5": 6, "4,6,6": 6,
+    "5,6,0": 0, "5,6,1": 6, "5,6,2": 6, "5,6,3": 6, "5,6,4": 6, "5,6,5": 6, "5,6,6": 6,
+    "6,0,0": 6, "6,0,1": 6, "6,0,2": 6, "6,0,3": 6, "6,0,4": 6, "6,0,5": 6, "6,0,6": 6,
+    "6,6,0": 0, "6,6,1": 6, "6,6,2": 6, "6,6,3": 6, "6,6,4": 6, "6,6,5": 6, "6,6,6": 6,
+    "0,1,6": 1, "6,1,0": 0, "6,1,1": 1, "6,1,2": 1, "6,1,3": 1, "6,1,4": 1, "6,1,5": 1, "6,1,6": 1,
+    "0,2,6": 2, "6,2,0": 0, "6,2,1": 2, "6,2,2": 2, "6,2,3": 2, "6,2,4": 2, "6,2,5": 2, "6,2,6": 2,
+    "0,3,6": 3, "6,3,0": 0, "6,3,1": 3, "6,3,2": 3, "6,3,3": 3, "6,3,4": 3, "6,3,5": 3, "6,3,6": 3,
+    "0,4,6": 4, "6,4,0": 0, "6,4,1": 4, "6,4,2": 4, "6,4,3": 4, "6,4,4": 4, "6,4,5": 4, "6,4,6": 4,
+    "0,5,6": 5, "6,5,0": 0, "6,5,1": 5, "6,5,2": 5, "6,5,3": 5, "6,5,4": 5, "6,5,5": 5, "6,5,6": 5
 };
 
 // Tipos de conexión
@@ -700,11 +772,13 @@ function actualizarCalle(calle, calleIndex) {
         if (calle.tamano <= 1) continue;
 
         for (let i = 0; i < calle.tamano; i++) {
+            // ✅ CRÍTICO: Si la celda está esperando, NO procesarla
             if (calle.celulasEsperando[c][i]) {
                 nuevaCalle[c][i] = calle.arreglo[c][i];
                 continue;
             }
             
+            // Si tiene conexión de salida, no mover
             if (tieneConexionSalida(calle, c, i) && calle.arreglo[c][i] > 0) {
                 nuevaCalle[c][i] = calle.arreglo[c][i];
                 continue;
@@ -721,25 +795,20 @@ function actualizarCalle(calle, calleIndex) {
                 derechaReal = infoIntersec.calle.arreglo[infoIntersec.carril][infoIntersec.indice];
             }
 
-            // Convertir a binario para aplicar reglas (0 = vacío, 1 = ocupado)
-            const izqBin = izq > 0 ? 1 : 0;
-            const centroBin = centro > 0 ? 1 : 0;
-            const derBin = derechaReal > 0 ? 1 : 0;
+            const patron = `${izq},${centro},${derechaReal}`;
+            const resultadoRegla = reglas[patron];
 
-            const patron = `${izqBin},${centroBin},${derBin}`;
-            const resultadoRegla = reglas[patron] || 0;
-
-            // Si la regla dice que hay un vehículo, preservar el tipo del vehículo de la izquierda
-            if (resultadoRegla === 1 && izq > 0) {
-                nuevaCalle[c][i] = izq; // Preservar tipo del vehículo que se mueve
+            if (resultadoRegla !== undefined) {
+                nuevaCalle[c][i] = resultadoRegla;
             } else {
-                nuevaCalle[c][i] = 0; // Celda vacía
+                nuevaCalle[c][i] = centro;
             }
         }
     }
 
     calle.arreglo = nuevaCalle;
     
+    // ✅ CRÍTICO: Limpiar flags de espera DESPUÉS de actualizar
     for (let c = 0; c < calle.carriles; c++) {
         calle.celulasEsperando[c].fill(false);
     }
@@ -762,33 +831,43 @@ function cambioCarril(calle) {
     for (let c = 0; c < calle.carriles; c++) {
         for (let i = 1; i < calle.tamano - 1; i++) {
             const vehiculo = calle.arreglo[c][i];
+
+            // Solo procesar si hay vehículo Y no está esperando
             if (vehiculo > 0 && !calle.celulasEsperando[c][i]) {
                 if (Math.random() < calle.probabilidadSaltoDeCarril) {
                     const carrilesDisponibles = [];
 
+                    // Verificar carril superior (cambio vertical)
                     if (c > 0) {
                         const destinoSuperior = `${c - 1},${i}`;
-                        if (calle.arreglo[c - 1][i] === 0 && !espaciosReservados.has(destinoSuperior)) {
+                        // Verificar que destino esté libre
+                        if (calle.arreglo[c - 1][i] === 0 &&
+                            !espaciosReservados.has(destinoSuperior) &&
+                            !calle.celulasEsperando[c - 1][i]) {
                             carrilesDisponibles.push({carril: c - 1, key: destinoSuperior});
                         }
                     }
 
+                    // Verificar carril inferior (cambio vertical)
                     if (c < calle.carriles - 1) {
                         const destinoInferior = `${c + 1},${i}`;
-                        if (calle.arreglo[c + 1][i] === 0 && !espaciosReservados.has(destinoInferior)) {
+                        // Verificar que destino esté libre
+                        if (calle.arreglo[c + 1][i] === 0 &&
+                            !espaciosReservados.has(destinoInferior) &&
+                            !calle.celulasEsperando[c + 1][i]) {
                             carrilesDisponibles.push({carril: c + 1, key: destinoInferior});
                         }
                     }
 
                     if (carrilesDisponibles.length > 0) {
                         const seleccion = carrilesDisponibles[Math.floor(Math.random() * carrilesDisponibles.length)];
-                        const nuevoCarril = seleccion.carril;
 
+                        // Reservar el espacio
                         espaciosReservados.add(seleccion.key);
 
                         cambios.push({
                             desde: {carril: c, posicion: i},
-                            hacia: {carril: nuevoCarril, posicion: i},
+                            hacia: {carril: seleccion.carril, posicion: i},
                             tipoVehiculo: vehiculo
                         });
                     }
@@ -797,9 +876,40 @@ function cambioCarril(calle) {
         }
     }
 
+    // CORRECCIÓN 5: Aplicar cambios en DOS FASES
+    // FASE 1: Primero limpiar todas las celdas de origen
     cambios.forEach(cambio => {
         calle.arreglo[cambio.desde.carril][cambio.desde.posicion] = 0;
+    });
+
+    // FASE 2: Luego colocar vehículos en destino Y marcar celdas como esperando
+    cambios.forEach(cambio => {
+        // Colocar vehículo con su tipo original
         calle.arreglo[cambio.hacia.carril][cambio.hacia.posicion] = cambio.tipoVehiculo;
+
+        // CRÍTICO: Marcar el destino como esperando
+        calle.celulasEsperando[cambio.hacia.carril][cambio.hacia.posicion] = true;
+
+        // CRÍTICO: Marcar el origen como esperando para evitar que CA copie vehículos ahí
+        calle.celulasEsperando[cambio.desde.carril][cambio.desde.posicion] = true;
+
+        // CRÍTICO: Marcar las celdas adyacentes en AMBAS direcciones para evitar que CA las procese
+        // Celda anterior (izquierda) en el carril de destino
+        if (cambio.hacia.posicion > 0) {
+            calle.celulasEsperando[cambio.hacia.carril][cambio.hacia.posicion - 1] = true;
+        }
+        // Celda siguiente (derecha) en el carril de destino
+        if (cambio.hacia.posicion < calle.tamano - 1) {
+            calle.celulasEsperando[cambio.hacia.carril][cambio.hacia.posicion + 1] = true;
+        }
+        // Celda anterior (izquierda) en el carril de origen
+        if (cambio.desde.posicion > 0) {
+            calle.celulasEsperando[cambio.desde.carril][cambio.desde.posicion - 1] = true;
+        }
+        // Celda siguiente (derecha) en el carril de origen
+        if (cambio.desde.posicion < calle.tamano - 1) {
+            calle.celulasEsperando[cambio.desde.carril][cambio.desde.posicion + 1] = true;
+        }
     });
 }
 
@@ -1845,12 +1955,14 @@ Avenida_Wilfrido_Massieu_1.esCurva = true;
     });
 
     function paso() {
+        // 1. Generar nuevos vehículos
         calles.forEach(calle => {
             if (calle.tipo === TIPOS.GENERADOR) {
                 generarCelulas(calle);
             }
         });
         
+        // 2. Transferir vehículos por conexiones
         let transferenciasExitosas = 0;
         let transferenciasBloqueadas = 0;
         
@@ -1865,13 +1977,13 @@ Avenida_Wilfrido_Massieu_1.esCurva = true;
             }
         });
 
+        // ✅ CRÍTICO: PRIMERO cambiar carriles
         calles.forEach(cambioCarril);
 
+        // ✅ CRÍTICO: LUEGO actualizar estado de cada calle
         calles.forEach((calle, index) => {
             actualizarCalle(calle, index);
         });
-
-        //checarIntersecciones();
 
         updateMetrics();
         renderizarCanvas();
