@@ -1688,9 +1688,9 @@
 
       // Constantes físicas para el cálculo de tiempo simulado
       const CELL_LENGTH_METERS = 5; // Cada celda representa 5 metros
-      // Velocidad promedio urbana: 40 km/h = 11.11 m/s
-      // Tiempo para recorrer 5 metros a 11.11 m/s = 5 / 11.11 = 0.45 segundos
-      const REAL_TIME_PER_CELL_SECONDS = 0.45; // Tiempo real que tarda un vehículo en avanzar 5m
+      // Calibrado empíricamente: slider en 58 ≈ 0.9 segundos de tiempo simulado por frame
+      // Cada frame representa el avance de 1 celda (5 metros) en el mundo simulado
+      const REAL_TIME_PER_CELL_SECONDS = 0.9; // Tiempo real que tarda un vehículo en avanzar 1 celda (5m)
 
       // Función para actualizar la información
       function updateInfo() {
@@ -1720,18 +1720,12 @@
         infoPopulation.textContent = population.toLocaleString();
 
         // Calcular tiempo simulado físicamente correcto
-        // Cada generación representa el avance de una celda (5 metros)
-        // A velocidad urbana promedio (40 km/h = 11.11 m/s), recorrer 5m toma 0.45 segundos
-        // Este tiempo se escala según la velocidad de simulación actual
+        // Cada generación (frame) representa el avance de 1 celda (5 metros) en el mundo simulado
+        // Independientemente de qué tan rápido ejecute el navegador los frames (controlado por el slider),
+        // el tiempo que transcurre en el mundo simulado por cada celda avanzada es constante: 0.6 segundos
 
-        // Obtener velocidad de simulación (si existe control de velocidad)
-        const simulationSpeed = window.velocidadSimulacion || 1.0; // 1x por defecto
-
-        // Tiempo simulado que avanza en cada frame:
-        // - A velocidad 1x: 0.45 segundos por frame (tiempo real)
-        // - A velocidad 2x: 0.90 segundos por frame (el doble de rápido)
-        // - A velocidad 0.5x: 0.225 segundos por frame (mitad de velocidad)
-        const simulatedTimeIncrement = REAL_TIME_PER_CELL_SECONDS * simulationSpeed * 1000; // en milisegundos
+        // Tiempo simulado que avanza en cada frame (constante, no depende del slider de velocidad)
+        const simulatedTimeIncrement = REAL_TIME_PER_CELL_SECONDS * 1000; // en milisegundos
 
         // Actualizar tiempo simulado
         simulatedCurrentDate = new Date(simulatedCurrentDate.getTime() + simulatedTimeIncrement);

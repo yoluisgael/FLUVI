@@ -128,10 +128,10 @@ let intervaloDeseado = 500; // Intervalo en milisegundos (100ms = 10 actualizaci
 
 let isPaused = false;
 let mostrarIntersecciones = false;
-const minVelocidadSlider = 1;  
-const maxVelocidadSlider = 100; 
-const maxIntervalo = 1000;  
-const minIntervalo = 10;
+const minVelocidadSlider = 1;
+const maxVelocidadSlider = 100;
+const maxIntervalo = 1000;
+const minIntervalo = 0;  // 0ms = velocidad máxima (1 frame sin delay)
 
 // Configuración
 let calles = [];
@@ -2481,17 +2481,17 @@ function iniciarSimulacion() {
         velocidadSlider.value = valorInicialSlider;
         velocidadValorSpan.textContent = valorInicialSlider;
 
-        // Calcular y exponer velocidad de simulación normalizada (1x = baseline)
-        // A 1000ms (1 segundo) = velocidad 1x, a 10ms = velocidad 100x
-        window.velocidadSimulacion = maxIntervalo / intervaloDeseado;
+        // Calcular y exponer velocidad de simulación normalizada (frames por segundo)
+        // A 1000ms = 1 fps, a 0ms = máxima velocidad posible del navegador
+        window.velocidadSimulacion = intervaloDeseado > 0 ? maxIntervalo / intervaloDeseado : Infinity;
 
         velocidadSlider.addEventListener('input', () => {
             const valorActualSlider = parseFloat(velocidadSlider.value);
             intervaloDeseado = calcularIntervaloDesdeSlider(valorActualSlider);
             velocidadValorSpan.textContent = valorActualSlider;
 
-            // Actualizar velocidad de simulación normalizada
-            window.velocidadSimulacion = maxIntervalo / intervaloDeseado;
+            // Actualizar velocidad de simulación normalizada (protección contra división por cero)
+            window.velocidadSimulacion = intervaloDeseado > 0 ? maxIntervalo / intervaloDeseado : Infinity;
         });
     }
 
