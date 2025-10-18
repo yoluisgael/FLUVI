@@ -75,7 +75,7 @@
   </div>
 
   <!-- Toggle button for mobile -->
-  <button class="sidebar-toggle" id="sidebarToggle">
+  <button class="sidebar-toggle" id="sidebarToggle" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Mostrar/Ocultar panel de control">
     <span id="toggleIcon">📊</span>
   </button>
 
@@ -105,7 +105,7 @@
         <div id="collapseInstrucciones" class="accordion-collapse collapse" aria-labelledby="headingInstrucciones" data-bs-parent="#controlPanelAccordion">
           <div class="accordion-body">
             <p class="text-muted small mb-3">Aprende a usar el simulador de tráfico</p>
-            <button class="btn btn-info w-100" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+            <button class="btn btn-info w-100" data-bs-toggle="modal" data-bs-target="#instructionsModal" data-bs-title="Abrir la guía completa del simulador con instrucciones detalladas">
               📚 Ver Guía Completa
             </button>
           </div>
@@ -139,7 +139,7 @@
 
             <!-- Botón aplicar cambios -->
             <div id="calleApplyButton">
-              <button id="btnActualizarCalle" class="btn btn-primary w-100">✓ Aplicar Cambios</button>
+              <button id="btnActualizarCalle" class="btn btn-primary w-100" data-bs-toggle="tooltip" data-bs-title="Aplicar las probabilidades configuradas a la calle seleccionada">✓ Aplicar Cambios</button>
             </div>
 
             <div class="alert alert-info p-2 small mt-3 mb-0">
@@ -163,13 +163,13 @@
 
             <!-- Botones de gestión de archivo -->
             <div class="d-grid gap-2 mb-3">
-              <button id="btnNuevaSimulacion" class="btn btn-success btn-sm">
+              <button id="btnNuevaSimulacion" class="btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-title="Crear una nueva simulación desde cero, borrando todo el contenido actual">
                 ➕ Nueva Simulación
               </button>
-              <button id="btnGuardarSimulacion" class="btn btn-primary btn-sm">
+              <button id="btnGuardarSimulacion" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-title="Guardar la simulación actual como archivo JSON">
                 💾 Guardar Simulación
               </button>
-              <button id="btnCargarSimulacion" class="btn btn-info btn-sm">
+              <button id="btnCargarSimulacion" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Cargar una simulación desde un archivo JSON guardado previamente">
                 📂 Cargar Simulación
               </button>
               <input type="file" id="inputCargarSimulacion" accept=".json" style="display: none;">
@@ -204,17 +204,17 @@
             </div>
 
             <!-- Botón de modo edición -->
-            <button id="btnModoEdicion" class="btn btn-warning w-100 mb-2" disabled>
+            <button id="btnModoEdicion" class="btn btn-warning w-100 mb-2" disabled data-bs-toggle="tooltip" data-bs-title="Activar modo edición para mover y rotar el objeto seleccionado visualmente">
               ✏️ Modo Edición
             </button>
 
             <!-- Botones de guardar/cancelar (solo visibles en modo edición) -->
             <div id="editActionButtons" style="display: none;">
               <div class="d-flex gap-2 mb-2">
-                <button id="btnGuardarEdicion" class="btn btn-success flex-fill">
+                <button id="btnGuardarEdicion" class="btn btn-success flex-fill" data-bs-toggle="tooltip" data-bs-title="Guardar los cambios realizados en el modo edición">
                   💾 Guardar
                 </button>
-                <button id="btnCancelarEdicion" class="btn btn-secondary flex-fill">
+                <button id="btnCancelarEdicion" class="btn btn-secondary flex-fill" data-bs-toggle="tooltip" data-bs-title="Cancelar los cambios y restaurar la posición original">
                   ❌ Cancelar
                 </button>
               </div>
@@ -222,7 +222,7 @@
 
             <!-- Dropdown de Ajustes Avanzados -->
             <div class="mt-3">
-              <button class="btn btn-outline-primary w-100" type="button" id="btnAjustesAvanzados">
+              <button class="btn btn-outline-primary w-100" type="button" id="btnAjustesAvanzados" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar ajustes avanzados de posición, rotación y dimensiones">
                 🔧 Ajustes Avanzados <span id="advancedArrow">▼</span>
               </button>
 
@@ -263,7 +263,7 @@
                       <span>carriles</span>
                     </div>
 
-                    <button id="btnAplicarDimensiones" class="btn btn-sm btn-warning mt-2 w-100">
+                    <button id="btnAplicarDimensiones" class="btn btn-sm btn-warning mt-2 w-100" data-bs-toggle="tooltip" data-bs-title="Aplicar cambios de tamaño y número de carriles (elimina vehículos)">
                       📏 Aplicar Dimensiones
                     </button>
 
@@ -272,7 +272,7 @@
                     </div>
                   </div>
 
-                  <button id="btnAplicarPosicion" class="btn btn-sm btn-success mt-2 w-100">
+                  <button id="btnAplicarPosicion" class="btn btn-sm btn-success mt-2 w-100" data-bs-toggle="tooltip" data-bs-title="Aplicar la posición (X, Y) y ángulo de rotación ingresados manualmente">
                     ✓ Aplicar Posición
                   </button>
 
@@ -290,10 +290,10 @@
               <div class="mt-3 border-top pt-3">
                 <h6>🌊 Modo Curva</h6>
                 <div class="d-flex gap-2">
-                  <button id="btnToggleCurva" class="btn btn-outline-info flex-fill" disabled>
+                  <button id="btnToggleCurva" class="btn btn-outline-info flex-fill" disabled data-bs-toggle="tooltip" data-bs-title="Activar modo curva para arrastrar vértices y crear curvaturas en la calle">
                     🌊 Activar Curvas
                   </button>
-                  <button id="btnResetVertices" class="btn btn-outline-secondary flex-fill" disabled>
+                  <button id="btnResetVertices" class="btn btn-outline-secondary flex-fill" disabled data-bs-toggle="tooltip" data-bs-title="Restaurar todos los vértices a su posición original (calle recta)">
                     🔄 Resetear
                   </button>
                 </div>
@@ -312,16 +312,16 @@
 
             <!-- Botones de agregar -->
             <div class="d-grid gap-2 mb-3">
-              <button id="btnAgregarCalle" class="btn btn-outline-primary btn-sm">
+              <button id="btnAgregarCalle" class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-title="Abrir formulario para crear una nueva calle en el mapa">
                 ➕ Agregar Calle
               </button>
-              <button id="btnAgregarEdificio" class="btn btn-outline-success btn-sm">
+              <button id="btnAgregarEdificio" class="btn btn-outline-success btn-sm" data-bs-toggle="tooltip" data-bs-title="Abrir formulario para crear un nuevo edificio en el mapa">
                 🏢 Agregar Edificio
               </button>
-              <button id="btnAgregarConexion" class="btn btn-outline-secondary btn-sm">
+              <button id="btnAgregarConexion" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-title="Crear una conexión entre dos calles para flujo de tráfico">
                 🔗 Agregar Conexión
               </button>
-              <button id="btnEliminarObjeto" class="btn btn-outline-danger btn-sm">
+              <button id="btnEliminarObjeto" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-title="Eliminar permanentemente la calle o edificio seleccionado">
                 🗑️ Eliminar Objeto Seleccionado
               </button>
             </div>
@@ -331,7 +331,7 @@
             <h6 class="mb-3">🔗 Gestión de Conexiones</h6>
 
             <!-- Botón para mostrar lista de conexiones -->
-            <button id="btnMostrarListaConexiones" class="btn btn-outline-info w-100 mb-2">
+            <button id="btnMostrarListaConexiones" class="btn btn-outline-info w-100 mb-2" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar lista de todas las conexiones entre calles creadas">
               📋 Ver Conexiones Existentes
             </button>
 
@@ -394,13 +394,13 @@
 
             <h6 class="mb-3">💾 Exportar Métricas</h6>
             <div class="d-grid gap-2">
-              <button id="btnDescargarCSV" class="btn btn-success btn-sm">
+              <button id="btnDescargarCSV" class="btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-title="Exportar todas las métricas recolectadas en formato CSV">
                 Descargar CSV
               </button>
-              <button id="btnDescargarJSON" class="btn btn-info btn-sm">
+              <button id="btnDescargarJSON" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Exportar todas las métricas recolectadas en formato JSON">
                 Descargar JSON
               </button>
-              <button id="btnLimpiarMetricas" class="btn btn-danger btn-sm">
+              <button id="btnLimpiarMetricas" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-title="Borrar todos los datos de métricas recolectados y reiniciar gráficas">
                 Limpiar Métricas
               </button>
             </div>
@@ -616,8 +616,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" id="btnConfirmarNuevaCalle">✓ Crear Calle</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="tooltip" data-bs-title="Cerrar sin crear la calle">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btnConfirmarNuevaCalle" data-bs-toggle="tooltip" data-bs-title="Crear la calle con los parámetros ingresados">✓ Crear Calle</button>
         </div>
       </div>
     </div>
@@ -662,8 +662,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-success" id="btnConfirmarNuevoEdificio">✓ Crear Edificio</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="tooltip" data-bs-title="Cerrar sin crear el edificio">Cancelar</button>
+          <button type="button" class="btn btn-success" id="btnConfirmarNuevoEdificio" data-bs-toggle="tooltip" data-bs-title="Crear el edificio con los parámetros ingresados">✓ Crear Edificio</button>
         </div>
       </div>
     </div>
@@ -728,8 +728,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" id="btnConfirmarNuevaConexion">✓ Crear Conexión</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="tooltip" data-bs-title="Cerrar sin crear la conexión">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btnConfirmarNuevaConexion" data-bs-toggle="tooltip" data-bs-title="Crear la conexión entre las calles con los parámetros ingresados">✓ Crear Conexión</button>
         </div>
       </div>
     </div>
@@ -786,8 +786,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-warning" id="btnConfirmarEditarConexion">✓ Guardar Cambios</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="tooltip" data-bs-title="Cerrar sin guardar los cambios">Cancelar</button>
+          <button type="button" class="btn btn-warning" id="btnConfirmarEditarConexion" data-bs-toggle="tooltip" data-bs-title="Guardar los cambios realizados en la conexión">✓ Guardar Cambios</button>
         </div>
       </div>
     </div>
@@ -806,13 +806,13 @@
       <!-- Control Bar -->
       <div id="canvasControlBar">
         <div id="controlBar" class="d-flex align-items-center">
-          <button id="btnConexiones" class="btn btn-info">Mostrar Conexiones</button>
-          <button id="btnPauseResume" class="btn btn-secondary me-2">⏸</button>
-          <button id="btnPaso" class="btn btn-success me-2" disabled>⏭</button>
-          <button id="btnIntersecciones" class="btn btn-info me-2">Intersecciones</button>
-          <button id="btnEtiquetas" class="btn btn-info me-2">🏷️ Ocultar Etiquetas</button>
-          <button id="btnBorrar" class="btn btn-danger me-2">🗑️</button>
-          <button id="btnRandom" class="btn btn-warning me-3">Aleatorio</button>
+          <button id="btnConexiones" class="btn btn-info" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las conexiones entre calles en el canvas">Mostrar Conexiones</button>
+          <button id="btnPauseResume" class="btn btn-secondary me-2" data-bs-toggle="tooltip" data-bs-title="Pausar o reanudar la simulación de tráfico">⏸</button>
+          <button id="btnPaso" class="btn btn-success me-2" disabled data-bs-toggle="tooltip" data-bs-title="Avanzar un paso de la simulación (solo disponible cuando está en pausa)">⏭</button>
+          <button id="btnIntersecciones" class="btn btn-info me-2" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los puntos de intersección entre calles">Intersecciones</button>
+          <button id="btnEtiquetas" class="btn btn-info me-2" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las etiquetas con nombres de calles y edificios">🏷️ Ocultar Etiquetas</button>
+          <button id="btnBorrar" class="btn btn-danger me-2" data-bs-toggle="tooltip" data-bs-title="Borrar todos los vehículos de todas las calles">🗑️</button>
+          <button id="btnRandom" class="btn btn-warning me-3" data-bs-toggle="tooltip" data-bs-title="Llenar las calles con vehículos aleatorios">Aleatorio</button>
           <label for="velocidadSlider" class="form-label me-2 mb-0">Velocidad:</label>
           <input type="range" class="form-range me-2" id="velocidadSlider" min="1" max="100" step="1" style="width: 100px;">
           <span id="velocidadValor" class="badge bg-primary">10</span>
@@ -911,5 +911,24 @@
   <script src="constructor.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Inicializar tooltips de Bootstrap 5 -->
+  <script>
+    // Inicializar todos los tooltips cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      // Obtener todos los elementos con data-bs-toggle="tooltip"
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+
+      // Inicializar cada tooltip
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+          trigger: 'hover focus', // Mostrar al pasar el mouse o enfocar
+          delay: { show: 300, hide: 100 } // Pequeño delay para evitar tooltips molestos
+        });
+      });
+
+      console.log(`✓ ${tooltipList.length} tooltips inicializados correctamente`);
+    });
+  </script>
 </body>
 </html>

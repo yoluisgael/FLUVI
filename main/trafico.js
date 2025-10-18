@@ -199,8 +199,8 @@ const edificios = [
     { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 282, label: "ESTACIONAMIENTO CIC" },
     
     // CFIE
-    { x: 1643, y: 1592, width: 140, height: 100, color: "#0047a3ff", angle: 12, label: "CFIE" },
-// Edificios pequeños E
+    { x: 1643, y: 1592, width: 140, height: 100, color: "#0047a3ff", angle: 12, label: "C.F.I.E" },
+    // Edificios pequeños E
     { x: 2029, y: 1774, width: 35, height: 30, color: "#29293aff", angle: 17, label: "E" },
     { x: 1688, y: 463, width: 35, height: 30, color: "#29293aff", angle: 157, label: "E" },
     { x: 1591, y: 517, width: 35, height: 30, color: "#29293aff", angle: 149, label: "E" },
@@ -217,7 +217,7 @@ const edificios = [
     { x: 2018, y: 1107, width: 250, height: 80, color: "#164916ff", angle: 280, label: "ESTADIO AMERICANO" },
     
     // Alberca
-    { x: 2136, y: 1497, width: 80, height: 70, color: "#4169E1", angle: 100, label: "Alberca" },
+    { x: 2133, y: 1474, width: 100, height: 200, color: "#4169E1", angle: 10, label: "ALBERCA" },
     
     // Gimnasio
     { x: 1891, y: 1617, width: 70, height: 50, color: "#8b4513", angle: 282, label: "Gimnasio" },
