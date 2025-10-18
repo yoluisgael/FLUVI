@@ -210,17 +210,8 @@ const edificios = [
     // ESTACIONAMIENTO CIC
     { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 282, label: "ESTACIONAMIENTO CIC" },
     
-<<<<<<< Updated upstream
-    // CFIE
-    { x: 1643, y: 1592, width: 140, height: 100, color: "#0047a3ff", angle: 12, label: "CFIE" },
-    // Edificios pequeños E
-    { x: 2029, y: 1774, width: 35, height: 30, color: "#29293aff", angle: 17, label: "E" },
-    { x: 1688, y: 463, width: 35, height: 30, color: "#29293aff", angle: 157, label: "E" },
-    { x: 1591, y: 517, width: 35, height: 30, color: "#29293aff", angle: 149, label: "E" },
-=======
 
     { x: 1513, y: 915, width: 100, height: 60, color: "#0047a3ff", angle: 12, label: "ESTABLO DE BURROS" },
->>>>>>> Stashed changes
     
     { x: 1375, y: 946, width: 180, height: 80, color: "#164916ff", angle: 282, label: "CAMPO ESCOM" },
 
