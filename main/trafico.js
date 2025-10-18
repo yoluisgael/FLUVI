@@ -143,6 +143,14 @@ let isDragging = false, startX, startY;
 let hasDragged = false;
 let lastTouchX, lastTouchY;
 let calleSeleccionada = null; // Variable para almacenar la calle seleccionada
+
+// Variables para arrastre de calles con SHIFT
+let isDraggingStreet = false;
+let draggedStreet = null;
+let dragStreetStartX = 0;
+let dragStreetStartY = 0;
+let dragStreetInitialX = 0;
+let dragStreetInitialY = 0;
 let probabilidadGeneracionGeneral = 0.5;
 
 // Variables globales expuestas para el editor
@@ -2537,6 +2545,24 @@ canvas.addEventListener("mousedown", event => {
     const worldX = (scaledMouseX - offsetX) / escala;
     const worldY = (scaledMouseY - offsetY) / escala;
 
+    // NUEVO: Detectar SHIFT + clic para arrastrar calle en modo edición
+    if (event.shiftKey && window.editorCalles && window.editorCalles.modoEdicion) {
+        const resultadoCalle = encontrarCalleEnPunto(worldX, worldY);
+
+        if (resultadoCalle && resultadoCalle.calle) {
+            event.preventDefault();
+            isDraggingStreet = true;
+            draggedStreet = resultadoCalle.calle;
+            dragStreetStartX = event.clientX;
+            dragStreetStartY = event.clientY;
+            dragStreetInitialX = draggedStreet.x;
+            dragStreetInitialY = draggedStreet.y;
+            canvas.style.cursor = 'move';
+            console.log('🚀 Iniciando arrastre de calle:', draggedStreet.nombre);
+            return;
+        }
+    }
+
     // Intentar detectar vértice primero
     const verticeDetectado = detectarVerticeEnPosicion(worldX, worldY);
 
@@ -2560,8 +2586,8 @@ canvas.addEventListener("mousedown", event => {
 });
 
 canvas.addEventListener('click', (event) => {
-    // Evitar comportamiento si se está arrastrando o controlando vértice
-    if (hasDragged || controlandoVertice) return;
+    // Evitar comportamiento si se está arrastrando o controlando vértice o arrastrando calle
+    if (hasDragged || controlandoVertice || isDraggingStreet) return;
 
     const rect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
@@ -2684,18 +2710,42 @@ canvas.addEventListener("mousemove", event => {
     const worldX = (scaledMouseX - offsetX) / escala;
     const worldY = (scaledMouseY - offsetY) / escala;
 
-    // Detectar si el mouse está sobre un edificio para mostrar tooltip
+    // Detectar si el mouse está sobre un edificio o calle para mostrar tooltip
     const resultadoEdificio = encontrarEdificioEnPunto(worldX, worldY);
+    const resultadoCalle = encontrarCalleEnPunto(worldX, worldY);
+
     if (resultadoEdificio && resultadoEdificio.edificio.label) {
         canvas.title = resultadoEdificio.edificio.label;
+    } else if (resultadoCalle && resultadoCalle.calle.nombre) {
+        canvas.title = resultadoCalle.calle.nombre;
     } else {
         canvas.title = "";
     }
 
-    // Cambiar cursor si se presiona Ctrl/Cmd
+    // NUEVO: Si estamos arrastrando una calle con SHIFT
+    if (isDraggingStreet && draggedStreet) {
+        const deltaX = (event.clientX - dragStreetStartX) / escala;
+        const deltaY = (event.clientY - dragStreetStartY) / escala;
+
+        draggedStreet.x = dragStreetInitialX + deltaX;
+        draggedStreet.y = dragStreetInitialY + deltaY;
+
+        // Actualizar inputs de posición si el editor está disponible
+        if (window.editorCalles) {
+            window.editorCalles.actualizarInputsPosicion();
+            window.editorCalles.actualizarPosicionHandles();
+        }
+
+        renderizarCanvas();
+        return;
+    }
+
+    // Cambiar cursor si se presiona Ctrl/Cmd o SHIFT
     if (event.ctrlKey || event.metaKey) {
-        const resultadoCalle = encontrarCalleEnPunto(worldX, worldY);
         canvas.style.cursor = (resultadoEdificio || resultadoCalle) ? 'pointer' : 'default';
+    } else if (event.shiftKey && window.editorCalles && window.editorCalles.modoEdicion) {
+        // Mostrar cursor de movimiento si SHIFT está presionado en modo edición
+        canvas.style.cursor = resultadoCalle ? 'move' : 'default';
     } else {
         canvas.style.cursor = isDragging ? 'grabbing' : 'grab';
     }
@@ -2729,6 +2779,26 @@ canvas.addEventListener("mousemove", event => {
 });
 
 canvas.addEventListener("mouseup", () => {
+    // NUEVO: Finalizar arrastre de calle con SHIFT
+    if (isDraggingStreet && draggedStreet) {
+        console.log('✅ Arrastre de calle finalizado:', draggedStreet.nombre,
+                    `Nueva posición: (${Math.round(draggedStreet.x)}, ${Math.round(draggedStreet.y)})`);
+
+        // Recalcular intersecciones después de mover la calle
+        if (window.inicializarIntersecciones) {
+            window.inicializarIntersecciones();
+        }
+        if (window.construirMapaIntersecciones) {
+            window.construirMapaIntersecciones();
+        }
+
+        isDraggingStreet = false;
+        draggedStreet = null;
+        canvas.style.cursor = 'grab';
+        renderizarCanvas();
+        return;
+    }
+
     isDragging = false;
     controlandoVertice = false;
     verticeSeleccionado = null;
@@ -2736,6 +2806,13 @@ canvas.addEventListener("mouseup", () => {
 });
 
 canvas.addEventListener("mouseleave", () => {
+    // NUEVO: Cancelar arrastre de calle si el mouse sale del canvas
+    if (isDraggingStreet && draggedStreet) {
+        isDraggingStreet = false;
+        draggedStreet = null;
+        canvas.style.cursor = 'grab';
+    }
+
     isDragging = false;
     controlandoVertice = false;
     verticeSeleccionado = null;
