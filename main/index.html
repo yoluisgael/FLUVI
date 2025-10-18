@@ -6,8 +6,8 @@
   <title>Simulador de Calles Dinámicas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="stylesheet" href="estilos.css">
-  <link rel="stylesheet" href="minimapa.css">
+  <link rel="stylesheet" href="src/css/estilos.css">
+  <link rel="stylesheet" href="src/css/minimapa.css">
 </head>
 
 <body>
@@ -74,9 +74,9 @@
     </div>
   </div>
 
-  <!-- Toggle button for mobile -->
-  <button class="sidebar-toggle" id="sidebarToggle" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Mostrar/Ocultar panel de control">
-    <span id="toggleIcon">📊</span>
+  <!-- Botón flotante para mostrar sidebar (visible solo cuando sidebar está oculto) -->
+  <button class="sidebar-toggle-float" id="sidebarToggleFloat" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Mostrar panel de control" style="display: none;">
+    <span>☰</span>
   </button>
 
   <!-- Handles de edición (se posicionan dinámicamente) -->
@@ -85,6 +85,11 @@
 
   <!-- Sidebar Panel -->
   <div class="sidebar" id="sidebar">
+    <!-- Toggle button dentro del panel (esquina superior derecha) -->
+    <button class="sidebar-toggle-inner" id="sidebarToggle" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Ocultar panel de control">
+      <span id="toggleIcon">✕</span>
+    </button>
+
     <h4>Panel de Control</h4>
 
     <!-- Indicador de modo edición -->
@@ -131,8 +136,16 @@
               </label>
             </div>
 
+            <!-- Switch Logs de Consola -->
+            <div class="form-check form-switch mt-3">
+              <input class="form-check-input" type="checkbox" id="switchConsoleLogs">
+              <label class="form-check-label" for="switchConsoleLogs">
+                <span id="labelConsoleLogs">📝 Mostrar Logs en Consola</span>
+              </label>
+            </div>
+
             <div class="alert alert-info p-2 small mt-3 mb-0">
-              <strong>💡 Consejo:</strong> El modo oscuro es ideal para trabajar en ambientes con poca luz y reduce la fatiga visual.
+              <strong>💡 Consejo:</strong> El modo oscuro es ideal para trabajar en ambientes con poca luz. Desactiva los logs de consola para mejorar el rendimiento en producción.
             </div>
           </div>
         </div>
@@ -334,7 +347,7 @@
               <div class="mt-3 border-top pt-3">
                 <h6>🌊 Modo Curva</h6>
                 <small class="text-muted d-block mt-2">
-                  💡 <strong>Haz clic en un vértice</strong> y arrástralo perpendicular a la calle para curvarlo (máx ±45°)
+                  💡 <strong>Haz clic en un vértice</strong> y arrástralo perpendicular a la calle para curvarlo (máx ±30°)
                 </small>
                 <small class="text-muted d-block mt-1">
                   🎯 Aparecerá una guía visual azul mostrando la dirección de arrastre
@@ -1366,11 +1379,11 @@
   </script>
 
   <!-- Scripts modulares del simulador -->
-  <script src="curvas.js"></script>
-  <script src="etiquetas.js"></script>
-  <script src="trafico.js"></script>
-  <script src="editor.js"></script>
-  <script src="constructor.js"></script>
+  <script src="src/js/core/curvas.js"></script>
+  <script src="src/js/ui/etiquetas.js"></script>
+  <script src="src/js/core/trafico.js"></script>
+  <script src="src/js/ui/editor.js"></script>
+  <script src="src/js/ui/constructor.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -1390,6 +1403,210 @@
       });
 
       console.log(`✓ ${tooltipList.length} tooltips inicializados correctamente`);
+    });
+  </script>
+
+  <!-- Fix para warning de aria-hidden en modales -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Obtener todos los modales
+      const modals = document.querySelectorAll('.modal');
+
+      modals.forEach(modal => {
+        // Antes de que el modal se oculte, remover el foco de cualquier elemento dentro del modal
+        modal.addEventListener('hide.bs.modal', function(event) {
+          // Buscar el elemento que tiene el foco dentro del modal
+          const focusedElement = modal.querySelector(':focus');
+
+          if (focusedElement) {
+            // Remover el foco del elemento
+            focusedElement.blur();
+          }
+        });
+
+        // Opcional: Cuando el modal se muestre, enfocar el botón de cerrar o el primer input
+        modal.addEventListener('shown.bs.modal', function(event) {
+          // Buscar el primer input o textarea que no esté deshabilitado
+          const firstInput = modal.querySelector('input:not([disabled]):not([readonly]), textarea:not([disabled]):not([readonly])');
+
+          if (firstInput) {
+            // Pequeño delay para asegurar que el modal esté completamente renderizado
+            setTimeout(() => firstInput.focus(), 100);
+          }
+        });
+      });
+
+      console.log(`✓ ${modals.length} modales configurados para evitar warning de aria-hidden`);
+    });
+  </script>
+
+  <!-- Sistema de Control de Logs de Consola -->
+  <script>
+    // Guardar referencias originales de los métodos de console
+    const originalConsole = {
+      log: console.log,
+      warn: console.warn,
+      error: console.error,
+      info: console.info,
+      debug: console.debug,
+      trace: console.trace,
+      table: console.table,
+      group: console.group,
+      groupEnd: console.groupEnd,
+      groupCollapsed: console.groupCollapsed
+    };
+
+    // Función para deshabilitar logs de consola
+    function disableConsoleLogs() {
+      console.log = function() {};
+      console.warn = function() {};
+      console.error = function() {};
+      console.info = function() {};
+      console.debug = function() {};
+      console.trace = function() {};
+      console.table = function() {};
+      console.group = function() {};
+      console.groupEnd = function() {};
+      console.groupCollapsed = function() {};
+    }
+
+    // Función para habilitar logs de consola
+    function enableConsoleLogs() {
+      console.log = originalConsole.log;
+      console.warn = originalConsole.warn;
+      console.error = originalConsole.error;
+      console.info = originalConsole.info;
+      console.debug = originalConsole.debug;
+      console.trace = originalConsole.trace;
+      console.table = originalConsole.table;
+      console.group = originalConsole.group;
+      console.groupEnd = originalConsole.groupEnd;
+      console.groupCollapsed = originalConsole.groupCollapsed;
+    }
+
+    // Inicializar: Por defecto los logs están DESHABILITADOS
+    const consoleLogsEnabled = localStorage.getItem('consoleLogsEnabled') === 'true';
+    if (!consoleLogsEnabled) {
+      disableConsoleLogs();
+    }
+
+    // Configurar el switch cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      const switchConsoleLogs = document.getElementById('switchConsoleLogs');
+      const labelConsoleLogs = document.getElementById('labelConsoleLogs');
+
+      // Establecer estado inicial del switch
+      switchConsoleLogs.checked = consoleLogsEnabled;
+
+      // Actualizar label según el estado
+      function updateLabel(enabled) {
+        if (enabled) {
+          labelConsoleLogs.innerHTML = '📝 Mostrar Logs en Consola';
+          labelConsoleLogs.style.color = '#28a745';
+        } else {
+          labelConsoleLogs.innerHTML = '🚫 Ocultar Logs en Consola';
+          labelConsoleLogs.style.color = '#6c757d';
+        }
+      }
+
+      updateLabel(consoleLogsEnabled);
+
+      // Event listener para el switch
+      switchConsoleLogs.addEventListener('change', function() {
+        const enabled = this.checked;
+        localStorage.setItem('consoleLogsEnabled', enabled);
+
+        if (enabled) {
+          enableConsoleLogs();
+          console.log('✅ Logs de consola HABILITADOS');
+        } else {
+          console.log('🚫 Logs de consola DESHABILITADOS');
+          disableConsoleLogs();
+        }
+
+        updateLabel(enabled);
+      });
+    });
+  </script>
+
+  <!-- Sistema de toggle para sidebar responsive -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.querySelector('.main-content');
+      const toggleBtnInner = document.getElementById('sidebarToggle');
+      const toggleBtnFloat = document.getElementById('sidebarToggleFloat');
+      const toggleIcon = document.getElementById('toggleIcon');
+
+      // Estado del sidebar (inicialmente visible)
+      let sidebarVisible = true;
+
+      // Cargar estado del sidebar desde localStorage
+      const savedState = localStorage.getItem('sidebarVisible');
+      if (savedState !== null) {
+        sidebarVisible = savedState === 'true';
+        applySidebarState(false); // Aplicar sin animación inicial
+      }
+
+      // Función para aplicar el estado del sidebar
+      function applySidebarState(animate = true) {
+        if (sidebarVisible) {
+          // Mostrar sidebar
+          sidebar.classList.remove('hidden');
+          mainContent.classList.remove('expanded');
+          document.body.classList.remove('sidebar-collapsed');
+
+          // Mostrar botón interno, ocultar botón flotante
+          toggleBtnInner.style.display = 'flex';
+          toggleBtnFloat.style.display = 'none';
+
+          toggleIcon.textContent = '✕';
+        } else {
+          // Ocultar sidebar
+          sidebar.classList.add('hidden');
+          mainContent.classList.add('expanded');
+          document.body.classList.add('sidebar-collapsed');
+
+          // Ocultar botón interno, mostrar botón flotante
+          setTimeout(() => {
+            toggleBtnInner.style.display = 'none';
+            toggleBtnFloat.style.display = 'flex';
+          }, animate ? 400 : 0); // Esperar a que termine la animación
+        }
+
+        // Guardar estado en localStorage
+        localStorage.setItem('sidebarVisible', sidebarVisible);
+
+        // Renderizar canvas después de la transición
+        if (animate) {
+          setTimeout(() => {
+            if (window.renderizarCanvas) {
+              window.renderizarCanvas();
+            }
+          }, 400);
+        }
+      }
+
+      // Función para toggle del sidebar
+      function toggleSidebar() {
+        sidebarVisible = !sidebarVisible;
+        applySidebarState(true);
+        console.log(`📊 Panel de control ${sidebarVisible ? 'mostrado' : 'ocultado'}`);
+      }
+
+      // Event listeners para ambos botones
+      toggleBtnInner.addEventListener('click', toggleSidebar);
+      toggleBtnFloat.addEventListener('click', toggleSidebar);
+
+      // Atajo de teclado: Ctrl + B para toggle
+      document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'b') {
+          e.preventDefault();
+          toggleSidebar();
+        }
+      });
+
+      console.log('✓ Sistema de toggle del sidebar inicializado (Ctrl+B para toggle)');
     });
   </script>
 </body>

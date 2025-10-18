@@ -171,7 +171,7 @@ window.modoSeleccion = "configuracion"; // Para diferenciar entre "configuracion
 const carroImgs = [];
 for (let i = 1; i <= 6; i++) {
     const img = new Image();
-    img.src = i === 1 ? "carro.png" : `carro${i}.png`;
+    img.src = i === 1 ? "assets/images/vehicles/carro.png" : `assets/images/vehicles/carro${i}.png`;
     carroImgs.push(img);
 }
 
@@ -189,15 +189,15 @@ const carroImg = carroImgs[0];
 
 // Cargar la imagen del carretera
 const carreteraImg = new Image();
-carreteraImg.src = "carretera.png";
+carreteraImg.src = "assets/images/roads/carretera.png";
 
 // Cargar la imagen del cono
 const conoImg = new Image();
-conoImg.src = "cono.png";
+conoImg.src = "assets/images/objects/cono.png";
 
 // Cargar la imagen de ESCOM
 const escomImg = new Image();
-escomImg.src = "ESCOM.png";
+escomImg.src = "assets/images/buildings/ESCOM.png";
 
 // ========== LISTA DE EDIFICIOS COMPLETA (DESDE TRAFICO.TXT) ==========
 const edificios = [
