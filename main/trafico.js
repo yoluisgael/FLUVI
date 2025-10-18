@@ -251,7 +251,7 @@ const edificios = [
     { x: 1756, y: 466, width: 35, height: 30, color: "#29293aff", angle: 335, label: "SAD-IPN" },
     { x: 1734, y: 600, width: 40, height: 35, color: "#8b7355", angle: 335, label: "DIRECCIÓN GENERAL" },
     { x: 1819, y: 810, width: 40, height: 35, color: "#8b7355", angle: 7, label: "SIIS-IPN" },
-    { x: 1303, y: 720, width: 40, height: 35, color: "#8b7355", angle: 9, label: "EDIFICIO INTELIGENTE" },
+    { x: 1444, y: 746, width: 40, height: 35, color: "#8b7355", angle: 9, label: "EDIFICIO INTELIGENTE" },
     { x: 1623, y: 760, width: 40, height: 35, color: "#8b7355", angle: 335, label: "SECADEMICA-IPN" },
     
 
