@@ -423,6 +423,7 @@ class ConexionCA {
                 const seTransfiere = Math.random() < this.probabilidadTransferencia;
 
                 if (!seTransfiere) {
+                    console.log(`🎲 CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] NO se transfiere (probabilidad ${this.probabilidadTransferencia})`);
                     return false;
                 }
             }
@@ -431,14 +432,17 @@ class ConexionCA {
             if (this.destino.arreglo[this.carrilDestino][this.posDestino] > 0) {
                 this.bloqueada = true;
                 this.origen.celulasEsperando[this.carrilOrigen][posOrig] = true;
+                console.log(`🔴 CONEXIÓN BLOQUEADA: [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}] - Destino ocupado`);
                 return false;
             } else {
                 if (!this.origen.celulasEsperando[this.carrilOrigen][posOrig]) {
                     // Transferir el tipo de vehículo
                     this.destino.arreglo[this.carrilDestino][this.posDestino] = vehiculoOrigen;
                     this.origen.arreglo[this.carrilOrigen][posOrig] = 0;
+                    console.log(`✅ CONEXIÓN EXITOSA: Vehículo tipo ${vehiculoOrigen} de [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}]`);
                     return true;
                 } else {
+                    console.log(`⏸️ CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] está esperando`);
                     return false;
                 }
             }
@@ -688,13 +692,23 @@ function checarIntersecciones() {
 
         if (estadoActualI1 > 0 && estadoActualI2 > 0) {
             let vehiculoPerdedor;
+            let calleGanadora, carrilesGanador, indiceGanador, vehiculoGanador;
+
             if (prioridadPar) {
                 callePerdedora = calle2; carrilPerdedor = carril2; indicePerdedor = indice2;
                 vehiculoPerdedor = estadoActualI2;
+                calleGanadora = calle1; carrilesGanador = carril1; indiceGanador = indice1;
+                vehiculoGanador = estadoActualI1;
             } else {
                 callePerdedora = calle1; carrilPerdedor = carril1; indicePerdedor = indice1;
                 vehiculoPerdedor = estadoActualI1;
+                calleGanadora = calle2; carrilesGanador = carril2; indiceGanador = indice2;
+                vehiculoGanador = estadoActualI2;
             }
+
+            console.log(`⚠️ INTERSECCIÓN: Colisión detectada!`);
+            console.log(`   🏆 Ganador: [${calleGanadora.nombre}][Carril ${carrilesGanador}, Pos ${indiceGanador}] Vehículo tipo ${vehiculoGanador}`);
+            console.log(`   ⏮️ Perdedor: [${callePerdedora.nombre}][Carril ${carrilPerdedor}, Pos ${indicePerdedor}] Vehículo tipo ${vehiculoPerdedor} retrocede`);
 
             callePerdedora.arreglo[carrilPerdedor][indicePerdedor] = 0;
 
@@ -780,21 +794,36 @@ function actualizarCalle(calle, calleIndex) {
         if (calle.tamano <= 1) continue;
 
         for (let i = 0; i < calle.tamano; i++) {
-            // ✅ CRÍTICO: Si la celda está esperando, NO procesarla
+            // Si la celda está esperando, NO procesarla
             if (calle.celulasEsperando[c][i]) {
                 nuevaCalle[c][i] = calle.arreglo[c][i];
-                continue;
-            }
-            
-            // Si tiene conexión de salida, no mover
-            if (tieneConexionSalida(calle, c, i) && calle.arreglo[c][i] > 0) {
-                nuevaCalle[c][i] = calle.arreglo[c][i];
+                if (calle.arreglo[c][i] > 0) {
+                    console.log(`⏸️ CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} está esperando (celda bloqueada)`);
+                }
                 continue;
             }
 
-            const izq = i > 0 ? calle.arreglo[c][i - 1] : 0;
+            // Si tiene conexión de salida, no mover
+            if (tieneConexionSalida(calle, c, i) && calle.arreglo[c][i] > 0) {
+                nuevaCalle[c][i] = calle.arreglo[c][i];
+                console.log(`🔗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} esperando en conexión de salida`);
+                continue;
+            }
+
+            // Obtener valores de celdas vecinas
+            let izq = i > 0 ? calle.arreglo[c][i - 1] : 0;
             const centro = calle.arreglo[c][i];
-            const der = i < calle.tamano - 1 ? calle.arreglo[c][i + 1] : 0;
+            let der = i < calle.tamano - 1 ? calle.arreglo[c][i + 1] : 0;
+
+            // IMPORTANTE: Si la celda izquierda está esperando, tratarla como vacía
+            // para evitar que se "copie" el vehículo a la celda actual
+            if (i > 0 && calle.celulasEsperando[c][i - 1]) {
+                izq = 0;
+            }
+
+            // IMPORTANTE: Si la celda derecha está esperando, tratarla como ocupada
+            // para evitar que el vehículo actual intente moverse ahí
+            // (esto ya se maneja implícitamente, pero lo hacemos explícito)
 
             const idCeldaActual = `${calleIndex}-${c}-${i}`;
             const infoIntersec = mapaIntersecciones.get(idCeldaActual);
@@ -807,7 +836,27 @@ function actualizarCalle(calle, calleIndex) {
             const resultadoRegla = reglas[patron];
 
             if (resultadoRegla !== undefined) {
-                nuevaCalle[c][i] = resultadoRegla;
+                // ✅ PRESERVAR TIPO DE VEHÍCULO
+                // Si la regla dice que debe haber un vehículo (>0), usar el tipo original
+                if (resultadoRegla > 0 && centro > 0) {
+                    nuevaCalle[c][i] = centro; // Mantener el tipo original
+
+                    // Log solo si el vehículo se movió (cambió de posición)
+                    if (izq > 0 && resultadoRegla > 0) {
+                        console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} avanza desde pos ${i-1}`);
+                    }
+                } else {
+                    nuevaCalle[c][i] = resultadoRegla;
+
+                    // Log cuando una celda cambia de estado
+                    if (centro !== resultadoRegla) {
+                        if (resultadoRegla === 0 && centro > 0) {
+                            console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} sale de la celda`);
+                        } else if (resultadoRegla > 0 && centro === 0) {
+                            console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo llega a celda vacía`);
+                        }
+                    }
+                }
             } else {
                 nuevaCalle[c][i] = centro;
             }
@@ -816,13 +865,17 @@ function actualizarCalle(calle, calleIndex) {
 
     calle.arreglo = nuevaCalle;
     
-    // ✅ CRÍTICO: Limpiar flags de espera DESPUÉS de actualizar
+    // Limpiar flags de espera
     for (let c = 0; c < calle.carriles; c++) {
         calle.celulasEsperando[c].fill(false);
     }
 
     if (calle.tipo === TIPOS.DEVORADOR) {
         for (let c = 0; c < calle.carriles; c++) {
+            const vehiculoEliminado = calle.arreglo[c][calle.tamano - 1];
+            if (vehiculoEliminado > 0) {
+                console.log(`🗑️ CA: [${calle.nombre}][Carril ${c}, Pos ${calle.tamano - 1}] DEVORADOR elimina vehículo tipo ${vehiculoEliminado}`);
+            }
             calle.arreglo[c][calle.tamano - 1] = 0;
         }
     }
@@ -832,50 +885,75 @@ function cambioCarril(calle) {
     if (calle.carriles <= 1 || calle.probabilidadSaltoDeCarril <= 0) {
         return;
     }
-    
+
     const cambios = [];
-    const espaciosReservados = new Set();
-    
+    const espaciosReservados = new Set(); // Reserva GLOBAL para destinos (SOLO destinos)
+    const estadoOriginal = {}; // Backup del estado original
+
+    // ✅ FASE 0: Crear backup del estado original
+    for (let c = 0; c < calle.carriles; c++) {
+        estadoOriginal[c] = [...calle.arreglo[c]];
+    }
+
+    // ✅ FASE 1: Detectar y reservar cambios válidos DIAGONALES
+    // Cambio diagonal = carril diferente + avanzar 1 posición adelante
     for (let c = 0; c < calle.carriles; c++) {
         for (let i = 1; i < calle.tamano - 1; i++) {
             const vehiculo = calle.arreglo[c][i];
 
-            // Solo procesar si hay vehículo Y no está esperando
-            if (vehiculo > 0 && !calle.celulasEsperando[c][i]) {
+            // Solo procesar si hay vehículo válido (1-6) Y no está esperando
+            if (vehiculo >= 1 && vehiculo <= 6 && !calle.celulasEsperando[c][i]) {
                 if (Math.random() < calle.probabilidadSaltoDeCarril) {
                     const carrilesDisponibles = [];
 
-                    // Verificar carril superior (cambio vertical)
+                    // CAMBIO DIAGONAL SUPERIOR: carril-1, posición+1
                     if (c > 0) {
-                        const destinoSuperior = `${c - 1},${i}`;
-                        // Verificar que destino esté libre
-                        if (calle.arreglo[c - 1][i] === 0 &&
-                            !espaciosReservados.has(destinoSuperior) &&
-                            !calle.celulasEsperando[c - 1][i]) {
-                            carrilesDisponibles.push({carril: c - 1, key: destinoSuperior});
+                        const posDestino = i + 1;
+                        const claveDestino = `${c - 1},${posDestino}`;
+
+                        // Verificar que destino esté vacío Y no reservado
+                        // IMPORTANTE: verificar contra estadoOriginal para evitar conflictos
+                        if (posDestino < calle.tamano &&
+                            estadoOriginal[c - 1][posDestino] === 0 &&
+                            !espaciosReservados.has(claveDestino) &&
+                            !calle.celulasEsperando[c - 1][posDestino]) {
+                            carrilesDisponibles.push({
+                                carril: c - 1,
+                                posicion: posDestino,
+                                key: claveDestino
+                            });
                         }
                     }
 
-                    // Verificar carril inferior (cambio vertical)
+                    // CAMBIO DIAGONAL INFERIOR: carril+1, posición+1
                     if (c < calle.carriles - 1) {
-                        const destinoInferior = `${c + 1},${i}`;
-                        // Verificar que destino esté libre
-                        if (calle.arreglo[c + 1][i] === 0 &&
-                            !espaciosReservados.has(destinoInferior) &&
-                            !calle.celulasEsperando[c + 1][i]) {
-                            carrilesDisponibles.push({carril: c + 1, key: destinoInferior});
+                        const posDestino = i + 1;
+                        const claveDestino = `${c + 1},${posDestino}`;
+
+                        // Verificar que destino esté vacío Y no reservado
+                        // IMPORTANTE: verificar contra estadoOriginal para evitar conflictos
+                        if (posDestino < calle.tamano &&
+                            estadoOriginal[c + 1][posDestino] === 0 &&
+                            !espaciosReservados.has(claveDestino) &&
+                            !calle.celulasEsperando[c + 1][posDestino]) {
+                            carrilesDisponibles.push({
+                                carril: c + 1,
+                                posicion: posDestino,
+                                key: claveDestino
+                            });
                         }
                     }
 
+                    // Si hay carriles disponibles, elegir uno al azar
                     if (carrilesDisponibles.length > 0) {
                         const seleccion = carrilesDisponibles[Math.floor(Math.random() * carrilesDisponibles.length)];
 
-                        // Reservar el espacio
+                        // Reservar SOLO el destino (el origen se liberará automáticamente)
                         espaciosReservados.add(seleccion.key);
 
                         cambios.push({
                             desde: {carril: c, posicion: i},
-                            hacia: {carril: seleccion.carril, posicion: i},
+                            hacia: {carril: seleccion.carril, posicion: seleccion.posicion},
                             tipoVehiculo: vehiculo
                         });
                     }
@@ -884,41 +962,167 @@ function cambioCarril(calle) {
         }
     }
 
-    // CORRECCIÓN 5: Aplicar cambios en DOS FASES
-    // FASE 1: Primero limpiar todas las celdas de origen
-    cambios.forEach(cambio => {
+    // Si no hay cambios, salir
+    if (cambios.length === 0) {
+        return;
+    }
+
+    // ✅ FASE 2: Detectar y eliminar cambios cruzados en "X"
+    // Cambio cruzado = dos vehículos en carriles adyacentes que intentan intercambiar carriles
+    const cambiosFiltrados = [];
+    const cambiosEliminados = new Set(); // Índices de cambios que se deben eliminar
+
+    for (let i = 0; i < cambios.length; i++) {
+        if (cambiosEliminados.has(i)) continue; // Ya fue eliminado
+
+        const cambioA = cambios[i];
+        let esCruzado = false;
+
+        // Buscar si hay otro cambio que forme una X con este
+        for (let j = i + 1; j < cambios.length; j++) {
+            if (cambiosEliminados.has(j)) continue;
+
+            const cambioB = cambios[j];
+
+            // Detectar cruce en X:
+            // Dos vehículos se cruzan si:
+            // 1. Están en carriles adyacentes en el origen
+            // 2. Están en la misma posición horizontal en el origen
+            // 3. Intercambian posiciones diagonalmente (uno sube, otro baja)
+            // 4. Ambos avanzan a la misma columna destino
+            //
+            // Ejemplo de cruce prohibido:
+            // Antes: [carril2, pos1]=vehículo1  y  [carril3, pos1]=vehículo2
+            // Después: [carril1, pos2]=vehículo1  y  [carril2, pos2]=vehículo2
+            // (Se cruzan en el espacio entre pos1 y pos2)
+
+            const mismaColumnaOrigen = cambioA.desde.posicion === cambioB.desde.posicion;
+            const mismaColumnaDestino = cambioA.hacia.posicion === cambioB.hacia.posicion;
+            const carrilesAdyacentesOrigen = Math.abs(cambioA.desde.carril - cambioB.desde.carril) === 1;
+            const carrilesAdyacentesDestino = Math.abs(cambioA.hacia.carril - cambioB.hacia.carril) === 1;
+
+            // Verificar si hay cruce: ambos en carriles adyacentes, misma posición inicial,
+            // y se cruzan (uno sube mientras el otro baja)
+            const seCruzan =
+                (cambioA.desde.carril < cambioB.desde.carril && cambioA.hacia.carril > cambioB.hacia.carril) ||
+                (cambioA.desde.carril > cambioB.desde.carril && cambioA.hacia.carril < cambioB.hacia.carril);
+
+            if (mismaColumnaOrigen && mismaColumnaDestino && carrilesAdyacentesOrigen && carrilesAdyacentesDestino && seCruzan) {
+                // Cruce en X detectado
+                console.log(`🚫 Cruce en X detectado: [${cambioA.desde.carril},${cambioA.desde.posicion}]→[${cambioA.hacia.carril},${cambioA.hacia.posicion}] vs [${cambioB.desde.carril},${cambioB.desde.posicion}]→[${cambioB.hacia.carril},${cambioB.hacia.posicion}]`);
+                cambiosEliminados.add(i);
+                cambiosEliminados.add(j);
+                esCruzado = true;
+                break;
+            }
+        }
+
+        // Si no es cruzado, mantener el cambio
+        if (!esCruzado && !cambiosEliminados.has(i)) {
+            cambiosFiltrados.push(cambioA);
+        }
+    }
+
+    // Reemplazar lista de cambios con la filtrada
+    cambios.length = 0;
+    cambios.push(...cambiosFiltrados);
+
+    // Si después de filtrar no quedan cambios, salir
+    if (cambios.length === 0) {
+        return;
+    }
+
+    // ✅ FASE 3: Validar que TODOS los cambios son seguros
+    // IMPORTANTE: verificar contra el estado ORIGINAL para garantizar integridad
+    let todosLosDestinosLibres = true;
+    for (const cambio of cambios) {
+        const destinoEnEstadoOriginal = estadoOriginal[cambio.hacia.carril][cambio.hacia.posicion];
+        if (destinoEnEstadoOriginal !== 0) {
+            console.error(`❌ VALIDACIÓN FALLIDA: Destino [${cambio.hacia.carril},${cambio.hacia.posicion}] ocupado por tipo ${destinoEnEstadoOriginal} en estado original`);
+            todosLosDestinosLibres = false;
+            break;
+        }
+    }
+
+    // Si algún destino está ocupado, CANCELAR TODOS los cambios
+    if (!todosLosDestinosLibres) {
+        console.warn(`⚠️ CAMBIOS CANCELADOS: Colisión detectada en validación`);
+        return;
+    }
+
+    // ✅ FASE 4: Aplicar cambios de forma ATÓMICA
+    // Primero: Limpiar TODOS los orígenes
+    for (const cambio of cambios) {
         calle.arreglo[cambio.desde.carril][cambio.desde.posicion] = 0;
-    });
+    }
 
-    // FASE 2: Luego colocar vehículos en destino Y marcar celdas como esperando
-    cambios.forEach(cambio => {
-        // Colocar vehículo con su tipo original
+    // Segundo: Colocar TODOS los vehículos en destino con verificación
+    let colisionDetectada = false;
+    for (const cambio of cambios) {
+        // VERIFICACIÓN FINAL antes de escribir
+        if (calle.arreglo[cambio.hacia.carril][cambio.hacia.posicion] !== 0) {
+            console.error(`❌ COLISIÓN CRÍTICA: Tipo ${cambio.tipoVehiculo} intentó ocupar [${cambio.hacia.carril},${cambio.hacia.posicion}] pero está ocupado por tipo ${calle.arreglo[cambio.hacia.carril][cambio.hacia.posicion]}`);
+            colisionDetectada = true;
+            break;
+        }
+
+        // Colocar vehículo en destino
         calle.arreglo[cambio.hacia.carril][cambio.hacia.posicion] = cambio.tipoVehiculo;
+    }
 
-        // CRÍTICO: Marcar el destino como esperando
+    // Si hubo colisión, hacer ROLLBACK completo
+    if (colisionDetectada) {
+        console.error(`🔄 ROLLBACK: Restaurando estado original debido a colisión`);
+        for (let c = 0; c < calle.carriles; c++) {
+            calle.arreglo[c] = [...estadoOriginal[c]];
+        }
+        return; // Salir de la función completa
+    }
+
+    // ✅ FASE 5: Marcar celdas como esperando (solo si TODO fue exitoso)
+    // Para cambios DIAGONALES, solo necesitamos marcar el destino y su vecindad
+    // No necesitamos marcar todos los carriles porque el vehículo se mueve diagonal
+    for (const cambio of cambios) {
+        // Marcar el destino (donde llegó el vehículo)
         calle.celulasEsperando[cambio.hacia.carril][cambio.hacia.posicion] = true;
 
-        // CRÍTICO: Marcar el origen como esperando para evitar que CA copie vehículos ahí
-        calle.celulasEsperando[cambio.desde.carril][cambio.desde.posicion] = true;
+        // IMPORTANTE: NO marcar el origen como esperando
+        // El origen queda vacío después del cambio de carril y DEBE poder recibir
+        // vehículos que vengan desde posiciones anteriores por las reglas CA
 
-        // CRÍTICO: Marcar las celdas adyacentes en AMBAS direcciones para evitar que CA las procese
-        // Celda anterior (izquierda) en el carril de destino
-        if (cambio.hacia.posicion > 0) {
-            calle.celulasEsperando[cambio.hacia.carril][cambio.hacia.posicion - 1] = true;
-        }
-        // Celda siguiente (derecha) en el carril de destino
+        // Marcar vecinos del destino en el MISMO carril de destino
+        // IMPORTANTE: NO marcar el vecino anterior (pos-1) porque puede recibir vehículos
+        // que avanzan por las reglas CA normales desde posiciones anteriores
+        // Solo marcamos el vecino siguiente para evitar que avance sobre el vehículo que acaba de llegar
         if (cambio.hacia.posicion < calle.tamano - 1) {
             calle.celulasEsperando[cambio.hacia.carril][cambio.hacia.posicion + 1] = true;
         }
-        // Celda anterior (izquierda) en el carril de origen
-        if (cambio.desde.posicion > 0) {
-            calle.celulasEsperando[cambio.desde.carril][cambio.desde.posicion - 1] = true;
-        }
-        // Celda siguiente (derecha) en el carril de origen
+
+        // Marcar vecinos del origen en el MISMO carril de origen
+        // IMPORTANTE: NO marcar el vecino anterior (pos-1) porque puede haber vehículos
+        // que necesitan avanzar a esa posición desde posiciones más atrás
+        // IMPORTANTE: NO marcar el origen mismo porque necesita recibir vehículos
+
+        // Marcar el vecino siguiente para evitar que el vehículo siguiente avance
+        // inmediatamente al espacio que quedó vacío
         if (cambio.desde.posicion < calle.tamano - 1) {
             calle.celulasEsperando[cambio.desde.carril][cambio.desde.posicion + 1] = true;
         }
-    });
+
+        console.log(`🔄 CAMBIO DE CARRIL: [${calle.nombre}] Vehículo tipo ${cambio.tipoVehiculo} de [Carril ${cambio.desde.carril}, Pos ${cambio.desde.posicion}] → [Carril ${cambio.hacia.carril}, Pos ${cambio.hacia.posicion}]`);
+    }
+
+    // ✅ FASE 5: Validación post-cambio
+    let vehiculosFinales = 0;
+    for (let c = 0; c < calle.carriles; c++) {
+        for (let i = 0; i < calle.tamano; i++) {
+            if (calle.arreglo[c][i] >= 1 && calle.arreglo[c][i] <= 6) {
+                vehiculosFinales++;
+            }
+        }
+    }
+
+    console.log(`📊 Cambios de carril completados: ${cambios.length} movimientos, ${vehiculosFinales} vehículos totales`);
 }
 
 // ========== EXPONER EDIFICIOS PARA EL EDITOR ==========
