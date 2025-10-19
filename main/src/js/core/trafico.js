@@ -1,6 +1,13 @@
 const canvas = document.getElementById("simuladorCanvas");
 const ctx = canvas.getContext("2d");
 
+// Motor Gráfico PixiJS - Se inicializa después
+let pixiInitialized = false;
+
+// Flag para habilitar/deshabilitar PixiJS (útil para debugging)
+// Cambia a false si quieres usar Canvas 2D tradicional
+window.USE_PIXI = localStorage.getItem('usePixi') !== 'false'; // Por defecto true
+
 // Constantes de intersecciones
 let intersecciones = []; 
 const celdasIntersectadas = new Set();
@@ -1654,6 +1661,20 @@ function dibujarConexionesDetectadas() {
 
 // Renderizar canvas
 function renderizarCanvas() {
+    // Si PixiJS está inicializado Y habilitado, usar el motor gráfico
+    if (window.USE_PIXI && pixiInitialized && window.pixiApp && window.pixiApp.sceneManager) {
+        // PixiJS renderiza automáticamente en su propio canvas
+        window.pixiApp.sceneManager.renderAll();
+
+        // Renderizar minimapa con PixiJS
+        if (window.pixiApp.minimapRenderer) {
+            window.pixiApp.minimapRenderer.render();
+        }
+
+        return;
+    }
+
+    // Fallback completo a Canvas 2D nativo si PixiJS no está disponible
     ctx.fillStyle = "#c6cbcd";
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1662,7 +1683,7 @@ function renderizarCanvas() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.setTransform(escala, 0, 0, escala, offsetX, offsetY);
-    
+
     dibujarEdificios();
     dibujarCalles();
     dibujarCarros();
@@ -1961,6 +1982,38 @@ function registrarConexiones(conexionesArray) {
     });
     
     console.log(`✅ ${conexionesArray.length} conexiones registradas`);
+}
+
+// Función para inicializar el motor gráfico PixiJS
+async function inicializarMotorGrafico() {
+    try {
+        console.log('🎨 Inicializando motor gráfico PixiJS...');
+
+        // Crear instancia de PixiApp
+        const pixiApp = PixiApp.getInstance('simuladorCanvas');
+
+        // Inicializar el motor
+        const success = await pixiApp.init();
+
+        if (success) {
+            pixiInitialized = true;
+
+            // Crear instancia de EditorHandles
+            if (pixiApp.sceneManager) {
+                const editorHandles = new EditorHandles(pixiApp.sceneManager);
+            }
+
+            console.log('✅ Motor gráfico PixiJS inicializado correctamente');
+            return true;
+        } else {
+            console.warn('⚠️ No se pudo inicializar PixiJS, usando Canvas 2D');
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error inicializando motor gráfico:', error);
+        console.warn('⚠️ Usando Canvas 2D como fallback');
+        return false;
+    }
 }
 
 function iniciarSimulacion() {

@@ -204,7 +204,6 @@ Crea plantillas de patrones comunes:
 
 Para más ayuda, consulta:
 - Modal de instrucciones (botón 📚 Ver Guía Completa)
-- CLAUDE.md para arquitectura del código
 - Consola del navegador para mensajes de debug
 
 ---

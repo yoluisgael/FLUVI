@@ -1407,6 +1407,11 @@
         }
       }, 200);
 
+      // Función para actualizar el estado de carga
+      window.updateLoadingStatus = function(message) {
+        loadingStatus.textContent = message;
+      };
+
       // Función para ocultar la pantalla de carga
       window.hideLoadingScreen = function() {
         clearInterval(progressInterval);
@@ -1422,11 +1427,19 @@
       };
 
       // Ocultar pantalla cuando todo esté cargado
-      window.addEventListener('load', () => {
+      window.addEventListener('load', async () => {
         // Esperar un mínimo de 2 segundos para que se vean las instrucciones
-        setTimeout(() => {
+        setTimeout(async () => {
           // Verificar que los scripts principales estén cargados
           if (typeof iniciarSimulacion !== 'undefined') {
+            // Inicializar motor gráfico PixiJS solo si está habilitado
+            if (window.USE_PIXI && typeof inicializarMotorGrafico !== 'undefined') {
+              updateLoadingStatus('Inicializando motor gráfico...');
+              await inicializarMotorGrafico();
+              updateLoadingStatus('¡Listo!');
+            } else if (!window.USE_PIXI) {
+              console.log('ℹ️ PixiJS deshabilitado, usando Canvas 2D nativo');
+            }
             hideLoadingScreen();
           } else {
             // Esperar un poco más si no está listo
@@ -1445,6 +1458,27 @@
     })();
 
   </script>
+
+  <!-- Motor Gráfico PixiJS -->
+  <script src="https://cdn.jsdelivr.net/npm/pixi.js@7/dist/pixi.min.js"></script>
+
+  <!-- Motor Gráfico - Utilidades -->
+  <script src="src/js/renderer/utils/CoordinateConverter.js"></script>
+  <script src="src/js/renderer/utils/AssetLoader.js"></script>
+
+  <!-- Motor Gráfico - Core -->
+  <script src="src/js/renderer/CameraController.js"></script>
+  <script src="src/js/renderer/SceneManager.js"></script>
+  <script src="src/js/renderer/PixiApp.js"></script>
+
+  <!-- Motor Gráfico - Renderers -->
+  <script src="src/js/renderer/renderers/CalleRenderer.js"></script>
+  <script src="src/js/renderer/renderers/CarroRenderer.js"></script>
+  <script src="src/js/renderer/renderers/EdificioRenderer.js"></script>
+  <script src="src/js/renderer/renderers/ConexionRenderer.js"></script>
+  <script src="src/js/renderer/renderers/UIRenderer.js"></script>
+  <script src="src/js/renderer/renderers/EditorHandles.js"></script>
+  <script src="src/js/renderer/renderers/MinimapRenderer.js"></script>
 
   <!-- Scripts modulares del simulador -->
   <script src="src/js/core/curvas.js"></script>
