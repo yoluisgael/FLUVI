@@ -1541,3 +1541,175 @@ body.dark-mode code {
     padding: 2px 6px;
     border-radius: 3px;
 }
+
+/* ==================== PANEL DE INTERPRETACIÓN DE MÉTRICAS ==================== */
+
+.status-panel {
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.3s ease;
+    border-left: 5px solid;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Estados del panel */
+.status-panel.status-optimo {
+    background: linear-gradient(135deg, rgba(25, 135, 84, 0.1) 0%, rgba(25, 135, 84, 0.05) 100%);
+    border-left-color: #198754;
+}
+
+.status-panel.status-moderado {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+    border-left-color: #ffc107;
+}
+
+.status-panel.status-alto {
+    background: linear-gradient(135deg, rgba(253, 126, 20, 0.1) 0%, rgba(253, 126, 20, 0.05) 100%);
+    border-left-color: #fd7e14;
+}
+
+.status-panel.status-critico {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+    border-left-color: #dc3545;
+}
+
+.status-panel.status-bajo {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(13, 110, 253, 0.05) 100%);
+    border-left-color: #0d6efd;
+}
+
+/* Header del panel */
+.status-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.status-emoji {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.status-title {
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+/* Descripción del estado */
+.status-description {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+/* Métricas en el panel */
+.status-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.metric-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+}
+
+.metric-label {
+    font-weight: 600;
+    min-width: 65px;
+    color: #495057;
+}
+
+.metric-value {
+    font-weight: 700;
+    color: #212529;
+    min-width: 55px;
+}
+
+.metric-desc {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Observaciones */
+.status-observations {
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding-top: 10px;
+}
+
+.observations-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 6px;
+}
+
+.observation-item {
+    font-size: 11px;
+    color: #6c757d;
+    line-height: 1.5;
+    padding-left: 8px;
+    margin-bottom: 3px;
+}
+
+/* Modo oscuro para el panel de estado */
+body.dark-mode .status-panel {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .status-panel.status-optimo {
+    background: linear-gradient(135deg, rgba(25, 135, 84, 0.15) 0%, rgba(25, 135, 84, 0.08) 100%);
+}
+
+body.dark-mode .status-panel.status-moderado {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 193, 7, 0.08) 100%);
+}
+
+body.dark-mode .status-panel.status-alto {
+    background: linear-gradient(135deg, rgba(253, 126, 20, 0.15) 0%, rgba(253, 126, 20, 0.08) 100%);
+}
+
+body.dark-mode .status-panel.status-critico {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.15) 0%, rgba(220, 53, 69, 0.08) 100%);
+}
+
+body.dark-mode .status-panel.status-bajo {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.15) 0%, rgba(13, 110, 253, 0.08) 100%);
+}
+
+body.dark-mode .status-description {
+    color: #b0b0b0;
+}
+
+body.dark-mode .metric-item {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .metric-label {
+    color: #c0c0c0;
+}
+
+body.dark-mode .metric-value {
+    color: #e0e0e0;
+}
+
+body.dark-mode .metric-desc {
+    color: #909090;
+}
+
+body.dark-mode .observations-title {
+    color: #c0c0c0;
+}
+
+body.dark-mode .observation-item {
+    color: #909090;
+}
