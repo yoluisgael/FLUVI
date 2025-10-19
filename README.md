@@ -2,25 +2,24 @@
 
 Sistema de simulación de tráfico vehicular basado en autómatas celulares para el análisis y optimización del flujo vehicular en vialidades cercanas al IPN - ESCOM.
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
 1. Abre `index.html` en tu navegador web
 2. La simulación se cargará automáticamente
 3. Usa el panel lateral para configurar calles y métricas
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
-T3/
-├── index.html                           # Punto de entrada principal
-├── docs/                                # Documentación del proyecto
-│   ├── CLAUDE.md                       # Guía para Claude Code
-│   ├── CONSTRUCTOR.md                  # Documentación del constructor de mapas
-│   └── REFACTORING.md                  # Notas de refactorización
-├── src/                                 # Código fuente
-│   ├── js/                             # Módulos JavaScript
-│   │   ├── core/                       # Lógica central de simulación
+FLUVI/
+├── index.html                         # Punto de entrada principal
+├── docs/                              # Documentación del proyecto
+│   └── CONSTRUCTOR.md                 # Documentación del constructor de mapas
+├── src/                               # Código fuente
+│   ├── js/                            # Módulos JavaScript
+│   │   ├── core/                      # Lógica central de simulación
 │   │   │   ├── trafico.js             # Motor principal de simulación
+│   │   │   ├── graficas.js            # Módulo de  métricas
 │   │   │   └── curvas.js              # Sistema de curvas en calles
 │   │   └── ui/                        # Módulos de interfaz de usuario
 │   │       ├── editor.js              # Editor visual de calles
@@ -37,7 +36,7 @@ T3/
 │       └── objects/                   # Objetos varios
 ```
 
-## 🎮 Características Principales
+## Características Principales
 
 ### Simulación de Tráfico
 - **Autómatas Celulares**: Implementación de Regla 184 modificada
@@ -57,18 +56,18 @@ T3/
 - **Arrastre con SHIFT**: Mueve calles fácilmente en modo edición
 - **Exportar/Importar**: Guarda y carga simulaciones en formato JSON
 
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Canvas API**: Renderizado de gráficos
 - **Bootstrap 5**: Framework de UI
 - **Chart.js**: Visualización de métricas
 
-## 📖 Documentación
+## Documentación
 
 - Ver `docs/CONSTRUCTOR.md` para usar el constructor de mapas
 
-## 🎓 Créditos
+## Créditos
 
 **Desarrolladores:**
 - Connor Urbano Mendoza
@@ -83,7 +82,7 @@ T3/
 Instituto Politécnico Nacional (IPN)
 Escuela Superior de Cómputo (ESCOM)
 
-## 📝 Versión
+## Versión
 
 1.0.0 - 2025
 
