@@ -31,6 +31,12 @@ class SceneManager {
         this.conexionGraphics = new Map();  // Map<Conexion, PIXI.Graphics>
         this.verticeSprites = new Map();    // Map<id:string, PIXI.Graphics>
 
+        // Variables de estado para evitar re-renderizado innecesario
+        this.lastMostrarConexiones = false;
+        this.lastMostrarEtiquetas = false;
+        this.verticesRendered = false;
+        this.conexionesRendered = false;
+
         // Inicializar renderers especializados (se crearán después)
         this.calleRenderer = null;
         this.carroRenderer = null;
@@ -68,44 +74,86 @@ class SceneManager {
 
     update(delta) {
         // Actualizar sprites de vehículos (cambios cada frame)
-        if (this.carroRenderer) {
-            this.carroRenderer.updateAll(window.calles || []);
+        if (this.carroRenderer && window.calles) {
+            this.carroRenderer.updateAll(window.calles);
         }
 
         // Actualizar etiquetas si están visibles
-        if (window.mostrarEtiquetas && this.uiRenderer) {
-            this.uiRenderer.updateEtiquetas(window.calles || []);
+        if (window.mostrarEtiquetas && this.uiRenderer && window.calles) {
+            this.uiRenderer.updateEtiquetas(window.calles);
+        } else if (this.uiRenderer) {
+            // Limpiar etiquetas si no están visibles
+            this.uiRenderer.clearEtiquetas();
         }
 
-        // Actualizar vértices si están visibles
-        if (window.mostrarConexiones && this.uiRenderer && window.calleSeleccionada) {
-            this.uiRenderer.updateVertices(window.calleSeleccionada);
+        // Actualizar vértices y conexiones solo cuando cambie el estado
+        if (window.mostrarConexiones !== this.lastMostrarConexiones) {
+            this.lastMostrarConexiones = window.mostrarConexiones;
+
+            if (window.mostrarConexiones) {
+                // Renderizar conexiones y vértices solo una vez al activar
+                if (this.conexionRenderer && window.conexiones && window.conexiones.length > 0) {
+                    this.conexionRenderer.renderAll(window.conexiones);
+                }
+                this.renderVertices();
+                this.verticesRendered = true;
+                this.conexionesRendered = true;
+            } else {
+                // Limpiar conexiones y vértices solo una vez al desactivar
+                if (this.conexionRenderer) {
+                    this.conexionRenderer.clearAll();
+                }
+                // Limpiar vértices de la capa debug
+                const layer = this.getLayer('debug');
+                const childrenToRemove = [];
+                layer.children.forEach(child => {
+                    if (child.name && (child.name.startsWith('vertice_') || child.name.startsWith('vertice_text_'))) {
+                        childrenToRemove.push(child);
+                    }
+                });
+                childrenToRemove.forEach(child => {
+                    child.destroy();
+                    layer.removeChild(child);
+                });
+                this.verticesRendered = false;
+                this.conexionesRendered = false;
+            }
         }
+
+        // Nota: PixiJS renderiza automáticamente el stage cada frame
+        // No necesitamos llamar a render() manualmente
     }
 
     renderAll() {
+        console.log('🎨 SceneManager.renderAll() llamado');
+
         // Renderizar edificios
-        if (this.edificioRenderer && window.edificios) {
+        if (this.edificioRenderer && window.edificios && window.edificios.length > 0) {
+            console.log(`  → Renderizando ${window.edificios.length} edificios`);
             this.edificioRenderer.renderAll(window.edificios);
         }
 
         // Renderizar calles
-        if (this.calleRenderer && window.calles) {
+        if (this.calleRenderer && window.calles && window.calles.length > 0) {
+            console.log(`  → Renderizando ${window.calles.length} calles`);
             this.calleRenderer.renderAll(window.calles);
+        } else {
+            console.warn('  ⚠️ No hay calles para renderizar o CalleRenderer no inicializado');
         }
 
         // Renderizar vehículos
-        if (this.carroRenderer && window.calles) {
-            this.carroRenderer.renderAll(window.calles);
+        if (this.carroRenderer && window.calles && window.calles.length > 0) {
+            this.carroRenderer.updateAll(window.calles);
         }
 
         // Renderizar conexiones si están visibles
-        if (window.mostrarConexiones && this.conexionRenderer && window.conexiones) {
+        if (window.mostrarConexiones && this.conexionRenderer && window.conexiones && window.conexiones.length > 0) {
+            console.log(`  → Renderizando ${window.conexiones.length} conexiones`);
             this.conexionRenderer.renderAll(window.conexiones);
         }
 
         // Renderizar intersecciones si están visibles
-        if (window.mostrarIntersecciones && window.intersecciones) {
+        if (window.mostrarIntersecciones && window.intersecciones && window.intersecciones.length > 0) {
             this.renderIntersecciones();
         }
 
@@ -115,9 +163,11 @@ class SceneManager {
         }
 
         // Renderizar etiquetas si están visibles
-        if (window.mostrarEtiquetas && this.uiRenderer) {
-            this.uiRenderer.updateEtiquetas(window.calles || []);
+        if (window.mostrarEtiquetas && this.uiRenderer && window.calles && window.calles.length > 0) {
+            this.uiRenderer.updateEtiquetas(window.calles);
         }
+
+        console.log('✅ SceneManager.renderAll() completado');
     }
 
     renderIntersecciones() {
@@ -149,14 +199,17 @@ class SceneManager {
 
         const layer = this.getLayer('debug');
 
-        // Limpiar vértices anteriores (solo los que agregamos aquí)
+        // Limpiar vértices y textos anteriores (solo los que agregamos aquí)
         const childrenToRemove = [];
         layer.children.forEach(child => {
-            if (child.name && child.name.startsWith('vertice_')) {
+            if (child.name && (child.name.startsWith('vertice_') || child.name.startsWith('vertice_text_'))) {
                 childrenToRemove.push(child);
             }
         });
-        childrenToRemove.forEach(child => layer.removeChild(child));
+        childrenToRemove.forEach(child => {
+            child.destroy();
+            layer.removeChild(child);
+        });
 
         window.calles.forEach(calle => {
             if (calle.tipo !== window.TIPOS?.CONEXION || !calle.vertices || calle.vertices.length === 0) {
@@ -203,6 +256,20 @@ class SceneManager {
                 circle.cursor = 'pointer';
 
                 layer.addChild(circle);
+
+                // Agregar número del vértice
+                const text = new PIXI.Text(index.toString(), {
+                    fontFamily: 'Arial',
+                    fontSize: 9,
+                    fontWeight: 'bold',
+                    fill: 0xFFFFFF,
+                    align: 'center'
+                });
+                text.anchor.set(0.5);
+                text.x = pos.x;
+                text.y = pos.y;
+                text.name = `vertice_text_${calle.nombre}_${index}`;
+                layer.addChild(text);
             });
         });
     }

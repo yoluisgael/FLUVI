@@ -287,3 +287,16 @@ function calcularPuntoFinalCalleCurva(calle) {
         y: coordenadas.y
     };
 }
+
+// Exponer funciones globalmente para PixiJS
+window.inicializarVertices = inicializarVertices;
+window.calcularPosicionVertice = calcularPosicionVertice;
+window.obtenerAnguloEnPunto = obtenerAnguloEnPunto;
+window.actualizarAnguloVertice = actualizarAnguloVertice;
+window.actualizarVerticePorArrastre = actualizarVerticePorArrastre;
+window.detectarVerticeEnPosicion = detectarVerticeEnPosicion;
+window.obtenerCoordenadasGlobalesCeldaConCurva = obtenerCoordenadasGlobalesCeldaConCurva;
+window.calcularCentroCalleCurva = calcularCentroCalleCurva;
+window.calcularPuntoFinalCalleCurva = calcularPuntoFinalCalleCurva;
+
+console.log('✓ curvas.js cargado y funciones expuestas globalmente');

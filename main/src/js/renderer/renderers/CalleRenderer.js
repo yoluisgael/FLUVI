@@ -11,11 +11,22 @@ class CalleRenderer {
     }
 
     renderAll(calles) {
+        if (!calles || calles.length === 0) {
+            console.warn('⚠️ CalleRenderer: No hay calles para renderizar');
+            return;
+        }
+
+        console.log(`🛣️ CalleRenderer: Renderizando ${calles.length} calles`);
+
         calles.forEach(calle => {
-            if (calle.esCurva) {
-                this.renderCalleCurva(calle);
-            } else {
-                this.renderCalleRecta(calle);
+            try {
+                if (calle.esCurva) {
+                    this.renderCalleCurva(calle);
+                } else {
+                    this.renderCalleRecta(calle);
+                }
+            } catch (error) {
+                console.error(`❌ Error renderizando calle ${calle.nombre}:`, error);
             }
         });
     }
@@ -34,11 +45,25 @@ class CalleRenderer {
 
         // Usar TilingSprite para repetir textura
         const texture = this.assets.getTexture('carretera');
+
+        if (!texture) {
+            console.error('❌ Textura de carretera no encontrada');
+            return null;
+        }
+
         const tilingSprite = new PIXI.TilingSprite(
             texture,
             calle.tamano * this.celda_tamano,
             calle.carriles * this.celda_tamano
         );
+
+        // Configurar el tiling para que cada celda muestre la textura completa
+        if (texture.width && texture.height) {
+            tilingSprite.tileScale.set(
+                this.celda_tamano / texture.width,
+                this.celda_tamano / texture.height
+            );
+        }
 
         container.addChild(tilingSprite);
 
@@ -68,6 +93,10 @@ class CalleRenderer {
         }
 
         const container = new PIXI.Container();
+        // El container se posiciona en (0,0) del mundo, los sprites usan coordenadas globales
+        container.x = 0;
+        container.y = 0;
+
         const texture = this.assets.getTexture('carretera');
 
         // Renderizar celda por celda siguiendo la curva
@@ -82,9 +111,17 @@ class CalleRenderer {
                 sprite.anchor.set(0.5);
                 sprite.width = this.celda_tamano;
                 sprite.height = this.celda_tamano;
+                // Usar coordenadas globales directamente ya que el container está en (0,0)
                 sprite.x = coords.x;
                 sprite.y = coords.y;
                 sprite.rotation = CoordinateConverter.degreesToRadians(coords.angulo || calle.angulo);
+
+                // Hacer cada sprite individual interactivo para calles curvas
+                sprite.interactive = true;
+                sprite.buttonMode = true;
+                sprite.on('pointerdown', (e) => this.onCalleClick(calle, e));
+                sprite.on('pointerover', () => this.onCalleHover(calle, container));
+                sprite.on('pointerout', () => this.onCalleOut(calle, container));
 
                 container.addChild(sprite);
             }
@@ -98,17 +135,6 @@ class CalleRenderer {
         // Guardar referencia
         this.scene.calleSprites.set(calle, container);
         this.scene.getLayer('streets').addChild(container);
-
-        // Hacer interactivo
-        container.interactive = true;
-        container.buttonMode = true;
-        container.hitArea = new PIXI.Rectangle(
-            0,
-            0,
-            calle.tamano * this.celda_tamano,
-            calle.carriles * this.celda_tamano
-        );
-        container.on('pointerdown', (e) => this.onCalleClick(calle, e));
 
         return container;
     }
@@ -148,7 +174,7 @@ class CalleRenderer {
 
     addSelectionBorder(container, calle) {
         const graphics = new PIXI.Graphics();
-        graphics.lineStyle(4, window.modoSeleccion === "constructor" ? 0xFFA500 : 0xFFD700);
+        graphics.lineStyle(2, window.modoSeleccion === "constructor" ? 0xFFA500 : 0xFFD700);
         graphics.drawRect(
             0,
             0,
@@ -161,21 +187,33 @@ class CalleRenderer {
 
     addSelectionBorderCurva(container, calle) {
         const graphics = new PIXI.Graphics();
-        graphics.lineStyle(2, window.modoSeleccion === "constructor" ? 0xFFA500 : 0xFFD700);
-        graphics.setLineDash([5, 3]);
+        const color = window.modoSeleccion === "constructor" ? 0xFFA500 : 0xFFD700;
 
-        // Dibujar contorno siguiendo los puntos de la curva
-        // Simplificado: dibujar rectángulo alrededor del primer y último punto
-        const firstCoords = window.obtenerCoordenadasGlobalesCeldaConCurva
-            ? window.obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, 0)
-            : { x: calle.x, y: calle.y };
+        graphics.lineStyle(2, color, 1);
 
-        const lastCoords = window.obtenerCoordenadasGlobalesCeldaConCurva
-            ? window.obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, calle.tamano - 1)
-            : { x: calle.x + calle.tamano * this.celda_tamano, y: calle.y };
+        // Dibujar contorno siguiendo ambos bordes de la calle curva (sin offset)
+        if (window.obtenerCoordenadasGlobalesCeldaConCurva) {
+            // Borde superior (carril 0)
+            for (let i = 0; i < calle.tamano; i++) {
+                const coords = window.obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, i);
 
-        graphics.moveTo(firstCoords.x, firstCoords.y);
-        graphics.lineTo(lastCoords.x, lastCoords.y);
+                if (i === 0) {
+                    graphics.moveTo(coords.x, coords.y);
+                } else {
+                    graphics.lineTo(coords.x, coords.y);
+                }
+            }
+
+            // Borde inferior (último carril)
+            for (let i = calle.tamano - 1; i >= 0; i--) {
+                const coords = window.obtenerCoordenadasGlobalesCeldaConCurva(calle, calle.carriles - 1, i);
+                graphics.lineTo(coords.x, coords.y);
+            }
+
+            // Cerrar el contorno volviendo al primer punto
+            const firstCoords = window.obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, 0);
+            graphics.lineTo(firstCoords.x, firstCoords.y);
+        }
 
         graphics.name = 'selectionBorder';
         container.addChild(graphics);
@@ -194,6 +232,19 @@ class CalleRenderer {
         }
     }
 
+    updateSelectionBorderCurva(container, calle) {
+        // Remover borde anterior
+        const oldBorder = container.getChildByName('selectionBorder');
+        if (oldBorder) {
+            container.removeChild(oldBorder);
+        }
+
+        // Agregar nuevo si está seleccionada
+        if (window.calleSeleccionada === calle) {
+            this.addSelectionBorderCurva(container, calle);
+        }
+    }
+
     removeCalleSprite(calle) {
         const container = this.scene.calleSprites.get(calle);
         if (container) {
@@ -208,20 +259,131 @@ class CalleRenderer {
         if (event.data.originalEvent.ctrlKey || event.data.originalEvent.metaKey) {
             console.log('🖱️ Clic en calle:', calle.nombre);
 
+            // Guardar la calle previamente seleccionada
+            const previousSelection = window.calleSeleccionada;
+
+            // Si se clickeó la misma calle, deseleccionar
+            if (previousSelection === calle) {
+                console.log('🔄 Deseleccionando calle:', calle.nombre);
+                window.calleSeleccionada = null;
+
+                // Remover borde de selección
+                const container = this.scene.calleSprites.get(calle);
+                if (container) {
+                    const border = container.getChildByName('selectionBorder');
+                    if (border) {
+                        container.removeChild(border);
+                        border.destroy();
+                    }
+                }
+
+                // Resetear AMBOS selectores de calle
+                const selectCalle = document.getElementById('selectCalle');
+                const selectCalleEditor = document.getElementById('selectCalleEditor');
+                if (selectCalle) {
+                    selectCalle.selectedIndex = 0;
+                }
+                if (selectCalleEditor) {
+                    selectCalleEditor.selectedIndex = 0;
+                }
+
+                // Actualizar UI
+                if (window.editorCalles) {
+                    window.editorCalles.actualizarInputsPosicion();
+                }
+
+                return;
+            }
+
             // Actualizar selección global
             window.calleSeleccionada = calle;
+            const previousEdificio = window.edificioSeleccionado;
             window.edificioSeleccionado = null;
 
-            // Actualizar UI (selectores)
+            // Quitar borde de la calle anterior si existe y es diferente
+            if (previousSelection && previousSelection !== calle) {
+                const prevContainer = this.scene.calleSprites.get(previousSelection);
+                if (prevContainer) {
+                    // Remover el borde de selección
+                    const oldBorder = prevContainer.getChildByName('selectionBorder');
+                    if (oldBorder) {
+                        prevContainer.removeChild(oldBorder);
+                        oldBorder.destroy();
+                    }
+                }
+            }
+
+            // Quitar borde del edificio previamente seleccionado
+            if (previousEdificio && window.pixiApp && window.pixiApp.sceneManager) {
+                const edificioRenderer = window.pixiApp.sceneManager.edificioRenderer;
+                if (edificioRenderer) {
+                    const edificioSprite = edificioRenderer.scene.edificioSprites.get(previousEdificio);
+                    if (edificioSprite) {
+                        const edificioBorder = edificioSprite.getChildByName ? edificioSprite.getChildByName('selectionBorder') : null;
+                        if (edificioBorder) {
+                            edificioSprite.removeChild(edificioBorder);
+                            edificioBorder.destroy();
+                        }
+                    }
+                }
+            }
+
+            // Agregar borde a la calle seleccionada
+            const currentContainer = this.scene.calleSprites.get(calle);
+            if (currentContainer) {
+                // Primero remover cualquier borde existente (por si acaso)
+                const existingBorder = currentContainer.getChildByName('selectionBorder');
+                if (existingBorder) {
+                    currentContainer.removeChild(existingBorder);
+                    existingBorder.destroy();
+                }
+
+                // Agregar el nuevo borde
+                if (calle.esCurva) {
+                    this.addSelectionBorderCurva(currentContainer, calle);
+                } else {
+                    this.addSelectionBorder(currentContainer, calle);
+                }
+            }
+
+            // Actualizar selector de tipo de objeto en Constructor
+            const selectTipoObjeto = document.getElementById('selectTipoObjeto');
+            if (selectTipoObjeto) {
+                selectTipoObjeto.value = 'calle';
+                // Disparar evento change para mostrar el selector correcto
+                selectTipoObjeto.dispatchEvent(new Event('change'));
+            }
+
+            // Actualizar AMBOS selectores de calle (Constructor y Configuración)
+            const selectCalle = document.getElementById('selectCalle');
+            const selectCalleEditor = document.getElementById('selectCalleEditor');
+            const calleIndex = window.calles ? window.calles.indexOf(calle) : -1;
+
+            if (calleIndex !== -1) {
+                // Actualizar selector de Configuración de Calles
+                if (selectCalle) {
+                    selectCalle.value = calleIndex;
+                }
+                // Actualizar selector del Constructor
+                if (selectCalleEditor) {
+                    selectCalleEditor.value = calleIndex;
+                    selectCalleEditor.dispatchEvent(new Event('change'));
+                }
+            }
+
+            // Resetear selector de edificios ya que ahora hay una calle seleccionada
+            const selectEdificio = document.getElementById('selectEdificio');
+            if (selectEdificio) {
+                selectEdificio.value = '';
+            }
+
+            // Actualizar UI (selectores y paneles)
             if (window.editorCalles) {
                 window.editorCalles.actualizarInputsPosicion();
             }
 
-            // Re-renderizar para mostrar selección
-            this.renderAll(window.calles);
-
-            // Llamar a la función global de renderizado si existe
-            if (window.renderizarCanvas) {
+            // Llamar a la función global de renderizado si existe (para Canvas 2D fallback)
+            if (!window.USE_PIXI && window.renderizarCanvas) {
                 window.renderizarCanvas();
             }
         }

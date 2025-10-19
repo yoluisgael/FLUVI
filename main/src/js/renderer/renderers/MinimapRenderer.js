@@ -5,22 +5,37 @@
 
 class MinimapRenderer {
     constructor() {
-        this.minimapaCanvas = document.getElementById('minimapaCanvas');
+        this.minimapaCanvas = document.getElementById('minimapa');
         if (!this.minimapaCanvas) {
             console.warn('⚠️ Canvas de minimapa no encontrado');
             return;
         }
 
-        // Crear aplicación PixiJS para el minimapa
-        this.app = new PIXI.Application({
-            view: this.minimapaCanvas,
-            width: this.minimapaCanvas.width,
-            height: this.minimapaCanvas.height,
-            backgroundColor: 0x767878,
-            resolution: window.devicePixelRatio || 1,
-            autoDensity: true,
-            antialias: false // Desactivar antialiasing para el minimapa (más rápido)
-        });
+        // Crear aplicación PixiJS para el minimapa con fallback a Canvas 2D
+        try {
+            this.app = new PIXI.Application({
+                view: this.minimapaCanvas,
+                width: this.minimapaCanvas.width,
+                height: this.minimapaCanvas.height,
+                backgroundColor: 0x767878,
+                resolution: window.devicePixelRatio || 1,
+                autoDensity: true,
+                antialias: false, // Desactivar antialiasing para el minimapa (más rápido)
+                forceCanvas: false
+            });
+        } catch (webglError) {
+            console.warn('⚠️ WebGL no disponible para minimapa, usando Canvas 2D...');
+            this.app = new PIXI.Application({
+                view: this.minimapaCanvas,
+                width: this.minimapaCanvas.width,
+                height: this.minimapaCanvas.height,
+                backgroundColor: 0x767878,
+                resolution: window.devicePixelRatio || 1,
+                autoDensity: true,
+                antialias: false,
+                forceCanvas: true // Forzar Canvas 2D
+            });
+        }
 
         this.container = new PIXI.Container();
         this.app.stage.addChild(this.container);

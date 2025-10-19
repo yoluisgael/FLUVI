@@ -689,16 +689,23 @@ class EditorCalles {
         }
         
         // Mostrar handles
-        this.actualizarPosicionHandles();
-        if (this.moveHandle) {
-            this.moveHandle.classList.add('active');
-            console.log('✅ Handle de movimiento activado');
+        if (window.USE_PIXI && window.editorHandles) {
+            // Usar handles de PixiJS
+            window.editorHandles.createHandles(this.objetoEditando, this.tipoObjetoEditando);
+            console.log('✅ Handles de PixiJS activados');
+        } else {
+            // Fallback a handles HTML
+            this.actualizarPosicionHandles();
+            if (this.moveHandle) {
+                this.moveHandle.classList.add('active');
+                console.log('✅ Handle de movimiento HTML activado');
+            }
+            if (this.rotationHandle) {
+                this.rotationHandle.classList.add('active');
+                console.log('✅ Handle de rotación HTML activado');
+            }
         }
-        if (this.rotationHandle) {
-            this.rotationHandle.classList.add('active');
-            console.log('✅ Handle de rotación activado');
-        }
-        
+
         // Ocultar controles normales
         const controlBar = document.getElementById('canvasControlBar');
         if (controlBar) controlBar.style.opacity = '0.3';
@@ -765,20 +772,29 @@ class EditorCalles {
         if (this.editModeBadge) {
             this.editModeBadge.classList.remove('active');
         }
-        if (this.moveHandle) {
-            this.moveHandle.classList.remove('active');
+
+        // Limpiar handles
+        if (window.USE_PIXI && window.editorHandles) {
+            // Limpiar handles de PixiJS
+            window.editorHandles.clearHandles();
+            console.log('✅ Handles de PixiJS limpiados');
+        } else {
+            // Limpiar handles HTML
+            if (this.moveHandle) {
+                this.moveHandle.classList.remove('active');
+            }
+            if (this.rotationHandle) {
+                this.rotationHandle.classList.remove('active');
+            }
         }
-        if (this.rotationHandle) {
-            this.rotationHandle.classList.remove('active');
-        }
-        
+
         // Restaurar estilo del botón
         if (this.btnModoEdicion) {
             this.btnModoEdicion.textContent = '✏️ Modo Edición';
             this.btnModoEdicion.classList.remove('btn-secondary');
             this.btnModoEdicion.classList.add('btn-warning');
         }
-        
+
         // Mostrar controles normales
         const controlBar = document.getElementById('canvasControlBar');
         if (controlBar) controlBar.style.opacity = '1';

@@ -319,30 +319,32 @@ class EditorHandles {
     }
 
     onVerticeDrag(event) {
-        if (!this.draggedVertice || !this.draggedCalle) return;
+        if (!this.draggedVertice || !this.draggedCalle || this.draggedVerticeIndex < 0) return;
 
         const camera = window.pixiApp.cameraController;
         const pos = event.data.global;
         const worldPos = camera.screenToWorld(pos.x, pos.y);
 
-        // Actualizar posición del vértice (usando lógica de curvas.js si está disponible)
-        if (window.actualizarPosicionVertice) {
-            window.actualizarPosicionVertice(
+        // Actualizar ángulo del vértice usando la función de curvas.js
+        if (window.actualizarVerticePorArrastre) {
+            const actualizado = window.actualizarVerticePorArrastre(
                 this.draggedCalle,
-                this.draggedVertice,
+                this.draggedVerticeIndex,
                 worldPos.x,
                 worldPos.y
             );
-        }
 
-        // Re-renderizar la calle
-        if (window.pixiApp.sceneManager.calleRenderer) {
-            window.pixiApp.sceneManager.calleRenderer.updateCalleCurvaSprite(this.draggedCalle);
-        }
+            if (actualizado) {
+                // Re-renderizar la calle curva
+                if (window.pixiApp.sceneManager.calleRenderer) {
+                    window.pixiApp.sceneManager.calleRenderer.updateCalleCurvaSprite(this.draggedCalle);
+                }
 
-        // Actualizar UI de vértices
-        if (window.pixiApp.sceneManager.uiRenderer) {
-            window.pixiApp.sceneManager.uiRenderer.updateVertices(this.draggedCalle);
+                // Re-renderizar vértices
+                if (window.mostrarConexiones) {
+                    window.pixiApp.sceneManager.renderVertices();
+                }
+            }
         }
     }
 

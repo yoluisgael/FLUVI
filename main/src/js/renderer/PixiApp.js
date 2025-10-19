@@ -29,16 +29,34 @@ class PixiApp {
         const width = oldCanvas.width;
         const height = oldCanvas.height;
 
-        // Crear aplicación PixiJS
-        this.app = new PIXI.Application({
-            width: width,
-            height: height,
-            backgroundColor: 0xc6cbcd, // Color actual del fondo
-            resolution: window.devicePixelRatio || 1,
-            autoDensity: true,
-            antialias: true,
-            powerPreference: 'high-performance'
-        });
+        // Crear aplicación PixiJS con fallback a Canvas 2D si WebGL no está disponible
+        try {
+            this.app = new PIXI.Application({
+                width: width,
+                height: height,
+                backgroundColor: 0xc6cbcd, // Color actual del fondo
+                resolution: window.devicePixelRatio || 1,
+                autoDensity: true,
+                antialias: true,
+                powerPreference: 'high-performance',
+                forceCanvas: false // Intentar WebGL primero
+            });
+            console.log('✅ WebGL disponible, usando aceleración GPU');
+        } catch (webglError) {
+            console.warn('⚠️ WebGL no disponible, usando Canvas 2D renderer como fallback...');
+            console.warn('   Razón:', webglError.message);
+            this.app = new PIXI.Application({
+                width: width,
+                height: height,
+                backgroundColor: 0xc6cbcd,
+                resolution: window.devicePixelRatio || 1,
+                autoDensity: true,
+                antialias: false, // Desactivar antialiasing en Canvas 2D para mejor performance
+                powerPreference: 'high-performance',
+                forceCanvas: true // Forzar Canvas 2D
+            });
+            console.log('✅ Canvas 2D renderer activado (sin aceleración GPU)');
+        }
 
         // Reemplazar canvas viejo con el de PixiJS
         oldCanvas.remove();
@@ -73,9 +91,16 @@ class PixiApp {
             // Inicializar renderers
             this.sceneManager.initRenderers();
 
-            // Inicializar minimapa
+            // Inicializar minimapa (opcional, no crítico)
             if (typeof MinimapRenderer !== 'undefined') {
-                this.minimapRenderer = new MinimapRenderer();
+                try {
+                    this.minimapRenderer = new MinimapRenderer();
+                    console.log('✅ Minimapa inicializado');
+                } catch (minimapError) {
+                    console.warn('⚠️ No se pudo inicializar el minimapa:', minimapError.message);
+                    console.warn('   Continuando sin minimapa...');
+                    this.minimapRenderer = null;
+                }
             }
 
             // Setup events

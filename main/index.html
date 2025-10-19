@@ -1428,15 +1428,25 @@
 
       // Ocultar pantalla cuando todo esté cargado
       window.addEventListener('load', async () => {
+        console.log('🚀 Evento window.load disparado');
         // Esperar un mínimo de 2 segundos para que se vean las instrucciones
         setTimeout(async () => {
+          console.log('⏰ Timeout de 2 segundos completado');
           // Verificar que los scripts principales estén cargados
+          console.log('🔍 Verificando iniciarSimulacion:', typeof iniciarSimulacion);
+          console.log('🔍 Verificando inicializarMotorGrafico:', typeof inicializarMotorGrafico);
+          console.log('🔍 window.USE_PIXI:', window.USE_PIXI);
           if (typeof iniciarSimulacion !== 'undefined') {
             // Inicializar motor gráfico PixiJS solo si está habilitado
             if (window.USE_PIXI && typeof inicializarMotorGrafico !== 'undefined') {
-              updateLoadingStatus('Inicializando motor gráfico...');
-              await inicializarMotorGrafico();
-              updateLoadingStatus('¡Listo!');
+              try {
+                updateLoadingStatus('Inicializando motor gráfico...');
+                await inicializarMotorGrafico();
+                updateLoadingStatus('¡Listo!');
+              } catch (error) {
+                console.error('❌ Error inicializando motor gráfico:', error);
+                alert('Error inicializando PixiJS. Revisa la consola para más detalles.');
+              }
             } else if (!window.USE_PIXI) {
               console.log('ℹ️ PixiJS deshabilitado, usando Canvas 2D nativo');
             }

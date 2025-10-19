@@ -12,7 +12,10 @@ class ConexionRenderer {
     renderAll(conexiones) {
         if (!conexiones || !window.mostrarConexiones) return;
 
-        // Limpiar conexiones anteriores
+        // Solo renderizar si no están ya renderizadas
+        if (this.scene.conexionGraphics.size > 0) return;
+
+        // Limpiar conexiones anteriores (por si acaso)
         this.clearAll();
 
         conexiones.forEach(conexion => {

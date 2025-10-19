@@ -1,12 +1,17 @@
+console.log('🚀 trafico.js cargando...');
+
 const canvas = document.getElementById("simuladorCanvas");
 const ctx = canvas.getContext("2d");
 
 // Motor Gráfico PixiJS - Se inicializa después
 let pixiInitialized = false;
+let pixiFirstRender = false; // Flag para renderizar la escena inicial
 
 // Flag para habilitar/deshabilitar PixiJS (útil para debugging)
 // Cambia a false si quieres usar Canvas 2D tradicional
 window.USE_PIXI = localStorage.getItem('usePixi') !== 'false'; // Por defecto true
+
+console.log(`ℹ️ USE_PIXI = ${window.USE_PIXI}`);
 
 // Constantes de intersecciones
 let intersecciones = []; 
@@ -17,6 +22,11 @@ let mostrarConexiones = false; // NUEVO: Variable para controlar visualización 
 let mostrarEtiquetas = true; // Variable para controlar visualización de etiquetas de nombres
 let colorFondoCanvas = "#c6cbcd"; // Color de fondo del canvas (almacenado para detección automática)
 let prioridadPar = true;
+
+// Exponer variables globales para PixiJS
+window.mostrarConexiones = mostrarConexiones;
+window.mostrarEtiquetas = mostrarEtiquetas;
+window.mostrarIntersecciones = false;
 
 // Ajustar tamaño inicial del canvas
 function resizeCanvas() {
@@ -1663,14 +1673,21 @@ function dibujarConexionesDetectadas() {
 function renderizarCanvas() {
     // Si PixiJS está inicializado Y habilitado, usar el motor gráfico
     if (window.USE_PIXI && pixiInitialized && window.pixiApp && window.pixiApp.sceneManager) {
-        // PixiJS renderiza automáticamente en su propio canvas
-        window.pixiApp.sceneManager.renderAll();
+        // Solo renderizar la escena completa la primera vez
+        // Después, el ticker de PixiJS maneja todo automáticamente
+        if (!pixiFirstRender) {
+            console.log('🎨 Primera renderización con PixiJS');
+            window.pixiApp.sceneManager.renderAll();
+            pixiFirstRender = true;
+        }
 
-        // Renderizar minimapa con PixiJS
+        // El minimapa se actualiza en cada frame (es ligero)
         if (window.pixiApp.minimapRenderer) {
             window.pixiApp.minimapRenderer.render();
         }
 
+        // Nota: PixiJS.Ticker ya está renderizando el stage automáticamente
+        // No necesitamos hacer nada más aquí
         return;
     }
 
@@ -1988,22 +2005,49 @@ function registrarConexiones(conexionesArray) {
 async function inicializarMotorGrafico() {
     try {
         console.log('🎨 Inicializando motor gráfico PixiJS...');
+        console.log('  → Verificando PixiApp:', typeof PixiApp);
 
         // Crear instancia de PixiApp
         const pixiApp = PixiApp.getInstance('simuladorCanvas');
+        console.log('  → PixiApp instancia creada:', pixiApp);
 
         // Inicializar el motor
+        console.log('  → Llamando a pixiApp.init()...');
         const success = await pixiApp.init();
+        console.log('  → pixiApp.init() completado. Success:', success);
 
         if (success) {
             pixiInitialized = true;
+            console.log('  → pixiInitialized = true');
 
             // Crear instancia de EditorHandles
             if (pixiApp.sceneManager) {
+                console.log('  → Creando EditorHandles...');
                 const editorHandles = new EditorHandles(pixiApp.sceneManager);
             }
 
             console.log('✅ Motor gráfico PixiJS inicializado correctamente');
+
+            // IMPORTANTE: Renderizar la escena inicial si ya hay datos
+            console.log('  → Verificando window.calles:', window.calles ? window.calles.length : 'undefined');
+            if (window.calles && window.calles.length > 0) {
+                console.log('🎨 Renderizando escena inicial con datos existentes...');
+                console.log('  → Llamando a pixiApp.sceneManager.renderAll()...');
+                pixiApp.sceneManager.renderAll();
+                pixiFirstRender = true;
+                console.log('  → renderAll() completado');
+            } else {
+                console.warn('⚠️ No hay calles para renderizar todavía');
+            }
+
+            // Renderizar minimapa si existe
+            if (pixiApp.minimapRenderer) {
+                console.log('  → Renderizando minimapa...');
+                pixiApp.minimapRenderer.render();
+            } else {
+                console.warn('⚠️ minimapRenderer no está disponible');
+            }
+
             return true;
         } else {
             console.warn('⚠️ No se pudo inicializar PixiJS, usando Canvas 2D');
@@ -2011,6 +2055,7 @@ async function inicializarMotorGrafico() {
         }
     } catch (error) {
         console.error('❌ Error inicializando motor gráfico:', error);
+        console.error('Stack trace:', error.stack);
         console.warn('⚠️ Usando Canvas 2D como fallback');
         return false;
     }
@@ -2489,6 +2534,23 @@ function iniciarSimulacion() {
             window.mostrarConexiones = mostrarConexiones;
             // Solo emoji, el tooltip ya explica la función
             btnConexiones.textContent = mostrarConexiones ? '🔗' : '🔗';
+
+            // Si usamos PixiJS, forzar renderizado de conexiones y vértices
+            if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                if (mostrarConexiones) {
+                    // Renderizar conexiones y vértices
+                    window.pixiApp.sceneManager.renderAll();
+                } else {
+                    // Limpiar conexiones y vértices
+                    if (window.pixiApp.sceneManager.conexionRenderer) {
+                        window.pixiApp.sceneManager.conexionRenderer.clearAll();
+                    }
+                    if (window.pixiApp.sceneManager.uiRenderer) {
+                        window.pixiApp.sceneManager.uiRenderer.clearVertices();
+                    }
+                }
+            }
+
             renderizarCanvas();
         });
     }
@@ -2497,6 +2559,7 @@ function iniciarSimulacion() {
     if (btnEtiquetas) {
         btnEtiquetas.addEventListener('click', () => {
             mostrarEtiquetas = !mostrarEtiquetas;
+            window.mostrarEtiquetas = mostrarEtiquetas; // Sincronizar con window
             // Cambiar entre etiqueta visible y etiqueta tachada
             btnEtiquetas.textContent = mostrarEtiquetas ? '🏷️' : '🚫';
             renderizarCanvas();
@@ -3121,51 +3184,7 @@ canvas.addEventListener("mousemove", () => {
     }
 });
 
-// ========== BOTONES DE CONTROL DE CURVAS ==========
-const btnToggleCurva = document.getElementById('btnToggleCurva');
-const btnResetVertices = document.getElementById('btnResetVertices');
 
-if (btnToggleCurva) {
-    btnToggleCurva.addEventListener('click', () => {
-        if (!calleSeleccionada) return;
-        
-        calleSeleccionada.esCurva = !calleSeleccionada.esCurva;
-        
-        if (calleSeleccionada.esCurva) {
-            btnToggleCurva.textContent = '🚫 Desactivar Curvas';
-            btnToggleCurva.classList.remove('btn-outline-info');
-            btnToggleCurva.classList.add('btn-info');
-            console.log(`🌊 Curvas activadas para ${calleSeleccionada.nombre}`);
-        } else {
-            btnToggleCurva.textContent = '🌊 Activar Curvas';
-            btnToggleCurva.classList.remove('btn-info');
-            btnToggleCurva.classList.add('btn-outline-info');
-            console.log(`📏 Curvas desactivadas para ${calleSeleccionada.nombre}`);
-        }
-        
-        renderizarCanvas();
-    });
-}
-
-if (btnResetVertices) {
-    btnResetVertices.addEventListener('click', () => {
-        if (!calleSeleccionada) return;
-        
-        if (confirm(`¿Resetear vértices de "${calleSeleccionada.nombre}"?`)) {
-            inicializarVertices(calleSeleccionada);
-            calleSeleccionada.esCurva = false;
-            
-            if (btnToggleCurva) {
-                btnToggleCurva.textContent = '🌊 Activar Curvas';
-                btnToggleCurva.classList.remove('btn-info');
-                btnToggleCurva.classList.add('btn-outline-info');
-            }
-            
-            renderizarCanvas();
-            console.log(`🔄 Vértices reseteados para ${calleSeleccionada.nombre}`);
-        }
-    });
-}
 
 // Actualizar estado de botones cuando cambia la selección
 selectCalle.addEventListener('change', () => {
@@ -3185,9 +3204,7 @@ selectCalle.addEventListener('change', () => {
         }
     }
     
-    if (btnResetVertices) {
-        btnResetVertices.disabled = !hayCalleSeleccionada || calleSeleccionada.tipo !== TIPOS.CONEXION;
-    }
+    
 });
 
 // ============================================================================
