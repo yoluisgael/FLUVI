@@ -1011,24 +1011,39 @@ class EditorCalles {
         this.isDraggingMove = true;
         this.dragStartX = e.clientX;
         this.dragStartY = e.clientY;
-        console.log('🖱️ Iniciando arrastre de movimiento');
+        console.log('🖱️ Iniciando arrastre de movimiento (HTML handle)');
     }
-    
+
     arrastreMovimiento(e) {
         if (!this.objetoEditando) return;
-        
+
         const escala = window.escala || 1;
-        const deltaX = (e.clientX - this.dragStartX) / escala;
-        const deltaY = (e.clientY - this.dragStartY) / escala;
-        
+        const camera = window.pixiApp?.cameraController;
+
+        // Usar CameraController si está disponible
+        const scale = camera ? camera.scale : escala;
+
+        const deltaX = (e.clientX - this.dragStartX) / scale;
+        const deltaY = (e.clientY - this.dragStartY) / scale;
+
         this.objetoEditando.x += deltaX;
         this.objetoEditando.y += deltaY;
-        
+
         this.dragStartX = e.clientX;
         this.dragStartY = e.clientY;
-        
+
         this.actualizarInputsPosicion();
         this.actualizarPosicionHandles();
+
+        // Actualizar sprite en PixiJS
+        if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+            if (this.tipoObjetoEditando === 'calle') {
+                window.pixiApp.sceneManager.calleRenderer?.updateCalleSprite(this.objetoEditando);
+            } else {
+                window.pixiApp.sceneManager.edificioRenderer?.updateEdificioSprite(this.objetoEditando);
+            }
+        }
+
         if (window.renderizarCanvas) window.renderizarCanvas();
     }
     

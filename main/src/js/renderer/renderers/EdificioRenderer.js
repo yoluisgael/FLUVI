@@ -9,6 +9,30 @@ class EdificioRenderer {
         this.assets = assetLoader;
     }
 
+    // Función auxiliar para detectar si un color es oscuro
+    esColorOscuro(colorHex) {
+        // Si es número hexadecimal de PixiJS (0xRRGGBB)
+        let r, g, b;
+
+        if (typeof colorHex === 'number') {
+            r = (colorHex >> 16) & 0xFF;
+            g = (colorHex >> 8) & 0xFF;
+            b = colorHex & 0xFF;
+        } else if (typeof colorHex === 'string') {
+            // Si es string tipo "#RRGGBB" o "#RRGGBBaa"
+            const hex = colorHex.replace('#', '');
+            r = parseInt(hex.substr(0, 2), 16);
+            g = parseInt(hex.substr(2, 2), 16);
+            b = parseInt(hex.substr(4, 2), 16);
+        } else {
+            return true; // Por defecto asumir oscuro (texto blanco)
+        }
+
+        // Calcular luminosidad
+        const luminosidad = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminosidad < 0.5;
+    }
+
     renderAll(edificios) {
         if (!edificios) return;
 
@@ -39,6 +63,8 @@ class EdificioRenderer {
             if (this.assets.hasTexture(imagenLower)) {
                 const texture = this.assets.getTexture(imagenLower);
                 sprite = new PIXI.Sprite(texture);
+
+                // Usar las dimensiones exactas del edificio (sin mantener aspect ratio)
                 sprite.width = edificio.width || 100;
                 sprite.height = edificio.height || 100;
                 sprite.anchor.set(0.5);
@@ -105,6 +131,12 @@ class EdificioRenderer {
             sprite.rotation = CoordinateConverter.degreesToRadians(edificio.angle);
         }
 
+        // Agregar nombre del edificio si tiene label y no es una imagen
+        if (edificio.label && !sprite.texture) {
+            // Solo agregar texto si es un graphics (no imagen)
+            this.addBuildingLabel(sprite, edificio);
+        }
+
         // Agregar borde si está seleccionado
         if (window.edificioSeleccionado === edificio) {
             this.addSelectionBorder(sprite, edificio);
@@ -139,13 +171,78 @@ class EdificioRenderer {
         this.updateSelectionBorder(sprite, edificio);
     }
 
+    addBuildingLabel(sprite, edificio) {
+        // Determinar color del texto basándose en el color de fondo del edificio
+        const backgroundColor = edificio.color || 0x808080;
+        const esOscuro = this.esColorOscuro(backgroundColor);
+        const colorTexto = esOscuro ? 0xFFFFFF : 0x000000; // Blanco para fondos oscuros, negro para claros
+
+        // Crear texto del label
+        const text = new PIXI.Text(edificio.label, {
+            fontFamily: 'Arial',
+            fontSize: 12,
+            fill: colorTexto,
+            align: 'center',
+            fontWeight: 'bold'
+        });
+
+        text.anchor.set(0.5);
+        text.resolution = 2; // Alta resolución para evitar pixelación
+
+        // Posicionar en el centro del edificio
+        const width = edificio.width || 100;
+        const height = edificio.height || 100;
+        text.x = width / 2;
+        text.y = height / 2;
+
+        text.name = 'buildingLabel';
+
+        // Agregar al sprite (que es un Graphics)
+        if (sprite instanceof PIXI.Graphics || sprite instanceof PIXI.Container) {
+            sprite.addChild(text);
+        }
+    }
+
     addSelectionBorder(sprite, edificio) {
         const graphics = new PIXI.Graphics();
         graphics.lineStyle(3, 0xFFD700);
-        graphics.drawRect(0, 0, edificio.width || 100, edificio.height || 100);
+
+        // Usar las dimensiones REALES del sprite, no las del objeto edificio
+        // porque el sprite puede haber sido redimensionado
+        let width, height;
+
+        if (sprite instanceof PIXI.Sprite && sprite.texture) {
+            // Para imágenes (Sprite), necesitamos compensar la escala del sprite
+            // porque el graphics hereda la transformación del padre
+            width = sprite.width;
+            height = sprite.height;
+
+            // DEBUG: Ver dimensiones reales y escalas
+            console.log(`🔍 Edificio "${edificio.label}":`);
+            console.log(`   sprite.width=${sprite.width}, sprite.height=${sprite.height}`);
+            console.log(`   sprite.scale.x=${sprite.scale.x}, sprite.scale.y=${sprite.scale.y}`);
+            console.log(`   texture: ${sprite.texture.width} x ${sprite.texture.height}`);
+
+            // El graphics se escala con el sprite, así que necesitamos compensar
+            // dibujando en coordenadas de la textura (sin escala)
+            const textureWidth = sprite.texture.width;
+            const textureHeight = sprite.texture.height;
+
+            console.log(`   Dibujando en coordenadas de textura: (${-textureWidth/2}, ${-textureHeight/2}, ${textureWidth}, ${textureHeight})`);
+
+            // Dibujar en coordenadas de la textura original (se escalará automáticamente con el sprite)
+            graphics.drawRect(-textureWidth / 2, -textureHeight / 2, textureWidth, textureHeight);
+        } else {
+            // Para Graphics (figuras geométricas), usar las dimensiones del edificio
+            width = edificio.width || 100;
+            height = edificio.height || 100;
+            // Para Graphics, dibujar desde 0, 0
+            graphics.drawRect(0, 0, width, height);
+        }
+
         graphics.name = 'selectionBorder';
 
-        if (sprite instanceof PIXI.Container) {
+        if (sprite instanceof PIXI.Container || sprite instanceof PIXI.Sprite) {
             sprite.addChild(graphics);
         }
     }
@@ -172,14 +269,14 @@ class EdificioRenderer {
     // Event handlers
     onEdificioClick(edificio, event) {
         if (event.data.originalEvent.ctrlKey || event.data.originalEvent.metaKey) {
-            console.log('🖱️ Clic en edificio:', edificio.nombre || 'Sin nombre');
+            console.log('🖱️ Clic en edificio:', edificio.label || 'Sin nombre');
 
             // Guardar edificio previamente seleccionado
             const previousSelection = window.edificioSeleccionado;
 
             // Si se clickeó el mismo edificio, deseleccionar
             if (previousSelection === edificio) {
-                console.log('🔄 Deseleccionando edificio:', edificio.nombre || 'Sin nombre');
+                console.log('🔄 Deseleccionando edificio:', edificio.label || 'Sin nombre');
                 window.edificioSeleccionado = null;
 
                 // Remover borde de selección
@@ -206,40 +303,20 @@ class EdificioRenderer {
                 return;
             }
 
+            // NUEVO: Limpiar TODOS los bordes existentes primero
+            if (window.pixiApp && window.pixiApp.sceneManager && window.pixiApp.sceneManager.calleRenderer) {
+                window.pixiApp.sceneManager.calleRenderer.clearAllSelectionBorders();
+            }
+
             // Actualizar selección global
             window.edificioSeleccionado = edificio;
-            const previousCalle = window.calleSeleccionada;
             window.calleSeleccionada = null;
 
-            // Quitar borde del edificio anterior si existe
-            if (previousSelection && previousSelection !== edificio) {
-                const prevSprite = this.scene.edificioSprites.get(previousSelection);
-                if (prevSprite) {
-                    const oldBorder = prevSprite.getChildByName ? prevSprite.getChildByName('selectionBorder') : null;
-                    if (oldBorder) {
-                        prevSprite.removeChild(oldBorder);
-                        oldBorder.destroy();
-                    }
-                }
+            // Agregar borde al edificio seleccionado
+            const currentSprite = this.scene.edificioSprites.get(edificio);
+            if (currentSprite) {
+                this.addSelectionBorder(currentSprite, edificio);
             }
-
-            // Quitar borde de la calle previamente seleccionada
-            if (previousCalle && window.pixiApp && window.pixiApp.sceneManager) {
-                const calleRenderer = window.pixiApp.sceneManager.calleRenderer;
-                if (calleRenderer) {
-                    const calleContainer = calleRenderer.scene.calleSprites.get(previousCalle);
-                    if (calleContainer) {
-                        const calleBorder = calleContainer.getChildByName('selectionBorder');
-                        if (calleBorder) {
-                            calleContainer.removeChild(calleBorder);
-                            calleBorder.destroy();
-                        }
-                    }
-                }
-            }
-
-            // Re-renderizar todos los edificios para actualizar bordes
-            this.renderAll(window.edificios);
 
             // Actualizar selector de tipo de objeto en Constructor
             const selectTipoObjeto = document.getElementById('selectTipoObjeto');
@@ -272,6 +349,13 @@ class EdificioRenderer {
             // Actualizar UI
             if (window.editorCalles) {
                 window.editorCalles.actualizarInputsPosicion();
+
+                // Si estamos en modo edición, recrear handles para el nuevo objeto
+                if (window.editorCalles.modoEdicion && window.editorHandles) {
+                    console.log('🔄 Cambiando handles al nuevo objeto (edificio) en modo edición');
+                    window.editorHandles.clearHandles();
+                    window.editorHandles.createHandles(edificio, 'edificio');
+                }
             }
 
             // Renderizar Canvas 2D si es necesario

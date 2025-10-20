@@ -370,13 +370,29 @@ function dibujarMinimapa() {
     const params = calcularParametrosMinimapa();
     const { minimapaAncho, minimapaAlto, minimapaEscala, minimapaOffsetX, minimapaOffsetY, viewport } = params;
 
+    // DEBUG: Log para verificar valores del viewport (descomenta para debugging)
+    if (Math.random() < 0.01) { // Solo log 1% del tiempo para no saturar la consola
+        console.log('🗺️ Minimapa Debug:', {
+            escala: window.escala?.toFixed(2),
+            viewportAncho: viewport.ancho?.toFixed(0),
+            viewportAlto: viewport.alto?.toFixed(0),
+            rectAncho: (viewport.ancho * minimapaEscala)?.toFixed(1),
+            rectAlto: (viewport.alto * minimapaEscala)?.toFixed(1)
+        });
+    }
+
     // Ajustar la resolución interna del canvas para que coincida con su tamaño en pantalla
     // Usar devicePixelRatio para mantener calidad en pantallas de alta densidad
     const dpr = window.devicePixelRatio || 1;
-    minimapaCanvas.width = minimapaAncho * dpr;
-    minimapaCanvas.height = minimapaAlto * dpr;
 
-    // Escalar el contexto para compensar el devicePixelRatio
+    // Solo redimensionar si cambió el tamaño (para evitar reset constante)
+    if (minimapaCanvas.width !== minimapaAncho * dpr || minimapaCanvas.height !== minimapaAlto * dpr) {
+        minimapaCanvas.width = minimapaAncho * dpr;
+        minimapaCanvas.height = minimapaAlto * dpr;
+    }
+
+    // Resetear transformaciones y escalar el contexto para compensar el devicePixelRatio
+    minimapaCtx.setTransform(1, 0, 0, 1, 0, 0);
     minimapaCtx.scale(dpr, dpr);
 
     // Limpiar el minimapa
@@ -488,8 +504,8 @@ function crearCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion, 
         }
     }
 
-    // NUEVO: Inicializar vértices automáticamente para calles tipo CONEXION
-    if (tipo === TIPOS.CONEXION) {
+    // Inicializar vértices automáticamente para calles tipo CONEXION, GENERADOR y DEVORADOR
+    if (tipo === TIPOS.CONEXION || tipo === TIPOS.GENERADOR || tipo === TIPOS.DEVORADOR) {
         inicializarVertices(calle);
     }
 
@@ -1756,23 +1772,58 @@ function calcularLimitesMapa() {
 // Función para aplicar límites al offset
 function aplicarLimitesOffset() {
     const limites = calcularLimitesMapa();
-    const viewportWidth = canvas.width / escala;
-    const viewportHeight = canvas.height / escala;
 
-    const minOffsetX = -(limites.maxX * escala - canvas.width);
-    const maxOffsetX = -limites.minX * escala;
-    const minOffsetY = -(limites.maxY * escala - canvas.height);
-    const maxOffsetY = -limites.minY * escala;
+    // Usar canvas de PixiJS si está disponible, sino usar Canvas 2D
+    let canvasWidth, canvasHeight;
+    if (window.USE_PIXI && window.pixiApp && window.pixiApp.app && window.pixiApp.app.view) {
+        canvasWidth = window.pixiApp.app.view.width;
+        canvasHeight = window.pixiApp.app.view.height;
+    } else {
+        canvasWidth = canvas.width;
+        canvasHeight = canvas.height;
+    }
 
-    offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, offsetX));
-    offsetY = Math.max(minOffsetY, Math.min(maxOffsetY, offsetY));
+    // IMPORTANTE: Usar las variables globales actualizadas por CameraController
+    const currentEscala = window.escala || escala;
+    const currentOffsetX = window.offsetX !== undefined ? window.offsetX : offsetX;
+    const currentOffsetY = window.offsetY !== undefined ? window.offsetY : offsetY;
+
+    const minOffsetX = -(limites.maxX * currentEscala - canvasWidth);
+    const maxOffsetX = -limites.minX * currentEscala;
+    const minOffsetY = -(limites.maxY * currentEscala - canvasHeight);
+    const maxOffsetY = -limites.minY * currentEscala;
+
+    // Actualizar tanto las variables locales como las globales
+    offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, currentOffsetX));
+    offsetY = Math.max(minOffsetY, Math.min(maxOffsetY, currentOffsetY));
+
+    // Sincronizar con variables globales
+    window.offsetX = offsetX;
+    window.offsetY = offsetY;
 }
 
 function calcularViewportVisible() {
-    const vistaX = -offsetX / escala;
-    const vistaY = -offsetY / escala;
-    const vistaAncho = canvas.width / escala;
-    const vistaAlto = canvas.height / escala;
+    // Usar canvas de PixiJS si está disponible, sino usar Canvas 2D
+    let canvasWidth, canvasHeight;
+
+    if (window.USE_PIXI && window.pixiApp && window.pixiApp.app && window.pixiApp.app.view) {
+        canvasWidth = window.pixiApp.app.view.width;
+        canvasHeight = window.pixiApp.app.view.height;
+    } else {
+        canvasWidth = canvas.width;
+        canvasHeight = canvas.height;
+    }
+
+    // IMPORTANTE: Usar las variables globales actualizadas por CameraController
+    const currentEscala = window.escala || escala;
+    const currentOffsetX = window.offsetX || offsetX;
+    const currentOffsetY = window.offsetY || offsetY;
+
+    const vistaX = -currentOffsetX / currentEscala;
+    const vistaY = -currentOffsetY / currentEscala;
+    const vistaAncho = canvasWidth / currentEscala;
+    const vistaAlto = canvasHeight / currentEscala;
+
     return { x: vistaX, y: vistaY, ancho: vistaAncho, alto: vistaAlto };
 }
 
@@ -3026,8 +3077,9 @@ minimapaCanvas.addEventListener("mousedown", (event) => {
         arrastandoMinimapa = true;
         minimapaInicialMouseX = mouseX;
         minimapaInicialMouseY = mouseY;
-        minimapaInicialOffsetX = offsetX;
-        minimapaInicialOffsetY = offsetY;
+        // IMPORTANTE: Usar las variables globales que son actualizadas por CameraController
+        minimapaInicialOffsetX = window.offsetX !== undefined ? window.offsetX : offsetX;
+        minimapaInicialOffsetY = window.offsetY !== undefined ? window.offsetY : offsetY;
         minimapaCanvas.style.cursor = 'grabbing';
         document.body.style.cursor = 'grabbing'; // Cambiar cursor de toda la página
         event.preventDefault();
@@ -3056,11 +3108,20 @@ minimapaCanvas.addEventListener("mousemove", (event) => {
         const worldDeltaX = deltaX / minimapaEscala;
         const worldDeltaY = deltaY / minimapaEscala;
 
-        // Actualizar el offset (el movimiento en el minimapa es directo, no inverso)
-        offsetX = minimapaInicialOffsetX - worldDeltaX * escala;
-        offsetY = minimapaInicialOffsetY - worldDeltaY * escala;
+        // IMPORTANTE: Usar la escala global actualizada por CameraController
+        const currentEscala = window.escala || escala;
 
-        aplicarLimitesOffset();
+        // Actualizar el offset (el movimiento en el minimapa es directo, no inverso)
+        offsetX = minimapaInicialOffsetX - worldDeltaX * currentEscala;
+        offsetY = minimapaInicialOffsetY - worldDeltaY * currentEscala;
+
+        // Si usamos PixiJS, actualizar el CameraController (que incluye aplicarLimitesOffset)
+        if (window.USE_PIXI && window.pixiApp && window.pixiApp.cameraController) {
+            window.pixiApp.cameraController.setPosition(offsetX, offsetY);
+        } else {
+            aplicarLimitesOffset();
+        }
+
         renderizarCanvas();
 
         // Prevenir la selección de texto mientras se arrastra
@@ -3105,11 +3166,20 @@ document.addEventListener("mousemove", (event) => {
         const worldDeltaX = deltaX / minimapaEscala;
         const worldDeltaY = deltaY / minimapaEscala;
 
-        // Actualizar el offset (el movimiento en el minimapa es directo, no inverso)
-        offsetX = minimapaInicialOffsetX - worldDeltaX * escala;
-        offsetY = minimapaInicialOffsetY - worldDeltaY * escala;
+        // IMPORTANTE: Usar la escala global actualizada por CameraController
+        const currentEscala = window.escala || escala;
 
-        aplicarLimitesOffset();
+        // Actualizar el offset (el movimiento en el minimapa es directo, no inverso)
+        offsetX = minimapaInicialOffsetX - worldDeltaX * currentEscala;
+        offsetY = minimapaInicialOffsetY - worldDeltaY * currentEscala;
+
+        // Si usamos PixiJS, actualizar el CameraController (que incluye aplicarLimitesOffset)
+        if (window.USE_PIXI && window.pixiApp && window.pixiApp.cameraController) {
+            window.pixiApp.cameraController.setPosition(offsetX, offsetY);
+        } else {
+            aplicarLimitesOffset();
+        }
+
         renderizarCanvas();
 
         event.preventDefault();
@@ -3170,6 +3240,12 @@ selectCalle.addEventListener("change", () => {
 window.renderizarCanvas = renderizarCanvas;
 window.inicializarIntersecciones = inicializarIntersecciones;
 window.construirMapaIntersecciones = construirMapaIntersecciones;
+window.encontrarCeldaMasCercana = encontrarCeldaMasCercana;
+window.dibujarMinimapa = dibujarMinimapa;
+window.calcularLimitesMapa = calcularLimitesMapa;
+window.aplicarLimitesOffset = aplicarLimitesOffset;
+window.calcularViewportVisible = calcularViewportVisible;
+window.calcularParametrosMinimapa = calcularParametrosMinimapa;
 
 canvas.addEventListener("wheel", () => {
     window.escala = escala;
@@ -3186,26 +3262,8 @@ canvas.addEventListener("mousemove", () => {
 
 
 
-// Actualizar estado de botones cuando cambia la selección
-selectCalle.addEventListener('change', () => {
-    const hayCalleSeleccionada = calleSeleccionada !== null;
-    
-    if (btnToggleCurva) {
-        btnToggleCurva.disabled = !hayCalleSeleccionada || calleSeleccionada.tipo !== TIPOS.CONEXION;
-        
-        if (hayCalleSeleccionada && calleSeleccionada.esCurva) {
-            btnToggleCurva.textContent = '🚫 Desactivar Curvas';
-            btnToggleCurva.classList.remove('btn-outline-info');
-            btnToggleCurva.classList.add('btn-info');
-        } else {
-            btnToggleCurva.textContent = '🌊 Activar Curvas';
-            btnToggleCurva.classList.remove('btn-info');
-            btnToggleCurva.classList.add('btn-outline-info');
-        }
-    }
-    
-    
-});
+// Código relacionado con btnToggleCurva eliminado ya que el botón no existe
+// Las curvas ahora siempre están disponibles automáticamente
 
 // ============================================================================
 // MODO OSCURO / MODO CLARO (Dark Mode / Light Mode)

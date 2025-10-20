@@ -122,6 +122,11 @@ class PixiApp {
             if (!window.isPaused && this.sceneManager) {
                 this.sceneManager.update(delta);
             }
+
+            // Actualizar minimapa en cada frame (es ligero, usa Canvas 2D)
+            if (typeof window.dibujarMinimapa === 'function') {
+                window.dibujarMinimapa();
+            }
         });
     }
 
@@ -129,13 +134,18 @@ class PixiApp {
         window.addEventListener('resize', () => {
             const sidebar = document.querySelector('.sidebar');
             const header = document.querySelector('header');
-            const sidebarWidth = window.innerWidth > 768 ? (sidebar ? sidebar.offsetWidth : 380) : 0;
+
+            // Verificar si el sidebar está visible (no tiene clase 'hidden')
+            const sidebarVisible = sidebar && !sidebar.classList.contains('hidden');
+            const sidebarWidth = window.innerWidth > 768 && sidebarVisible ? (sidebar.offsetWidth || 380) : 0;
             const headerHeight = header ? header.offsetHeight : 0;
 
             this.app.renderer.resize(
                 window.innerWidth - sidebarWidth,
                 window.innerHeight - headerHeight
             );
+
+            console.log(`📐 Resize: ${window.innerWidth - sidebarWidth}x${window.innerHeight - headerHeight} (sidebar: ${sidebarVisible ? 'visible' : 'hidden'})`);
         });
     }
 

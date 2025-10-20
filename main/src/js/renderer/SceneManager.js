@@ -78,12 +78,17 @@ class SceneManager {
             this.carroRenderer.updateAll(window.calles);
         }
 
-        // Actualizar etiquetas si están visibles
-        if (window.mostrarEtiquetas && this.uiRenderer && window.calles) {
-            this.uiRenderer.updateEtiquetas(window.calles);
-        } else if (this.uiRenderer) {
-            // Limpiar etiquetas si no están visibles
-            this.uiRenderer.clearEtiquetas();
+        // Actualizar etiquetas solo cuando cambie el estado
+        if (window.mostrarEtiquetas !== this.lastMostrarEtiquetas) {
+            this.lastMostrarEtiquetas = window.mostrarEtiquetas;
+
+            if (window.mostrarEtiquetas && this.uiRenderer && window.calles) {
+                // Renderizar etiquetas solo una vez al activar
+                this.uiRenderer.updateEtiquetas(window.calles);
+            } else if (this.uiRenderer) {
+                // Limpiar etiquetas al desactivar
+                this.uiRenderer.clearEtiquetas();
+            }
         }
 
         // Actualizar vértices y conexiones solo cuando cambie el estado
@@ -122,6 +127,13 @@ class SceneManager {
 
         // Nota: PixiJS renderiza automáticamente el stage cada frame
         // No necesitamos llamar a render() manualmente
+    }
+
+    // Método para forzar actualización de etiquetas cuando cambien las calles
+    refreshEtiquetas() {
+        if (window.mostrarEtiquetas && this.uiRenderer && window.calles) {
+            this.uiRenderer.updateEtiquetas(window.calles);
+        }
     }
 
     renderAll() {
@@ -257,7 +269,7 @@ class SceneManager {
 
                 layer.addChild(circle);
 
-                // Agregar número del vértice
+                // Agregar número del vértice con mayor resolución para evitar pixelación
                 const text = new PIXI.Text(index.toString(), {
                     fontFamily: 'Arial',
                     fontSize: 9,
@@ -266,6 +278,7 @@ class SceneManager {
                     align: 'center'
                 });
                 text.anchor.set(0.5);
+                text.resolution = 2; // Doble resolución para mayor calidad
                 text.x = pos.x;
                 text.y = pos.y;
                 text.name = `vertice_text_${calle.nombre}_${index}`;

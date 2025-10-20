@@ -12,8 +12,9 @@ class CameraController {
         this.offsetX = 0;
         this.offsetY = 0;
 
-        this.minScale = 0.1;
-        this.maxScale = 5;
+        // Límites de zoom (mismos valores que Canvas 2D original)
+        this.minScale = 0.7;  // Zoom out mínimo
+        this.maxScale = 20.0; // Zoom in máximo
 
         this.isDragging = false;
         this.lastMouseX = 0;
@@ -41,13 +42,20 @@ class CameraController {
 
         // Pan con arrastre
         view.addEventListener('mousedown', (e) => {
-            // Solo arrastrar si no está en modo edición o si se presiona Shift
-            if (!window.modoEdicion || e.shiftKey) {
-                this.isDragging = true;
-                this.lastMouseX = e.clientX;
-                this.lastMouseY = e.clientY;
-                view.style.cursor = 'grabbing';
+            // No capturar si se está arrastrando un objeto en modo edición
+            if (window.editorHandles && (window.editorHandles.isDraggingMove || window.editorHandles.isDraggingRotate)) {
+                return;
             }
+
+            // No capturar si SHIFT está presionado en modo edición (para arrastrar objetos)
+            if (e.shiftKey && window.editorCalles && window.editorCalles.modoEdicion) {
+                return;
+            }
+
+            this.isDragging = true;
+            this.lastMouseX = e.clientX;
+            this.lastMouseY = e.clientY;
+            view.style.cursor = 'grabbing';
         });
 
         view.addEventListener('mousemove', (e) => {
@@ -81,6 +89,7 @@ class CameraController {
         this.offsetX = centerX - (centerX - this.offsetX) * scaleFactor;
         this.offsetY = centerY - (centerY - this.offsetY) * scaleFactor;
 
+        this.applyLimits();
         this.applyTransform();
         this.updateGlobals();
     }
@@ -89,12 +98,14 @@ class CameraController {
         this.offsetX += dx;
         this.offsetY += dy;
 
+        this.applyLimits();
         this.applyTransform();
         this.updateGlobals();
     }
 
     setScale(newScale) {
         this.scale = Math.max(this.minScale, Math.min(this.maxScale, newScale));
+        this.applyLimits();
         this.applyTransform();
         this.updateGlobals();
     }
@@ -102,8 +113,28 @@ class CameraController {
     setPosition(x, y) {
         this.offsetX = x;
         this.offsetY = y;
+        this.applyLimits();
         this.applyTransform();
         this.updateGlobals();
+    }
+
+    applyLimits() {
+        // Usar la función de límites de trafico.js si está disponible
+        if (typeof window.calcularLimitesMapa === 'function' && window.calles && window.calles.length > 0) {
+            const limites = window.calcularLimitesMapa();
+            const canvas = this.app.view;
+
+            // Calcular límites basados en la escala actual
+            // A mayor zoom (scale), más espacio de movimiento necesitamos
+            const minOffsetX = -(limites.maxX * this.scale - canvas.width);
+            const maxOffsetX = -limites.minX * this.scale;
+            const minOffsetY = -(limites.maxY * this.scale - canvas.height);
+            const maxOffsetY = -limites.minY * this.scale;
+
+            // Aplicar límites
+            this.offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, this.offsetX));
+            this.offsetY = Math.max(minOffsetY, Math.min(maxOffsetY, this.offsetY));
+        }
     }
 
     applyTransform() {
@@ -117,6 +148,11 @@ class CameraController {
         window.escala = this.scale;
         window.offsetX = this.offsetX;
         window.offsetY = this.offsetY;
+
+        // Actualizar handles del editor si está disponible y en modo edición
+        if (window.editorCalles && window.editorCalles.modoEdicion) {
+            window.editorCalles.actualizarPosicionHandles();
+        }
     }
 
     worldToScreen(worldX, worldY) {

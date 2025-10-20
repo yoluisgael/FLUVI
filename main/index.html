@@ -1685,13 +1685,42 @@
         // Guardar estado en localStorage
         localStorage.setItem('sidebarVisible', sidebarVisible);
 
-        // Renderizar canvas después de la transición
+        // Redimensionar canvas después de la transición
         if (animate) {
           setTimeout(() => {
-            if (window.renderizarCanvas) {
-              window.renderizarCanvas();
-            }
+            resizeCanvasToFit();
           }, 400);
+        } else {
+          // Aplicar inmediatamente si no hay animación
+          resizeCanvasToFit();
+        }
+      }
+
+      // Función para redimensionar el canvas al tamaño correcto
+      function resizeCanvasToFit() {
+        const header = document.querySelector('header');
+        const sidebarWidth = sidebarVisible ? (window.innerWidth > 768 ? 380 : 0) : 0;
+        const headerHeight = header ? header.offsetHeight : 0;
+
+        const newWidth = window.innerWidth - sidebarWidth;
+        const newHeight = window.innerHeight - headerHeight;
+
+        // Si usamos PixiJS, redimensionar su renderer
+        if (window.USE_PIXI && window.pixiApp && window.pixiApp.app) {
+          window.pixiApp.app.renderer.resize(newWidth, newHeight);
+          console.log(`🖼️ Canvas PixiJS redimensionado: ${newWidth}x${newHeight}`);
+        } else {
+          // Canvas 2D tradicional
+          const canvas = document.getElementById('simuladorCanvas');
+          if (canvas) {
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+          }
+        }
+
+        // Renderizar después del redimensionamiento
+        if (window.renderizarCanvas) {
+          window.renderizarCanvas();
         }
       }
 

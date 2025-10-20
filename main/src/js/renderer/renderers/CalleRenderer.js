@@ -65,6 +65,9 @@ class CalleRenderer {
             );
         }
 
+        // Hacer el TilingSprite interactivo para asegurar que capture eventos
+        tilingSprite.interactive = true;
+
         container.addChild(tilingSprite);
 
         // Agregar borde de selección si es la calle seleccionada
@@ -253,8 +256,38 @@ class CalleRenderer {
         }
     }
 
+    clearAllSelectionBorders() {
+        // Limpiar bordes de TODAS las calles
+        this.scene.calleSprites.forEach((container, calle) => {
+            const border = container.getChildByName('selectionBorder');
+            if (border) {
+                container.removeChild(border);
+                border.destroy();
+            }
+        });
+
+        // Limpiar bordes de TODOS los edificios
+        if (window.pixiApp && window.pixiApp.sceneManager && window.pixiApp.sceneManager.edificioRenderer) {
+            const edificioRenderer = window.pixiApp.sceneManager.edificioRenderer;
+            edificioRenderer.scene.edificioSprites.forEach((sprite, edificio) => {
+                const border = sprite.getChildByName ? sprite.getChildByName('selectionBorder') : null;
+                if (border) {
+                    sprite.removeChild(border);
+                    border.destroy();
+                }
+            });
+        }
+
+        console.log('🧹 Todos los bordes de selección limpiados');
+    }
+
     // Event handlers
     onCalleClick(calle, event) {
+        // Obtener coordenadas del mundo
+        const globalPos = event.data.global;
+        const worldX = (globalPos.x - window.offsetX) / window.escala;
+        const worldY = (globalPos.y - window.offsetY) / window.escala;
+
         // Si es Ctrl+Click, seleccionar la calle
         if (event.data.originalEvent.ctrlKey || event.data.originalEvent.metaKey) {
             console.log('🖱️ Clic en calle:', calle.nombre);
@@ -295,38 +328,12 @@ class CalleRenderer {
                 return;
             }
 
+            // NUEVO: Limpiar TODOS los bordes existentes primero
+            this.clearAllSelectionBorders();
+
             // Actualizar selección global
             window.calleSeleccionada = calle;
-            const previousEdificio = window.edificioSeleccionado;
             window.edificioSeleccionado = null;
-
-            // Quitar borde de la calle anterior si existe y es diferente
-            if (previousSelection && previousSelection !== calle) {
-                const prevContainer = this.scene.calleSprites.get(previousSelection);
-                if (prevContainer) {
-                    // Remover el borde de selección
-                    const oldBorder = prevContainer.getChildByName('selectionBorder');
-                    if (oldBorder) {
-                        prevContainer.removeChild(oldBorder);
-                        oldBorder.destroy();
-                    }
-                }
-            }
-
-            // Quitar borde del edificio previamente seleccionado
-            if (previousEdificio && window.pixiApp && window.pixiApp.sceneManager) {
-                const edificioRenderer = window.pixiApp.sceneManager.edificioRenderer;
-                if (edificioRenderer) {
-                    const edificioSprite = edificioRenderer.scene.edificioSprites.get(previousEdificio);
-                    if (edificioSprite) {
-                        const edificioBorder = edificioSprite.getChildByName ? edificioSprite.getChildByName('selectionBorder') : null;
-                        if (edificioBorder) {
-                            edificioSprite.removeChild(edificioBorder);
-                            edificioBorder.destroy();
-                        }
-                    }
-                }
-            }
 
             // Agregar borde a la calle seleccionada
             const currentContainer = this.scene.calleSprites.get(calle);
@@ -363,6 +370,8 @@ class CalleRenderer {
                 // Actualizar selector de Configuración de Calles
                 if (selectCalle) {
                     selectCalle.value = calleIndex;
+                    // Disparar evento change para actualizar los inputs de probabilidades
+                    selectCalle.dispatchEvent(new Event('change'));
                 }
                 // Actualizar selector del Constructor
                 if (selectCalleEditor) {
@@ -380,11 +389,43 @@ class CalleRenderer {
             // Actualizar UI (selectores y paneles)
             if (window.editorCalles) {
                 window.editorCalles.actualizarInputsPosicion();
+
+                // Si estamos en modo edición, recrear handles para el nuevo objeto
+                if (window.editorCalles.modoEdicion && window.editorHandles) {
+                    console.log('🔄 Cambiando handles al nuevo objeto en modo edición');
+                    window.editorHandles.clearHandles();
+                    window.editorHandles.createHandles(calle, 'calle');
+                }
             }
 
             // Llamar a la función global de renderizado si existe (para Canvas 2D fallback)
             if (!window.USE_PIXI && window.renderizarCanvas) {
                 window.renderizarCanvas();
+            }
+        } else {
+            // Comportamiento normal sin Ctrl: agregar/quitar vehículos
+            if (typeof window.encontrarCeldaMasCercana === 'function') {
+                const celdaObjetivo = window.encontrarCeldaMasCercana(worldX, worldY);
+
+                if (celdaObjetivo) {
+                    const { calle: calleObjetivo, carril, indice } = celdaObjetivo;
+
+                    // Verificar que la celda objetivo sea de la calle clickeada
+                    if (calleObjetivo === calle) {
+                        if (calleObjetivo.arreglo[carril] !== undefined && calleObjetivo.arreglo[carril][indice] === 0) {
+                            // Agregar vehículo
+                            calleObjetivo.arreglo[carril][indice] = 1;
+                            console.log(`🚗 Vehículo agregado en ${calle.nombre} [${carril}][${indice}]`);
+                        } else if (calleObjetivo.arreglo[carril] !== undefined && calleObjetivo.arreglo[carril][indice] !== 0) {
+                            // Quitar vehículo
+                            calleObjetivo.arreglo[carril][indice] = 0;
+                            console.log(`🚫 Vehículo removido de ${calle.nombre} [${carril}][${indice}]`);
+                        }
+
+                        // Los vehículos se actualizan automáticamente en el siguiente frame
+                        // No es necesario llamar a renderizarCanvas en PixiJS
+                    }
+                }
             }
         }
     }

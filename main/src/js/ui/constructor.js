@@ -228,7 +228,18 @@ function agregarCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion
         // Actualizar selector
         actualizarSelectorCalles();
 
-        // Renderizar
+        // Renderizar en PixiJS si está activo
+        if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+            if (calle.esCurva) {
+                window.pixiApp.sceneManager.calleRenderer?.renderCalleCurva(calle);
+            } else {
+                window.pixiApp.sceneManager.calleRenderer?.renderCalleRecta(calle);
+            }
+            // Actualizar etiquetas cuando se agrega una calle
+            window.pixiApp.sceneManager.refreshEtiquetas();
+        }
+
+        // Renderizar Canvas 2D si existe
         if (window.renderizarCanvas) {
             window.renderizarCanvas();
         }
@@ -393,6 +404,15 @@ function mostrarDialogoNuevaConexion() {
             // Renderizar canvas
             if (window.renderizarCanvas) {
                 window.renderizarCanvas();
+            }
+
+            // Renderizar en PixiJS si está activo
+            if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                // Limpiar y re-renderizar todas las conexiones
+                window.pixiApp.sceneManager.conexionRenderer?.clearAll();
+                if (window.conexiones && window.mostrarConexiones) {
+                    window.pixiApp.sceneManager.conexionRenderer?.renderAll(window.conexiones);
+                }
             }
 
             console.log(`✅ Conexión ${tipo} creada entre "${origen.nombre}" y "${destino.nombre}"`);
@@ -566,7 +586,12 @@ function agregarEdificio(label, x, y, width, height, angle) {
     // Actualizar selectores
     actualizarSelectorEdificios();
 
-    // Renderizar
+    // Renderizar en PixiJS si está activo
+    if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+        window.pixiApp.sceneManager.edificioRenderer?.renderEdificio(edificio);
+    }
+
+    // Renderizar Canvas 2D si existe
     if (window.renderizarCanvas) {
         window.renderizarCanvas();
     }
@@ -661,12 +686,19 @@ function eliminarObjetoSeleccionado() {
             // Actualizar selectores
             actualizarSelectorCalles();
 
+            // Eliminar sprite en PixiJS si está activo
+            if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                window.pixiApp.sceneManager.calleRenderer?.removeCalleSprite(calle);
+                // Actualizar etiquetas cuando se elimina una calle
+                window.pixiApp.sceneManager.refreshEtiquetas();
+            }
+
             // Reinicializar intersecciones
             if (window.inicializarIntersecciones) {
                 window.inicializarIntersecciones();
             }
 
-            // Renderizar
+            // Renderizar Canvas 2D si existe
             if (window.renderizarCanvas) {
                 window.renderizarCanvas();
             }
@@ -692,7 +724,12 @@ function eliminarObjetoSeleccionado() {
             // Actualizar selector
             actualizarSelectorEdificios();
 
-            // Renderizar
+            // Eliminar sprite en PixiJS si está activo
+            if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                window.pixiApp.sceneManager.edificioRenderer?.removeEdificioSprite(edificio);
+            }
+
+            // Renderizar Canvas 2D si existe
             if (window.renderizarCanvas) {
                 window.renderizarCanvas();
             }
@@ -921,7 +958,20 @@ function cargarSimulacion(event) {
                         window.construirMapaIntersecciones();
                     }
 
-                    // Renderizar
+                    // Re-renderizar todo en PixiJS si está activo
+                    if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                        console.log('🎨 Re-renderizando simulación cargada en PixiJS');
+                        window.pixiApp.sceneManager.clearAll();
+                        window.pixiApp.sceneManager.renderAll();
+
+                        // Forzar actualización de etiquetas si están habilitadas
+                        if (window.mostrarEtiquetas && window.pixiApp.sceneManager.uiRenderer) {
+                            console.log('🏷️ Actualizando etiquetas después de cargar simulación');
+                            window.pixiApp.sceneManager.uiRenderer.updateEtiquetas(window.calles);
+                        }
+                    }
+
+                    // Renderizar Canvas 2D si existe
                     if (window.renderizarCanvas) {
                         window.renderizarCanvas();
                     }
@@ -1007,7 +1057,13 @@ function limpiarSimulacionActual() {
     actualizarSelectorCalles();
     actualizarSelectorEdificios();
 
-    // Renderizar
+    // Limpiar PixiJS si está activo
+    if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+        console.log('🧹 Limpiando escena de PixiJS');
+        window.pixiApp.sceneManager.clearAll();
+    }
+
+    // Renderizar Canvas 2D si existe
     if (window.renderizarCanvas) {
         window.renderizarCanvas();
     }
@@ -1324,6 +1380,15 @@ function eliminarConexion(index) {
     actualizarListaConexiones();
     if (window.renderizarCanvas) {
         window.renderizarCanvas();
+    }
+
+    // Actualizar en PixiJS si está activo
+    if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+        // Limpiar y re-renderizar todas las conexiones
+        window.pixiApp.sceneManager.conexionRenderer?.clearAll();
+        if (window.conexiones && window.mostrarConexiones) {
+            window.pixiApp.sceneManager.conexionRenderer?.renderAll(window.conexiones);
+        }
     }
 
     console.log(`🗑️ Conexión ${index} eliminada de la simulación`);
