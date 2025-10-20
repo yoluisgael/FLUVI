@@ -20,6 +20,12 @@ class CameraController {
         this.lastMouseX = 0;
         this.lastMouseY = 0;
 
+        // Guardar referencias a los event handlers para poder deshabilitarlos
+        this.mouseDownHandler = null;
+        this.mouseMoveHandler = null;
+        this.mouseUpHandler = null;
+        this.mouseLeaveHandler = null;
+
         this.setupEvents();
 
         // Exponer para compatibilidad con código existente
@@ -40,8 +46,8 @@ class CameraController {
             this.zoom(zoomFactor, e.offsetX, e.offsetY);
         }, { passive: false });
 
-        // Pan con arrastre
-        view.addEventListener('mousedown', (e) => {
+        // Pan con arrastre - USAR CAPTURE PHASE para interceptar antes que PixiJS
+        this.mouseDownHandler = (e) => {
             // No capturar si se está arrastrando un objeto en modo edición
             if (window.editorHandles && (window.editorHandles.isDraggingMove || window.editorHandles.isDraggingRotate)) {
                 return;
@@ -52,11 +58,21 @@ class CameraController {
                 return;
             }
 
+            // NO capturar si Z está presionada en modo edición (para editar vértices)
+            // Dejar que el evento continúe para que editor.js pueda detectar vértices
+            if (window.zKeyPressed && window.editorCalles && window.editorCalles.modoEdicion) {
+                console.log('🚫 CameraController: Z presionada, ignorando pero dejando pasar evento');
+                return; // Solo return, NO stopPropagation
+            }
+
             this.isDragging = true;
             this.lastMouseX = e.clientX;
             this.lastMouseY = e.clientY;
             view.style.cursor = 'grabbing';
-        });
+        };
+
+        // IMPORTANTE: Usar capture phase (tercer parámetro = true)
+        view.addEventListener('mousedown', this.mouseDownHandler, true);
 
         view.addEventListener('mousemove', (e) => {
             if (this.isDragging) {

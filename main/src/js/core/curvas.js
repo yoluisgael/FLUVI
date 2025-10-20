@@ -153,14 +153,25 @@ function actualizarAnguloVertice(calle, indiceVertice, nuevoAnguloOffset) {
 
 // Calcula el ángulo basado en distancia perpendicular al eje de la calle
 function actualizarVerticePorArrastre(calle, indiceVertice, mouseX, mouseY) {
-    if (indiceVertice < 0 || indiceVertice >= calle.vertices.length) return false;
+    console.log(`🔧 actualizarVerticePorArrastre llamado:`);
+    console.log(`   Calle: ${calle.nombre}, Índice: ${indiceVertice}`);
+    console.log(`   Mouse: (${mouseX.toFixed(2)}, ${mouseY.toFixed(2)})`);
+
+    if (indiceVertice < 0 || indiceVertice >= calle.vertices.length) {
+        console.error(`❌ Índice de vértice inválido: ${indiceVertice}, total vértices: ${calle.vertices.length}`);
+        return false;
+    }
 
     const vertice = calle.vertices[indiceVertice];
     const posActual = calcularPosicionVertice(calle, vertice);
 
+    console.log(`   Posición vértice: (${posActual.x.toFixed(2)}, ${posActual.y.toFixed(2)})`);
+
     // Vector desde posición del vértice al mouse
     const dx = mouseX - posActual.x;
     const dy = mouseY - posActual.y;
+
+    console.log(`   Vector dx,dy: (${dx.toFixed(2)}, ${dy.toFixed(2)})`);
 
     // Calcular ángulo base de la calle en radianes
     const anguloBaseRad = -calle.angulo * Math.PI / 180;
@@ -169,19 +180,30 @@ function actualizarVerticePorArrastre(calle, indiceVertice, mouseX, mouseY) {
     const perpX = -Math.sin(anguloBaseRad);
     const perpY = Math.cos(anguloBaseRad);
 
+    console.log(`   Vector perpendicular: (${perpX.toFixed(2)}, ${perpY.toFixed(2)})`);
+
     // Proyección del mouse sobre el eje perpendicular (distancia lateral)
     const distanciaPerp = dx * perpX + dy * perpY;
+
+    console.log(`   Distancia perpendicular: ${distanciaPerp.toFixed(2)}`);
 
     // Convertir distancia perpendicular a ángulo
     // Usamos una escala: cada 50 píxeles = 40 grados
     const escalaDistancia = 50; // píxeles para llegar al máximo
     let nuevoOffset = (distanciaPerp / escalaDistancia) * 40;
 
+    console.log(`   Nuevo offset calculado: ${nuevoOffset.toFixed(2)}°`);
+
     // Limitar a ±40 grados
     nuevoOffset = Math.max(-40, Math.min(40, nuevoOffset));
 
+    console.log(`   Nuevo offset limitado: ${nuevoOffset.toFixed(2)}°`);
+
     // Aplicar con validación
-    return actualizarAnguloVertice(calle, indiceVertice, nuevoOffset);
+    const resultado = actualizarAnguloVertice(calle, indiceVertice, nuevoOffset);
+    console.log(`   Resultado de actualizarAnguloVertice: ${resultado}`);
+
+    return resultado;
 }
 
 // Detectar si el mouse está sobre un vértice

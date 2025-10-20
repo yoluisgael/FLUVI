@@ -1870,6 +1870,87 @@
         console.log('✓ Sistema de información en tiempo real inicializado');
       });
     })();
+
+    // ========== DETECCIÓN DE TECLA Z PARA EDICIÓN DE VÉRTICES ==========
+    (function() {
+      window.zKeyPressed = false;
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'z' || e.key === 'Z') {
+          if (window.zKeyPressed) return; // Ya está presionada
+
+          window.zKeyPressed = true;
+
+          // Cambiar cursor del canvas si estamos en modo edición
+          const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
+            ? window.pixiApp.app.view
+            : document.getElementById('simuladorCanvas');
+
+          if (canvas && canvas.classList.contains('editing-vertices')) {
+            canvas.style.cursor = 'crosshair';
+
+            // Actualizar feedback visual de los vértices
+            updateVerticesVisualFeedback(true);
+          }
+        }
+      });
+
+      document.addEventListener('keyup', function(e) {
+        if (e.key === 'z' || e.key === 'Z') {
+          window.zKeyPressed = false;
+
+          // Restaurar cursor del canvas
+          const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
+            ? window.pixiApp.app.view
+            : document.getElementById('simuladorCanvas');
+
+          if (canvas && canvas.classList.contains('editing-vertices')) {
+            canvas.style.cursor = '';
+
+            // Actualizar feedback visual de los vértices
+            updateVerticesVisualFeedback(false);
+          }
+        }
+      });
+
+      // Resetear estado si la ventana pierde el foco
+      window.addEventListener('blur', function() {
+        window.zKeyPressed = false;
+        updateVerticesVisualFeedback(false);
+      });
+
+      // Función para actualizar el feedback visual de los vértices
+      function updateVerticesVisualFeedback(altPressed) {
+        if (!window.USE_PIXI || !window.pixiApp || !window.pixiApp.sceneManager) return;
+
+        const calleSeleccionada = window.calleSeleccionada;
+        if (!calleSeleccionada) return;
+
+        const verticesContainer = window.pixiApp.sceneManager.verticeSprites.get(calleSeleccionada);
+        if (!verticesContainer) return;
+
+        // Actualizar cada vértice
+        verticesContainer.children.forEach((graphics, index) => {
+          const isFirst = index === 0;
+          const isLast = index === calleSeleccionada.vertices.length - 1;
+
+          // Solo aplicar efecto a vértices editables (intermedios)
+          if (!isFirst && !isLast) {
+            if (altPressed) {
+              // Aumentar brillo y tamaño cuando Alt está presionado
+              graphics.alpha = 1.0;
+              graphics.scale.set(1.2);
+            } else {
+              // Restaurar estado normal
+              graphics.alpha = 0.8;
+              graphics.scale.set(1.0);
+            }
+          }
+        });
+      }
+
+      console.log('✓ Sistema de detección de tecla Z inicializado');
+    })();
   </script>
 </body>
 </html>

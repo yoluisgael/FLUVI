@@ -370,16 +370,16 @@ function dibujarMinimapa() {
     const params = calcularParametrosMinimapa();
     const { minimapaAncho, minimapaAlto, minimapaEscala, minimapaOffsetX, minimapaOffsetY, viewport } = params;
 
-    // DEBUG: Log para verificar valores del viewport (descomenta para debugging)
-    if (Math.random() < 0.01) { // Solo log 1% del tiempo para no saturar la consola
-        console.log('🗺️ Minimapa Debug:', {
-            escala: window.escala?.toFixed(2),
-            viewportAncho: viewport.ancho?.toFixed(0),
-            viewportAlto: viewport.alto?.toFixed(0),
-            rectAncho: (viewport.ancho * minimapaEscala)?.toFixed(1),
-            rectAlto: (viewport.alto * minimapaEscala)?.toFixed(1)
-        });
-    }
+    // DEBUG: Log para verificar valores del viewport (comentado para evitar spam en consola)
+    // if (Math.random() < 0.01) {
+    //     console.log('🗺️ Minimapa Debug:', {
+    //         escala: window.escala?.toFixed(2),
+    //         viewportAncho: viewport.ancho?.toFixed(0),
+    //         viewportAlto: viewport.alto?.toFixed(0),
+    //         rectAncho: (viewport.ancho * minimapaEscala)?.toFixed(1),
+    //         rectAlto: (viewport.alto * minimapaEscala)?.toFixed(1)
+    //     });
+    // }
 
     // Ajustar la resolución interna del canvas para que coincida con su tamaño en pantalla
     // Usar devicePixelRatio para mantener calidad en pantallas de alta densidad
@@ -1695,6 +1695,22 @@ function renderizarCanvas() {
             console.log('🎨 Primera renderización con PixiJS');
             window.pixiApp.sceneManager.renderAll();
             pixiFirstRender = true;
+        } else {
+            // Si hay una calle seleccionada en modo edición, re-renderizarla
+            // para reflejar cambios de geometría (como curvas de vértices)
+            if (window.editorCalles && window.editorCalles.modoEdicion && window.calleSeleccionada) {
+                const calleRenderer = window.pixiApp.sceneManager.calleRenderer;
+                if (calleRenderer) {
+                    // Re-renderizar la calle seleccionada
+                    if (window.calleSeleccionada.esCurva) {
+                        calleRenderer.renderCalleCurva(window.calleSeleccionada);
+                    } else {
+                        calleRenderer.renderCalleRecta(window.calleSeleccionada);
+                    }
+                    // Re-renderizar sus vértices
+                    calleRenderer.renderVertices(window.calleSeleccionada);
+                }
+            }
         }
 
         // El minimapa se actualiza en cada frame (es ligero)

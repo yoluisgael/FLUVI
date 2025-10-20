@@ -11,7 +11,14 @@ class SceneManager {
         // Contenedor principal con soporte para z-index
         this.mainContainer = new PIXI.Container();
         this.mainContainer.sortableChildren = true;
+        this.mainContainer.interactiveChildren = true;
         this.app.stage.addChild(this.mainContainer);
+
+        // Asegurar que el stage tenga eventos habilitados
+        this.app.stage.eventMode = 'static';
+        this.app.stage.interactiveChildren = true;
+
+        console.log('🎮 Stage configurado con eventos interactivos');
 
         // Crear capas en orden de renderizado
         this.layers = {
@@ -51,6 +58,8 @@ class SceneManager {
         const layer = new PIXI.Container();
         layer.zIndex = zIndex;
         layer.sortableChildren = true;
+        layer.eventMode = 'static'; // Habilitar eventos en PixiJS v7+
+        layer.interactiveChildren = true;
         this.mainContainer.addChild(layer);
         return layer;
     }

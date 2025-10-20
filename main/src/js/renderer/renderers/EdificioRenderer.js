@@ -214,21 +214,11 @@ class EdificioRenderer {
         if (sprite instanceof PIXI.Sprite && sprite.texture) {
             // Para imágenes (Sprite), necesitamos compensar la escala del sprite
             // porque el graphics hereda la transformación del padre
-            width = sprite.width;
-            height = sprite.height;
-
-            // DEBUG: Ver dimensiones reales y escalas
-            console.log(`🔍 Edificio "${edificio.label}":`);
-            console.log(`   sprite.width=${sprite.width}, sprite.height=${sprite.height}`);
-            console.log(`   sprite.scale.x=${sprite.scale.x}, sprite.scale.y=${sprite.scale.y}`);
-            console.log(`   texture: ${sprite.texture.width} x ${sprite.texture.height}`);
 
             // El graphics se escala con el sprite, así que necesitamos compensar
             // dibujando en coordenadas de la textura (sin escala)
             const textureWidth = sprite.texture.width;
             const textureHeight = sprite.texture.height;
-
-            console.log(`   Dibujando en coordenadas de textura: (${-textureWidth/2}, ${-textureHeight/2}, ${textureWidth}, ${textureHeight})`);
 
             // Dibujar en coordenadas de la textura original (se escalará automáticamente con el sprite)
             graphics.drawRect(-textureWidth / 2, -textureHeight / 2, textureWidth, textureHeight);

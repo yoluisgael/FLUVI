@@ -13,7 +13,10 @@ class EditorCalles {
         this.verticeEditando = null;
         this.indiceVerticeEditando = -1;
         this.isDraggingVertice = false;
-        
+
+        // Handler para eventos de vértices (para poder removerlo cuando sea necesario)
+        this.vertexMouseDownHandler = null;
+
         // Elementos del DOM
         this.btnModoEdicion = document.getElementById('btnModoEdicion');
         this.btnGuardarEdicion = document.getElementById('btnGuardarEdicion');
@@ -310,46 +313,21 @@ class EditorCalles {
             this.iniciarArrastreRotacion(e);
         });
         
-        // NUEVO: Capturar mousedown en el canvas para detectar vértices
-        const canvas = document.getElementById('simuladorCanvas');
-        if (canvas) {
-            canvas.addEventListener('mousedown', (e) => {
-                // Solo procesar si estamos en modo edición y mostrando conexiones
-                if (!this.modoEdicion || !window.mostrarConexiones) return;
-                if (this.tipoObjetoEditando !== 'calle') return;
-                if (!this.objetoEditando || !this.objetoEditando.vertices) return;
-                
-                const rect = canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                const mouseY = e.clientY - rect.top;
-                
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                const scaledMouseX = mouseX * scaleX;
-                const scaledMouseY = mouseY * scaleY;
-                
-                const escala = window.escala || 1;
-                const offsetX = window.offsetX || 0;
-                const offsetY = window.offsetY || 0;
-                
-                const worldX = (scaledMouseX - offsetX) / escala;
-                const worldY = (scaledMouseY - offsetY) / escala;
-                
-                // Intentar detectar vértice
-                const verticeDetectado = this.detectarClicEnVertice(worldX, worldY);
-                
-                if (verticeDetectado) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.iniciarArrastreVertice(
-                        verticeDetectado.vertice,
-                        verticeDetectado.indice,
-                        worldX,
-                        worldY
-                    );
-                    console.log(`🎯 Vértice ${verticeDetectado.indice} capturado`);
+        // NUEVO: Capturar mousedown en el canvas para detectar vértices (Canvas 2D y PixiJS)
+        // Usar una función que se puede volver a adjuntar después de que PixiJS reemplace el canvas
+        this.setupVertexEventListeners();
+
+        // Si PixiJS se inicializa después, re-adjuntar el event listener
+        // Esto es necesario porque PixiJS reemplaza el canvas cuando se inicializa
+        if (window.USE_PIXI && !window.pixiApp) {
+            // Esperar a que PixiJS se inicialice
+            const checkPixiInitialized = setInterval(() => {
+                if (window.pixiApp && window.pixiApp.app) {
+                    console.log('🔄 PixiJS inicializado, re-adjuntando event listeners de vértices');
+                    this.setupVertexEventListeners();
+                    clearInterval(checkPixiInitialized);
                 }
-            });
+            }, 500);
         }
         
         // Eventos globales de mouse
@@ -371,17 +349,21 @@ class EditorCalles {
         document.addEventListener('mouseup', () => {
             this.isDraggingMove = false;
             this.isDraggingRotate = false;
-            
+
             if (this.isDraggingVertice) {
                 this.isDraggingVertice = false;
                 this.verticeEditando = null;
                 this.indiceVerticeEditando = -1;
-                
+
                 // Restaurar cursor
-                const canvas = document.getElementById('simuladorCanvas');
+                const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
+                    ? window.pixiApp.app.view
+                    : document.getElementById('simuladorCanvas');
                 if (canvas) {
                     canvas.classList.remove('dragging-vertex');
                 }
+
+                console.log('✅ Arrastre de vértice finalizado');
             }
         });
         
@@ -389,30 +371,108 @@ class EditorCalles {
     }
     
     // ==================== FUNCIONES DE DETECCIÓN Y EDICIÓN DE VÉRTICES ====================
-    
+
+    setupVertexEventListeners() {
+        const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
+            ? window.pixiApp.app.view
+            : document.getElementById('simuladorCanvas');
+
+        if (!canvas) {
+            console.warn('⚠️ Canvas no encontrado para event listeners de vértices');
+            return;
+        }
+
+        // Remover event listener anterior si existe (para evitar duplicados)
+        if (this.vertexMouseDownHandler) {
+            canvas.removeEventListener('mousedown', this.vertexMouseDownHandler);
+        }
+
+        // Crear y guardar el handler
+        this.vertexMouseDownHandler = (e) => {
+            // Solo procesar si estamos en modo edición, Z está presionada, y hay vértices
+            if (!this.modoEdicion) return;
+            if (!window.zKeyPressed) return; // IMPORTANTE: Solo con Z presionada
+            if (this.tipoObjetoEditando !== 'calle') return;
+            if (!this.objetoEditando || !this.objetoEditando.vertices) return;
+
+            console.log('🎯 Editor: Detectando click en vértice con Z presionada...');
+
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const scaledMouseX = mouseX * scaleX;
+            const scaledMouseY = mouseY * scaleY;
+
+            const escala = window.escala || 1;
+            const offsetX = window.offsetX || 0;
+            const offsetY = window.offsetY || 0;
+
+            const worldX = (scaledMouseX - offsetX) / escala;
+            const worldY = (scaledMouseY - offsetY) / escala;
+
+            console.log(`   Coordenadas mundo: (${worldX.toFixed(2)}, ${worldY.toFixed(2)})`);
+            console.log(`   Calle editando: ${this.objetoEditando?.nombre}, Vértices: ${this.objetoEditando?.vertices?.length}`);
+
+            // Intentar detectar vértice
+            const verticeDetectado = this.detectarClicEnVertice(worldX, worldY);
+
+            console.log(`   Vértice detectado:`, verticeDetectado ? `Índice ${verticeDetectado.indice}` : 'Ninguno');
+
+            if (verticeDetectado) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.iniciarArrastreVertice(
+                    verticeDetectado.vertice,
+                    verticeDetectado.indice,
+                    worldX,
+                    worldY
+                );
+                console.log(`🎯 Vértice ${verticeDetectado.indice} capturado`);
+            }
+        };
+
+        // Adjuntar el event listener
+        canvas.addEventListener('mousedown', this.vertexMouseDownHandler);
+        console.log('✅ Event listener de vértices adjuntado al canvas');
+    }
+
     // Función para detectar clic en vértice
     detectarClicEnVertice(mouseX, mouseY) {
-        if (!this.objetoEditando || !this.objetoEditando.vertices) return null;
-        
+        if (!this.objetoEditando || !this.objetoEditando.vertices) {
+            console.log('🔍 detectarClicEnVertice: Sin objeto editando o sin vértices');
+            return null;
+        }
+
         const umbralDistancia = 15 / (window.escala || 1);
-        
+        console.log(`🔍 detectarClicEnVertice: Buscando vértices cerca de (${mouseX.toFixed(2)}, ${mouseY.toFixed(2)}), umbral: ${umbralDistancia.toFixed(2)}`);
+
         for (let i = 0; i < this.objetoEditando.vertices.length; i++) {
             const vertice = this.objetoEditando.vertices[i];
-            const pos = window.calcularPosicionVertice 
+            const pos = window.calcularPosicionVertice
                 ? window.calcularPosicionVertice(this.objetoEditando, vertice)
                 : null;
-            
-            if (!pos) continue;
-            
+
+            if (!pos) {
+                console.log(`   Vértice ${i}: Sin posición calculada`);
+                continue;
+            }
+
             const dx = mouseX - pos.x;
             const dy = mouseY - pos.y;
             const distancia = Math.sqrt(dx * dx + dy * dy);
-            
+
+            console.log(`   Vértice ${i}: pos=(${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}), distancia=${distancia.toFixed(2)}`);
+
             if (distancia < umbralDistancia) {
+                console.log(`   ✅ Vértice ${i} detectado!`);
                 return { vertice, indice: i, pos };
             }
         }
-        
+
+        console.log('   ❌ Ningún vértice detectado');
         return null;
     }
 
@@ -423,21 +483,30 @@ class EditorCalles {
         this.indiceVerticeEditando = indice;
         this.dragStartX = mouseX;
         this.dragStartY = mouseY;
-        
+
         // Cambiar cursor
-        const canvas = document.getElementById('simuladorCanvas');
+        const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
+            ? window.pixiApp.app.view
+            : document.getElementById('simuladorCanvas');
         if (canvas) {
             canvas.classList.add('dragging-vertex');
+            canvas.style.cursor = 'grabbing';
         }
-        
+
         console.log(`✏️ Editando vértice ${indice} de ${this.objetoEditando.nombre}`);
     }
 
     // Arrastrar vértice
     arrastreVertice(e) {
         if (!this.verticeEditando || !this.objetoEditando) return;
-        
-        const canvas = document.getElementById('simuladorCanvas');
+
+        // Obtener el canvas correcto (PixiJS o Canvas 2D)
+        const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
+            ? window.pixiApp.app.view
+            : document.getElementById('simuladorCanvas');
+
+        if (!canvas) return;
+
         const rect = canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
@@ -688,6 +757,26 @@ class EditorCalles {
             this.btnModoEdicion.classList.add('btn-secondary');
         }
         
+        // Agregar clase de edición de vértices al canvas
+        if (calle && calle.vertices && calle.vertices.length > 0) {
+            const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
+                ? window.pixiApp.app.view
+                : document.getElementById('simuladorCanvas');
+
+            if (canvas) {
+                canvas.classList.add('editing-vertices');
+            }
+        }
+
+        // Renderizar vértices si es una calle
+        if (window.USE_PIXI && calle && window.pixiApp && window.pixiApp.sceneManager) {
+            if (window.pixiApp.sceneManager.calleRenderer) {
+                console.log('🔄 Renderizando vértices para la calle seleccionada...');
+                window.pixiApp.sceneManager.calleRenderer.renderVertices(calle);
+                console.log('✅ Vértices renderizados');
+            }
+        }
+
         // Mostrar handles
         if (window.USE_PIXI && window.editorHandles) {
             // Usar handles de PixiJS
@@ -760,17 +849,36 @@ class EditorCalles {
     }
     
     salirModoEdicion() {
+        const calleEditando = this.tipoObjetoEditando === 'calle' ? this.objetoEditando : null;
+
         this.modoEdicion = false;
         this.objetoEditando = null;
         this.tipoObjetoEditando = null;
         this.objetoOriginal = null;
-        
+
         // Ocultar controles de edición
         if (this.editActionButtons) {
             this.editActionButtons.style.display = 'none';
         }
         if (this.editModeBadge) {
             this.editModeBadge.classList.remove('active');
+        }
+
+        // Quitar clase de edición de vértices del canvas
+        const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
+            ? window.pixiApp.app.view
+            : document.getElementById('simuladorCanvas');
+
+        if (canvas) {
+            canvas.classList.remove('editing-vertices');
+            canvas.classList.remove('dragging-vertex');
+        }
+
+        // Limpiar vértices visuales si estábamos editando una calle
+        if (window.USE_PIXI && calleEditando && window.pixiApp && window.pixiApp.sceneManager) {
+            if (window.pixiApp.sceneManager.calleRenderer) {
+                window.pixiApp.sceneManager.calleRenderer.clearVertices(calleEditando);
+            }
         }
 
         // Limpiar handles
@@ -952,8 +1060,6 @@ class EditorCalles {
         const distanciaTotal = Math.sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
 
         if (distanciaTotal < separacionMinima) {
-            console.log('🔧 Resolviendo traslape de handles...');
-
             // Calcular vector de separación
             const dx = finalRotX - finalMoveX;
             const dy = finalRotY - finalMoveY;
