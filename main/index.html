@@ -1477,6 +1477,7 @@
   <script src="src/js/renderer/utils/AssetLoader.js"></script>
 
   <!-- Motor Gráfico - Core -->
+  <script src="src/js/renderer/DayNightCycle.js"></script>
   <script src="src/js/renderer/CameraController.js"></script>
   <script src="src/js/renderer/SceneManager.js"></script>
   <script src="src/js/renderer/PixiApp.js"></script>
@@ -1860,9 +1861,15 @@
         infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
       }
 
-      // Exponer funciones globalmente
+      // Exponer funciones y variables globalmente
       window.updateSimulationInfo = updateInfo;
       window.resetSimulationInfo = resetInfo;
+
+      // Exponer tiempo simulado para el ciclo día/noche
+      Object.defineProperty(window, 'simulatedCurrentDate', {
+        get: function() { return simulatedCurrentDate; },
+        enumerable: true
+      });
 
       // Inicializar con fecha y hora actuales
       document.addEventListener('DOMContentLoaded', function() {

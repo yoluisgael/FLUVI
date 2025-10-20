@@ -18,6 +18,9 @@ class SceneManager {
         this.app.stage.eventMode = 'static';
         this.app.stage.interactiveChildren = true;
 
+        // Inicializar sistema de ciclo día/noche
+        this.dayNightCycle = new DayNightCycle();
+
         console.log('🎮 Stage configurado con eventos interactivos');
 
         // Crear capas en orden de renderizado
@@ -82,6 +85,14 @@ class SceneManager {
     }
 
     update(delta) {
+        // Actualizar color de fondo según ciclo día/noche
+        if (window.simulatedCurrentDate && this.dayNightCycle) {
+            const backgroundColor = this.dayNightCycle.getBackgroundColor(window.simulatedCurrentDate);
+            if (backgroundColor !== this.app.renderer.background.color) {
+                this.app.renderer.background.color = backgroundColor;
+            }
+        }
+
         // Actualizar sprites de vehículos (cambios cada frame)
         if (this.carroRenderer && window.calles) {
             this.carroRenderer.updateAll(window.calles);
