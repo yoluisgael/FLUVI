@@ -8,6 +8,8 @@ class CalleRenderer {
         this.scene = sceneManager;
         this.assets = assetLoader;
         this.celda_tamano = window.celda_tamano || 5;
+        this.draggingVertexIndex = -1; // Índice del vértice que se está arrastrando
+        this.draggingCalle = null; // Calle del vértice que se está arrastrando
     }
 
     renderAll(calles) {
@@ -523,34 +525,34 @@ class CalleRenderer {
             // Crear círculo para el vértice
             const graphics = new PIXI.Graphics();
 
-            // Estilo según si está seleccionado
+            // Estilo según posición del vértice
             const isFirst = index === 0;
             const isLast = index === calle.vertices.length - 1;
 
-            if (isFirst || isLast) {
-                // Primer y último vértice: azul (fijos, no editables)
-                graphics.beginFill(0x4A90E2, 0.8);
-                graphics.lineStyle(2, 0xFFFFFF);
+            if (isFirst) {
+                // Primer vértice: Verde (inicio de la calle) - AHORA EDITABLE
+                graphics.beginFill(0x00FF88, 0.9);
+                graphics.lineStyle(3, 0xFFFFFF);
+            } else if (isLast) {
+                // Último vértice: Rojo (final de la calle) - AHORA EDITABLE
+                graphics.beginFill(0xFF5555, 0.9);
+                graphics.lineStyle(3, 0xFFFFFF);
             } else {
-                // Vértices intermedios: amarillo (editables)
+                // Vértices intermedios: Amarillo (editables)
                 graphics.beginFill(0xFFD700, 0.8);
                 graphics.lineStyle(2, 0xFFFFFF);
             }
 
-            const circleRadius = (isFirst || isLast) ? 6 : 8;
+            // Todos los vértices tienen el mismo tamaño ahora (todos editables)
+            const circleRadius = 8;
             graphics.drawCircle(0, 0, circleRadius);
             graphics.endFill();
 
-            // Agregar efecto de glow para vértices editables
-            if (!isFirst && !isLast) {
-                graphics.filters = [];
-                // El glow se agregará dinámicamente cuando Z esté presionado
-
-                // IMPORTANTE: Área de hit más grande para facilitar el click
-                const hitArea = new PIXI.Circle(0, 0, 15); // Radio de 15 píxeles para hit area
-                graphics.hitArea = hitArea;
-                console.log(`      → Hit area establecida: radio 15px`);
-            }
+            // IMPORTANTE: Área de hit más grande para facilitar el click (TODOS los vértices)
+            graphics.filters = [];
+            const hitArea = new PIXI.Circle(0, 0, 15); // Radio de 15 píxeles para hit area
+            graphics.hitArea = hitArea;
+            console.log(`      → Hit area establecida: radio 15px`);
 
             graphics.x = pos.x;
             graphics.y = pos.y;
@@ -559,41 +561,40 @@ class CalleRenderer {
             // IMPORTANTE: Asegurar que el vértice está por encima de todo
             graphics.zIndex = 1000 + index;
 
-            // Hacer interactivo solo si es un vértice intermedio
-            if (!isFirst && !isLast) {
-                console.log(`      → Vértice ${index} es EDITABLE, haciendo interactivo...`);
-
-                // IMPORTANTE: En PixiJS v7+ necesitamos usar eventMode
-                graphics.eventMode = 'static'; // Habilitar eventos
-                graphics.cursor = 'pointer';
-
-                // El cursor se cambiará dinámicamente según si Z está presionado
-                graphics.on('pointerover', () => {
-                    console.log(`      🖱️ Hover sobre vértice ${index}, Z: ${window.zKeyPressed}`);
-                    if (window.zKeyPressed) {
-                        graphics.cursor = 'grab';
-                    } else {
-                        graphics.cursor = 'pointer';
-                    }
-                });
-
-                graphics.on('pointerout', () => {
-                    graphics.cursor = 'pointer';
-                });
-
-                // NOTA: El arrastre de vértices se maneja mediante eventos DOM en editor.js
-                // Los eventos PixiJS están deshabilitados porque CameraController interfiere
-                // y el sistema original usaba eventos DOM directamente
-
-                // graphics.on('pointerdown', (e) => {
-                //     console.log(`      🖱️ POINTERDOWN en vértice ${index}!`);
-                //     this.onVerticePointerDown(calle, vertice, index, e);
-                // });
-
-                console.log(`      ✅ Vértice ${index} renderizado (eventos manejados por editor.js)`);
-            } else {
-                console.log(`      → Vértice ${index} es ${isFirst ? 'PRIMERO' : 'ÚLTIMO'}, no editable`);
+            // IMPORTANTE: Si este vértice se está arrastrando, hacerlo translúcido
+            if (this.draggingCalle === calle && this.draggingVertexIndex === index) {
+                graphics.alpha = 0.3;
+                console.log(`      → Vértice ${index} está siendo ARRASTRADO (translúcido)`);
             }
+
+            // TODOS los vértices ahora son editables (primero, último e intermedios)
+            console.log(`      → Vértice ${index} es EDITABLE (${isFirst ? '🟢 INICIO' : isLast ? '🔴 FIN' : '🟡 INTERMEDIO'})`);
+
+            // IMPORTANTE: En PixiJS v7+ necesitamos usar eventMode
+            graphics.eventMode = 'static'; // Habilitar eventos
+            graphics.cursor = 'pointer';
+
+            // El cursor se cambiará dinámicamente según el modo de edición de vértices
+            graphics.on('pointerover', () => {
+                console.log(`      🖱️ Hover sobre vértice ${index}, modo activo: ${window.vertexEditMode}`);
+                if (window.vertexEditMode) {
+                    graphics.cursor = 'grab';
+                } else {
+                    graphics.cursor = 'pointer';
+                }
+            });
+
+            graphics.on('pointerout', () => {
+                graphics.cursor = 'pointer';
+            });
+
+            // Habilitar eventos de PixiJS para arrastre de vértices con Z + Click
+            graphics.on('pointerdown', (e) => {
+                console.log(`      🖱️ POINTERDOWN en vértice ${index}!`);
+                this.onVerticePointerDown(calle, vertice, index, e);
+            });
+
+            console.log(`      ✅ Vértice ${index} renderizado con eventos PixiJS`);
 
             verticesContainer.addChild(graphics);
         });
@@ -612,11 +613,17 @@ class CalleRenderer {
     // ==================== EVENTOS DE VÉRTICES ====================
 
     onVerticePointerDown(calle, vertice, index, event) {
-        console.log(`🔍 Click en vértice ${index}, Z presionada: ${window.zKeyPressed}`);
+        console.log(`🔍 Click en vértice ${index}, modo edición activo: ${window.vertexEditMode}`);
 
-        // Solo permitir arrastre si Z está presionado
-        if (!window.zKeyPressed) {
-            console.log('⚠️ Mantén presionada la tecla Z para editar vértices');
+        // Verificar que estamos en modo edición
+        if (!window.editorCalles || !window.editorCalles.modoEdicion) {
+            console.log('⚠️ Solo puedes editar vértices en modo edición');
+            return;
+        }
+
+        // Solo permitir arrastre si el modo de edición de vértices está activo
+        if (!window.vertexEditMode) {
+            console.log('💡 Presiona la tecla Z para activar el modo de edición de vértices');
             return;
         }
 
@@ -630,7 +637,13 @@ class CalleRenderer {
         const canvas = this.scene.app.view;
         if (canvas) {
             canvas.classList.add('dragging-vertex');
+            canvas.style.cursor = 'grabbing';
         }
+
+        // Marcar este vértice como "siendo arrastrado" para hacerlo translúcido
+        this.draggingVertexIndex = index;
+        this.draggingCalle = calle;
+        console.log(`   🎨 Vértice ${index} marcado para arrastre translúcido`);
 
         // Guardar estado inicial
         const dragData = {
@@ -647,6 +660,9 @@ class CalleRenderer {
             calle.esCurva = true;
             console.log(`🌊 Modo curva activado para ${calle.nombre}`);
         }
+
+        // Re-renderizar vértices una vez para aplicar el efecto translúcido
+        this.renderVertices(calle);
 
         // Función de arrastre
         const onPointerMove = (e) => {
@@ -709,13 +725,21 @@ class CalleRenderer {
             this.scene.app.stage.off('pointerup', onPointerUp);
             this.scene.app.stage.off('pointerupoutside', onPointerUp);
 
+            // Desmarcar vértice arrastrado
+            this.draggingVertexIndex = -1;
+            this.draggingCalle = null;
+
             // Restaurar cursor
             const canvas = this.scene.app.view;
             if (canvas) {
                 canvas.classList.remove('dragging-vertex');
+                canvas.style.cursor = window.vertexEditMode ? 'crosshair' : '';
             }
 
-            console.log(`✅ Vértice ${index} soltado`);
+            // Re-renderizar vértices para restaurar opacidad normal
+            this.renderVertices(dragData.calle);
+
+            console.log(`✅ Vértice ${index} soltado - Opacidad restaurada`);
         };
 
         // Registrar eventos globales

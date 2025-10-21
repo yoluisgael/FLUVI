@@ -18,13 +18,15 @@ let intersecciones = [];
 const celdasIntersectadas = new Set();
 let mapaIntersecciones = new Map(); 
 
-let mostrarConexiones = false; // NUEVO: Variable para controlar visualización de conexiones
+let mostrarConexiones = false; // Variable para controlar visualización de conexiones
+let mostrarVertices = false; // Variable para controlar visualización de vértices
 let mostrarEtiquetas = true; // Variable para controlar visualización de etiquetas de nombres
 let colorFondoCanvas = "#c6cbcd"; // Color de fondo del canvas (almacenado para detección automática)
 let prioridadPar = true;
 
 // Exponer variables globales para PixiJS
 window.mostrarConexiones = mostrarConexiones;
+window.mostrarVertices = mostrarVertices;
 window.mostrarEtiquetas = mostrarEtiquetas;
 window.mostrarIntersecciones = false;
 
@@ -1524,7 +1526,7 @@ function dibujarContornoCalleCurva(calle) {
 
 // Función para dibujar vértices editables
 function dibujarVertices() {
-    if (!mostrarConexiones) return;
+    if (!mostrarVertices) return;
 
     ctx.save();
 
@@ -2676,16 +2678,38 @@ function iniciarSimulacion() {
             // Solo emoji, el tooltip ya explica la función
             btnConexiones.textContent = mostrarConexiones ? '🔗' : '🔗';
 
-            // Si usamos PixiJS, forzar renderizado de conexiones y vértices
+            // Si usamos PixiJS, forzar renderizado de conexiones
             if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
                 if (mostrarConexiones) {
-                    // Renderizar conexiones y vértices
+                    // Renderizar conexiones
                     window.pixiApp.sceneManager.renderAll();
                 } else {
-                    // Limpiar conexiones y vértices
+                    // Limpiar conexiones
                     if (window.pixiApp.sceneManager.conexionRenderer) {
                         window.pixiApp.sceneManager.conexionRenderer.clearAll();
                     }
+                }
+            }
+
+            renderizarCanvas();
+        });
+    }
+
+    const btnVertices = document.getElementById('btnVertices');
+    if (btnVertices) {
+        btnVertices.addEventListener('click', () => {
+            mostrarVertices = !mostrarVertices;
+            window.mostrarVertices = mostrarVertices;
+            // Solo emoji, el tooltip ya explica la función
+            btnVertices.textContent = mostrarVertices ? '📍' : '📍';
+
+            // Si usamos PixiJS, forzar renderizado de vértices
+            if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                if (mostrarVertices) {
+                    // Renderizar vértices
+                    window.pixiApp.sceneManager.renderAll();
+                } else {
+                    // Limpiar vértices
                     if (window.pixiApp.sceneManager.uiRenderer) {
                         window.pixiApp.sceneManager.uiRenderer.clearVertices();
                     }

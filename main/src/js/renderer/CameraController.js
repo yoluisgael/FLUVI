@@ -58,10 +58,10 @@ class CameraController {
                 return;
             }
 
-            // NO capturar si Z está presionada en modo edición (para editar vértices)
-            // Dejar que el evento continúe para que editor.js pueda detectar vértices
-            if (window.zKeyPressed && window.editorCalles && window.editorCalles.modoEdicion) {
-                console.log('🚫 CameraController: Z presionada, ignorando pero dejando pasar evento');
+            // NO capturar si el modo de edición de vértices está activo (para editar vértices)
+            // Dejar que el evento continúe para que CalleRenderer pueda detectar vértices
+            if (window.vertexEditMode && window.editorCalles && window.editorCalles.modoEdicion) {
+                console.log('🚫 CameraController: Modo edición de vértices activo, ignorando evento de arrastre');
                 return; // Solo return, NO stopPropagation
             }
 

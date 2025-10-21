@@ -1376,20 +1376,40 @@
 
       <!-- Control Bar -->
       <div id="canvasControlBar">
-        <div id="controlBar" class="d-flex align-items-center">
-          <button id="btnConexiones" class="btn btn-info" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las conexiones entre calles en el canvas">🔗</button>
-          <button id="btnPauseResume" class="btn btn-secondary me-2" data-bs-toggle="tooltip" data-bs-title="Pausar o reanudar la simulación de tráfico">⏸</button>
-          <button id="btnPaso" class="btn btn-success me-2" disabled data-bs-toggle="tooltip" data-bs-title="Avanzar un paso de la simulación (solo disponible cuando está en pausa)">⏭</button>
-          <button id="btnIntersecciones" class="btn btn-info me-2" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los puntos de intersección entre calles">✖️</button>
-          <button id="btnEtiquetas" class="btn btn-info me-2" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las etiquetas con nombres de calles y edificios">🏷️</button>
-          <button id="btnBorrar" class="btn btn-danger me-2" data-bs-toggle="tooltip" data-bs-title="Borrar todos los vehículos de todas las calles">🗑️</button>
-          <button id="btnRandom" class="btn btn-warning me-3" data-bs-toggle="tooltip" data-bs-title="Llenar las calles con vehículos aleatorios">🎲</button>
-          <label for="velocidadSlider" class="form-label me-2 mb-0">Velocidad:</label>
-          <input type="range" class="form-range me-2" id="velocidadSlider" min="1" max="100" step="1" style="width: 100px;">
-          <span id="velocidadValor" class="badge bg-primary">10</span>
-          <label for="probabilidadSlider" class="form-label ms-3 me-2 mb-0">Generación:</label>
-          <input type="range" class="form-range me-2" id="probabilidadSlider" min="0" max="100" step="1" style="width: 100px;">
-          <span id="probabilidadValor" class="badge bg-primary">10</span>
+        <div id="controlBar" class="d-flex flex-wrap align-items-center gap-2">
+          <!-- Grupo de controles de visualización -->
+          <div class="btn-group" role="group">
+            <button id="btnConexiones" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las conexiones entre calles en el canvas">🔗</button>
+            <button id="btnVertices" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los vértices de las calles para edición">📍</button>
+            <button id="btnIntersecciones" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los puntos de intersección entre calles">✖️</button>
+            <button id="btnEtiquetas" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las etiquetas con nombres de calles y edificios">🏷️</button>
+          </div>
+
+          <!-- Grupo de controles de simulación -->
+          <div class="btn-group" role="group">
+            <button id="btnPauseResume" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-title="Pausar o reanudar la simulación de tráfico">⏸</button>
+            <button id="btnPaso" class="btn btn-success btn-sm" disabled data-bs-toggle="tooltip" data-bs-title="Avanzar un paso de la simulación (solo disponible cuando está en pausa)">⏭</button>
+          </div>
+
+          <!-- Grupo de acciones -->
+          <div class="btn-group" role="group">
+            <button id="btnRandom" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" data-bs-title="Llenar las calles con vehículos aleatorios">🎲</button>
+            <button id="btnBorrar" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-title="Borrar todos los vehículos de todas las calles">🗑️</button>
+          </div>
+
+          <!-- Controles de velocidad -->
+          <div class="d-flex align-items-center gap-1 flex-wrap">
+            <label for="velocidadSlider" class="form-label mb-0 small">Velocidad:</label>
+            <input type="range" class="form-range" id="velocidadSlider" min="1" max="100" step="1" style="width: 80px;">
+            <span id="velocidadValor" class="badge bg-primary">10</span>
+          </div>
+
+          <!-- Controles de generación -->
+          <div class="d-flex align-items-center gap-1 flex-wrap">
+            <label for="probabilidadSlider" class="form-label mb-0 small">Generación:</label>
+            <input type="range" class="form-range" id="probabilidadSlider" min="0" max="100" step="1" style="width: 80px;">
+            <span id="probabilidadValor" class="badge bg-primary">10</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1906,56 +1926,72 @@
       });
     })();
 
-    // ========== DETECCIÓN DE TECLA Z PARA EDICIÓN DE VÉRTICES ==========
+    // ========== DETECCIÓN DE TECLA Z PARA EDICIÓN DE VÉRTICES (MODO TOGGLE) ==========
     (function() {
-      window.zKeyPressed = false;
+      window.vertexEditMode = false; // Modo toggle: activar/desactivar con Z
+      let zKeyDown = false; // Para detectar presiones repetidas
 
       document.addEventListener('keydown', function(e) {
         if (e.key === 'z' || e.key === 'Z') {
-          if (window.zKeyPressed) return; // Ya está presionada
+          // Evitar repeticiones si la tecla está siendo mantenida presionada
+          if (zKeyDown) return;
+          zKeyDown = true;
 
-          window.zKeyPressed = true;
+          // Solo funcionar en modo edición
+          if (!window.editorCalles || !window.editorCalles.modoEdicion) return;
+          if (!window.calleSeleccionada || !window.calleSeleccionada.vertices) return;
 
-          // Cambiar cursor del canvas si estamos en modo edición
+          // TOGGLE: cambiar estado
+          window.vertexEditMode = !window.vertexEditMode;
+
           const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
             ? window.pixiApp.app.view
             : document.getElementById('simuladorCanvas');
 
-          if (canvas && canvas.classList.contains('editing-vertices')) {
-            canvas.style.cursor = 'crosshair';
+          if (window.vertexEditMode) {
+            // MODO ACTIVADO
+            console.log('🟢 Modo edición de vértices ACTIVADO (presiona Z nuevamente para desactivar)');
 
-            // Actualizar feedback visual de los vértices
+            if (canvas) {
+              canvas.style.cursor = 'crosshair';
+              canvas.classList.add('vertex-edit-active');
+            }
+
+            // Mostrar badge indicador
+            showVertexEditBadge(true);
             updateVerticesVisualFeedback(true);
+          } else {
+            // MODO DESACTIVADO
+            console.log('🔴 Modo edición de vértices DESACTIVADO');
+
+            if (canvas) {
+              canvas.style.cursor = '';
+              canvas.classList.remove('vertex-edit-active');
+            }
+
+            // Ocultar badge indicador
+            showVertexEditBadge(false);
+            updateVerticesVisualFeedback(false);
           }
         }
       });
 
       document.addEventListener('keyup', function(e) {
         if (e.key === 'z' || e.key === 'Z') {
-          window.zKeyPressed = false;
-
-          // Restaurar cursor del canvas
-          const canvas = window.USE_PIXI && window.pixiApp && window.pixiApp.app
-            ? window.pixiApp.app.view
-            : document.getElementById('simuladorCanvas');
-
-          if (canvas && canvas.classList.contains('editing-vertices')) {
-            canvas.style.cursor = '';
-
-            // Actualizar feedback visual de los vértices
-            updateVerticesVisualFeedback(false);
-          }
+          zKeyDown = false; // Permitir nueva presión
         }
       });
 
-      // Resetear estado si la ventana pierde el foco
+      // Resetear estado si la ventana pierde el foco o se sale del modo edición
       window.addEventListener('blur', function() {
-        window.zKeyPressed = false;
+        window.vertexEditMode = false;
+        zKeyDown = false;
+        showVertexEditBadge(false);
         updateVerticesVisualFeedback(false);
       });
 
       // Función para actualizar el feedback visual de los vértices
-      function updateVerticesVisualFeedback(altPressed) {
+      function updateVerticesVisualFeedback(isActive) {
         if (!window.USE_PIXI || !window.pixiApp || !window.pixiApp.sceneManager) return;
 
         const calleSeleccionada = window.calleSeleccionada;
@@ -1964,27 +2000,104 @@
         const verticesContainer = window.pixiApp.sceneManager.verticeSprites.get(calleSeleccionada);
         if (!verticesContainer) return;
 
-        // Actualizar cada vértice
+        // Actualizar TODOS los vértices (ahora todos son editables)
         verticesContainer.children.forEach((graphics, index) => {
-          const isFirst = index === 0;
-          const isLast = index === calleSeleccionada.vertices.length - 1;
-
-          // Solo aplicar efecto a vértices editables (intermedios)
-          if (!isFirst && !isLast) {
-            if (altPressed) {
-              // Aumentar brillo y tamaño cuando Alt está presionado
-              graphics.alpha = 1.0;
-              graphics.scale.set(1.2);
-            } else {
-              // Restaurar estado normal
-              graphics.alpha = 0.8;
-              graphics.scale.set(1.0);
-            }
+          if (isActive) {
+            // Aumentar brillo y tamaño cuando el modo está activo
+            graphics.alpha = 1.0;
+            graphics.scale.set(1.3);
+            graphics.cursor = 'grab';
+          } else {
+            // Restaurar estado normal
+            graphics.alpha = 0.8;
+            graphics.scale.set(1.0);
+            graphics.cursor = 'pointer';
           }
         });
       }
 
-      console.log('✓ Sistema de detección de tecla Z inicializado');
+      // Función para mostrar/ocultar badge indicador del modo de edición de vértices
+      function showVertexEditBadge(show) {
+        let badge = document.getElementById('vertexEditModeBadge');
+
+        if (show) {
+          if (!badge) {
+            // Crear badge si no existe
+            badge = document.createElement('div');
+            badge.id = 'vertexEditModeBadge';
+            badge.innerHTML = `
+              <span style="font-weight: bold;">🎯 Modo Edición de Vértices</span>
+              <br>
+              <small>Arrastra los vértices para crear curvas<br>Presiona <kbd>Z</kbd> para desactivar</small>
+            `;
+            badge.style.cssText = `
+              position: fixed;
+              top: 80px;
+              right: 20px;
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              padding: 12px 16px;
+              border-radius: 8px;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+              z-index: 10000;
+              font-size: 14px;
+              text-align: center;
+              animation: slideInRight 0.3s ease-out;
+              border: 2px solid rgba(255,255,255,0.3);
+            `;
+            document.body.appendChild(badge);
+
+            // Agregar animación CSS si no existe
+            if (!document.getElementById('vertexEditBadgeStyle')) {
+              const style = document.createElement('style');
+              style.id = 'vertexEditBadgeStyle';
+              style.textContent = `
+                @keyframes slideInRight {
+                  from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                  }
+                  to {
+                    transform: translateX(0);
+                    opacity: 1;
+                  }
+                }
+                @keyframes slideOutRight {
+                  from {
+                    transform: translateX(0);
+                    opacity: 1;
+                  }
+                  to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                  }
+                }
+                #vertexEditModeBadge kbd {
+                  background: rgba(255,255,255,0.2);
+                  padding: 2px 6px;
+                  border-radius: 3px;
+                  border: 1px solid rgba(255,255,255,0.3);
+                  font-family: monospace;
+                  font-weight: bold;
+                }
+              `;
+              document.head.appendChild(style);
+            }
+          } else {
+            badge.style.display = 'block';
+            badge.style.animation = 'slideInRight 0.3s ease-out';
+          }
+        } else {
+          if (badge) {
+            badge.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+              if (badge) badge.style.display = 'none';
+            }, 300);
+          }
+        }
+      }
+
+      console.log('✓ Sistema de detección de tecla Z (modo toggle) inicializado');
     })();
   </script>
 </body>
