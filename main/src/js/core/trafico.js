@@ -221,34 +221,34 @@ const edificios = [
     // ========== ZONA SUPERIOR IZQUIERDA (cerca de Av. Miguel Othon de Mendizabal) ==========
         
     // Torres
-    { x: 1195, y: 781, width: 300, height: 20, color: "#29293aff", angle: 10, label: "PLAZA TORRES LINDAVISTA" },
+    { x: 1247, y: 781, width: 300, height: 20, color: "#29293aff", angle: 350, label: "PLAZA TORRES LINDAVISTA" },
 
     // ESCOM
-    { x: 1080, y: 859, width: 100, height: 200, color: "#0047a3ff", angle: 12, label: "ESCOM" },
+    { x: 1080, y: 859, width: 100, height: 200, color: "#0047a3ff", angle: 350, label: "ESCOM" },
     
     // ESTACIONAMIENTO ESCOM
-    { x: 1199, y: 916, width: 200, height: 90, color: "#29293aff", angle: 282, label: "ESTACIONAMIENTO ESCOM" },
+    { x: 1199, y: 916, width: 200, height: 90, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO ESCOM" },
     
     // CIC
-    { x: 1050, y: 1008, width: 100, height: 60, color: "#0047a3ff", angle: 12, label: "CIC" },
+    { x: 1050, y: 1008, width: 100, height: 60, color: "#0047a3ff", angle: 350, label: "CIC" },
 
     // ESTACIONAMIENTO CIC
-    { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 282, label: "ESTACIONAMIENTO CIC" },
+    { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO CIC" },
     
 
-    { x: 1513, y: 915, width: 100, height: 60, color: "#0047a3ff", angle: 12, label: "ESTABLO DE BURROS" },
+    { x: 1513, y: 915, width: 100, height: 60, color: "#0047a3ff", angle: 260, label: "ESTABLO DE BURROS" },
     
-    { x: 1375, y: 946, width: 180, height: 80, color: "#164916ff", angle: 282, label: "CAMPO ESCOM" },
+    { x: 1375, y: 946, width: 180, height: 80, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
 
-    { x: 1739, y: 1116, width: 300, height: 140, color: "#164916ff", angle: 279, label: "CAMPO BURROS BLANCOS" },
+    { x: 1739, y: 1116, width: 300, height: 140, color: "#164916ff", angle: 350, label: "CAMPO BURROS BLANCOS" },
     
     // Campo de Beisbol
-    { x: 1974, y: 1273, width: 160, height: 50, color: "#29293aff", angle: 10, label: "ESTACIONAMIENTO" },
-    { x: 1963, y: 1413, width: 100, height: 200, color: "#164916ff", angle: 10, label: "BEISBOL" },
-    { x: 1923, y: 1548, width: 160, height: 50, color: "#29293aff", angle: 10, label: "ESTACIONAMIENTO" },
+    { x: 1974, y: 1273, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" },
+    { x: 1963, y: 1413, width: 100, height: 200, color: "#164916ff", angle: 350, label: "BEISBOL" },
+    { x: 1923, y: 1548, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" },
  
     
-    { x: 1643, y: 1592, width: 140, height: 100, color: "#0047a3ff", angle: 12, label: "C.F.I.E" },
+    { x: 1643, y: 1592, width: 140, height: 100, color: "#0047a3ff", angle: 350, label: "C.F.I.E" },
 
     // CONO
     { x: 1937, y: 910, width: 45, height: 45, color: "#0d0e10ff", angle: 12, label: "CONO" },
@@ -256,51 +256,51 @@ const edificios = [
 
     // ========== ZONA CENTRAL (entre Luis Enrique Erro y Miguel Anda y Barredo) ==========
     // Estadio Americano
-    { x: 2018, y: 1107, width: 250, height: 80, color: "#164916ff", angle: 280, label: "ESTADIO AMERICANO" },
+    { x: 2018, y: 1107, width: 250, height: 80, color: "#164916ff", angle: 260, label: "ESTADIO AMERICANO" },
     
     // Alberca
-    { x: 2136, y: 1497, width: 80, height: 70, color: "#4169E1", angle: 100, label: "Alberca" },
+    { x: 2136, y: 1497, width: 80, height: 70, color: "#4169E1", angle: 250, label: "Alberca" },
     
     // Gimnasio
-    { x: 1891, y: 1617, width: 70, height: 50, color: "#8b4513", angle: 13, label: "GIMNASIO" },
+    { x: 1891, y: 1617, width: 70, height: 50, color: "#8b4513", angle: 350, label: "GIMNASIO" },
     
     // PLANETARIO
-    { x: 1876, y: 1740, width: 80, height: 80, color: "#4b0000ff", angle: 13, label: "PLANETARIO" },
+    { x: 1876, y: 1740, width: 80, height: 80, color: "#4b0000ff", angle: 350, label: "PLANETARIO" },
     
     // CENLEX
-    { x: 2050, y: 1689, width: 70, height: 45, color: "#8b4513", angle: 12, label: "CENLEX" },
+    { x: 2050, y: 1689, width: 70, height: 45, color: "#8b4513", angle: 350, label: "CENLEX" },
     
 
-    { x: 1605, y: 540, width: 35, height: 30, color: "#29293aff", angle: 335, label: "OIC-IPN" },
-    { x: 1456, y: 605, width: 40, height: 35, color: "#8b7355", angle: 335, label: "POI-IPN" },
-    { x: 1756, y: 466, width: 35, height: 30, color: "#29293aff", angle: 335, label: "SAD-IPN" },
-    { x: 1734, y: 600, width: 40, height: 35, color: "#8b7355", angle: 335, label: "DIRECCIÓN GENERAL" },
-    { x: 1819, y: 810, width: 40, height: 35, color: "#8b7355", angle: 7, label: "SIIS-IPN" },
-    { x: 1444, y: 746, width: 40, height: 35, color: "#8b7355", angle: 9, label: "EDIFICIO INTELIGENTE" },
-    { x: 1623, y: 760, width: 40, height: 35, color: "#8b7355", angle: 335, label: "SECADEMICA-IPN" },
+    { x: 1605, y: 540, width: 35, height: 30, color: "#29293aff", angle: 350, label: "OIC-IPN" },
+    { x: 1456, y: 605, width: 40, height: 35, color: "#8b7355", angle: 350, label: "POI-IPN" },
+    { x: 1756, y: 466, width: 35, height: 30, color: "#29293aff", angle: 350, label: "SAD-IPN" },
+    { x: 1734, y: 600, width: 40, height: 35, color: "#8b7355", angle: 350, label: "DIRECCIÓN GENERAL" },
+    { x: 1819, y: 810, width: 40, height: 35, color: "#8b7355", angle: 350, label: "SIIS-IPN" },
+    { x: 1444, y: 746, width: 40, height: 35, color: "#8b7355", angle: 350, label: "EDIFICIO INTELIGENTE" },
+    { x: 1623, y: 760, width: 40, height: 35, color: "#8b7355", angle: 350, label: "SECADEMICA-IPN" },
     
 
 
     // ========== ZONA DERECHA (entre Av. IPN) ==========
   
-    { x: 2398, y: 1083, width: 90, height: 32, color: "#4b0000ff", angle: 10, label: "ESFM" },
-    { x: 2386, y: 1150, width: 90, height: 32, color: "#4b0000ff", angle: 10, label: "ESIQIE Edificio 8" },
-    { x: 2376, y: 1209, width: 90, height: 32, color: "#4b0000ff", angle: 10, label: "ESIQIE Edificio 7" },
-    { x: 2367, y: 1270, width: 90, height: 32, color: "#4b0000ff", angle: 10, label: "ESIQUIE" },
-    { x: 2352, y: 1343, width: 90, height: 32, color: "#4b0000ff", angle: 10, label: "ESIME Edificio 5" },
-    { x: 2344, y: 1413, width: 90, height: 32, color: "#4b0000ff", angle: 10, label: "ESIME Edificio 4" },
-    { x: 2331, y: 1488, width: 90, height: 32, color: "#4b0000ff", angle: 10, label: "Edificio Edificio 3" },
-    { x: 2319, y: 1562, width: 90, height: 32, color: "#4b0000ff", angle: 10, label: "ESIME Edificio 2" },
-    { x: 2306, y: 1632, width: 90, height: 32, color: "#4b0000ff", angle: 10, label: "ESIME" },
-    { x: 2584, y: 1370, width: 70, height: 90, color: "#57126fff", angle: 10, label: "EST" },
-    { x: 2551, y: 1537, width: 45, height: 140, color: "#29293aff", angle: 12, label: "ESTACIONAMIENTO" }, 
+    { x: 2398, y: 1083, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESFM" },
+    { x: 2386, y: 1150, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIQIE Edificio 8" },
+    { x: 2376, y: 1209, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIQIE Edificio 7" },
+    { x: 2367, y: 1270, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIQUIE" },
+    { x: 2352, y: 1343, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 5" },
+    { x: 2344, y: 1413, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 4" },
+    { x: 2331, y: 1488, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "Edificio Edificio 3" },
+    { x: 2319, y: 1562, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 2" },
+    { x: 2306, y: 1632, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIME" },
+    { x: 2584, y: 1370, width: 70, height: 90, color: "#57126fff", angle: 350, label: "EST" },
+    { x: 2551, y: 1537, width: 45, height: 140, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" }, 
     
     // Edificio Z (vertical largo)
-    { x: 2216, y: 897, width: 300, height: 35, color: "#4b0000ff", angle: 9, label: "ESIA" },
+    { x: 2216, y: 897, width: 300, height: 35, color: "#4b0000ff", angle: 350, label: "ESIA" },
     
     // Centro Cultural JTB
-    { x: 2306, y: 1754, width: 90, height: 60, color: "#8b4513", angle: 10, label: "CENTRO CULTURAL JTB" },
-    { x: 2399, y: 1904, width: 200, height: 50, color: "#29293aff", angle: 15, label: "ESTACIONAMIENTO" },
+    { x: 2306, y: 1754, width: 90, height: 60, color: "#8b4513", angle: 350, label: "CENTRO CULTURAL JTB" },
+    { x: 2399, y: 1904, width: 200, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" },
 ];
 
 // Obtener el contexto del minimapa

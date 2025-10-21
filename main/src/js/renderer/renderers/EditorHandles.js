@@ -436,8 +436,10 @@ class EditorHandles {
             }
         }
 
-        // NO actualizar inputs en UI durante el drag (causa lag)
-        // Los inputs se actualizarán al finalizar el drag
+        // Actualizar inputs de UI en tiempo real durante el drag
+        if (window.editorCalles) {
+            window.editorCalles.actualizarInputsPosicion();
+        }
     }
 
     onRotateHandleDragStart(event) {
@@ -543,8 +545,10 @@ class EditorHandles {
         // Actualizar posiciones de handles
         this.updateHandlePositions();
 
-        // NO actualizar inputs en UI durante el drag (causa lag)
-        // Los inputs se actualizarán al finalizar el drag
+        // Actualizar inputs de UI en tiempo real durante el drag
+        if (window.editorCalles) {
+            window.editorCalles.actualizarInputsPosicion();
+        }
     }
 
     // Manejo de arrastre de vértices
