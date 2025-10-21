@@ -216,18 +216,92 @@ conoImg.src = "assets/images/objects/cono.png";
 const escomImg = new Image();
 escomImg.src = "assets/images/buildings/ESCOM.png";
 
+// Cargar la imagen de CIC
+const cicImg = new Image();
+cicImg.src = "assets/images/buildings/CIC.png";
+
+// Cargar la imagen del Planetario
+const planetarioImg = new Image();
+planetarioImg.src = "assets/images/buildings/planetario.png";
+
+// Cargar la imagen de Torres Lindavista
+const torresLindavistaImg = new Image();
+torresLindavistaImg.src = "assets/images/buildings/torres_lindavista.png";
+
+// Cargar la imagen de Alberca
+const albercaImg = new Image();
+albercaImg.src = "assets/images/buildings/ALBERCA.png";
+
+// Cargar la imagen de CFIE
+const cfieImg = new Image();
+cfieImg.src = "assets/images/buildings/C.F.I.E.png";
+
+// Cargar la imagen de Campo Burros Blancos
+const campoBurrosImg = new Image();
+campoBurrosImg.src = "assets/images/buildings/CAMPO BURROS BLANCOS ESTADIO WILFRIDO MASSIEU.png";
+
+// Cargar la imagen de Centro Cultural JTB
+const centroCulturalImg = new Image();
+centroCulturalImg.src = "assets/images/buildings/CENTRO CULTURAL JTB.png";
+
+// Cargar la imagen de Dirección General
+const direccionGeneralImg = new Image();
+direccionGeneralImg.src = "assets/images/buildings/Dirección General.png";
+
+// Cargar la imagen de Edificio Inteligente
+const edificioInteligenteImg = new Image();
+edificioInteligenteImg.src = "assets/images/buildings/EDIFICIO INTELIGENTE.png";
+
+// Cargar la imagen de ESIME ESIQIE ESFM
+const esimeImg = new Image();
+esimeImg.src = "assets/images/buildings/ESIME ESIQIE ESFM ETC.png";
+
+// Cargar la imagen de Estadio Americano
+const estadioAmericanoImg = new Image();
+estadioAmericanoImg.src = "assets/images/buildings/ESTADIO AMERICANO.png";
+
+// Cargar la imagen de Estadio Americano Minis
+const estadioMinisImg = new Image();
+estadioMinisImg.src = "assets/images/buildings/ESTADIO AMERICANO MINIS.png";
+
+// Mapeo de labels a imágenes (definido globalmente para eficiencia)
+const buildingImageMap = {
+    "CONO": conoImg,
+    "ESCOM": escomImg,
+    "CIC": cicImg,
+    "PLANETARIO": planetarioImg,
+    "PLAZA TORRES LINDAVISTA": torresLindavistaImg,
+    "Alberca": albercaImg,
+    "C.F.I.E": cfieImg,
+    "CAMPO BURROS BLANCOS": campoBurrosImg,
+    "CENTRO CULTURAL JTB": centroCulturalImg,
+    "DIRECCIÓN GENERAL": direccionGeneralImg,
+    "EDIFICIO INTELIGENTE": edificioInteligenteImg,
+    "ESTADIO AMERICANO": estadioAmericanoImg,
+    // Edificios ESIME - todos usan la misma imagen
+    "ESIME": esimeImg,
+    "ESIME Edificio 2": esimeImg,
+    "ESIME Edificio 4": esimeImg,
+    "ESIME Edificio 5": esimeImg,
+    "ESFM": esimeImg,
+    "ESIQIE Edificio 7": esimeImg,
+    "ESIQIE Edificio 8": esimeImg,
+    "ESIQUIE": esimeImg,
+    "ESIA": esimeImg
+};
+
 // ========== LISTA DE EDIFICIOS COMPLETA (DESDE TRAFICO.TXT) ==========
 const edificios = [
     // ========== ZONA SUPERIOR IZQUIERDA (cerca de Av. Miguel Othon de Mendizabal) ==========
         
     // Torres
-    { x: 1247, y: 781, width: 300, height: 20, color: "#29293aff", angle: 350, label: "PLAZA TORRES LINDAVISTA" },
+    { x: 1223, y: 740, width: 300, height: 20, color: "#29293aff", angle: 350, label: "PLAZA TORRES LINDAVISTA" },
 
     // ESCOM
     { x: 1080, y: 859, width: 100, height: 200, color: "#0047a3ff", angle: 350, label: "ESCOM" },
     
     // ESTACIONAMIENTO ESCOM
-    { x: 1199, y: 916, width: 200, height: 90, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO ESCOM" },
+    { x: 1199, y: 916, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO ESCOM" },
     
     // CIC
     { x: 1050, y: 1008, width: 100, height: 60, color: "#0047a3ff", angle: 350, label: "CIC" },
@@ -240,7 +314,7 @@ const edificios = [
     
     { x: 1375, y: 946, width: 180, height: 80, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
 
-    { x: 1739, y: 1116, width: 300, height: 140, color: "#164916ff", angle: 350, label: "CAMPO BURROS BLANCOS" },
+    { x: 1760, y: 1076, width: 300, height: 140, color: "#164916ff", angle: 260, label: "CAMPO BURROS BLANCOS" },
     
     // Campo de Beisbol
     { x: 1974, y: 1273, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" },
@@ -1276,12 +1350,12 @@ function dibujarEdificios() {
         ctx.translate(edificio.x, edificio.y);
         ctx.rotate((edificio.angle || 0) * Math.PI / 180);
 
-        // Si es un CONO y la imagen está cargada, dibujar la imagen
-        if (edificio.label === "CONO" && conoImg.complete && conoImg.naturalHeight !== 0) {
-            ctx.drawImage(conoImg, -edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
-        } else if (edificio.label === "ESCOM" && escomImg.complete && escomImg.naturalHeight !== 0) {
-            // Si es ESCOM y la imagen está cargada, dibujar la imagen
-            ctx.drawImage(escomImg, -edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
+        // Buscar si existe una imagen para este edificio
+        const img = buildingImageMap[edificio.label];
+
+        // Si existe una imagen y está cargada, dibujarla
+        if (img && img.complete && img.naturalHeight !== 0) {
+            ctx.drawImage(img, -edificio.width / 2, -edificio.height / 2, edificio.width, edificio.height);
         } else {
             // Dibujar rectángulo de color para otros edificios
             ctx.fillStyle = edificio.color;

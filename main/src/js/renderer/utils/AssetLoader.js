@@ -28,8 +28,24 @@ class AssetLoader {
             { name: 'cono', url: 'assets/images/objects/cono.png' },
             { name: 'escom', url: 'assets/images/buildings/ESCOM.png' },
             { name: 'cic', url: 'assets/images/buildings/CIC.png' },
-            { name: 'cfie', url: 'assets/images/buildings/C.F.I.E.png' },
-            { name: 'planetario', url: 'assets/images/buildings/planetario.png' }
+            { name: 'c.f.i.e', url: 'assets/images/buildings/C.F.I.E.png' },
+            { name: 'planetario', url: 'assets/images/buildings/planetario.png' },
+            { name: 'plaza torres lindavista', url: 'assets/images/buildings/torres_lindavista.png' },
+            { name: 'alberca', url: 'assets/images/buildings/ALBERCA.png' },
+            { name: 'campo burros blancos', url: 'assets/images/buildings/CAMPO BURROS BLANCOS ESTADIO WILFRIDO MASSIEU.png' },
+            { name: 'centro cultural jtb', url: 'assets/images/buildings/CENTRO CULTURAL JTB.png' },
+            { name: 'dirección general', url: 'assets/images/buildings/Dirección General.png' },
+            { name: 'edificio inteligente', url: 'assets/images/buildings/EDIFICIO INTELIGENTE.png' },
+            { name: 'esime', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'esime edificio 2', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'esime edificio 4', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'esime edificio 5', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'esfm', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'esiqie edificio 7', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'esiqie edificio 8', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'esiquie', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'esia', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'estadio americano', url: 'assets/images/buildings/ESTADIO AMERICANO.png' }
         ];
 
         try {
