@@ -11,6 +11,7 @@ const metricsHistory = {
     netGeneration: [], // Tasa de cambio de población (antes "flow")
     throughput: [], // Flujo vehicular real (Q = k × v)
     speed: [],
+    entropy: [], // Entropía de Shannon del autómata celular
     maxDataPoints: 50
 };
 
@@ -20,11 +21,15 @@ let flowMeasureInterval = 1000;
 let lastFlowMeasure = Date.now();
 let lastFlowValue = 0; // Almacena el último flujo calculado para evitar parpadeos
 
+// Estado anterior de las calles para calcular transiciones del autómata celular
+let previousStreetStates = new Map();
+
 // Instancias de Chart.js para cada gráfica
 let densityChartInstance = null;
 let throughputChartInstance = null;
 let netGenerationChartInstance = null;
 let speedChartInstance = null;
+let entropyChartInstance = null;
 
 // Contador para actualizar métricas cada 5 frames
 let metricsUpdateCounter = 0;
@@ -249,12 +254,21 @@ function getSpeedLabel(speed) {
 
 /**
  * Calcula las métricas de tráfico actuales
- * @returns {Object} Objeto con densidad, flujo, velocidad y total de vehículos
+ * @returns {Object} Objeto con densidad, flujo, velocidad, entropía y total de vehículos
  */
 function calculateMetrics() {
     let totalCars = 0;
     let totalCells = 0;
     let carsInMotion = 0;
+
+    // Contador de transiciones/reglas del autómata celular para entropía de Shannon
+    // Tipos de transiciones:
+    // 0: STAY_EMPTY (0→0) - celda permanece vacía
+    // 1: ADVANCE (0→V desde V anterior) - vehículo avanza
+    // 2: STOPPED (V→V sin V anterior) - vehículo se detiene
+    // 3: MOVE_OUT (V→0) - vehículo sale de celda
+    // 4: SPAWN (0→V sin V anterior) - vehículo aparece (generación)
+    const transitionCount = new Array(5).fill(0);
 
     // Acceder a la variable global 'calles' definida en trafico.js
     if (!window.calles) {
@@ -263,27 +277,81 @@ function calculateMetrics() {
             density: 0,
             flow: 0,
             speed: 0,
+            entropy: 0,
             totalCars: 0
         };
     }
 
-    window.calles.forEach(calle => {
+    // Guardar estado actual y calcular transiciones
+    const currentStates = new Map();
+
+    window.calles.forEach((calle, calleIdx) => {
         for (let c = 0; c < calle.carriles; c++) {
             totalCells += calle.tamano;
+
             for (let i = 0; i < calle.tamano; i++) {
-                if (calle.arreglo[c][i] > 0) { // Cambiado de === 1 a > 0 para contar todos los tipos de vehículos (1-6)
+                const cellValue = calle.arreglo[c][i];
+                const cellKey = `${calleIdx}-${c}-${i}`;
+
+                // Guardar estado actual
+                currentStates.set(cellKey, cellValue);
+
+                // Contar vehículos
+                if (cellValue > 0) {
                     totalCars++;
                     const nextIndex = (i + 1) % calle.tamano;
                     if (calle.arreglo[c][nextIndex] === 0) {
                         carsInMotion++;
                     }
                 }
+
+                // Calcular transiciones comparando con estado anterior
+                const prevValue = previousStreetStates.get(cellKey) ?? 0;
+                const prevCellKey = `${calleIdx}-${c}-${Math.max(0, i - 1)}`;
+                const prevLeftValue = i > 0 ? (previousStreetStates.get(prevCellKey) ?? 0) : 0;
+
+                // Clasificar la transición
+                if (prevValue === 0 && cellValue === 0) {
+                    // STAY_EMPTY: celda permanece vacía
+                    transitionCount[0]++;
+                } else if (prevValue === 0 && cellValue > 0) {
+                    // Vehículo aparece en celda
+                    if (prevLeftValue > 0) {
+                        // ADVANCE: vehículo avanzó desde celda anterior
+                        transitionCount[1]++;
+                    } else {
+                        // SPAWN: vehículo generado (apareció de la nada)
+                        transitionCount[4]++;
+                    }
+                } else if (prevValue > 0 && cellValue > 0) {
+                    // STOPPED: vehículo permanece en la misma celda
+                    transitionCount[2]++;
+                } else if (prevValue > 0 && cellValue === 0) {
+                    // MOVE_OUT: vehículo salió de la celda
+                    transitionCount[3]++;
+                }
             }
         }
     });
 
+    // Actualizar estado anterior para el siguiente paso
+    previousStreetStates = currentStates;
+
     // Calcular densidad como porcentaje de ocupación
     const density = totalCells > 0 ? (totalCars / totalCells) * 100 : 0;
+
+    // Calcular Entropía de Shannon basada en transiciones del autómata celular
+    // H = -Σ(p_i * log2(p_i)) donde p_i es la proporción de cada tipo de transición
+    let entropy = 0;
+    if (totalCells > 0) {
+        for (let i = 0; i < transitionCount.length; i++) {
+            if (transitionCount[i] > 0) {
+                const p_i = transitionCount[i] / totalCells;
+                // Usar log2 = log(x) / log(2)
+                entropy -= p_i * (Math.log(p_i) / Math.log(2));
+            }
+        }
+    }
 
     // Calcular tasa de cambio neta de población (antes llamado "flujo")
     const now = Date.now();
@@ -315,6 +383,7 @@ function calculateMetrics() {
         netGeneration: lastFlowValue.toFixed(2), // Tasa de cambio de población
         throughput: throughput.toFixed(2), // Flujo vehicular real (Q = k × v)
         speed: avgSpeed.toFixed(2),
+        entropy: entropy.toFixed(3), // Entropía de Shannon (bits)
         totalCars: totalCars
     };
 }
@@ -334,6 +403,7 @@ function updateMetricsHistory(metrics) {
     metricsHistory.netGeneration.push(parseFloat(metrics.netGeneration));
     metricsHistory.throughput.push(parseFloat(metrics.throughput));
     metricsHistory.speed.push(parseFloat(metrics.speed));
+    metricsHistory.entropy.push(parseFloat(metrics.entropy));
 
     // Limitar el historial al número máximo de puntos de datos
     if (metricsHistory.timestamps.length > metricsHistory.maxDataPoints) {
@@ -342,6 +412,7 @@ function updateMetricsHistory(metrics) {
         metricsHistory.netGeneration.shift();
         metricsHistory.throughput.shift();
         metricsHistory.speed.shift();
+        metricsHistory.entropy.shift();
     }
 }
 
@@ -672,11 +743,85 @@ function initializeCharts() {
         });
     }
 
+    // Gráfica de Entropía de Shannon
+    const entropyCtx = document.getElementById('entropyChart');
+    if (entropyCtx) {
+        entropyChartInstance = new Chart(entropyCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'bits',
+                    data: [],
+                    borderColor: '#6f42c1',
+                    backgroundColor: 'rgba(111, 66, 193, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                        padding: 12,
+                        displayColors: false,
+                        titleFont: { size: 13, weight: 'bold' },
+                        bodyFont: { size: 11 },
+                        callbacks: {
+                            title: function(context) {
+                                return 'Entropía de Shannon (AC)';
+                            },
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                return [
+                                    `${value.toFixed(3)} bits`,
+                                    '',
+                                    'Mide la diversidad de REGLAS',
+                                    'aplicadas en el autómata celular',
+                                    '',
+                                    'Reglas medidas:',
+                                    '• Celda vacía (permanece)',
+                                    '• Vehículo avanza',
+                                    '• Vehículo se detiene',
+                                    '• Vehículo sale',
+                                    '• Vehículo generado',
+                                    '',
+                                    'Máximo: 2.322 bits (5 reglas)',
+                                    '0 bits = Una sola regla activa',
+                                    'Alto = Reglas variadas'
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    ...commonOptions.scales,
+                    y: {
+                        ...commonOptions.scales.y,
+                        min: 0,
+                        max: 2.5,
+                        ticks: {
+                            ...commonOptions.scales.y.ticks,
+                            callback: function(value) {
+                                return value.toFixed(1) + ' bits';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     console.log('✅ Gráficas de Chart.js inicializadas correctamente');
 }
 
 /**
- * Actualiza los datos de las cuatro gráficas
+ * Actualiza los datos de las cinco gráficas
  */
 function updateCharts() {
     if (!window.Chart) return;
@@ -708,6 +853,13 @@ function updateCharts() {
         speedChartInstance.data.datasets[0].data = metricsHistory.speed;
         speedChartInstance.update('none');
     }
+
+    // Actualizar gráfica de entropía
+    if (entropyChartInstance) {
+        entropyChartInstance.data.labels = metricsHistory.timestamps;
+        entropyChartInstance.data.datasets[0].data = metricsHistory.entropy;
+        entropyChartInstance.update('none');
+    }
 }
 
 /**
@@ -715,7 +867,7 @@ function updateCharts() {
  * @param {boolean} modoOscuro - true para modo oscuro, false para modo claro
  */
 function actualizarColoresGraficas(modoOscuro) {
-    if (!densityChartInstance || !throughputChartInstance || !netGenerationChartInstance || !speedChartInstance) return;
+    if (!densityChartInstance || !throughputChartInstance || !netGenerationChartInstance || !speedChartInstance || !entropyChartInstance) return;
 
     const gridColor = modoOscuro ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
     const tickColor = modoOscuro ? '#c0c0c0' : '#666';
@@ -759,6 +911,16 @@ function actualizarColoresGraficas(modoOscuro) {
         speedChartInstance.data.datasets[0].backgroundColor = modoOscuro ? 'rgba(232, 200, 136, 0.1)' : 'rgba(255, 193, 7, 0.1)';
         speedChartInstance.update('none');
     }
+
+    // Actualizar Entropía
+    if (entropyChartInstance) {
+        entropyChartInstance.options.scales.x.ticks.color = tickColor;
+        entropyChartInstance.options.scales.y.ticks.color = tickColor;
+        entropyChartInstance.options.scales.y.grid.color = gridColor;
+        entropyChartInstance.data.datasets[0].borderColor = modoOscuro ? '#9d7dd3' : '#6f42c1';
+        entropyChartInstance.data.datasets[0].backgroundColor = modoOscuro ? 'rgba(157, 125, 211, 0.2)' : 'rgba(111, 66, 193, 0.2)';
+        entropyChartInstance.update('none');
+    }
 }
 
 // ==================== FUNCIONES DE EXPORTACIÓN DE MÉTRICAS ====================
@@ -786,13 +948,14 @@ function descargarMetricasCSV() {
     const throughputStats = calcularEstadisticas(metricsHistory.throughput);
     const netGenStats = calcularEstadisticas(metricsHistory.netGeneration);
     const speedStats = calcularEstadisticas(metricsHistory.speed);
+    const entropyStats = calcularEstadisticas(metricsHistory.entropy);
 
     // Encabezado de datos
-    let csvContent = 'Timestamp,Density (%),Throughput (veh/s),Net Generation (veh/s),Speed (% movement)\n';
+    let csvContent = 'Timestamp,Density (%),Throughput (veh/s),Net Generation (veh/s),Speed (% movement),Entropy (bits)\n';
 
     // Datos de series temporales
     for (let i = 0; i < metricsHistory.timestamps.length; i++) {
-        csvContent += `${metricsHistory.timestamps[i]},${metricsHistory.density[i]},${metricsHistory.throughput[i]},${metricsHistory.netGeneration[i]},${metricsHistory.speed[i]}\n`;
+        csvContent += `${metricsHistory.timestamps[i]},${metricsHistory.density[i]},${metricsHistory.throughput[i]},${metricsHistory.netGeneration[i]},${metricsHistory.speed[i]},${metricsHistory.entropy[i]}\n`;
     }
 
     // Agregar línea en blanco y sección de estadísticas
@@ -803,6 +966,7 @@ function descargarMetricasCSV() {
     csvContent += `Throughput (veh/s),${throughputStats.avg},${throughputStats.min},${throughputStats.max}\n`;
     csvContent += `Net Generation (veh/s),${netGenStats.avg},${netGenStats.min},${netGenStats.max}\n`;
     csvContent += `Speed (% movement),${speedStats.avg},${speedStats.min},${speedStats.max}\n`;
+    csvContent += `Entropy (bits),${entropyStats.avg},${entropyStats.min},${entropyStats.max}\n`;
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
@@ -840,7 +1004,7 @@ function descargarMetricasJSON() {
 
     const data = {
         metadata: {
-            version: '2.0',
+            version: '2.1',
             exportDate: new Date().toISOString(),
             simulationName: 'FLUVI Traffic Simulation',
             totalDataPoints: metricsHistory.timestamps.length,
@@ -848,7 +1012,8 @@ function descargarMetricasJSON() {
                 density: 'Porcentaje de celdas ocupadas',
                 throughput: 'Flujo vehicular real (Q = Densidad × Velocidad) en veh/s',
                 netGeneration: 'Tasa de cambio neta de población vehicular en veh/s',
-                speed: 'Porcentaje de vehículos en movimiento'
+                speed: 'Porcentaje de vehículos en movimiento',
+                entropy: 'Entropía de Shannon del autómata celular en bits (mide diversidad de reglas/transiciones aplicadas: vacío, avanzar, detenerse, salir, generar)'
             }
         },
         metrics: {
@@ -856,13 +1021,15 @@ function descargarMetricasJSON() {
             density: metricsHistory.density,
             throughput: metricsHistory.throughput,
             netGeneration: metricsHistory.netGeneration,
-            speed: metricsHistory.speed
+            speed: metricsHistory.speed,
+            entropy: metricsHistory.entropy
         },
         statistics: {
             density: calcularEstadisticas(metricsHistory.density),
             throughput: calcularEstadisticas(metricsHistory.throughput),
             netGeneration: calcularEstadisticas(metricsHistory.netGeneration),
-            speed: calcularEstadisticas(metricsHistory.speed)
+            speed: calcularEstadisticas(metricsHistory.speed),
+            entropy: calcularEstadisticas(metricsHistory.entropy)
         }
     };
 
@@ -899,6 +1066,7 @@ function limpiarMetricas() {
         metricsHistory.throughput = [];
         metricsHistory.netGeneration = [];
         metricsHistory.speed = [];
+        metricsHistory.entropy = [];
 
         updateCharts();
 

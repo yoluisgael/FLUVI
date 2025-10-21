@@ -91,6 +91,52 @@ FLUVI/
 - `3 a 6` - Crecimiento moderado
 - `≥6` - Crecimiento rápido
 
+### Entropía de Shannon (bits)
+
+Métrica que mide la **diversidad de reglas/transiciones** aplicadas en el autómata celular en cada paso de tiempo.
+
+#### Fórmula
+```
+H = -Σ(p_i × log₂(p_i))
+```
+
+Donde `p_i` es la probabilidad empírica (frecuencia relativa) de cada regla:
+
+```
+p_i = (cantidad de veces que se usó la regla i) / (total de celdas)
+```
+
+#### Reglas/Transiciones Medidas
+
+| ID | Regla | Transición | Descripción |
+|----|-------|-----------|-------------|
+| 0 | **STAY_EMPTY** | 0→0 | Celda permanece vacía |
+| 1 | **ADVANCE** | 0→V | Vehículo avanza desde celda anterior |
+| 2 | **STOPPED** | V→V | Vehículo se detiene/permanece en su posición |
+| 3 | **MOVE_OUT** | V→0 | Vehículo sale de la celda |
+| 4 | **SPAWN** | 0→V | Vehículo generado (aparece sin venir de celda anterior) |
+
+**Nota**: V = vehículo (tipos 1-6), 0 = celda vacía
+
+#### Interpretación de Valores
+
+- **0 bits**: Sistema estático (una sola regla activa)
+  - Ejemplo: Todas las celdas vacías o todos los vehículos detenidos
+- **~1 bit**: Baja diversidad (predomina una o dos reglas)
+  - Ejemplo: Mayormente vehículos detenidos con pocos avances
+- **1.5-2 bits**: Diversidad moderada (mezcla balanceada de reglas)
+  - Ejemplo: Sistema con flujo variado: algunos avanzan, otros se detienen
+- **2.322 bits**: Máximo teórico (distribución uniforme de las 5 reglas)
+  - Ejemplo: Todas las reglas se aplican con igual frecuencia
+
+#### Rangos de Clasificación
+
+- `<0.5` - Homogéneo (sistema muy simple)
+- `0.5-1.0` - Baja diversidad
+- `1.0-1.5` - Diversidad moderada-baja
+- `1.5-2.0` - Diversidad moderada-alta
+- `≥2.0` - Alta diversidad (sistema muy dinámico)
+
 ### Estados del Sistema
 
 #### 🔴 COLAPSO
