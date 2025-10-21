@@ -56,6 +56,73 @@ FLUVI/
 - **Arrastre con SHIFT**: Mueve calles fácilmente en modo edición
 - **Exportar/Importar**: Guarda y carga simulaciones en formato JSON
 
+## Métricas del Sistema
+
+### Densidad (%)
+- `<15%` - Muy baja
+- `15-25%` - Baja
+- `25-45%` - Moderada
+- `45-60%` - Buena ocupación
+- `60-75%` - Alta
+- `75-85%` - Muy alta
+- `≥85%` - Crítica
+
+### Velocidad (%)
+- `<15%` - Detenido
+- `15-30%` - Lento
+- `30-50%` - Moderado
+- `50-70%` - Fluido
+- `70-80%` - Muy fluido
+- `≥80%` - Excelente
+
+### Flujo Vehicular (veh/s)
+- `<0.8` - Muy bajo
+- `0.8-2.0` - Bajo
+- `2.0-3.0` - Moderado
+- `3.0-4.0` - Bueno
+- `4.0-4.5` - Alto
+- `≥4.5` - Excelente
+
+### Tasa de Cambio (veh/s)
+- `<-3` - Decrecimiento rápido
+- `-3 a -1` - Decrecimiento lento
+- `-1 a 1` - Estable
+- `1 a 3` - Crecimiento lento
+- `3 a 6` - Crecimiento moderado
+- `≥6` - Crecimiento rápido
+
+### Estados del Sistema
+
+#### 🔴 COLAPSO
+- **Condición**: `density >80% && speed <15%`
+- **Descripción**: Las calles están severamente congestionadas y casi paralizadas
+- **Throughput típico**: 0-1 veh/s
+- **Acción requerida**: Reducir generación o mejorar salidas
+
+#### 🟢 ÓPTIMO
+- **Condición**: `throughput ≥2.5 && density 25-60% && speed ≥50%`
+- **Descripción**: Máxima eficiencia del sistema: buen balance entre densidad y velocidad
+- **Throughput típico**: 2.5-5 veh/s
+- **Característica**: Sistema funcionando al máximo rendimiento
+
+#### 🟠 CONGESTIONADO
+- **Condición**: `density >65% && speed <35%`
+- **Descripción**: Alta densidad vehicular con movimiento lento
+- **Throughput típico**: 1-2 veh/s
+- **Advertencia**: Riesgo de colapso si aumenta densidad
+
+#### 🔵 SUB-UTILIZADO
+- **Condición**: `density <25% && throughput <1.5`
+- **Descripción**: Baja ocupación de las calles, capacidad disponible
+- **Throughput típico**: 0-1.5 veh/s
+- **Recomendación**: Considerar aumentar generación para aprovechar capacidad
+
+#### 🟡 MODERADO
+- **Condición**: Otras combinaciones
+- **Descripción**: Condiciones de tráfico aceptables con margen de mejora
+- **Throughput típico**: Variable
+- **Característica**: Estado por defecto, funcional pero mejorable
+
 ## Tecnologías Utilizadas
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)

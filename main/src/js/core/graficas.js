@@ -53,9 +53,11 @@ function interpretarMetricas(metrics) {
         clase: ''
     };
 
-    // Análisis del estado del tráfico usando throughput (flujo real)
-    if (density > 85 && speed < 20) {
-        // COLAPSO
+    // Análisis del estado del tráfico basado en la ecuación fundamental Q=k×v
+    // Prioridad: 1) Colapso, 2) Óptimo (por throughput), 3) Congestionado, 4) Sub-utilizado, 5) Moderado
+
+    if (density > 80 && speed < 15) {
+        // COLAPSO CRÍTICO - Gridlock: alta densidad pero sin movimiento
         estado.nivel = 'COLAPSO';
         estado.emoji = '🔴';
         estado.color = '#dc3545';
@@ -63,14 +65,30 @@ function interpretarMetricas(metrics) {
         estado.descripcion = 'Las calles están severamente congestionadas y casi paralizadas';
         estado.clase = 'status-critico';
         estado.observaciones = [
-            'Densidad crítica detectada',
-            'Velocidad extremadamente baja',
+            'Densidad crítica detectada (>80%)',
+            'Velocidad extremadamente baja (<15%)',
             `Flujo vehicular: ${throughput.toFixed(1)} veh/s - Casi nulo`,
             `Tasa cambio: ${netGeneration.toFixed(1)} veh/s - ${getNetGenerationLabel(netGeneration)}`,
-            'Se requiere intervención urgente'
+            'Se requiere intervención: reducir generación o mejorar salidas'
         ];
-    } else if (density > 70 && speed < 40) {
-        // CONGESTIONADO
+    } else if (throughput >= 2.5 && density >= 25 && density <= 60 && speed >= 50) {
+        // ÓPTIMO - Basado en THROUGHPUT alto con condiciones balanceadas
+        // Zona de máxima eficiencia según ecuación fundamental
+        estado.nivel = 'ÓPTIMO';
+        estado.emoji = '🟢';
+        estado.color = '#198754';
+        estado.titulo = 'FLUJO ÓPTIMO';
+        estado.descripcion = 'Máxima eficiencia del sistema: buen balance entre densidad y velocidad';
+        estado.clase = 'status-optimo';
+        estado.observaciones = [
+            `Densidad en zona óptima (${density.toFixed(0)}%)`,
+            `Velocidad fluida (${speed.toFixed(0)}%)`,
+            `Flujo vehicular alto: ${throughput.toFixed(1)} veh/s`,
+            `Tasa cambio: ${netGeneration.toFixed(1)} veh/s - ${getNetGenerationLabel(netGeneration)}`,
+            'Sistema funcionando al máximo rendimiento'
+        ];
+    } else if (density > 65 && speed < 35) {
+        // CONGESTIONADO - Alta densidad con velocidad reducida
         estado.nivel = 'CONGESTIONADO';
         estado.emoji = '🟠';
         estado.color = '#fd7e14';
@@ -78,29 +96,14 @@ function interpretarMetricas(metrics) {
         estado.descripcion = 'Alta densidad vehicular con movimiento lento';
         estado.clase = 'status-alto';
         estado.observaciones = [
-            'Densidad alta en las calles',
-            'Velocidad reducida significativamente',
-            `Throughput: ${throughput.toFixed(1)} veh/s - ${throughput < 2 ? 'Muy bajo' : 'Reducido'}`,
-            netGeneration > 3 ? `Población creciendo (${netGeneration.toFixed(1)} veh/s)` : 'Población estable',
-            'Posible formación de embotellamientos'
+            `Densidad alta (${density.toFixed(0)}%)`,
+            `Velocidad reducida (${speed.toFixed(0)}%)`,
+            `Flujo vehicular: ${throughput.toFixed(1)} veh/s - ${getThroughputLabel(throughput)}`,
+            netGeneration > 2 ? `⚠ Población creciendo (${netGeneration.toFixed(1)} veh/s)` : 'Población estable',
+            'Riesgo de colapso si aumenta densidad'
         ];
-    } else if (density >= 30 && density <= 65 && speed >= 40) {
-        // ÓPTIMO
-        estado.nivel = 'ÓPTIMO';
-        estado.emoji = '🟢';
-        estado.color = '#198754';
-        estado.titulo = 'FLUJO ÓPTIMO';
-        estado.descripcion = 'Las calles están bien utilizadas sin congestión';
-        estado.clase = 'status-optimo';
-        estado.observaciones = [
-            'Densidad en rango ideal',
-            'Velocidad adecuada',
-            `Throughput: ${throughput.toFixed(1)} veh/s - ${getThroughputLabel(throughput)}`,
-            `Tasa cambio: ${netGeneration.toFixed(1)} veh/s - ${getNetGenerationLabel(netGeneration)}`,
-            'Sistema funcionando eficientemente'
-        ];
-    } else if (density < 30 && throughput < 2) {
-        // SUB-UTILIZADO
+    } else if (density < 25 && throughput < 1.5) {
+        // SUB-UTILIZADO - Baja densidad Y bajo flujo
         estado.nivel = 'SUB-UTILIZADO';
         estado.emoji = '🔵';
         estado.color = '#0d6efd';
@@ -108,14 +111,14 @@ function interpretarMetricas(metrics) {
         estado.descripcion = 'Baja ocupación de las calles, capacidad disponible';
         estado.clase = 'status-bajo';
         estado.observaciones = [
-            'Densidad muy baja',
-            'Pocas calles están siendo usadas',
-            `Throughput: ${throughput.toFixed(1)} veh/s`,
+            `Densidad muy baja (${density.toFixed(0)}%)`,
+            `Flujo vehicular bajo: ${throughput.toFixed(1)} veh/s`,
+            `Velocidad: ${speed.toFixed(0)}% - ${getSpeedLabel(speed)}`,
             netGeneration > 1 ? `Creciendo lentamente (${netGeneration.toFixed(1)} veh/s)` : 'Población estable',
-            'Considerar aumentar generación'
+            'Considerar aumentar generación para aprovechar capacidad'
         ];
     } else {
-        // MODERADO
+        // MODERADO - Condiciones aceptables pero no óptimas
         estado.nivel = 'MODERADO';
         estado.emoji = '🟡';
         estado.color = '#ffc107';
@@ -123,11 +126,11 @@ function interpretarMetricas(metrics) {
         estado.descripcion = 'Condiciones de tráfico aceptables con margen de mejora';
         estado.clase = 'status-moderado';
         estado.observaciones = [
-            `Densidad: ${density.toFixed(0)}% - ${density > 50 ? 'Moderadamente alta' : 'Moderada'}`,
-            `Velocidad: ${speed.toFixed(0)}% - ${speed > 60 ? 'Buena' : 'Puede mejorar'}`,
-            `Throughput: ${throughput.toFixed(1)} veh/s - ${getThroughputLabel(throughput)}`,
+            `Densidad: ${density.toFixed(0)}% - ${getDensityLabel(density)}`,
+            `Velocidad: ${speed.toFixed(0)}% - ${getSpeedLabel(speed)}`,
+            `Flujo vehicular: ${throughput.toFixed(1)} veh/s - ${getThroughputLabel(throughput)}`,
             `Tasa cambio: ${netGeneration.toFixed(1)} veh/s - ${getNetGenerationLabel(netGeneration)}`,
-            'Sistema funcionando normalmente'
+            throughput < 2.5 ? 'Puede optimizarse para aumentar flujo' : 'Sistema funcionando normalmente'
         ];
     }
 
@@ -167,19 +170,19 @@ function actualizarPanelInterpretacion(estado, metrics) {
                 <span class="metric-desc">→ ${getDensityLabel(density)}</span>
             </div>
             <div class="metric-item">
-                <span class="metric-label">Throughput:</span>
+                <span class="metric-label">Flujo vehicular:</span>
                 <span class="metric-value">${throughput.toFixed(1)} veh/s</span>
                 <span class="metric-desc">→ ${getThroughputLabel(throughput)}</span>
-            </div>
-            <div class="metric-item">
-                <span class="metric-label">Tasa cambio:</span>
-                <span class="metric-value">${netGeneration.toFixed(1)} veh/s</span>
-                <span class="metric-desc">→ ${getNetGenerationLabel(netGeneration)}</span>
             </div>
             <div class="metric-item">
                 <span class="metric-label">Velocidad:</span>
                 <span class="metric-value">${speed.toFixed(1)}%</span>
                 <span class="metric-desc">→ ${getSpeedLabel(speed)}</span>
+            </div>
+            <div class="metric-item">
+                <span class="metric-label">Tasa cambio:</span>
+                <span class="metric-value">${netGeneration.toFixed(1)} veh/s</span>
+                <span class="metric-desc">→ ${getNetGenerationLabel(netGeneration)}</span>
             </div>
         </div>
         <div class="status-observations">
@@ -191,49 +194,54 @@ function actualizarPanelInterpretacion(estado, metrics) {
 
 /**
  * Obtiene la etiqueta descriptiva para la densidad
+ * Basado en teoría de tráfico: óptimo ~40-60%, crítico >85%
  */
 function getDensityLabel(density) {
-    if (density < 20) return 'Muy baja';
-    if (density < 30) return 'Baja';
-    if (density < 50) return 'Moderada';
-    if (density < 65) return 'Buena ocupación';
-    if (density < 80) return 'Alta';
-    if (density < 90) return 'Muy alta';
+    if (density < 15) return 'Muy baja';
+    if (density < 25) return 'Baja';
+    if (density < 45) return 'Moderada';
+    if (density < 60) return 'Buena ocupación';
+    if (density < 75) return 'Alta';
+    if (density < 85) return 'Muy alta';
     return 'Crítica';
 }
 
 /**
  * Obtiene la etiqueta descriptiva para la tasa de cambio neta (netGeneration)
+ * Considera tanto crecimiento (+) como decrecimiento (-)
  */
 function getNetGenerationLabel(netGen) {
-    if (netGen < 1) return 'Estable';
+    if (netGen < -3) return 'Decrecimiento rápido';
+    if (netGen < -1) return 'Decrecimiento lento';
+    if (netGen >= -1 && netGen <= 1) return 'Estable';
     if (netGen < 3) return 'Crecimiento lento';
     if (netGen < 6) return 'Crecimiento moderado';
-    if (netGen < 10) return 'Crecimiento rápido';
-    return 'Crecimiento muy rápido';
+    return 'Crecimiento rápido';
 }
 
 /**
  * Obtiene la etiqueta descriptiva para el throughput (flujo real Q=k×v)
+ * Máximo práctico: ~4.0 veh/s (density=50% × speed=80% × 10)
  */
 function getThroughputLabel(throughput) {
-    if (throughput < 1) return 'Muy bajo';
-    if (throughput < 2) return 'Bajo';
-    if (throughput < 3) return 'Moderado';
-    if (throughput < 4) return 'Bueno';
-    if (throughput < 5) return 'Alto';
+    if (throughput < 0.8) return 'Muy bajo';
+    if (throughput < 2.0) return 'Bajo';
+    if (throughput < 3.0) return 'Moderado';
+    if (throughput < 4.0) return 'Bueno';
+    if (throughput < 4.5) return 'Alto';
     return 'Excelente';
 }
 
 /**
  * Obtiene la etiqueta descriptiva para la velocidad
+ * Ajustado para autómata celular con intersecciones (difícil alcanzar >80%)
  */
 function getSpeedLabel(speed) {
-    if (speed < 20) return 'Casi detenido';
-    if (speed < 40) return 'Lento';
-    if (speed < 60) return 'Moderado';
-    if (speed < 75) return 'Fluido';
-    if (speed < 85) return 'Muy fluido';
+    if (speed < 15) return 'Detenido';
+    if (speed < 30) return 'Lento';
+    if (speed < 50) return 'Moderado';
+    if (speed < 70) return 'Fluido';
+    if (speed < 80) return 'Muy fluido';
     return 'Excelente';
 }
 
@@ -263,7 +271,7 @@ function calculateMetrics() {
         for (let c = 0; c < calle.carriles; c++) {
             totalCells += calle.tamano;
             for (let i = 0; i < calle.tamano; i++) {
-                if (calle.arreglo[c][i] === 1) {
+                if (calle.arreglo[c][i] > 0) { // Cambiado de === 1 a > 0 para contar todos los tipos de vehículos (1-6)
                     totalCars++;
                     const nextIndex = (i + 1) % calle.tamano;
                     if (calle.arreglo[c][nextIndex] === 0) {
@@ -518,8 +526,9 @@ function initializeCharts() {
                                     '',
                                     getThroughputLabel(value),
                                     '',
-                                    'Flujo = Densidad × Velocidad',
-                                    '>4 veh/s = Excelente',
+                                    'Flujo = Densidad% × Velocidad%',
+                                    '≥4.5 veh/s = Excelente',
+                                    '2.5-4 veh/s = Óptimo',
                                     '<2 veh/s = Bajo'
                                 ];
                             }
