@@ -3332,3 +3332,30 @@ switchModoOscuro.addEventListener('change', (event) => {
     // Renderizar el canvas para actualizar colores si es necesario
     renderizarCanvas();
 });
+
+// ============================================================================
+// TOGGLE DE SECCIÓN DE CONFIGURACIÓN (COLAPSAR/EXPANDIR)
+// ============================================================================
+
+const configHeader = document.getElementById('configHeader');
+const configFooter = document.querySelector('.sidebar-footer-config');
+
+// Cargar estado guardado del colapso
+document.addEventListener('DOMContentLoaded', () => {
+    const configCollapsed = localStorage.getItem('configCollapsed');
+
+    if (configCollapsed === 'true') {
+        configFooter.classList.add('collapsed');
+    }
+});
+
+// Event listener para toggle
+if (configHeader) {
+    configHeader.addEventListener('click', () => {
+        configFooter.classList.toggle('collapsed');
+
+        // Guardar estado en localStorage
+        const isCollapsed = configFooter.classList.contains('collapsed');
+        localStorage.setItem('configCollapsed', isCollapsed.toString());
+    });
+}
