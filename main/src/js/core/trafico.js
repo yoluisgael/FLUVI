@@ -160,6 +160,8 @@ let escala = 1;
 let offsetX = 0, offsetY = 0;
 let isDragging = false, startX, startY;
 let hasDragged = false;
+const DRAG_THRESHOLD = 5; // Píxeles mínimos de movimiento para considerar un drag real
+let dragStartMouseX = 0, dragStartMouseY = 0; // Posición inicial del mouse para medir distancia
 let lastTouchX, lastTouchY;
 let calleSeleccionada = null; // Variable para almacenar la calle seleccionada
 
@@ -2835,6 +2837,8 @@ canvas.addEventListener("wheel", event => {
 });
 
 canvas.addEventListener("mousedown", event => {
+    console.log('🟨 trafico.js canvas.mousedown EJECUTADO');
+
     const rect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
@@ -2881,15 +2885,30 @@ canvas.addEventListener("mousedown", event => {
     }
 
     // Si no hay vértice, iniciar arrastre normal del canvas
-    isDragging = true;
-    hasDragged = false;
-    startX = event.clientX - offsetX;
-    startY = event.clientY - offsetY;
+    // SOLO si NO estamos usando PixiJS (porque CameraController lo maneja)
+    if (!window.USE_PIXI || !pixiInitialized) {
+        isDragging = true;
+        hasDragged = false;
+        dragStartMouseX = event.clientX; // Guardar posición inicial del mouse
+        dragStartMouseY = event.clientY; // para calcular distancia de drag
+        startX = event.clientX - offsetX;
+        startY = event.clientY - offsetY;
+    }
 });
 
 canvas.addEventListener('click', (event) => {
+    console.log('🟩 trafico.js canvas.click EJECUTADO');
+
+    // DEBUG: Log para diagnosticar
+    const cameraWasDragging = window.pixiApp?.cameraController?.wasDragging || false;
+    console.log('   hasDragged:', hasDragged, 'controlandoVertice:', controlandoVertice, 'isDraggingStreet:', isDraggingStreet, 'cameraWasDragging:', cameraWasDragging);
+
     // Evitar comportamiento si se está arrastrando o controlando vértice o arrastrando calle
-    if (hasDragged || controlandoVertice || isDraggingStreet) return;
+    // También verificar si CameraController estuvo arrastrando (para PixiJS)
+    if (hasDragged || controlandoVertice || isDraggingStreet || cameraWasDragging) {
+        console.log('⚠️ Click bloqueado');
+        return;
+    }
 
     const rect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
@@ -2984,18 +3003,40 @@ canvas.addEventListener('click', (event) => {
         return;
     }
 
-    // Comportamiento normal: agregar/quitar vehículos
+    // Comportamiento normal: agregar/quitar vehículos (toggle)
     const celdaObjetivo = encontrarCeldaMasCercana(worldX, worldY);
+
+    console.log('🎯 celdaObjetivo:', celdaObjetivo);
 
     if (celdaObjetivo) {
         const { calle, carril, indice } = celdaObjetivo;
-        if (calle.arreglo[carril] !== undefined && calle.arreglo[carril][indice] === 0) {
-            calle.arreglo[carril][indice] = 1;
+
+        console.log('📍 Celda encontrada - Calle:', calle.nombre, 'Carril:', carril, 'Índice:', indice);
+        console.log('🔍 Arreglo existe?', calle.arreglo[carril] !== undefined);
+
+        if (calle.arreglo[carril] !== undefined) {
+            const currentValue = calle.arreglo[carril][indice];
+            console.log('💾 Valor actual de la celda:', currentValue, 'Tipo:', typeof currentValue);
+
+            if (currentValue === 0) {
+                // Celda vacía -> Agregar vehículo con tipo aleatorio (1-6)
+                const nuevoValor = Math.floor(Math.random() * 6) + 1;
+                calle.arreglo[carril][indice] = nuevoValor;
+                console.log('➕ Vehículo agregado con valor:', nuevoValor);
+            } else {
+                // Celda ocupada -> Quitar vehículo
+                console.log('🔴 INTENTANDO QUITAR VEHÍCULO - Valor antes:', calle.arreglo[carril][indice]);
+                calle.arreglo[carril][indice] = 0;
+                console.log('🔴 Valor después de quitar:', calle.arreglo[carril][indice]);
+                console.log('➖ Vehículo quitado');
+            }
+
             renderizarCanvas();
-        } else if (calle.arreglo[carril] !== undefined && calle.arreglo[carril][indice] !== 0) {
-            calle.arreglo[carril][indice] = 0;
-            renderizarCanvas();
+        } else {
+            console.log('❌ ERROR: El arreglo del carril no existe');
         }
+    } else {
+        console.log('❌ No se encontró celda objetivo');
     }
 });
 
@@ -3064,9 +3105,19 @@ canvas.addEventListener("mousemove", event => {
         return;
     }
 
-    // Si estamos arrastrando el canvas
-    if (isDragging) {
-        hasDragged = true;
+    // Si estamos arrastrando el canvas (solo para Canvas 2D, no PixiJS)
+    if (isDragging && (!window.USE_PIXI || !pixiInitialized)) {
+        // Calcular distancia desde el punto inicial del drag
+        const dragDistanceX = event.clientX - dragStartMouseX;
+        const dragDistanceY = event.clientY - dragStartMouseY;
+        const dragDistance = Math.sqrt(dragDistanceX * dragDistanceX + dragDistanceY * dragDistanceY);
+
+        // Solo marcar como "dragged" si el movimiento supera el threshold
+        // Esto evita que clicks con movimientos mínimos sean considerados drags
+        if (dragDistance >= DRAG_THRESHOLD) {
+            hasDragged = true;
+        }
+
         offsetX = (event.clientX - startX);
         offsetY = (event.clientY - startY);
         aplicarLimitesOffset();
@@ -3102,6 +3153,7 @@ canvas.addEventListener("mouseup", () => {
     }
 
     isDragging = false;
+    hasDragged = false; // IMPORTANTE: Resetear hasDragged en mouseup
     controlandoVertice = false;
     verticeSeleccionado = null;
     renderizarCanvas();
@@ -3116,6 +3168,7 @@ canvas.addEventListener("mouseleave", () => {
     }
 
     isDragging = false;
+    hasDragged = false; // IMPORTANTE: Resetear hasDragged
     controlandoVertice = false;
     verticeSeleccionado = null;
     renderizarCanvas();

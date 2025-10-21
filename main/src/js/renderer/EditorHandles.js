@@ -45,8 +45,8 @@ class EditorHandles {
         this.moveHandle.moveTo(0, -8);
         this.moveHandle.lineTo(0, 8);
 
-        this.moveHandle.interactive = true;
-        this.moveHandle.buttonMode = true;
+        // PixiJS v7+ API
+        this.moveHandle.eventMode = 'static';
         this.moveHandle.cursor = 'move';
 
         this.moveHandle.on('pointerdown', (e) => {
@@ -70,8 +70,8 @@ class EditorHandles {
         this.rotateHandle.moveTo(0, -10);
         this.rotateHandle.lineTo(3, -7);
 
-        this.rotateHandle.interactive = true;
-        this.rotateHandle.buttonMode = true;
+        // PixiJS v7+ API
+        this.rotateHandle.eventMode = 'static';
         this.rotateHandle.cursor = 'grab';
 
         this.rotateHandle.on('pointerdown', (e) => {
@@ -96,7 +96,7 @@ class EditorHandles {
     setupGlobalDragEvents() {
         const stage = this.scene.app.stage;
 
-        stage.interactive = true;
+        // Ya está configurado en SceneManager como eventMode = 'static'
 
         const onPointerMove = (e) => {
             if (this.isDraggingMove) {

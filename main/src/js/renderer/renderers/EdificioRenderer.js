@@ -146,9 +146,9 @@ class EdificioRenderer {
         this.scene.edificioSprites.set(edificio, sprite);
         this.scene.getLayer('buildings').addChild(sprite);
 
-        // Hacer interactivo
-        sprite.interactive = true;
-        sprite.buttonMode = true;
+        // Hacer interactivo (PixiJS v7+ API)
+        sprite.eventMode = 'static';
+        sprite.cursor = 'pointer';
         sprite.on('pointerdown', (e) => this.onEdificioClick(edificio, e));
         sprite.on('pointerover', () => this.onEdificioHover(edificio, sprite));
         sprite.on('pointerout', () => this.onEdificioOut(edificio, sprite));
@@ -258,6 +258,9 @@ class EdificioRenderer {
 
     // Event handlers
     onEdificioClick(edificio, event) {
+        // IMPORTANTE: Detener la propagación para que CameraController no capture este evento
+        event.stopPropagation();
+
         if (event.data.originalEvent.ctrlKey || event.data.originalEvent.metaKey) {
             console.log('🖱️ Clic en edificio:', edificio.label || 'Sin nombre');
 

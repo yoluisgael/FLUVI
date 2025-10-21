@@ -75,7 +75,8 @@ class CalleRenderer {
         }
 
         // Hacer el TilingSprite interactivo para asegurar que capture eventos
-        tilingSprite.interactive = true;
+        tilingSprite.eventMode = 'static'; // PixiJS v7+ API
+        tilingSprite.cursor = 'pointer';
 
         container.addChild(tilingSprite);
 
@@ -88,9 +89,9 @@ class CalleRenderer {
         this.scene.calleSprites.set(calle, container);
         this.scene.getLayer('streets').addChild(container);
 
-        // Hacer interactivo
-        container.interactive = true;
-        container.buttonMode = true;
+        // Hacer interactivo (PixiJS v7+ API)
+        container.eventMode = 'static';
+        container.cursor = 'pointer';
         container.on('pointerdown', (e) => this.onCalleClick(calle, e));
         container.on('pointerover', () => this.onCalleHover(calle, container));
         container.on('pointerout', () => this.onCalleOut(calle, container));
@@ -128,9 +129,9 @@ class CalleRenderer {
                 sprite.y = coords.y;
                 sprite.rotation = CoordinateConverter.degreesToRadians(coords.angulo || calle.angulo);
 
-                // Hacer cada sprite individual interactivo para calles curvas
-                sprite.interactive = true;
-                sprite.buttonMode = true;
+                // Hacer cada sprite individual interactivo para calles curvas (PixiJS v7+ API)
+                sprite.eventMode = 'static';
+                sprite.cursor = 'pointer';
                 sprite.on('pointerdown', (e) => this.onCalleClick(calle, e));
                 sprite.on('pointerover', () => this.onCalleHover(calle, container));
                 sprite.on('pointerout', () => this.onCalleOut(calle, container));
@@ -292,10 +293,18 @@ class CalleRenderer {
 
     // Event handlers
     onCalleClick(calle, event) {
+        console.log('🟥 CalleRenderer.onCalleClick EJECUTADO - Calle:', calle.nombre);
+
+        // Detener propagación para evitar conflictos
+        event.stopPropagation();
+
         // Obtener coordenadas del mundo
         const globalPos = event.data.global;
         const worldX = (globalPos.x - window.offsetX) / window.escala;
         const worldY = (globalPos.y - window.offsetY) / window.escala;
+
+        const isCtrl = event.data.originalEvent.ctrlKey || event.data.originalEvent.metaKey;
+        console.log('Ctrl?', isCtrl);
 
         // Si es Ctrl+Click, seleccionar/deseleccionar la calle
         if (event.data.originalEvent.ctrlKey || event.data.originalEvent.metaKey) {
@@ -412,10 +421,8 @@ class CalleRenderer {
                 window.renderizarCanvas();
             }
         } else {
-            // Comportamiento normal sin Ctrl: agregar/quitar vehículos
-            // (funciona tanto en calles seleccionadas como no seleccionadas)
-            console.log('🖱️ Clic normal en calle:', calle.nombre);
-            console.log('   Estado de pausa:', window.isPaused);
+            // Comportamiento normal sin Ctrl: agregar/quitar vehículos usando ClickActionManager
+            console.log('🔵 Click normal en calle (sin Ctrl)');
 
             if (typeof window.encontrarCeldaMasCercana === 'function') {
                 const celdaObjetivo = window.encontrarCeldaMasCercana(worldX, worldY);
@@ -425,16 +432,36 @@ class CalleRenderer {
 
                     // Verificar que la celda objetivo sea de la calle clickeada
                     if (calleObjetivo === calle) {
-                        console.log(`📍 Celda objetivo: [${carril}][${indice}], valor actual: ${calleObjetivo.arreglo[carril]?.[indice]}`);
+                        const valorActual = calleObjetivo.arreglo[carril]?.[indice];
+                        console.log('📍 Celda encontrada - Carril:', carril, 'Índice:', indice, 'Valor actual:', valorActual);
 
-                        if (calleObjetivo.arreglo[carril] !== undefined && calleObjetivo.arreglo[carril][indice] === 0) {
-                            // Agregar vehículo
-                            calleObjetivo.arreglo[carril][indice] = 1;
-                            console.log(`🚗 Vehículo agregado en ${calle.nombre} [${carril}][${indice}]`);
-                        } else if (calleObjetivo.arreglo[carril] !== undefined && calleObjetivo.arreglo[carril][indice] !== 0) {
-                            // Quitar vehículo
-                            calleObjetivo.arreglo[carril][indice] = 0;
-                            console.log(`🚫 Vehículo removido de ${calle.nombre} [${carril}][${indice}]`);
+                        // Usar ClickActionManager si existe
+                        if (window.clickActionManager) {
+                            const changed = window.clickActionManager.executeAction({
+                                calle: calleObjetivo,
+                                carril: carril,
+                                indice: indice
+                            });
+
+                            if (changed) {
+                                const nuevoValor = calleObjetivo.arreglo[carril][indice];
+                                console.log('✅ Vehículo modificado por ClickActionManager. Nuevo valor:', nuevoValor);
+                            } else {
+                                console.log('⚠️ ClickActionManager no realizó cambios');
+                            }
+                        } else {
+                            // Fallback: lógica simple de toggle
+                            console.log('⚠️ ClickActionManager no disponible, usando lógica simple');
+                            if (valorActual === 0 || valorActual === undefined) {
+                                // Agregar vehículo
+                                const nuevoValor = Math.floor(Math.random() * 6) + 1;
+                                calleObjetivo.arreglo[carril][indice] = nuevoValor;
+                                console.log('✅ AGREGADO:', nuevoValor);
+                            } else {
+                                // Quitar vehículo
+                                calleObjetivo.arreglo[carril][indice] = 0;
+                                console.log('✅ QUITADO (valor anterior:', valorActual, ')');
+                            }
                         }
 
                         // Los vehículos se actualizan automáticamente en el siguiente frame

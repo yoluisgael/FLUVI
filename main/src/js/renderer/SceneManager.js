@@ -297,9 +297,8 @@ class SceneManager {
                 circle.endFill();
                 circle.name = `vertice_${calle.nombre}_${index}`;
 
-                // Hacer interactivo para poder arrastrarlo
-                circle.interactive = true;
-                circle.buttonMode = true;
+                // Hacer interactivo para poder arrastrarlo (PixiJS v7+ API)
+                circle.eventMode = 'static';
                 circle.cursor = 'pointer';
 
                 layer.addChild(circle);
