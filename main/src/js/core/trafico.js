@@ -2652,7 +2652,12 @@ function iniciarSimulacion() {
                     const carrilActual = calle.arreglo[c];
                     if (carrilActual) {
                         for (let i = 0; i < calle.tamano; i++) {
-                            carrilActual[i] = Math.random() < probabilidadGeneracionGeneral ? 1 : 0;
+                            if (Math.random() < probabilidadGeneracionGeneral) {
+                                // Generar tipo aleatorio de vehículo (1-6)
+                                carrilActual[i] = Math.floor(Math.random() * 6) + 1;
+                            } else {
+                                carrilActual[i] = 0;
+                            }
                         }
                     }
                 }
