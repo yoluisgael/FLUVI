@@ -134,7 +134,17 @@ class SceneManager {
             }
         }
 
-        // Actualizar vértices solo cuando cambie el estado (separado de conexiones)
+        // OPTIMIZACIÓN CRÍTICA: Renderizado de vértices legacy DESHABILITADO
+        // Este código está duplicado - CalleRenderer ya maneja vértices de manera más eficiente
+        // El código legacy creaba PIXI.Graphics con bordes blancos para cada vértice, causando problemas de rendimiento
+        //
+        // NOTA: Los vértices ahora se renderizan solo cuando:
+        // 1. Una calle está seleccionada
+        // 2. El modo edición está activo
+        // Esto se maneja en CalleRenderer.renderVertices()
+        //
+        // Código legacy deshabilitado:
+        /*
         if (window.mostrarVertices !== this.lastMostrarVertices) {
             this.lastMostrarVertices = window.mostrarVertices;
 
@@ -162,6 +172,7 @@ class SceneManager {
                 this.verticesRendered = false;
             }
         }
+        */
 
         // Nota: PixiJS renderiza automáticamente el stage cada frame
         // No necesitamos llamar a render() manualmente
@@ -177,14 +188,21 @@ class SceneManager {
     renderAll() {
         console.log('🎨 SceneManager.renderAll() llamado');
 
-        // OPTIMIZACIÓN CRÍTICA: Renderizar áreas de fondo SOLO UNA VEZ
-        // El fondo es completamente estático, nunca cambia
+        // OPTIMIZACIÓN CRÍTICA: Renderizado de área de fondo DESHABILITADO
+        // El polígono beige del Politécnico es GIGANTE (2053x1654px = 3.4M píxeles)
+        // Crea un Canvas HTML5 masivo que consume mucha memoria GPU
+        // Como es solo decorativo (referencia visual), se ha deshabilitado para mejorar rendimiento
+        //
+        // Si se desea reactivar, descomentar el código abajo y ajustar el tamaño del polígono
+        /*
         if (!this.backgroundRendered && this.backgroundAreaRenderer && window.backgroundAreas && window.backgroundAreas.length > 0) {
             console.log(`  → Renderizando ${window.backgroundAreas.length} área(s) de fondo (UNA SOLA VEZ)`);
             this.backgroundAreaRenderer.renderAll(window.backgroundAreas);
             this.backgroundRendered = true; // Marcar como renderizado, NUNCA volver a renderizar
             console.log(`  ✅ Fondo marcado como renderizado, no se volverá a procesar`);
         }
+        */
+        console.log(`  ⚠️ Renderizado de áreas de fondo DESHABILITADO por optimización (polígono muy grande)`);
 
         // Renderizar edificios
         if (this.edificioRenderer && window.edificios && window.edificios.length > 0) {
@@ -216,10 +234,14 @@ class SceneManager {
             this.renderIntersecciones();
         }
 
+        // OPTIMIZACIÓN: renderVertices() legacy deshabilitado
+        // CalleRenderer ahora maneja el renderizado de vértices de manera más eficiente
         // Renderizar vértices de curvas si están visibles
+        /*
         if (window.mostrarVertices && this.uiRenderer) {
             this.renderVertices();
         }
+        */
 
         // Renderizar etiquetas si están visibles
         if (window.mostrarEtiquetas && this.uiRenderer && window.calles && window.calles.length > 0) {
@@ -253,6 +275,9 @@ class SceneManager {
         });
     }
 
+    // OPTIMIZACIÓN: Función legacy deshabilitada - CalleRenderer maneja vértices ahora
+    // Esta función creaba PIXI.Graphics con bordes blancos causando problemas de rendimiento
+    /*
     renderVertices() {
         if (!window.calles) return;
 
@@ -298,11 +323,11 @@ class SceneManager {
 
                 // Si es el vértice seleccionado, hacerlo más grande y de otro color
                 if (window.verticeSeleccionado === vertice) {
-                    circle.lineStyle(3, 0xFFFFFF);
+                    circle.lineStyle(3, 0xFFFFFF);  // BORDE BLANCO - PROBLEMA DE RENDIMIENTO
                     circle.beginFill(0xFF0000, 0.9);
                     circle.drawCircle(pos.x, pos.y, 10);
                 } else {
-                    circle.lineStyle(2, 0xFFFFFF);
+                    circle.lineStyle(2, 0xFFFFFF);  // BORDE BLANCO - PROBLEMA DE RENDIMIENTO
                     circle.beginFill(0x9370DB, 0.8);
                     circle.drawCircle(pos.x, pos.y, 8);
                 }
@@ -332,6 +357,7 @@ class SceneManager {
             });
         });
     }
+    */
 
     clearLayer(layerName) {
         const layer = this.getLayer(layerName);

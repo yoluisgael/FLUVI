@@ -138,8 +138,14 @@ class PixiApp {
         const minimapaUpdateInterval = 3; // Actualizar minimapa cada 3 frames (~20 FPS)
 
         this.app.ticker.add((delta) => {
+            // OPTIMIZACIÓN: Loop de simulación unificado - paso() se llama desde aquí
+            // Esto elimina el doble loop que había con requestAnimationFrame
+            if (typeof window.stepSimulation === 'function') {
+                window.stepSimulation(performance.now());
+            }
+
             // PixiJS renderiza automáticamente el stage
-            // Solo actualizar lógica si es necesario
+            // Actualizar sprites de vehículos (dirty tracking interno)
             if (!window.isPaused && this.sceneManager) {
                 this.sceneManager.update(delta);
             }

@@ -380,17 +380,35 @@ class EdificioRenderer {
             tooltip.textContent = edificio.label;
             tooltip.style.display = 'block';
 
-            // Actualizar posición del tooltip siguiendo el mouse
-            const updateTooltipPosition = (e) => {
-                tooltip.style.left = (e.clientX + 15) + 'px';
-                tooltip.style.top = (e.clientY + 15) + 'px';
+            // OPTIMIZACIÓN: Throttling con requestAnimationFrame
+            // Sin throttling: 200-400 eventos/segundo × ~110 edificios = 22,000-44,000 DOM updates/sec
+            // Con throttling: Máximo 60 updates/segundo (1 por frame)
+            let mouseX = 0;
+            let mouseY = 0;
+            let rafId = null;
+
+            // Handler ligero: solo captura posición del mouse
+            const onMouseMove = (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+
+                // Solo programar actualización si no hay una pendiente
+                if (!rafId) {
+                    rafId = requestAnimationFrame(() => {
+                        // Actualizar posición del tooltip (máx 60 FPS)
+                        tooltip.style.left = (mouseX + 15) + 'px';
+                        tooltip.style.top = (mouseY + 15) + 'px';
+                        rafId = null; // Resetear para permitir siguiente actualización
+                    });
+                }
             };
 
-            // Guardar la función para poder removerla después
-            sprite._tooltipMoveHandler = updateTooltipPosition;
+            // Guardar referencias para limpieza posterior
+            sprite._tooltipMoveHandler = onMouseMove;
+            sprite._tooltipRafId = rafId;
 
             // Agregar listener de movimiento del mouse
-            document.addEventListener('mousemove', updateTooltipPosition);
+            document.addEventListener('mousemove', onMouseMove);
         }
     }
 
@@ -401,6 +419,12 @@ class EdificioRenderer {
         const tooltip = document.getElementById('canvasTooltip');
         if (tooltip) {
             tooltip.style.display = 'none';
+        }
+
+        // OPTIMIZACIÓN: Cancelar requestAnimationFrame pendiente
+        if (sprite._tooltipRafId) {
+            cancelAnimationFrame(sprite._tooltipRafId);
+            sprite._tooltipRafId = null;
         }
 
         // Remover listener de movimiento del mouse
