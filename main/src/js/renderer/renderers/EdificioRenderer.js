@@ -360,10 +360,41 @@ class EdificioRenderer {
 
     onEdificioHover(edificio, sprite) {
         sprite.alpha = 0.9;
+
+        // Mostrar tooltip con el nombre/label del edificio
+        const tooltip = document.getElementById('canvasTooltip');
+        if (tooltip && edificio.label) {
+            tooltip.textContent = edificio.label;
+            tooltip.style.display = 'block';
+
+            // Actualizar posición del tooltip siguiendo el mouse
+            const updateTooltipPosition = (e) => {
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+            };
+
+            // Guardar la función para poder removerla después
+            sprite._tooltipMoveHandler = updateTooltipPosition;
+
+            // Agregar listener de movimiento del mouse
+            document.addEventListener('mousemove', updateTooltipPosition);
+        }
     }
 
     onEdificioOut(edificio, sprite) {
         sprite.alpha = 1.0;
+
+        // Ocultar tooltip
+        const tooltip = document.getElementById('canvasTooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+
+        // Remover listener de movimiento del mouse
+        if (sprite._tooltipMoveHandler) {
+            document.removeEventListener('mousemove', sprite._tooltipMoveHandler);
+            sprite._tooltipMoveHandler = null;
+        }
     }
 }
 

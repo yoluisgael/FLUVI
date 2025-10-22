@@ -480,10 +480,41 @@ class CalleRenderer {
 
     onCalleHover(calle, container) {
         container.alpha = 0.9;
+
+        // Mostrar tooltip con el nombre de la calle
+        const tooltip = document.getElementById('canvasTooltip');
+        if (tooltip && calle.nombre) {
+            tooltip.textContent = calle.nombre;
+            tooltip.style.display = 'block';
+
+            // Actualizar posición del tooltip siguiendo el mouse
+            const updateTooltipPosition = (e) => {
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+            };
+
+            // Guardar la función para poder removerla después
+            container._tooltipMoveHandler = updateTooltipPosition;
+
+            // Agregar listener de movimiento del mouse
+            document.addEventListener('mousemove', updateTooltipPosition);
+        }
     }
 
     onCalleOut(calle, container) {
         container.alpha = 1.0;
+
+        // Ocultar tooltip
+        const tooltip = document.getElementById('canvasTooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+
+        // Remover listener de movimiento del mouse
+        if (container._tooltipMoveHandler) {
+            document.removeEventListener('mousemove', container._tooltipMoveHandler);
+            container._tooltipMoveHandler = null;
+        }
     }
 
     // ==================== RENDERIZADO DE VÉRTICES PARA CURVAS ====================
