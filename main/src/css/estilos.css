@@ -277,12 +277,42 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   z-index: 100;
   backdrop-filter: blur(10px);
+  max-width: 95%; /* Evitar que se salga de la pantalla */
+}
+
+/* Control bar: mantener en una línea cuando hay espacio (>= 1000px canvas width) */
+#controlBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap; /* Por defecto, NO wrappear */
+  white-space: nowrap;
+}
+
+/* Control bar: permitir wrap solo en pantallas pequeñas */
+@media (max-width: 1200px) {
+  #controlBar {
+    flex-wrap: wrap; /* Permitir wrap en pantallas pequeñas */
+    justify-content: center;
+  }
 }
 
 #controlBar .btn {
   margin: 0 5px;
   border-radius: 20px;
   font-weight: 500;
+  flex-shrink: 0; /* Evitar que los botones se compriman */
+}
+
+/* Grupos de botones: no permitir wrap interno */
+#controlBar .btn-group {
+  flex-shrink: 0;
+}
+
+/* Controles de velocidad y generación: no permitir wrap interno */
+#controlBar .d-flex {
+  flex-shrink: 0;
+  flex-wrap: nowrap !important;
 }
 
 #velocidadValor {

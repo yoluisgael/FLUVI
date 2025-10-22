@@ -1358,7 +1358,7 @@
 
       <!-- Control Bar -->
       <div id="canvasControlBar">
-        <div id="controlBar" class="d-flex flex-wrap align-items-center gap-2">
+        <div id="controlBar" class="align-items-center">
           <!-- Grupo de controles de visualización -->
           <div class="btn-group" role="group">
             <button id="btnConexiones" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las conexiones entre calles en el canvas">🔗</button>
@@ -1380,14 +1380,14 @@
           </div>
 
           <!-- Controles de velocidad -->
-          <div class="d-flex align-items-center gap-1 flex-wrap">
+          <div class="d-flex align-items-center gap-1">
             <label for="velocidadSlider" class="form-label mb-0 small">Velocidad:</label>
             <input type="range" class="form-range" id="velocidadSlider" min="1" max="100" step="1" style="width: 80px;">
             <span id="velocidadValor" class="badge bg-primary">10</span>
           </div>
 
           <!-- Controles de generación -->
-          <div class="d-flex align-items-center gap-1 flex-wrap">
+          <div class="d-flex align-items-center gap-1">
             <label for="probabilidadSlider" class="form-label mb-0 small">Generación:</label>
             <input type="range" class="form-range" id="probabilidadSlider" min="0" max="100" step="1" style="width: 80px;">
             <span id="probabilidadValor" class="badge bg-primary">10</span>
