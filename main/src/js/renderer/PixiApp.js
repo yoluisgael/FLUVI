@@ -39,9 +39,22 @@ class PixiApp {
                 autoDensity: true,
                 antialias: true,
                 powerPreference: 'high-performance',
-                forceCanvas: false // Intentar WebGL primero
+                forceCanvas: false, // Intentar WebGL primero
+
+                // OPTIMIZACIÓN: Configurar renderer para mejor rendimiento
+                backgroundAlpha: 1,
+                clearBeforeRender: true,
+                preserveDrawingBuffer: false,
+
+                // OPTIMIZACIÓN: FPS target (limitar a 60 FPS máximo)
+                sharedTicker: true,
+                sharedLoader: true
             });
-            console.log('✅ WebGL disponible, usando aceleración GPU');
+
+            // OPTIMIZACIÓN: Configurar target FPS
+            this.app.ticker.maxFPS = 60;
+
+            console.log('✅ WebGL disponible, usando aceleración GPU (target: 60 FPS)');
         } catch (webglError) {
             console.warn('⚠️ WebGL no disponible, usando Canvas 2D renderer como fallback...');
             console.warn('   Razón:', webglError.message);
@@ -53,9 +66,13 @@ class PixiApp {
                 autoDensity: true,
                 antialias: false, // Desactivar antialiasing en Canvas 2D para mejor performance
                 powerPreference: 'high-performance',
-                forceCanvas: true // Forzar Canvas 2D
+                forceCanvas: true, // Forzar Canvas 2D
+                backgroundAlpha: 1,
+                clearBeforeRender: true,
+                preserveDrawingBuffer: false
             });
-            console.log('✅ Canvas 2D renderer activado (sin aceleración GPU)');
+            this.app.ticker.maxFPS = 60;
+            console.log('✅ Canvas 2D renderer activado (sin aceleración GPU, target: 60 FPS)');
         }
 
         // Reemplazar canvas viejo con el de PixiJS
@@ -116,6 +133,10 @@ class PixiApp {
     }
 
     setupTicker() {
+        // OPTIMIZACIÓN: Limitar FPS del minimapa (no necesita 60 FPS)
+        let minimapaFrameCounter = 0;
+        const minimapaUpdateInterval = 3; // Actualizar minimapa cada 3 frames (~20 FPS)
+
         this.app.ticker.add((delta) => {
             // PixiJS renderiza automáticamente el stage
             // Solo actualizar lógica si es necesario
@@ -123,9 +144,13 @@ class PixiApp {
                 this.sceneManager.update(delta);
             }
 
-            // Actualizar minimapa en cada frame (es ligero, usa Canvas 2D)
-            if (typeof window.dibujarMinimapa === 'function') {
-                window.dibujarMinimapa();
+            // OPTIMIZACIÓN: Actualizar minimapa a menor frecuencia (20 FPS en vez de 60 FPS)
+            minimapaFrameCounter++;
+            if (minimapaFrameCounter >= minimapaUpdateInterval) {
+                minimapaFrameCounter = 0;
+                if (typeof window.dibujarMinimapa === 'function') {
+                    window.dibujarMinimapa();
+                }
             }
         });
     }

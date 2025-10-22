@@ -12,6 +12,11 @@ class CarroRenderer {
         // Object pool para reutilizar sprites
         this.spritePool = [];
         this.maxPoolSize = 1000;
+
+        // Dirty tracking: solo actualizar vehículos que cambiaron
+        this.lastVehicleState = new Map(); // Map<id, tipo>
+        this.updateCounter = 0;
+        this.fullUpdateInterval = 60; // Full update cada 60 frames (~1 segundo a 60 FPS)
     }
 
     renderAll(calles) {
@@ -28,10 +33,23 @@ class CarroRenderer {
     }
 
     updateAll(calles) {
-        // Método más eficiente para actualizaciones frame-by-frame
-        calles.forEach(calle => {
-            this.updateCalleVehiculos(calle);
-        });
+        // OPTIMIZACIÓN: Usar dirty tracking para actualizar solo lo que cambió
+        this.updateCounter++;
+
+        // Cada N frames, hacer un full update para asegurar consistencia
+        const isFullUpdate = (this.updateCounter % this.fullUpdateInterval) === 0;
+
+        if (isFullUpdate) {
+            // Full update: revisar todo
+            calles.forEach(calle => {
+                this.updateCalleVehiculosFull(calle);
+            });
+        } else {
+            // Incremental update: solo lo que cambió
+            calles.forEach(calle => {
+                this.updateCalleVehiculosIncremental(calle);
+            });
+        }
     }
 
     renderCalleVehiculos(calle) {
@@ -44,21 +62,46 @@ class CarroRenderer {
         }
     }
 
-    updateCalleVehiculos(calle) {
+    updateCalleVehiculosFull(calle) {
         if (!calle.arreglo) return;
 
-        // Solo actualizar posiciones/rotaciones sin recrear sprites
+        // Full update: revisar todas las celdas
         for (let carril = 0; carril < calle.carriles; carril++) {
             for (let indice = 0; indice < calle.tamano; indice++) {
                 const id = this.getCarroId(calle, carril, indice);
                 const tipo = calle.arreglo[carril][indice];
 
+                // Guardar estado actual
+                this.lastVehicleState.set(id, tipo);
+
                 if (tipo === 0) {
-                    // Eliminar sprite si existe
                     this.removeCarroSprite(id);
                 } else {
-                    // Actualizar sprite existente o crear nuevo
                     this.createOrUpdateCarroSprite(calle, carril, indice);
+                }
+            }
+        }
+    }
+
+    updateCalleVehiculosIncremental(calle) {
+        if (!calle.arreglo) return;
+
+        // OPTIMIZACIÓN CRÍTICA: Solo actualizar celdas que cambiaron
+        for (let carril = 0; carril < calle.carriles; carril++) {
+            for (let indice = 0; indice < calle.tamano; indice++) {
+                const id = this.getCarroId(calle, carril, indice);
+                const tipoActual = calle.arreglo[carril][indice];
+                const tipoAnterior = this.lastVehicleState.get(id);
+
+                // Solo actualizar si el estado cambió
+                if (tipoActual !== tipoAnterior) {
+                    this.lastVehicleState.set(id, tipoActual);
+
+                    if (tipoActual === 0) {
+                        this.removeCarroSprite(id);
+                    } else {
+                        this.createOrUpdateCarroSprite(calle, carril, indice);
+                    }
                 }
             }
         }
@@ -157,7 +200,10 @@ class CarroRenderer {
     }
 
     getCarroId(calle, carril, indice) {
-        return `${calle.nombre}_${carril}_${indice}`;
+        // OPTIMIZACIÓN: Usar concatenación en lugar de template strings
+        // Template strings son más lentos que concatenación simple
+        // Esta función se llama ~180,000 veces por segundo
+        return calle.nombre + '_' + carril + '_' + indice;
     }
 
     // Object pooling para performance

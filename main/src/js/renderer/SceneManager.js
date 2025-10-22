@@ -47,6 +47,7 @@ class SceneManager {
         this.lastMostrarEtiquetas = false;
         this.verticesRendered = false;
         this.conexionesRendered = false;
+        this.backgroundRendered = false; // Flag para background (solo renderizar UNA VEZ)
 
         // Inicializar renderers especializados (se crearán después)
         this.calleRenderer = null;
@@ -54,6 +55,7 @@ class SceneManager {
         this.edificioRenderer = null;
         this.conexionRenderer = null;
         this.uiRenderer = null;
+        this.backgroundAreaRenderer = null;
 
         console.log('🎬 SceneManager creado');
     }
@@ -76,6 +78,7 @@ class SceneManager {
     }
 
     initRenderers() {
+        this.backgroundAreaRenderer = new BackgroundAreaRenderer(this);
         this.calleRenderer = new CalleRenderer(this, this.assets);
         this.carroRenderer = new CarroRenderer(this, this.assets);
         this.edificioRenderer = new EdificioRenderer(this, this.assets);
@@ -173,6 +176,15 @@ class SceneManager {
 
     renderAll() {
         console.log('🎨 SceneManager.renderAll() llamado');
+
+        // OPTIMIZACIÓN CRÍTICA: Renderizar áreas de fondo SOLO UNA VEZ
+        // El fondo es completamente estático, nunca cambia
+        if (!this.backgroundRendered && this.backgroundAreaRenderer && window.backgroundAreas && window.backgroundAreas.length > 0) {
+            console.log(`  → Renderizando ${window.backgroundAreas.length} área(s) de fondo (UNA SOLA VEZ)`);
+            this.backgroundAreaRenderer.renderAll(window.backgroundAreas);
+            this.backgroundRendered = true; // Marcar como renderizado, NUNCA volver a renderizar
+            console.log(`  ✅ Fondo marcado como renderizado, no se volverá a procesar`);
+        }
 
         // Renderizar edificios
         if (this.edificioRenderer && window.edificios && window.edificios.length > 0) {

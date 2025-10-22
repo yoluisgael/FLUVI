@@ -294,10 +294,31 @@ const buildingImageMap = {
     "ESIA": esimeImg
 };
 
+// ========== ÁREAS DE FONDO (RENDERIZADAS CON PIXI.GRAPHICS) ==========
+// Estas áreas se renderizan DEBAJO de todos los edificios y calles
+// OPTIMIZADO: Convierte Graphics a textura estática (Sprite) y se renderiza UNA SOLA VEZ
+// Cada área puede ser un polígono (vertices: [{x, y}, ...]) o rectángulo (x, y, width, height)
+const backgroundAreas = [
+    {
+        label: "Área IPN/Politécnico",
+        // Polígono con 8 vértices que define el área del Politécnico
+        vertices: [
+            { x: 720, y: 810 },   // Vértice 1 (arriba izquierda)
+            { x: 1847, y: 364 },  // Vértice 7 (izquierda abajo)
+            { x: 981, y: 1455 }    // Vértice 8 (izquierda arriba)
+        ],
+        color: "#FFE4B5",  // Beige claro (color de referencia visual del IPN)
+        alpha: 0.25,       // 25% de opacidad (semi-transparente)
+        showBorder: true,  // Mostrar borde para delimitar el área
+        showLabel: false   // No mostrar label (solo es referencia visual)
+    }
+];
+
 // ========== LISTA DE EDIFICIOS COMPLETA (DESDE TRAFICO.TXT) ==========
 const edificios = [
+
     // ========== ZONA SUPERIOR IZQUIERDA (cerca de Av. Miguel Othon de Mendizabal) ==========
-        
+
     // Torres
     { x: 1223, y: 740, width: 300, height: 20, color: "#29293aff", angle: 350, label: "PLAZA TORRES LINDAVISTA" },
 
@@ -1341,7 +1362,8 @@ function cambioCarril(calle) {
     console.log(`📊 Cambios de carril completados: ${cambios.length} movimientos, ${vehiculosFinales} vehículos totales`);
 }
 
-// ========== EXPONER EDIFICIOS PARA EL EDITOR ==========
+// ========== EXPONER VARIABLES GLOBALES PARA EL EDITOR ==========
+window.backgroundAreas = backgroundAreas;
 window.edificios = edificios;
 window.edificioSeleccionado = null;
 

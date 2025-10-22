@@ -46,6 +46,10 @@ class AssetLoader {
             { name: 'esiquie', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
             { name: 'esia', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
             { name: 'estadio americano', url: 'assets/images/buildings/ESTADIO AMERICANO.png' }
+
+            // NOTA: fondo.png removido - ahora usamos BackgroundAreaRenderer con PIXI.Graphics
+            // para renderizar áreas de fondo de manera mucho más eficiente (vectorial vs textura pesada)
+            // { name: 'fondo', url: 'assets/images/objects/fondo.png' }
         ];
 
         try {

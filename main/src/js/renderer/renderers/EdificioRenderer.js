@@ -144,14 +144,27 @@ class EdificioRenderer {
 
         // Guardar referencia
         this.scene.edificioSprites.set(edificio, sprite);
-        this.scene.getLayer('buildings').addChild(sprite);
 
-        // Hacer interactivo (PixiJS v7+ API)
-        sprite.eventMode = 'static';
-        sprite.cursor = 'pointer';
-        sprite.on('pointerdown', (e) => this.onEdificioClick(edificio, e));
-        sprite.on('pointerover', () => this.onEdificioHover(edificio, sprite));
-        sprite.on('pointerout', () => this.onEdificioOut(edificio, sprite));
+        // Determinar la capa donde se va a renderizar
+        // Si el edificio tiene layer: 'background', usar capa background, sino usar buildings
+        const targetLayer = edificio.layer === 'background' ? this.scene.getLayer('background') : this.scene.getLayer('buildings');
+        targetLayer.addChild(sprite);
+
+        // Hacer interactivo solo si no está marcado como no interactivo (PixiJS v7+ API)
+        // Si edificio.interactive es false, no agregar eventos
+        const isInteractive = edificio.interactive !== false;
+
+        if (isInteractive) {
+            sprite.eventMode = 'static';
+            sprite.cursor = 'pointer';
+            sprite.on('pointerdown', (e) => this.onEdificioClick(edificio, e));
+            sprite.on('pointerover', () => this.onEdificioHover(edificio, sprite));
+            sprite.on('pointerout', () => this.onEdificioOut(edificio, sprite));
+        } else {
+            // Asegurar que el sprite no capture eventos
+            sprite.eventMode = 'none';
+            sprite.interactiveChildren = false;
+        }
 
         return sprite;
     }
