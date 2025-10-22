@@ -8,31 +8,33 @@ class DayNightCycle {
     constructor() {
         // Paleta de colores clave para las 24 horas (puntos de control)
         // Interpolación continua entre estos puntos
-        this.colorKeyframes = [
-            { hour: 0,  color: 0x0a0e1f },   // 12:00 AM - Noche más oscura (azul muy oscuro)
-            { hour: 2,  color: 0x0d1228 },   // 2:00 AM - Noche profunda
-            { hour: 4,  color: 0x15193a },   // 4:00 AM - Noche pre-amanecer
-            { hour: 5,  color: 0x2a3555 },   // 5:00 AM - Inicio amanecer (azul oscuro)
-            { hour: 6,  color: 0x4a5f8f },   // 6:00 AM - Amanecer (azul medio)
-            { hour: 7,  color: 0x6a8fc8 },   // 7:00 AM - Amanecer avanzado (azul claro)
-            { hour: 8,  color: 0x8fb5d8 },   // 8:00 AM - Mañana temprana
-            { hour: 9,  color: 0xa8c8e1 },   // 9:00 AM - Mañana
-            { hour: 10, color: 0xb8d5e8 },   // 10:00 AM - Media mañana
-            { hour: 11, color: 0xc3dced },   // 11:00 AM - Pre-mediodía
-            { hour: 12, color: 0xc6cbcd },   // 12:00 PM - MEDIODÍA (más claro) - Color original
-            { hour: 13, color: 0xc3dced },   // 1:00 PM - Tarde temprana
-            { hour: 14, color: 0xb8d5e8 },   // 2:00 PM - Tarde
-            { hour: 15, color: 0xa8c8e1 },   // 3:00 PM - Media tarde
-            { hour: 16, color: 0x8fb5d8 },   // 4:00 PM - Tarde avanzada
-            { hour: 17, color: 0x7a9fc8 },   // 5:00 PM - Pre-atardecer
-            { hour: 18, color: 0x5d7fb0 },   // 6:00 PM - Atardecer (azul medio)
-            { hour: 19, color: 0x3d5580 },   // 7:00 PM - Atardecer avanzado
-            { hour: 20, color: 0x2a3a5f },   // 8:00 PM - Anochecer (azul oscuro)
-            { hour: 21, color: 0x1d2745 },   // 9:00 PM - Noche temprana
-            { hour: 22, color: 0x141a32 },   // 10:00 PM - Noche
-            { hour: 23, color: 0x0f1425 },   // 11:00 PM - Noche profunda
-            { hour: 24, color: 0x0a0e1f }    // 12:00 AM - Medianoche (cierra el ciclo)
-        ];
+this.colorKeyframes = [
+  { hour: 0,  color: 0x12163A}, // 12:00 AM - Inicio de ciclo (madrugada)
+  { hour: 1,  color: 0x121843 }, // 1:00 AM - Madrugada
+  { hour: 2,  color: 0x121B4C }, // 2:00 AM - Madrugada
+  { hour: 3,  color: 0x111D56 }, // 3:00 AM - Madrugada
+  { hour: 4,  color: 0x0F205F }, // 4:00 AM - Madrugada
+  { hour: 5,  color: 0x0C2269 }, // 5:00 AM - Pre-amanecer
+  { hour: 6,  color: 0xBED5F9 }, // 6:00 AM - Amanecer
+  { hour: 7,  color: 0x90B8F4 }, // 7:00 AM - Amanecer avanzado
+  { hour: 8,  color: 0x6AA0F0 }, // 8:00 AM - Mañana temprana
+  { hour: 9,  color: 0x6AA0F0 }, // 9:00 AM - Mañana
+  { hour: 10, color: 0x6AA0F0 }, // 10:00 AM - Media mañana
+  { hour: 11, color: 0x6AA0F0 }, // 11:00 AM - Pre-mediodía
+  { hour: 12, color: 0x6AA0F0 }, // 12:00 PM - Mediodía
+  { hour: 13, color: 0x6AA0F0 }, // 1:00 PM - Tarde temprana
+  { hour: 14, color: 0x6AA0F0 }, // 2:00 PM - Tarde
+  { hour: 15, color: 0x6AA0F0 }, // 3:00 PM - Media tarde
+  { hour: 16, color: 0x6AA0F0 }, // 4:00 PM - Tarde avanzada
+  { hour: 17, color: 0x6190D8 }, // 5:00 PM - Pre-atardecer
+  { hour: 18, color: 0x0C2269 }, // 6:00 PM - Atardecer
+  { hour: 19, color: 0x0F205F }, // 7:00 PM - Atardecer avanzado
+  { hour: 20, color: 0x111D56 }, // 8:00 PM - Noche temprana
+  { hour: 21, color: 0x121B4C }, // 9:00 PM - Noche temprana
+  { hour: 22, color: 0x121843 }, // 10:00 PM - Noche
+  { hour: 23, color: 0x12163A }, // 11:00 PM - Noche profunda
+  { hour: 24, color: 0x121331 }  // 12:00 AM - Medianoche (cierra el ciclo)
+];
 
         // Cache para evitar recálculos innecesarios
         this.lastHour = -1;

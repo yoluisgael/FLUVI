@@ -314,7 +314,7 @@ const edificios = [
     
     { x: 1375, y: 946, width: 180, height: 80, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
 
-    { x: 1760, y: 1076, width: 300, height: 140, color: "#164916ff", angle: 260, label: "CAMPO BURROS BLANCOS" },
+    { x: 1756, y: 1065, width: 154, height: 270, color: "#164916ff", angle: 170, label: "CAMPO BURROS BLANCOS" }, //9:16
     
     // Campo de Beisbol
     { x: 1974, y: 1273, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" },
@@ -348,7 +348,7 @@ const edificios = [
     { x: 1605, y: 540, width: 35, height: 30, color: "#29293aff", angle: 350, label: "OIC-IPN" },
     { x: 1456, y: 605, width: 40, height: 35, color: "#8b7355", angle: 350, label: "POI-IPN" },
     { x: 1756, y: 466, width: 35, height: 30, color: "#29293aff", angle: 350, label: "SAD-IPN" },
-    { x: 1734, y: 600, width: 40, height: 35, color: "#8b7355", angle: 350, label: "DIRECCIÓN GENERAL" },
+    { x: 1734, y: 600, width: 90, height: 90, color: "#8b7355", angle: 350, label: "DIRECCIÓN GENERAL" },
     { x: 1819, y: 810, width: 40, height: 35, color: "#8b7355", angle: 350, label: "SIIS-IPN" },
     { x: 1444, y: 746, width: 40, height: 35, color: "#8b7355", angle: 350, label: "EDIFICIO INTELIGENTE" },
     { x: 1623, y: 760, width: 40, height: 35, color: "#8b7355", angle: 350, label: "SECADEMICA-IPN" },
