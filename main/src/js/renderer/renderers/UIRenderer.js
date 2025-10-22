@@ -328,9 +328,8 @@ class UIRenderer {
             graphics.x = pos.x;
             graphics.y = pos.y;
 
-            // Hacer interactivo para arrastre
-            graphics.interactive = true;
-            graphics.buttonMode = true;
+            // Hacer interactivo para arrastre (PixiJS v7+ API)
+            graphics.eventMode = 'static';
             graphics.cursor = 'pointer';
 
             // Eventos de arrastre (se implementarán en EditorHandles)

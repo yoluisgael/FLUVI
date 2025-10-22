@@ -43,6 +43,7 @@ class SceneManager {
 
         // Variables de estado para evitar re-renderizado innecesario
         this.lastMostrarConexiones = false;
+        this.lastMostrarVertices = false;
         this.lastMostrarEtiquetas = false;
         this.verticesRendered = false;
         this.conexionesRendered = false;
@@ -111,22 +112,37 @@ class SceneManager {
             }
         }
 
-        // Actualizar vértices y conexiones solo cuando cambie el estado
+        // Actualizar conexiones solo cuando cambie el estado
         if (window.mostrarConexiones !== this.lastMostrarConexiones) {
             this.lastMostrarConexiones = window.mostrarConexiones;
 
             if (window.mostrarConexiones) {
-                // Renderizar conexiones y vértices solo una vez al activar
+                // Renderizar conexiones solo una vez al activar
                 if (this.conexionRenderer && window.conexiones && window.conexiones.length > 0) {
                     this.conexionRenderer.renderAll(window.conexiones);
                 }
-                this.renderVertices();
-                this.verticesRendered = true;
                 this.conexionesRendered = true;
             } else {
-                // Limpiar conexiones y vértices solo una vez al desactivar
+                // Limpiar conexiones solo una vez al desactivar
                 if (this.conexionRenderer) {
                     this.conexionRenderer.clearAll();
+                }
+                this.conexionesRendered = false;
+            }
+        }
+
+        // Actualizar vértices solo cuando cambie el estado (separado de conexiones)
+        if (window.mostrarVertices !== this.lastMostrarVertices) {
+            this.lastMostrarVertices = window.mostrarVertices;
+
+            if (window.mostrarVertices) {
+                // Renderizar vértices solo una vez al activar
+                this.renderVertices();
+                this.verticesRendered = true;
+            } else {
+                // Limpiar vértices solo una vez al desactivar
+                if (this.uiRenderer) {
+                    this.uiRenderer.clearVertices();
                 }
                 // Limpiar vértices de la capa debug
                 const layer = this.getLayer('debug');
@@ -141,7 +157,6 @@ class SceneManager {
                     layer.removeChild(child);
                 });
                 this.verticesRendered = false;
-                this.conexionesRendered = false;
             }
         }
 
@@ -190,7 +205,7 @@ class SceneManager {
         }
 
         // Renderizar vértices de curvas si están visibles
-        if (window.mostrarConexiones && this.uiRenderer) {
+        if (window.mostrarVertices && this.uiRenderer) {
             this.renderVertices();
         }
 
@@ -282,9 +297,8 @@ class SceneManager {
                 circle.endFill();
                 circle.name = `vertice_${calle.nombre}_${index}`;
 
-                // Hacer interactivo para poder arrastrarlo
-                circle.interactive = true;
-                circle.buttonMode = true;
+                // Hacer interactivo para poder arrastrarlo (PixiJS v7+ API)
+                circle.eventMode = 'static';
                 circle.cursor = 'pointer';
 
                 layer.addChild(circle);

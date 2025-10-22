@@ -17,6 +17,7 @@ class CameraController {
         this.maxScale = 20.0; // Zoom in máximo
 
         this.isDragging = false;
+        this.wasDragging = false; // Flag para detectar si hubo drag antes del click
         this.lastMouseX = 0;
         this.lastMouseY = 0;
 
@@ -58,13 +59,30 @@ class CameraController {
                 return;
             }
 
-            // NO capturar si Z está presionada en modo edición (para editar vértices)
-            // Dejar que el evento continúe para que editor.js pueda detectar vértices
-            if (window.zKeyPressed && window.editorCalles && window.editorCalles.modoEdicion) {
-                console.log('🚫 CameraController: Z presionada, ignorando pero dejando pasar evento');
+            // NO capturar si el modo de edición de vértices está activo (para editar vértices)
+            // Dejar que el evento continúe para que CalleRenderer pueda detectar vértices
+            if (window.vertexEditMode && window.editorCalles && window.editorCalles.modoEdicion) {
                 return; // Solo return, NO stopPropagation
             }
 
+            // CRÍTICO: NO activar drag si el click es sobre un objeto interactivo (calle o edificio)
+            // Convertir coordenadas de pantalla a coordenadas del mundo
+            const rect = view.getBoundingClientRect();
+            const screenX = e.clientX - rect.left;
+            const screenY = e.clientY - rect.top;
+            const worldX = (screenX - this.offsetX) / this.scale;
+            const worldY = (screenY - this.offsetY) / this.scale;
+
+            // Verificar si hay una calle o edificio en esa posición
+            const hayCalleEnPunto = typeof window.encontrarCalleEnPunto === 'function' && window.encontrarCalleEnPunto(worldX, worldY);
+            const hayEdificioEnPunto = typeof window.encontrarEdificioEnPunto === 'function' && window.encontrarEdificioEnPunto(worldX, worldY);
+
+            if (hayCalleEnPunto || hayEdificioEnPunto) {
+                // HAY un objeto interactivo, NO activar drag para que PixiJS lo maneje
+                return;
+            }
+
+            // No hay ningún objeto interactivo, activar drag del canvas
             this.isDragging = true;
             this.lastMouseX = e.clientX;
             this.lastMouseY = e.clientY;
@@ -85,12 +103,21 @@ class CameraController {
         });
 
         view.addEventListener('mouseup', () => {
+            // Si estábamos arrastrando, marcar wasDragging antes de resetear
+            if (this.isDragging) {
+                this.wasDragging = true;
+                // Resetear wasDragging después de un breve delay para que el click lo detecte
+                setTimeout(() => {
+                    this.wasDragging = false;
+                }, 100);
+            }
             this.isDragging = false;
             view.style.cursor = 'default';
         });
 
         view.addEventListener('mouseleave', () => {
             this.isDragging = false;
+            this.wasDragging = false;
             view.style.cursor = 'default';
         });
     }

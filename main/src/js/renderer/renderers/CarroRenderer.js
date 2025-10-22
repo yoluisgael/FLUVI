@@ -91,6 +91,10 @@ class CarroRenderer {
             sprite.height = this.celda_tamano;
             sprite.zIndex = 1; // Sobre las calles
 
+            // IMPORTANTE: Los vehículos NO deben capturar eventos de click
+            // para que los clicks pasen a través hacia las calles debajo
+            sprite.eventMode = 'none';
+
             this.scene.carroSprites.set(id, sprite);
             this.scene.getLayer('vehicles').addChild(sprite);
         }
@@ -161,7 +165,10 @@ class CarroRenderer {
         if (this.spritePool.length > 0) {
             return this.spritePool.pop();
         }
-        return new PIXI.Sprite();
+        const sprite = new PIXI.Sprite();
+        // IMPORTANTE: Configurar desde el inicio para evitar capturar eventos
+        sprite.eventMode = 'none';
+        return sprite;
     }
 
     releaseSprite(sprite) {

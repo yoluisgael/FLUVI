@@ -40,8 +40,8 @@ class EditorHandles {
         this.moveHandle.lineStyle(3, 0xFFFFFF);
         this.moveHandle.drawCircle(0, 0, 20);
 
-        this.moveHandle.interactive = true;
-        this.moveHandle.buttonMode = true;
+        // PixiJS v7+ API
+        this.moveHandle.eventMode = 'static';
         this.moveHandle.cursor = 'move';
 
         this.moveHandle.on('pointerdown', (e) => {
@@ -57,8 +57,8 @@ class EditorHandles {
         this.rotateHandle.lineStyle(3, 0xFFFFFF);
         this.rotateHandle.drawCircle(0, 0, 20);
 
-        this.rotateHandle.interactive = true;
-        this.rotateHandle.buttonMode = true;
+        // PixiJS v7+ API
+        this.rotateHandle.eventMode = 'static';
         this.rotateHandle.cursor = 'grab';
 
         this.rotateHandle.on('pointerdown', (e) => {
@@ -85,7 +85,7 @@ class EditorHandles {
         const stage = this.scene.app.stage;
         const view = this.scene.app.view;
 
-        stage.interactive = true;
+        // Ya está configurado en SceneManager como eventMode = 'static'
         // Asegurarse de que el stage capture eventos en toda el área del canvas
         stage.hitArea = new PIXI.Rectangle(0, 0, this.scene.app.screen.width, this.scene.app.screen.height);
 

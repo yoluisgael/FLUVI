@@ -389,13 +389,13 @@ class EditorCalles {
 
         // Crear y guardar el handler
         this.vertexMouseDownHandler = (e) => {
-            // Solo procesar si estamos en modo edición, Z está presionada, y hay vértices
+            // Solo procesar si estamos en modo edición, modo de vértices activo, y hay vértices
             if (!this.modoEdicion) return;
-            if (!window.zKeyPressed) return; // IMPORTANTE: Solo con Z presionada
+            if (!window.vertexEditMode) return; // IMPORTANTE: Solo con modo de edición de vértices activo
             if (this.tipoObjetoEditando !== 'calle') return;
             if (!this.objetoEditando || !this.objetoEditando.vertices) return;
 
-            console.log('🎯 Editor: Detectando click en vértice con Z presionada...');
+            console.log('🎯 Editor: Detectando click en vértice (modo toggle activo)...');
 
             const rect = canvas.getBoundingClientRect();
             const mouseX = e.clientX - rect.left;
@@ -712,12 +712,22 @@ class EditorCalles {
         if (calle) {
             this.objetoEditando = calle;
             this.tipoObjetoEditando = 'calle';
+
+            // Guardar estado original completo (incluyendo vértices y curvas)
             this.objetoOriginal = {
                 x: calle.x,
                 y: calle.y,
-                angulo: calle.angulo
+                angulo: calle.angulo,
+                esCurva: calle.esCurva || false,
+                vertices: calle.vertices ? JSON.parse(JSON.stringify(calle.vertices)) : null // Copia profunda
             };
             console.log('✏️ Modo edición activado para calle:', calle.nombre);
+            console.log('   Estado guardado:', {
+                posicion: `(${calle.x}, ${calle.y})`,
+                angulo: calle.angulo,
+                esCurva: this.objetoOriginal.esCurva,
+                verticesGuardados: this.objetoOriginal.vertices ? this.objetoOriginal.vertices.length : 0
+            });
             
             // NUEVO: Activar mostrar conexiones automáticamente si la calle tiene vértices
             if (calle.vertices && calle.vertices.length > 0) {
@@ -830,22 +840,93 @@ class EditorCalles {
     
     cancelarEdicion() {
         if (!this.modoEdicion || !this.objetoOriginal) return;
-        
+
+        console.log('🔙 Cancelando edición, restaurando estado original...');
+
+        // Restaurar posición y rotación
         this.objetoEditando.x = this.objetoOriginal.x;
         this.objetoEditando.y = this.objetoOriginal.y;
-        
+
         if (this.tipoObjetoEditando === 'calle') {
-            this.objetoEditando.angulo = this.objetoOriginal.angulo;
+            const calle = this.objetoEditando;
+
+            // Restaurar ángulo
+            calle.angulo = this.objetoOriginal.angulo;
+
+            // Restaurar estado de curva
+            calle.esCurva = this.objetoOriginal.esCurva;
+
+            // Restaurar vértices (copia profunda desde el backup)
+            if (this.objetoOriginal.vertices) {
+                calle.vertices = JSON.parse(JSON.stringify(this.objetoOriginal.vertices));
+                console.log(`   ✅ Vértices restaurados: ${calle.vertices.length} vértices`);
+            } else {
+                // Si no había vértices guardados, asegurar que la calle los tenga
+                if (!calle.vertices && (calle.tipo === TIPOS.CONEXION || calle.tipo === TIPOS.GENERADOR || calle.tipo === TIPOS.DEVORADOR)) {
+                    if (window.inicializarVertices) {
+                        window.inicializarVertices(calle);
+                        console.log(`   🔄 Vértices re-inicializados`);
+                    }
+                }
+            }
+
+            console.log('   Estado restaurado:', {
+                posicion: `(${calle.x}, ${calle.y})`,
+                angulo: calle.angulo,
+                esCurva: calle.esCurva,
+                verticesRestaurados: calle.vertices ? calle.vertices.length : 0
+            });
+
+            // Re-renderizar la calle en PixiJS con el estado restaurado
+            if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                const sceneManager = window.pixiApp.sceneManager;
+
+                // Limpiar sprite existente
+                if (sceneManager.calleSprites && sceneManager.calleSprites.has(calle)) {
+                    const container = sceneManager.calleSprites.get(calle);
+                    if (container) {
+                        container.destroy({ children: true });
+                    }
+                    sceneManager.calleSprites.delete(calle);
+                }
+
+                // Re-renderizar con estado restaurado
+                if (sceneManager.calleRenderer) {
+                    if (calle.esCurva) {
+                        sceneManager.calleRenderer.renderCalleCurva(calle);
+                        console.log('   🌊 Calle curva re-renderizada');
+                    } else {
+                        sceneManager.calleRenderer.renderCalleRecta(calle);
+                        console.log('   📏 Calle recta re-renderizada');
+                    }
+                }
+            }
+
         } else if (this.tipoObjetoEditando === 'edificio') {
             this.objetoEditando.angle = this.objetoOriginal.angle;
+
+            // Re-renderizar edificio en PixiJS
+            if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                const sceneManager = window.pixiApp.sceneManager;
+                const edificio = this.objetoEditando;
+
+                if (sceneManager.edificioSprites && sceneManager.edificioSprites.has(edificio)) {
+                    const sprite = sceneManager.edificioSprites.get(edificio);
+                    if (sprite) {
+                        sprite.x = edificio.x;
+                        sprite.y = edificio.y;
+                        sprite.rotation = (edificio.angle || 0) * Math.PI / 180;
+                    }
+                }
+            }
         }
-        
+
         this.actualizarInputsPosicion();
         if (window.renderizarCanvas) window.renderizarCanvas();
-        
+
         this.salirModoEdicion();
-        
-        console.log('❌ Edición cancelada');
+
+        console.log('✅ Edición cancelada - Todos los cambios revertidos');
     }
     
     salirModoEdicion() {
@@ -855,6 +936,20 @@ class EditorCalles {
         this.objetoEditando = null;
         this.tipoObjetoEditando = null;
         this.objetoOriginal = null;
+
+        // Desactivar modo de edición de vértices si estaba activo
+        if (window.vertexEditMode) {
+            window.vertexEditMode = false;
+
+            // Ocultar badge y restaurar feedback visual
+            const badge = document.getElementById('vertexEditModeBadge');
+            if (badge) {
+                badge.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => badge.style.display = 'none', 300);
+            }
+
+            console.log('🔴 Modo edición de vértices desactivado al salir de modo edición');
+        }
 
         // Ocultar controles de edición
         if (this.editActionButtons) {
