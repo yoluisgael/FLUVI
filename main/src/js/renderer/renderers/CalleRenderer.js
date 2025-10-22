@@ -487,36 +487,17 @@ class CalleRenderer {
             tooltip.textContent = calle.nombre;
             tooltip.style.display = 'block';
 
-            // OPTIMIZACIÓN CRÍTICA: Usar requestAnimationFrame para throttling
-            // Esto limita las actualizaciones del tooltip a 60 FPS máximo
-            // En lugar de 200-400 actualizaciones/seg del mousemove sin throttle
-
-            let mouseX = 0;
-            let mouseY = 0;
-            let rafId = null;
-
-            // Capturar posición del mouse (muy barato)
-            const onMouseMove = (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-
-                // Solo solicitar actualización si no hay una pendiente
-                if (!rafId) {
-                    rafId = requestAnimationFrame(() => {
-                        // Actualizar DOM solo una vez por frame
-                        tooltip.style.left = (mouseX + 15) + 'px';
-                        tooltip.style.top = (mouseY + 15) + 'px';
-                        rafId = null;
-                    });
-                }
+            // Actualizar posición del tooltip siguiendo el mouse
+            const updateTooltipPosition = (e) => {
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
             };
 
-            // Guardar referencias para cleanup
-            container._tooltipMoveHandler = onMouseMove;
-            container._tooltipRafId = rafId;
+            // Guardar la función para poder removerla después
+            container._tooltipMoveHandler = updateTooltipPosition;
 
-            // Agregar listener (ahora con throttling)
-            document.addEventListener('mousemove', onMouseMove);
+            // Agregar listener de movimiento del mouse
+            document.addEventListener('mousemove', updateTooltipPosition);
         }
     }
 
@@ -534,45 +515,38 @@ class CalleRenderer {
             document.removeEventListener('mousemove', container._tooltipMoveHandler);
             container._tooltipMoveHandler = null;
         }
-
-        // Cancelar requestAnimationFrame pendiente
-        if (container._tooltipRafId) {
-            cancelAnimationFrame(container._tooltipRafId);
-            container._tooltipRafId = null;
-        }
     }
 
     // ==================== RENDERIZADO DE VÉRTICES PARA CURVAS ====================
 
     renderVertices(calle) {
-        // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (se llama frecuentemente)
-        // console.log(`🔍 renderVertices llamado para: ${calle.nombre}`);
-        // console.log(`   Tiene vértices: ${calle.vertices ? calle.vertices.length : 0}`);
+        console.log(`🔍 renderVertices llamado para: ${calle.nombre}`);
+        console.log(`   Tiene vértices: ${calle.vertices ? calle.vertices.length : 0}`);
 
         // Solo renderizar vértices si:
         // 1. La calle tiene vértices
         // 2. La calle está seleccionada
         // 3. Estamos en modo edición
         if (!calle.vertices || calle.vertices.length === 0) {
-            // console.log('   ❌ No tiene vértices, saliendo...');
+            console.log('   ❌ No tiene vértices, saliendo...');
             return;
         }
 
         const isSelected = window.calleSeleccionada === calle;
         const isEditMode = window.editorCalles && window.editorCalles.modoEdicion;
 
-        // console.log(`   isSelected: ${isSelected}, isEditMode: ${isEditMode}`);
+        console.log(`   isSelected: ${isSelected}, isEditMode: ${isEditMode}`);
 
         const shouldShow = isSelected && isEditMode;
 
         if (!shouldShow) {
-            // console.log('   ❌ No debería mostrar vértices, limpiando...');
+            console.log('   ❌ No debería mostrar vértices, limpiando...');
             // Limpiar vértices existentes
             this.clearVertices(calle);
             return;
         }
 
-        // console.log(`   ✅ Debería mostrar vértices, procediendo...`);
+        console.log(`   ✅ Debería mostrar vértices, procediendo...`);
 
         // Obtener o crear contenedor de vértices
         let verticesContainer = this.scene.verticeSprites.get(calle);
@@ -585,13 +559,13 @@ class CalleRenderer {
             verticesContainer.interactiveChildren = true; // Permitir interactividad en hijos
             this.scene.verticeSprites.set(calle, verticesContainer);
             this.scene.getLayer('ui').addChild(verticesContainer);
-            // console.log(`   📦 Contenedor de vértices creado con eventMode='static'`);
+            console.log(`   📦 Contenedor de vértices creado con eventMode='static'`);
         }
 
         // Limpiar vértices anteriores
         verticesContainer.removeChildren();
 
-        // console.log(`   📍 Renderizando ${calle.vertices.length} vértices...`);
+        console.log(`   📍 Renderizando ${calle.vertices.length} vértices...`);
 
         // Renderizar cada vértice
         calle.vertices.forEach((vertice, index) => {
@@ -600,13 +574,11 @@ class CalleRenderer {
                 : null;
 
             if (!pos) {
-                // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-                // console.log(`   ⚠️ No se pudo calcular posición para vértice ${index}`);
+                console.log(`   ⚠️ No se pudo calcular posición para vértice ${index}`);
                 return;
             }
 
-            // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-            // console.log(`   🔵 Vértice ${index} en (${pos.x.toFixed(2)}, ${pos.y.toFixed(2)})`);
+            console.log(`   🔵 Vértice ${index} en (${pos.x.toFixed(2)}, ${pos.y.toFixed(2)})`);
 
             // Crear círculo para el vértice
             const graphics = new PIXI.Graphics();
@@ -638,8 +610,7 @@ class CalleRenderer {
             graphics.filters = [];
             const hitArea = new PIXI.Circle(0, 0, 15); // Radio de 15 píxeles para hit area
             graphics.hitArea = hitArea;
-            // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-            // console.log(`      → Hit area establecida: radio 15px`);
+            console.log(`      → Hit area establecida: radio 15px`);
 
             graphics.x = pos.x;
             graphics.y = pos.y;
@@ -651,13 +622,11 @@ class CalleRenderer {
             // IMPORTANTE: Si este vértice se está arrastrando, hacerlo translúcido
             if (this.draggingCalle === calle && this.draggingVertexIndex === index) {
                 graphics.alpha = 0.3;
-                // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-                // console.log(`      → Vértice ${index} está siendo ARRASTRADO (translúcido)`);
+                console.log(`      → Vértice ${index} está siendo ARRASTRADO (translúcido)`);
             }
 
             // TODOS los vértices ahora son editables (primero, último e intermedios)
-            // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-            // console.log(`      → Vértice ${index} es EDITABLE (${isFirst ? '🟢 INICIO' : isLast ? '🔴 FIN' : '🟡 INTERMEDIO'})`);
+            console.log(`      → Vértice ${index} es EDITABLE (${isFirst ? '🟢 INICIO' : isLast ? '🔴 FIN' : '🟡 INTERMEDIO'})`);
 
             // IMPORTANTE: En PixiJS v7+ necesitamos usar eventMode
             graphics.eventMode = 'static'; // Habilitar eventos
@@ -665,8 +634,7 @@ class CalleRenderer {
 
             // El cursor se cambiará dinámicamente según el modo de edición de vértices
             graphics.on('pointerover', () => {
-                // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-                // console.log(`      🖱️ Hover sobre vértice ${index}, modo activo: ${window.vertexEditMode}`);
+                console.log(`      🖱️ Hover sobre vértice ${index}, modo activo: ${window.vertexEditMode}`);
                 if (window.vertexEditMode) {
                     graphics.cursor = 'grab';
                 } else {
@@ -680,19 +648,16 @@ class CalleRenderer {
 
             // Habilitar eventos de PixiJS para arrastre de vértices con Z + Click
             graphics.on('pointerdown', (e) => {
-                // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (se llama en cada click)
-                // console.log(`      🖱️ POINTERDOWN en vértice ${index}!`);
+                console.log(`      🖱️ POINTERDOWN en vértice ${index}!`);
                 this.onVerticePointerDown(calle, vertice, index, e);
             });
 
-            // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-            // console.log(`      ✅ Vértice ${index} renderizado con eventos PixiJS`);
+            console.log(`      ✅ Vértice ${index} renderizado con eventos PixiJS`);
 
             verticesContainer.addChild(graphics);
         });
 
-        // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-        // console.log(`   ✅ Todos los vértices renderizados (${calle.vertices.length} total)`);
+        console.log(`   ✅ Todos los vértices renderizados (${calle.vertices.length} total)`);
     }
 
     clearVertices(calle) {
@@ -706,8 +671,7 @@ class CalleRenderer {
     // ==================== EVENTOS DE VÉRTICES ====================
 
     onVerticePointerDown(calle, vertice, index, event) {
-        // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-        // console.log(`🔍 Click en vértice ${index}, modo edición activo: ${window.vertexEditMode}`);
+        console.log(`🔍 Click en vértice ${index}, modo edición activo: ${window.vertexEditMode}`);
 
         // Verificar que estamos en modo edición
         if (!window.editorCalles || !window.editorCalles.modoEdicion) {
@@ -723,10 +687,9 @@ class CalleRenderer {
 
         event.stopPropagation(); // Evitar que se active el click de la calle
 
-        // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-        // console.log(`🎯 Vértice ${index} capturado para arrastre (Z+Click)`);
-        // console.log(`   Calle: ${calle.nombre}`);
-        // console.log(`   Vértice actual anguloOffset: ${vertice.anguloOffset}°`);
+        console.log(`🎯 Vértice ${index} capturado para arrastre (Z+Click)`);
+        console.log(`   Calle: ${calle.nombre}`);
+        console.log(`   Vértice actual anguloOffset: ${vertice.anguloOffset}°`);
 
         // Cambiar cursor a grabbing
         const canvas = this.scene.app.view;
@@ -738,8 +701,7 @@ class CalleRenderer {
         // Marcar este vértice como "siendo arrastrado" para hacerlo translúcido
         this.draggingVertexIndex = index;
         this.draggingCalle = calle;
-        // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-        // console.log(`   🎨 Vértice ${index} marcado para arrastre translúcido`);
+        console.log(`   🎨 Vértice ${index} marcado para arrastre translúcido`);
 
         // Guardar estado inicial
         const dragData = {
@@ -749,14 +711,12 @@ class CalleRenderer {
             isDragging: true
         };
 
-        // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-        // console.log(`   dragData creado:`, dragData);
+        console.log(`   dragData creado:`, dragData);
 
         // Activar modo curva si no está activo
         if (!calle.esCurva) {
             calle.esCurva = true;
-            // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento
-            // console.log(`🌊 Modo curva activado para ${calle.nombre}`);
+            console.log(`🌊 Modo curva activado para ${calle.nombre}`);
         }
 
         // Re-renderizar vértices una vez para aplicar el efecto translúcido
@@ -764,27 +724,25 @@ class CalleRenderer {
 
         // Función de arrastre
         const onPointerMove = (e) => {
-            // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento durante arrastre
-            // console.log(`🖱️ onPointerMove disparado, isDragging: ${dragData.isDragging}`);
+            console.log(`🖱️ onPointerMove disparado, isDragging: ${dragData.isDragging}`);
 
             if (!dragData.isDragging) {
-                // console.log('   ❌ No está arrastrando, saliendo...');
+                console.log('   ❌ No está arrastrando, saliendo...');
                 return;
             }
 
             // Obtener posición global del mouse
             const globalPos = e.data.global;
-            // console.log(`   Global pos: (${globalPos.x}, ${globalPos.y})`);
+            console.log(`   Global pos: (${globalPos.x}, ${globalPos.y})`);
 
             // Convertir a coordenadas del mundo (sin transformaciones de cámara)
             const worldPos = this.scene.mainContainer.toLocal(globalPos);
 
-            // console.log(`📍 Mouse en mundo: (${worldPos.x.toFixed(2)}, ${worldPos.y.toFixed(2)})`);
+            console.log(`📍 Mouse en mundo: (${worldPos.x.toFixed(2)}, ${worldPos.y.toFixed(2)})`);
 
-            // OPTIMIZACIÓN CRÍTICA: Solo actualizar el ángulo del vértice en memoria
-            // NO recrear sprites durante el arrastre (eso se hace al soltar)
+            // Actualizar ángulo del vértice usando la función de curvas.js
             if (window.actualizarVerticePorArrastre) {
-                // console.log(`   Llamando actualizarVerticePorArrastre...`);
+                console.log(`   Llamando actualizarVerticePorArrastre...`);
                 const resultado = window.actualizarVerticePorArrastre(
                     dragData.calle,
                     dragData.index,
@@ -792,26 +750,24 @@ class CalleRenderer {
                     worldPos.y
                 );
 
-                // console.log(`   Resultado: ${resultado}`);
+                console.log(`   Resultado: ${resultado}`);
 
                 if (resultado) {
-                    // console.log(`✅ Ángulo actualizado: ${dragData.calle.vertices[dragData.index].anguloOffset.toFixed(2)}°`);
+                    console.log(`✅ Ángulo actualizado: ${dragData.calle.vertices[dragData.index].anguloOffset.toFixed(2)}°`);
 
-                    // ✅ OPTIMIZACIÓN CRÍTICA: NO recrear sprites durante arrastre
-                    // Esto eliminaba y recreaba cientos de sprites por frame (36,000 ops/seg a 60 FPS)
-                    // Ahora solo actualizamos los datos, la recreación se hace UNA VEZ al soltar
+                    // Re-renderizar la calle y los vértices
+                    if (this.scene.calleSprites.has(dragData.calle)) {
+                        this.scene.calleSprites.get(dragData.calle).destroy({ children: true });
+                        this.scene.calleSprites.delete(dragData.calle);
+                    }
 
-                    // REMOVIDO: Re-renderizado durante arrastre
-                    // if (this.scene.calleSprites.has(dragData.calle)) {
-                    //     this.scene.calleSprites.get(dragData.calle).destroy({ children: true });
-                    //     this.scene.calleSprites.delete(dragData.calle);
-                    // }
-                    // if (dragData.calle.esCurva) {
-                    //     this.renderCalleCurva(dragData.calle);
-                    // } else {
-                    //     this.renderCalleRecta(dragData.calle);
-                    // }
-                    // this.renderVertices(dragData.calle);
+                    if (dragData.calle.esCurva) {
+                        this.renderCalleCurva(dragData.calle);
+                    } else {
+                        this.renderCalleRecta(dragData.calle);
+                    }
+
+                    this.renderVertices(dragData.calle);
                 } else {
                     console.warn('⚠️ No se pudo actualizar el ángulo del vértice');
                 }
@@ -822,30 +778,10 @@ class CalleRenderer {
 
         // Función de soltar
         const onPointerUp = () => {
-            console.log(`🎯 Vértice ${index} soltado - Recreando geometría UNA VEZ`);
-
             dragData.isDragging = false;
             this.scene.app.stage.off('pointermove', onPointerMove);
             this.scene.app.stage.off('pointerup', onPointerUp);
             this.scene.app.stage.off('pointerupoutside', onPointerUp);
-
-            // ✅ OPTIMIZACIÓN CRÍTICA: Recrear sprites SOLO UNA VEZ al soltar
-            // Antes se recreaban ~300 sprites por frame durante arrastre (36,000 ops/seg)
-            // Ahora solo se recrean UNA VEZ al final del arrastre
-            console.log(`   🔄 Recreando ${dragData.calle.tamano * dragData.calle.carriles} sprites...`);
-
-            if (this.scene.calleSprites.has(dragData.calle)) {
-                this.scene.calleSprites.get(dragData.calle).destroy({ children: true });
-                this.scene.calleSprites.delete(dragData.calle);
-            }
-
-            if (dragData.calle.esCurva) {
-                this.renderCalleCurva(dragData.calle);
-            } else {
-                this.renderCalleRecta(dragData.calle);
-            }
-
-            console.log(`   ✅ Geometría recreada`);
 
             // Desmarcar vértice arrastrado
             this.draggingVertexIndex = -1;
@@ -861,7 +797,7 @@ class CalleRenderer {
             // Re-renderizar vértices para restaurar opacidad normal
             this.renderVertices(dragData.calle);
 
-            console.log(`✅ Vértice ${index} soltado completamente - Opacidad restaurada`);
+            console.log(`✅ Vértice ${index} soltado - Opacidad restaurada`);
         };
 
         // Registrar eventos globales

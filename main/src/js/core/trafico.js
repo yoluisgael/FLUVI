@@ -648,8 +648,7 @@ class ConexionCA {
                 const seTransfiere = Math.random() < this.probabilidadTransferencia;
 
                 if (!seTransfiere) {
-                    // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
-                    // console.log(`🎲 CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] NO se transfiere (probabilidad ${this.probabilidadTransferencia})`);
+                    console.log(`🎲 CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] NO se transfiere (probabilidad ${this.probabilidadTransferencia})`);
                     return false;
                 }
             }
@@ -658,20 +657,17 @@ class ConexionCA {
             if (this.destino.arreglo[this.carrilDestino][this.posDestino] > 0) {
                 this.bloqueada = true;
                 this.origen.celulasEsperando[this.carrilOrigen][posOrig] = true;
-                // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
-                // console.log(`🔴 CONEXIÓN BLOQUEADA: [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}] - Destino ocupado`);
+                console.log(`🔴 CONEXIÓN BLOQUEADA: [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}] - Destino ocupado`);
                 return false;
             } else {
                 if (!this.origen.celulasEsperando[this.carrilOrigen][posOrig]) {
                     // Transferir el tipo de vehículo
                     this.destino.arreglo[this.carrilDestino][this.posDestino] = vehiculoOrigen;
                     this.origen.arreglo[this.carrilOrigen][posOrig] = 0;
-                    // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
-                    // console.log(`✅ CONEXIÓN EXITOSA: Vehículo tipo ${vehiculoOrigen} de [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}]`);
+                    console.log(`✅ CONEXIÓN EXITOSA: Vehículo tipo ${vehiculoOrigen} de [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}]`);
                     return true;
                 } else {
-                    // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
-                    // console.log(`⏸️ CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] está esperando`);
+                    console.log(`⏸️ CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] está esperando`);
                     return false;
                 }
             }
@@ -889,7 +885,7 @@ function inicializarIntersecciones() {
                                 celdasIntersectadas.add(idCelda1);
                                 celdasIntersectadas.add(idCelda2);
 
-                                //console.log(`Intersección: Calle ${j}[${c1},${i1}] (${calle1.nombre}) con Calle ${k}[${c2},${i2}] (${calle2.nombre})`);
+                                console.log(`Intersección: Calle ${j}[${c1},${i1}] (${calle1.nombre}) con Calle ${k}[${c2},${i2}] (${calle2.nombre})`);
                             }
                         }
                     }
@@ -953,10 +949,9 @@ function checarIntersecciones() {
                 vehiculoGanador = estadoActualI2;
             }
 
-            // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (se llama frecuentemente)
-            // console.log(`⚠️ INTERSECCIÓN: Colisión detectada!`);
-            // console.log(`   🏆 Ganador: [${calleGanadora.nombre}][Carril ${carrilesGanador}, Pos ${indiceGanador}] Vehículo tipo ${vehiculoGanador}`);
-            // console.log(`   ⏮️ Perdedor: [${callePerdedora.nombre}][Carril ${carrilPerdedor}, Pos ${indicePerdedor}] Vehículo tipo ${vehiculoPerdedor} retrocede`);
+            console.log(`⚠️ INTERSECCIÓN: Colisión detectada!`);
+            console.log(`   🏆 Ganador: [${calleGanadora.nombre}][Carril ${carrilesGanador}, Pos ${indiceGanador}] Vehículo tipo ${vehiculoGanador}`);
+            console.log(`   ⏮️ Perdedor: [${callePerdedora.nombre}][Carril ${carrilPerdedor}, Pos ${indicePerdedor}] Vehículo tipo ${vehiculoPerdedor} retrocede`);
 
             callePerdedora.arreglo[carrilPerdedor][indicePerdedor] = 0;
 
@@ -1024,8 +1019,7 @@ function generarCelulas(calle) {
                 // Generar tipo aleatorio de vehículo (1-6)
                 const tipoVehiculo = Math.floor(Math.random() * 6) + 1;
                 calle.arreglo[carril][0] = tipoVehiculo;
-                // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (se llama frecuentemente)
-                // console.log(`🏭 Generador "${calle.nombre}": Vehículo tipo ${tipoVehiculo} en carril ${carril + 1}, posición 0`);
+                console.log(`🏭 Generador "${calle.nombre}": Vehículo tipo ${tipoVehiculo} en carril ${carril + 1}, posición 0`);
             }
         }
     }
@@ -1046,18 +1040,16 @@ function actualizarCalle(calle, calleIndex) {
             // Si la celda está esperando, NO procesarla
             if (calle.celulasEsperando[c][i]) {
                 nuevaCalle[c][i] = calle.arreglo[c][i];
-                // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
-                // if (calle.arreglo[c][i] > 0) {
-                //     console.log(`⏸️ CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} está esperando (celda bloqueada)`);
-                // }
+                if (calle.arreglo[c][i] > 0) {
+                    console.log(`⏸️ CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} está esperando (celda bloqueada)`);
+                }
                 continue;
             }
 
             // Si tiene conexión de salida, no mover
             if (tieneConexionSalida(calle, c, i) && calle.arreglo[c][i] > 0) {
                 nuevaCalle[c][i] = calle.arreglo[c][i];
-                // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
-                // console.log(`🔗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} esperando en conexión de salida`);
+                console.log(`🔗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} esperando en conexión de salida`);
                 continue;
             }
 
@@ -1092,23 +1084,21 @@ function actualizarCalle(calle, calleIndex) {
                 if (resultadoRegla > 0 && centro > 0) {
                     nuevaCalle[c][i] = centro; // Mantener el tipo original
 
-                    // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
                     // Log solo si el vehículo se movió (cambió de posición)
-                    // if (izq > 0 && resultadoRegla > 0) {
-                    //     console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} avanza desde pos ${i-1}`);
-                    // }
+                    if (izq > 0 && resultadoRegla > 0) {
+                        console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} avanza desde pos ${i-1}`);
+                    }
                 } else {
                     nuevaCalle[c][i] = resultadoRegla;
 
-                    // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
                     // Log cuando una celda cambia de estado
-                    // if (centro !== resultadoRegla) {
-                    //     if (resultadoRegla === 0 && centro > 0) {
-                    //         console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} sale de la celda`);
-                    //     } else if (resultadoRegla > 0 && centro === 0) {
-                    //         console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo llega a celda vacía`);
-                    //     }
-                    // }
+                    if (centro !== resultadoRegla) {
+                        if (resultadoRegla === 0 && centro > 0) {
+                            console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} sale de la celda`);
+                        } else if (resultadoRegla > 0 && centro === 0) {
+                            console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo llega a celda vacía`);
+                        }
+                    }
                 }
             } else {
                 nuevaCalle[c][i] = centro;
@@ -1126,10 +1116,9 @@ function actualizarCalle(calle, calleIndex) {
     if (calle.tipo === TIPOS.DEVORADOR) {
         for (let c = 0; c < calle.carriles; c++) {
             const vehiculoEliminado = calle.arreglo[c][calle.tamano - 1];
-            // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
-            // if (vehiculoEliminado > 0) {
-            //     console.log(`🗑️ CA: [${calle.nombre}][Carril ${c}, Pos ${calle.tamano - 1}] DEVORADOR elimina vehículo tipo ${vehiculoEliminado}`);
-            // }
+            if (vehiculoEliminado > 0) {
+                console.log(`🗑️ CA: [${calle.nombre}][Carril ${c}, Pos ${calle.tamano - 1}] DEVORADOR elimina vehículo tipo ${vehiculoEliminado}`);
+            }
             calle.arreglo[c][calle.tamano - 1] = 0;
         }
     }
@@ -1263,8 +1252,7 @@ function cambioCarril(calle) {
 
             if (mismaColumnaOrigen && mismaColumnaDestino && carrilesAdyacentesOrigen && carrilesAdyacentesDestino && seCruzan) {
                 // Cruce en X detectado
-                // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
-                // console.log(`🚫 Cruce en X detectado: [${cambioA.desde.carril},${cambioA.desde.posicion}]→[${cambioA.hacia.carril},${cambioA.hacia.posicion}] vs [${cambioB.desde.carril},${cambioB.desde.posicion}]→[${cambioB.hacia.carril},${cambioB.hacia.posicion}]`);
+                console.log(`🚫 Cruce en X detectado: [${cambioA.desde.carril},${cambioA.desde.posicion}]→[${cambioA.hacia.carril},${cambioA.hacia.posicion}] vs [${cambioB.desde.carril},${cambioB.desde.posicion}]→[${cambioB.hacia.carril},${cambioB.hacia.posicion}]`);
                 cambiosEliminados.add(i);
                 cambiosEliminados.add(j);
                 esCruzado = true;
@@ -1364,8 +1352,7 @@ function cambioCarril(calle) {
             calle.celulasEsperando[cambio.desde.carril][cambio.desde.posicion + 1] = true;
         }
 
-        // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (loop crítico)
-        // console.log(`🔄 CAMBIO DE CARRIL: [${calle.nombre}] Vehículo tipo ${cambio.tipoVehiculo} de [Carril ${cambio.desde.carril}, Pos ${cambio.desde.posicion}] → [Carril ${cambio.hacia.carril}, Pos ${cambio.hacia.posicion}]`);
+        console.log(`🔄 CAMBIO DE CARRIL: [${calle.nombre}] Vehículo tipo ${cambio.tipoVehiculo} de [Carril ${cambio.desde.carril}, Pos ${cambio.desde.posicion}] → [Carril ${cambio.hacia.carril}, Pos ${cambio.hacia.posicion}]`);
     }
 
     // ✅ FASE 5: Validación post-cambio
@@ -1378,8 +1365,7 @@ function cambioCarril(calle) {
         }
     }
 
-    // OPTIMIZACIÓN: console.log comentado para mejorar rendimiento (se llama frecuentemente)
-    // console.log(`📊 Cambios de carril completados: ${cambios.length} movimientos, ${vehiculosFinales} vehículos totales`);
+    console.log(`📊 Cambios de carril completados: ${cambios.length} movimientos, ${vehiculosFinales} vehículos totales`);
 }
 
 // ========== EXPONER VARIABLES GLOBALES PARA EL EDITOR ==========
@@ -2092,7 +2078,7 @@ function crearConexionLineal(origen, destino, numCarriles = null, probabilidad =
     const carriles = numCarriles || Math.min(origen.carriles, destino.carriles);
     const conexionesCreadas = [];
     
-    //console.log(`🔗 Conexión LINEAL: ${origen.nombre} → ${destino.nombre} (${carriles} carriles)`);
+    console.log(`🔗 Conexión LINEAL: ${origen.nombre} → ${destino.nombre} (${carriles} carriles)`);
     
     for (let carril = 0; carril < carriles; carril++) {
         conexionesCreadas.push(new ConexionCA(
@@ -2113,7 +2099,7 @@ function crearConexionLineal(origen, destino, numCarriles = null, probabilidad =
 function crearConexionIncorporacion(origen, destino, carrilDestino = 0, posicionInicial = 0, configuracion = null) {
     const conexionesCreadas = [];
     
-    //console.log(`🔀 Conexión INCORPORACIÓN: ${origen.nombre} (${origen.carriles} carriles) → ${destino.nombre}[C${carrilDestino + 1}]`);
+    console.log(`🔀 Conexión INCORPORACIÓN: ${origen.nombre} (${origen.carriles} carriles) → ${destino.nombre}[C${carrilDestino + 1}]`);
     
     if (configuracion === null) {
         for (let carril = 0; carril < origen.carriles; carril++) {
@@ -2149,7 +2135,7 @@ function crearConexionIncorporacion(origen, destino, carrilDestino = 0, posicion
 function crearConexionProbabilistica(origen, carrilOrigen, destino, distribucion) {
     const conexionesCreadas = [];
     
-    //console.log(`🎲 Conexión PROBABILÍSTICA: ${origen.nombre}[C${carrilOrigen + 1}] → ${destino.nombre} (${distribucion.length} salidas)`);
+    console.log(`🎲 Conexión PROBABILÍSTICA: ${origen.nombre}[C${carrilOrigen + 1}] → ${destino.nombre} (${distribucion.length} salidas)`);
     
     distribucion.forEach(dist => {
         conexionesCreadas.push(new ConexionCA(
@@ -2669,9 +2655,7 @@ function iniciarSimulacion() {
         if (window.updateMetrics) {
             window.updateMetrics();
         }
-
-        // OPTIMIZACIÓN: renderizarCanvas() eliminado - PixiJS ya renderiza automáticamente
-        // renderizarCanvas();
+        renderizarCanvas();
 
         // Actualizar información en tiempo real (barra estilo Golly)
         if (window.updateSimulationInfo) {
@@ -2681,39 +2665,28 @@ function iniciarSimulacion() {
         prioridadPar = !prioridadPar;
     }
 
-    // OPTIMIZACIÓN: Sistema de animación unificado con PixiJS ticker
-    // El requestAnimationFrame tradicional ha sido eliminado para evitar doble loop
-    // Ahora el ticker de PixiJS (en PixiApp.js) maneja la animación
-
-    // Exponer paso() y variables de timing al scope global para que PixiJS ticker pueda accederlos
-    window.paso = paso;
-    window.tiempoAnterior = tiempoAnterior;
-    window.intervaloDeseado = intervaloDeseado;
-
-    // Función auxiliar para que PixiJS ticker maneje el timing
-    window.stepSimulation = function(tiempoActual) {
-        if (window.isPaused) return; // No avanzar si está en pausa
-
-        if (!window.tiempoAnterior) window.tiempoAnterior = tiempoActual;
-        const tiempoTranscurrido = tiempoActual - window.tiempoAnterior;
-
-        if (tiempoTranscurrido >= window.intervaloDeseado) {
+    function animate(tiempoActual) {
+        if (!tiempoAnterior) tiempoAnterior = tiempoActual;
+        const tiempoTranscurrido = tiempoActual - tiempoAnterior;
+        if (tiempoTranscurrido >= intervaloDeseado) {
             paso();
-            window.tiempoAnterior = tiempoActual;
+            tiempoAnterior = tiempoActual;
         }
-    };
+        animationId = requestAnimationFrame(animate);
+    }
+
+    animationId = requestAnimationFrame(animate);
 
     if (btnPauseResume) {
         btnPauseResume.addEventListener('click', () => {
             isPaused = !isPaused;
-            window.isPaused = isPaused; // Actualizar variable global para PixiJS ticker
             if (isPaused) {
-                // OPTIMIZACIÓN: Ya no usamos cancelAnimationFrame - el ticker de PixiJS maneja todo
+                cancelAnimationFrame(animationId);
                 btnPauseResume.textContent = '▶️';
                 btnPaso.disabled = false;
             } else {
-                window.tiempoAnterior = performance.now();
-                // OPTIMIZACIÓN: Ya no usamos requestAnimationFrame - el ticker de PixiJS maneja todo
+                tiempoAnterior = performance.now();
+                animationId = requestAnimationFrame(animate);
                 btnPauseResume.textContent = '⏸';
                 btnPaso.disabled = true;
             }
@@ -2834,7 +2807,6 @@ function iniciarSimulacion() {
         velocidadSlider.addEventListener('input', () => {
             const valorActualSlider = parseFloat(velocidadSlider.value);
             intervaloDeseado = calcularIntervaloDesdeSlider(valorActualSlider);
-            window.intervaloDeseado = intervaloDeseado; // FIX: Actualizar variable global para stepSimulation
             velocidadValorSpan.textContent = valorActualSlider;
 
             // Actualizar velocidad de simulación normalizada (protección contra división por cero)
