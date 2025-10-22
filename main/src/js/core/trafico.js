@@ -303,7 +303,13 @@ const backgroundAreas = [
         label: "Área IPN/Politécnico",
         // Polígono con 8 vértices que define el área del Politécnico
         vertices: [
-            { x: 720, y: 810 },   // Vértice 1 (arriba izquierda)
+           { x: 720, y: 810 },   // Vértice 1 (arriba izquierda)
+            { x: 1847, y: 364 },  // Vértice 2 (arriba derecha)
+            { x: 2077, y: 571 }, // Vértice 3 (derecha arriba)
+            { x: 1897, y: 944 }, // Vértice 4 (derecha abajo)
+            { x: 2763, y: 1091 }, // Vértice 5 (abajo derecha)
+            { x: 2594, y: 2008 },  // Vértice 6 (abajo izquierda)
+            { x: 1816, y: 1810 },  // Vértice 7 (izquierda abajo)
             { x: 1847, y: 364 },  // Vértice 7 (izquierda abajo)
             { x: 981, y: 1455 }    // Vértice 8 (izquierda arriba)
         ],
