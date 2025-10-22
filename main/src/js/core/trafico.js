@@ -310,7 +310,7 @@ const backgroundAreas = [
             { x: 2763, y: 1091 }, // Vértice 5 (abajo derecha)
             { x: 2594, y: 2008 },  // Vértice 6 (abajo izquierda)
             { x: 1816, y: 1810 },  // Vértice 7 (izquierda abajo)
-            { x: 1847, y: 364 },  // Vértice 7 (izquierda abajo)
+            //{ x: 1847, y: 364 },  // Vértice 7 (izquierda abajo)
             { x: 981, y: 1455 }    // Vértice 8 (izquierda arriba)
         ],
         color: "#FFE4B5",  // Beige claro (color de referencia visual del IPN)
@@ -361,7 +361,7 @@ const edificios = [
 
     // ========== ZONA CENTRAL (entre Luis Enrique Erro y Miguel Anda y Barredo) ==========
     // Estadio Americano
-    { x: 2018, y: 1107, width: 250, height: 80, color: "#164916ff", angle: 260, label: "ESTADIO AMERICANO" },
+    { x: 2018, y: 1107, width: 250, height: 180, color: "#164916ff", angle: 260, label: "ESTADIO AMERICANO" },
     
     // Alberca
     { x: 2136, y: 1497, width: 80, height: 70, color: "#4169E1", angle: 250, label: "Alberca" },
