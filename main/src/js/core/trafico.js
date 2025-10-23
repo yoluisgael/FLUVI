@@ -284,6 +284,7 @@ const buildingImageMap = {
     "ESTADIO AMERICANO": estadioAmericanoImg,
     // Edificios ESIME - todos usan la misma imagen
     "ESIME": esimeImg,
+    "ESIME Edificio 3": esimeImg,
     "ESIME Edificio 2": esimeImg,
     "ESIME Edificio 4": esimeImg,
     "ESIME Edificio 5": esimeImg,
@@ -329,13 +330,13 @@ const edificios = [
     { x: 1223, y: 740, width: 300, height: 20, color: "#29293aff", angle: 350, label: "PLAZA TORRES LINDAVISTA" },
 
     // ESCOM
-    { x: 1080, y: 859, width: 100, height: 200, color: "#0047a3ff", angle: 350, label: "ESCOM" },
+    { x: 1071, y: 859, width: 95, height: 160, color: "#0047a3ff", angle: 350, label: "ESCOM" },
     
     // ESTACIONAMIENTO ESCOM
-    { x: 1199, y: 916, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO ESCOM" },
+    { x: 1199, y: 916, width: 180, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO ESCOM" },
     
     // CIC
-    { x: 1050, y: 1008, width: 100, height: 60, color: "#0047a3ff", angle: 350, label: "CIC" },
+    { x: 1041, y: 1008, width: 90, height: 90, color: "#0047a3ff", angle: 350, label: "CIC" },
 
     // ESTACIONAMIENTO CIC
     { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO CIC" },
@@ -388,20 +389,20 @@ const edificios = [
 
     // ========== ZONA DERECHA (entre Av. IPN) ==========
   
-    { x: 2398, y: 1083, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESFM" },
-    { x: 2386, y: 1150, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIQIE Edificio 8" },
-    { x: 2376, y: 1209, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIQIE Edificio 7" },
-    { x: 2367, y: 1270, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIQUIE" },
-    { x: 2352, y: 1343, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 5" },
-    { x: 2344, y: 1413, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 4" },
-    { x: 2331, y: 1488, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "Edificio Edificio 3" },
-    { x: 2319, y: 1562, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 2" },
-    { x: 2306, y: 1632, width: 90, height: 32, color: "#4b0000ff", angle: 350, label: "ESIME" },
-    { x: 2584, y: 1370, width: 70, height: 90, color: "#57126fff", angle: 350, label: "EST" },
+    { x: 2398, y: 1083, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESFM" },
+    { x: 2386, y: 1150, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIQIE Edificio 8" },
+    { x: 2376, y: 1209, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIQIE Edificio 7" },
+    { x: 2367, y: 1270, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIQUIE" },
+    { x: 2352, y: 1343, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 5" },
+    { x: 2344, y: 1413, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 4" },
+    { x: 2331, y: 1488, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 3" },
+    { x: 2319, y: 1562, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 2" },
+    { x: 2306, y: 1632, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME" },
+    { x: 2584, y: 1370, width: 90, height: 90, color: "#57126fff", angle: 350, label: "EST" },
     { x: 2551, y: 1537, width: 45, height: 140, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" }, 
     
     // Edificio Z (vertical largo)
-    { x: 2216, y: 897, width: 300, height: 35, color: "#4b0000ff", angle: 350, label: "ESIA" },
+    { x: 2216, y: 897, width: 100, height: 100, color: "#4b0000ff", angle: 350, label: "ESIA" },
     
     // Centro Cultural JTB
     { x: 2306, y: 1754, width: 90, height: 60, color: "#8b4513", angle: 350, label: "CENTRO CULTURAL JTB" },
