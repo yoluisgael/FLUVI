@@ -125,18 +125,45 @@ class CarroRenderer {
         let sprite = this.scene.carroSprites.get(id);
 
         if (!sprite) {
-            // Crear nuevo sprite (desde pool si es posible)
-            sprite = this.acquireSprite();
-            const texture = this.assets.getTexture(`carro${tipo}`);
-            sprite.texture = texture;
-            sprite.anchor.set(0.5);
-            sprite.width = this.celda_tamano;
-            sprite.height = this.celda_tamano;
-            sprite.zIndex = 1; // Sobre las calles
+            // Para tipo 7 (bloqueo), verificar si necesitamos emoji o textura
+            if (tipo === 7) {
+                const celdaKey = `${calle.id}:${carril}:${indice}`;
+                const metadata = window.estadoEscenarios?.celdasBloqueadas.get(celdaKey);
 
-            // IMPORTANTE: Los vehículos NO deben capturar eventos de click
-            // para que los clicks pasen a través hacia las calles debajo
-            sprite.eventMode = 'none';
+                if (metadata && metadata.emoji) {
+                    // Crear un Text sprite para emojis (inundación u obstáculo)
+                    sprite = new PIXI.Text(metadata.emoji, {
+                        fontSize: this.celda_tamano * 0.8,
+                        align: 'center'
+                    });
+                    sprite.anchor.set(0.5);
+                } else {
+                    // Crear sprite normal con textura de carretera y tinte rojo (bloqueo)
+                    sprite = this.acquireSprite();
+                    const texture = this.assets.getTexture('carretera');
+                    sprite.texture = texture;
+                    sprite.anchor.set(0.5);
+                    sprite.width = this.celda_tamano;
+                    sprite.height = this.celda_tamano;
+                    sprite.tint = 0xFF0000; // Rojo
+                    sprite.alpha = 0.6; // Translúcido
+                }
+
+                sprite.zIndex = 1;
+                sprite.eventMode = 'none';
+            } else {
+                // Para vehículos normales (tipo 1-6)
+                sprite = this.acquireSprite();
+                const texture = this.assets.getTexture(`carro${tipo}`);
+                sprite.texture = texture;
+                sprite.anchor.set(0.5);
+                sprite.width = this.celda_tamano;
+                sprite.height = this.celda_tamano;
+                sprite.tint = 0xFFFFFF; // Blanco (sin tinte)
+                sprite.alpha = 1.0; // Opaco
+                sprite.zIndex = 1;
+                sprite.eventMode = 'none';
+            }
 
             this.scene.carroSprites.set(id, sprite);
             this.scene.getLayer('vehicles').addChild(sprite);

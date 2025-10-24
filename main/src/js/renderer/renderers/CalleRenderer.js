@@ -298,6 +298,68 @@ class CalleRenderer {
         // Detener propagación para evitar conflictos
         event.stopPropagation();
 
+        // PRIORIDAD 1: Si el modo bloqueo está activo, manejar el bloqueo de carriles
+        if (window.estadoEscenarios && window.estadoEscenarios.modoBloqueoActivo) {
+            console.log('🚧 Modo bloqueo activo - manejando click en celda');
+
+            // Obtener coordenadas del mundo
+            const globalPos = event.data.global;
+            const worldX = (globalPos.x - window.offsetX) / window.escala;
+            const worldY = (globalPos.y - window.offsetY) / window.escala;
+
+            // Buscar la celda clickeada usando la misma función que para agregar vehículos
+            if (typeof window.encontrarCeldaMasCercana === 'function') {
+                const celdaObjetivo = window.encontrarCeldaMasCercana(worldX, worldY);
+
+                if (celdaObjetivo) {
+                    const { calle: calleObjetivo, carril, indice } = celdaObjetivo;
+
+                    // Verificar que la celda objetivo sea de la calle clickeada
+                    if (calleObjetivo === calle) {
+                        const valorActual = calleObjetivo.arreglo[carril]?.[indice];
+                        const celdaKey = `${calleObjetivo.id}:${carril}:${indice}`;
+
+                        console.log('📍 Celda encontrada - Carril:', carril, 'Índice:', indice, 'Valor actual:', valorActual);
+
+                        // Toggle bloqueo: si está bloqueada (7), desbloquear (0); si no, bloquear (7)
+                        if (valorActual === 7) {
+                            console.log('🔓 Desbloqueando celda:', celdaKey);
+                            calleObjetivo.arreglo[carril][indice] = 0;
+                            window.estadoEscenarios.celdasBloqueadas.delete(celdaKey);
+                        } else {
+                            const tipoEscenario = window.estadoEscenarios.tipoEscenarioActivo || 'bloqueo';
+                            console.log(`🔒 Bloqueando celda con ${tipoEscenario}:`, celdaKey);
+
+                            calleObjetivo.arreglo[carril][indice] = 7;
+
+                            // Guardar metadata del tipo de escenario
+                            const metadata = { tipo: tipoEscenario };
+                            if (tipoEscenario === 'obstaculo') {
+                                metadata.emoji = window.estadoEscenarios.emojiObstaculoSeleccionado || '🕳️';
+                            } else if (tipoEscenario === 'inundacion') {
+                                metadata.emoji = '🌊';
+                            }
+
+                            window.estadoEscenarios.celdasBloqueadas.set(celdaKey, metadata);
+                            console.log('📝 Metadata guardada:', metadata);
+                        }
+
+                        // Forzar actualización del CarroRenderer para renderizar el bloqueo inmediatamente
+                        if (this.scene && this.scene.carroRenderer && window.calles) {
+                            console.log('🔄 Actualizando CarroRenderer para mostrar bloqueo');
+                            this.scene.carroRenderer.updateAll(window.calles);
+                        }
+                    }
+                }
+            } else {
+                console.error('❌ Función encontrarCeldaMasCercana no está disponible');
+            }
+
+            // Salir sin ejecutar la lógica normal de clicks
+            return;
+        }
+
+        // PRIORIDAD 2: Lógica normal de clicks (cuando NO está el modo bloqueo activo)
         // Obtener coordenadas del mundo
         const globalPos = event.data.global;
         const worldX = (globalPos.x - window.offsetX) / window.escala;

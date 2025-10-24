@@ -192,10 +192,92 @@
         </h2>
         <div id="collapseEscenarios" class="accordion-collapse collapse" aria-labelledby="headingEscenarios" data-bs-parent="#controlPanelAccordion">
           <div class="accordion-body">
-            <p class="text-muted small mb-3">Aquí podrás configurar escenarios y situaciones especiales de tráfico.</p>
+            <p class="text-muted small mb-3">Configura situaciones especiales de tráfico en el simulador.</p>
 
-            <div class="alert alert-warning p-2 small mb-0">
-              <strong>⚠️ En desarrollo:</strong> Esta sección estará disponible próximamente con funcionalidades avanzadas de configuración de escenarios.
+            <!-- Bloqueo de Carril (ACTIVO) -->
+            <div class="scenario-card scenario-active mb-3">
+              <div class="scenario-header">
+                <div class="scenario-icon">🚧</div>
+                <div class="scenario-info">
+                  <h6 class="scenario-title mb-1">Bloqueo de Carril</h6>
+                  <p class="scenario-desc mb-2">Bloquea celdas específicas para simular obstáculos permanentes</p>
+                </div>
+              </div>
+              <div class="scenario-controls">
+                <div class="form-check form-switch mb-2">
+                  <input class="form-check-input" type="checkbox" id="toggleBloqueoCarril" data-bs-toggle="tooltip" data-bs-title="Activar modo de pintado para bloquear celdas">
+                  <label class="form-check-label" for="toggleBloqueoCarril">
+                    <strong>Activar modo bloqueo</strong>
+                  </label>
+                </div>
+                <div class="scenario-paint-mode" id="paintModeIndicator" style="display: none;">
+                  <div class="paint-mode-badge">
+                    ✏️ Modo Pintado Activo
+                  </div>
+                  <p class="small text-muted mb-2">Haz clic o arrastra sobre las celdas de la calle para bloquearlas</p>
+                  <button id="btnClearBloqueos" class="btn btn-sm btn-outline-danger w-100" data-bs-toggle="tooltip" data-bs-title="Eliminar todos los bloqueos de carriles">
+                    🗑️ Limpiar Bloqueos
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inundación (ACTIVO) -->
+            <div class="scenario-card scenario-active mb-3">
+              <div class="scenario-header">
+                <div class="scenario-icon">🌊</div>
+                <div class="scenario-info">
+                  <h6 class="scenario-title mb-1">Inundación</h6>
+                  <p class="scenario-desc mb-2">Simula áreas inundadas que bloquean el paso</p>
+                </div>
+              </div>
+              <div class="scenario-controls">
+                <div class="form-check form-switch mb-2">
+                  <input class="form-check-input" type="checkbox" id="toggleInundacion" data-bs-toggle="tooltip" data-bs-title="Activar modo de inundación">
+                  <label class="form-check-label" for="toggleInundacion">
+                    <strong>Activar modo inundación</strong>
+                  </label>
+                </div>
+                <div class="scenario-paint-mode" id="paintModeIndicatorInundacion" style="display: none;">
+                  <div class="paint-mode-badge">🌊 Modo Inundación Activo</div>
+                  <p class="small text-muted mb-2">Haz clic sobre las celdas de la calle para inundarlas</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Obstáculo (ACTIVO) -->
+            <div class="scenario-card scenario-active mb-3">
+              <div class="scenario-header">
+                <div class="scenario-icon">⚠️</div>
+                <div class="scenario-info">
+                  <h6 class="scenario-title mb-1">Obstáculo</h6>
+                  <p class="scenario-desc mb-2">Coloca obstáculos específicos en las calles</p>
+                </div>
+              </div>
+              <div class="scenario-controls">
+                <div class="form-check form-switch mb-2">
+                  <input class="form-check-input" type="checkbox" id="toggleObstaculo" data-bs-toggle="tooltip" data-bs-title="Activar modo de obstáculos">
+                  <label class="form-check-label" for="toggleObstaculo">
+                    <strong>Activar modo obstáculo</strong>
+                  </label>
+                </div>
+                <div class="scenario-paint-mode" id="paintModeIndicatorObstaculo" style="display: none;">
+                  <div class="paint-mode-badge">⚠️ Modo Obstáculo Activo</div>
+                  <p class="small text-muted mb-2">Haz clic sobre las celdas para colocar obstáculos</p>
+                  <div id="selectorObstaculoContainer">
+                    <label for="selectorEmojiObstaculo" class="form-label small">Tipo de obstáculo:</label>
+                    <select id="selectorEmojiObstaculo" class="form-select form-select-sm mb-2">
+                      <option value="🕳️">🕳️ Bache</option>
+                      <option value="👷">👷 Construcción</option>
+                      <option value="🌳">🌳 Árbol caído</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info p-2 small mt-3 mb-0">
+              <strong>💡 Tip:</strong> Las celdas bloqueadas se marcan con valor <code>7</code> y los vehículos no podrán atravesarlas.
             </div>
           </div>
         </div>
@@ -1480,6 +1562,13 @@
             } else if (!window.USE_PIXI) {
               console.log('ℹ️ PixiJS deshabilitado, usando Canvas 2D nativo');
             }
+
+            // Inicializar módulo de escenarios
+            if (typeof inicializarEscenarios !== 'undefined') {
+              updateLoadingStatus('Inicializando escenarios...');
+              inicializarEscenarios();
+            }
+
             hideLoadingScreen();
           } else {
             // Esperar un poco más si no está listo
@@ -1526,6 +1615,7 @@
   <script src="src/js/core/curvas.js"></script>
   <script src="src/js/ui/etiquetas.js"></script>
   <script src="src/js/core/ClickActionManager.js"></script>
+  <script src="src/js/core/escenarios.js"></script>
   <script src="src/js/core/trafico.js"></script>
   <script src="src/js/core/graficas.js"></script>
   <script src="src/js/ui/editor.js"></script>
