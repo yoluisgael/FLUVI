@@ -9,9 +9,9 @@ console.log('🎬 escenarios.js cargando...');
 const estadoEscenarios = {
     modoBloqueoActivo: false,
     tipoEscenarioActivo: null, // 'bloqueo', 'inundacion', 'obstaculo'
-    emojiObstaculoSeleccionado: '🕳️', // Emoji por defecto para obstáculos
+    emojiObstaculoSeleccionado: 'bache', // Textura por defecto para obstáculos
     isPainting: false,
-    celdasBloqueadas: new Map() // key: "calleId:carril:indice", value: { tipo: string, emoji?: string }
+    celdasBloqueadas: new Map() // key: "calleId:carril:indice", value: { tipo: string, texture?: string }
 };
 
 // Referencias a elementos del DOM
@@ -85,11 +85,11 @@ function inicializarEscenarios() {
         });
     }
 
-    // Event listener para selector de emoji de obstáculo
+    // Event listener para selector de textura de obstáculo
     if (selectorEmojiObstaculo) {
         selectorEmojiObstaculo.addEventListener('change', (e) => {
             estadoEscenarios.emojiObstaculoSeleccionado = e.target.value;
-            console.log('🎨 Emoji de obstáculo seleccionado:', e.target.value);
+            console.log('🎨 Textura de obstáculo seleccionada:', e.target.value);
         });
     }
 
@@ -232,7 +232,11 @@ function importarBloqueos(bloqueosArray) {
     if (Array.isArray(bloqueosArray)) {
         bloqueosArray.forEach(bloqueo => {
             const celdaKey = bloqueo.key;
-            const metadata = { tipo: bloqueo.tipo, emoji: bloqueo.emoji };
+            // Soportar tanto el formato antiguo (emoji) como el nuevo (texture)
+            const metadata = {
+                tipo: bloqueo.tipo,
+                texture: bloqueo.texture || bloqueo.emoji
+            };
 
             estadoEscenarios.celdasBloqueadas.set(celdaKey, metadata);
 

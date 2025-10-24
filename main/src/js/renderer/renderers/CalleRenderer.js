@@ -335,9 +335,9 @@ class CalleRenderer {
                             // Guardar metadata del tipo de escenario
                             const metadata = { tipo: tipoEscenario };
                             if (tipoEscenario === 'obstaculo') {
-                                metadata.emoji = window.estadoEscenarios.emojiObstaculoSeleccionado || '🕳️';
+                                metadata.texture = window.estadoEscenarios.emojiObstaculoSeleccionado || 'bache';
                             } else if (tipoEscenario === 'inundacion') {
-                                metadata.emoji = '🌊';
+                                metadata.texture = 'inundacion';
                             }
 
                             window.estadoEscenarios.celdasBloqueadas.set(celdaKey, metadata);

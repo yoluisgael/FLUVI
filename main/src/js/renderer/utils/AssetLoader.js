@@ -24,8 +24,14 @@ class AssetLoader {
             { name: 'carro5', url: 'assets/images/vehicles/carro5.png' },
             { name: 'carro6', url: 'assets/images/vehicles/carro6.png' },
 
-            // Edificios
+            // Objetos de escenarios
             { name: 'cono', url: 'assets/images/objects/cono.png' },
+            { name: 'bache', url: 'assets/images/objects/Bache.png' },
+            { name: 'trabajador', url: 'assets/images/objects/Trabajador.png' },
+            { name: 'arbol', url: 'assets/images/objects/Arbol.png' },
+            { name: 'inundacion', url: 'assets/images/objects/Inundacion.png' },
+
+            // Edificios
             { name: 'escom', url: 'assets/images/buildings/ESCOM.png' },
             { name: 'cic', url: 'assets/images/buildings/CIC.png' },
             { name: 'c.f.i.e', url: 'assets/images/buildings/C.F.I.E.png' },

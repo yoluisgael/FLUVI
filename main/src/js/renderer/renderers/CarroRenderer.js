@@ -125,21 +125,24 @@ class CarroRenderer {
         let sprite = this.scene.carroSprites.get(id);
 
         if (!sprite) {
-            // Para tipo 7 (bloqueo), verificar si necesitamos emoji o textura
+            // Para tipo 7 (bloqueo), verificar metadata para determinar textura
             if (tipo === 7) {
                 const celdaKey = `${calle.id}:${carril}:${indice}`;
                 const metadata = window.estadoEscenarios?.celdasBloqueadas.get(celdaKey);
 
-                if (metadata && metadata.emoji) {
-                    // Crear un Text sprite para emojis (inundación u obstáculo)
-                    sprite = new PIXI.Text(metadata.emoji, {
-                        fontSize: this.celda_tamano * 0.8,
-                        align: 'center'
-                    });
+                sprite = this.acquireSprite();
+
+                if (metadata && metadata.texture) {
+                    // Usar textura específica (inundacion, bache, trabajador)
+                    const texture = this.assets.getTexture(metadata.texture);
+                    sprite.texture = texture;
                     sprite.anchor.set(0.5);
+                    sprite.width = this.celda_tamano;
+                    sprite.height = this.celda_tamano;
+                    sprite.tint = 0xFFFFFF; // Sin tinte
+                    sprite.alpha = 1.0; // Opaco
                 } else {
-                    // Crear sprite normal con textura de carretera y tinte rojo (bloqueo)
-                    sprite = this.acquireSprite();
+                    // Bloqueo por defecto: textura de carretera con tinte rojo
                     const texture = this.assets.getTexture('carretera');
                     sprite.texture = texture;
                     sprite.anchor.set(0.5);
