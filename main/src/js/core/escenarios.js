@@ -106,6 +106,12 @@ function inicializarEscenarios() {
  * Activa un tipo de escenario específico
  */
 function activarEscenario(tipo) {
+    // Desactivar el modo edición si está activo
+    if (window.editorVisual && window.editorVisual.modoEdicion) {
+        window.editorVisual.salirModoEdicion();
+        console.log('✅ Modo Edición desactivado para activar escenario');
+    }
+
     // Desactivar otros toggles
     if (tipo !== 'bloqueo' && toggleBloqueoCarril) toggleBloqueoCarril.checked = false;
     if (tipo !== 'inundacion' && toggleInundacion) toggleInundacion.checked = false;

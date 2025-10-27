@@ -421,7 +421,7 @@ function mostrarDialogoNuevaConexion() {
             // Actualizar lista de conexiones si está visible
             const listaContainer = document.getElementById('listaConexionesContainer');
             if (listaContainer && listaContainer.style.display !== 'none') {
-                actualizarListaConexiones();
+                actualizarListaConexiones(window.calleSeleccionada);
             }
 
             alert(`✅ Conexión ${tipo} creada exitosamente\n\nLa simulación está lista para usar la nueva conexión.`);
@@ -1083,7 +1083,7 @@ function toggleListaConexiones() {
     const btn = document.getElementById('btnMostrarListaConexiones');
 
     if (container.style.display === 'none') {
-        actualizarListaConexiones();
+        actualizarListaConexiones(window.calleSeleccionada);
         container.style.display = 'block';
         btn.textContent = '🔼 Ocultar Conexiones';
     } else {
@@ -1093,7 +1093,8 @@ function toggleListaConexiones() {
 }
 
 // Actualizar la lista de conexiones en el UI
-function actualizarListaConexiones() {
+// Si se proporciona calleSeleccionada, solo muestra conexiones donde la calle es origen o destino
+function actualizarListaConexiones(calleSeleccionada = null) {
     const listaDiv = document.getElementById('listaConexiones');
     listaDiv.innerHTML = '';
 
@@ -1102,11 +1103,40 @@ function actualizarListaConexiones() {
         return;
     }
 
-    window.conexiones.forEach((conexion, index) => {
+    // Filtrar conexiones si hay una calle seleccionada
+    let conexionesFiltradas = window.conexiones;
+    if (calleSeleccionada) {
+        conexionesFiltradas = window.conexiones.filter(conexion => {
+            if (!conexion || !conexion.origen || !conexion.destino) return false;
+            return conexion.origen === calleSeleccionada || conexion.destino === calleSeleccionada;
+        });
+
+        // Mostrar mensaje si la calle seleccionada no tiene conexiones
+        if (conexionesFiltradas.length === 0) {
+            listaDiv.innerHTML = `<div class="list-group-item text-muted text-center">
+                <strong>${calleSeleccionada.nombre}</strong> no tiene conexiones asociadas
+            </div>`;
+            console.log(`📋 Calle "${calleSeleccionada.nombre}" no tiene conexiones`);
+            return;
+        }
+    }
+
+    // Mostrar encabezado si hay filtro activo
+    if (calleSeleccionada) {
+        const header = document.createElement('div');
+        header.className = 'list-group-item list-group-item-info';
+        header.innerHTML = `<small><strong>📌 Conexiones de:</strong> ${calleSeleccionada.nombre}</small>`;
+        listaDiv.appendChild(header);
+    }
+
+    conexionesFiltradas.forEach((conexion, indexFiltrado) => {
         if (!conexion || !conexion.origen || !conexion.destino) return;
 
-        const origenNombre = conexion.origen.nombre || `Calle ${index}`;
-        const destinoNombre = conexion.destino.nombre || `Calle ${index}`;
+        // Obtener el índice real de la conexión en el array global
+        const indexReal = window.conexiones.indexOf(conexion);
+
+        const origenNombre = conexion.origen.nombre || `Calle ${indexReal}`;
+        const destinoNombre = conexion.destino.nombre || `Calle ${indexReal}`;
 
         let tipoIcono = '🟢';
         let tipoTexto = 'Lineal';
@@ -1131,10 +1161,10 @@ function actualizarListaConexiones() {
         item.innerHTML = `
             <div class="small">${detallesConexion}</div>
             <div class="btn-group btn-group-sm" role="group">
-                <button class="btn btn-outline-warning btn-sm" onclick="editarConexion(${index})" title="Editar">
+                <button class="btn btn-outline-warning btn-sm" onclick="editarConexion(${indexReal})" title="Editar">
                     ✏️
                 </button>
-                <button class="btn btn-outline-danger btn-sm" onclick="eliminarConexion(${index})" title="Eliminar">
+                <button class="btn btn-outline-danger btn-sm" onclick="eliminarConexion(${indexReal})" title="Eliminar">
                     🗑️
                 </button>
             </div>
@@ -1143,7 +1173,10 @@ function actualizarListaConexiones() {
         listaDiv.appendChild(item);
     });
 
-    console.log(`📋 Lista de conexiones actualizada: ${window.conexiones.length} conexiones`);
+    const mensajeLog = calleSeleccionada
+        ? `📋 Conexiones de "${calleSeleccionada.nombre}": ${conexionesFiltradas.length} de ${window.conexiones.length} totales`
+        : `📋 Lista de conexiones actualizada: ${window.conexiones.length} conexiones`;
+    console.log(mensajeLog);
 }
 
 // Editar una conexión existente
@@ -1318,7 +1351,7 @@ function guardarCambiosConexion(index) {
     }
 
     // Actualizar vista
-    actualizarListaConexiones();
+    actualizarListaConexiones(window.calleSeleccionada);
     if (window.renderizarCanvas) {
         window.renderizarCanvas();
     }
@@ -1377,7 +1410,7 @@ function eliminarConexion(index) {
     }
 
     // Actualizar vista
-    actualizarListaConexiones();
+    actualizarListaConexiones(window.calleSeleccionada);
     if (window.renderizarCanvas) {
         window.renderizarCanvas();
     }

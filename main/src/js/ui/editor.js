@@ -174,6 +174,14 @@ class EditorCalles {
                 window.calleSeleccionada = null;
             }
 
+            // Actualizar lista de conexiones si está visible
+            const listaConexionesContainer = document.getElementById('listaConexionesContainer');
+            if (listaConexionesContainer && listaConexionesContainer.style.display !== 'none') {
+                if (typeof actualizarListaConexiones === 'function') {
+                    actualizarListaConexiones(window.calleSeleccionada);
+                }
+            }
+
             if (window.renderizarCanvas) window.renderizarCanvas();
         });
 
@@ -198,6 +206,14 @@ class EditorCalles {
                 this.objetoEditando = window.calleSeleccionada;
                 this.tipoObjetoEditando = 'calle';
                 this.actualizarPosicionHandles();
+            }
+
+            // Actualizar lista de conexiones si está visible
+            const listaConexionesContainer = document.getElementById('listaConexionesContainer');
+            if (listaConexionesContainer && listaConexionesContainer.style.display !== 'none') {
+                if (typeof actualizarListaConexiones === 'function') {
+                    actualizarListaConexiones(window.calleSeleccionada);
+                }
             }
 
             if (window.renderizarCanvas) window.renderizarCanvas();
@@ -701,12 +717,34 @@ class EditorCalles {
     entrarModoEdicion() {
         const calle = window.calleSeleccionada;
         const edificio = window.edificioSeleccionado;
-        
+
         if (!calle && !edificio) {
             alert('⚠️ Selecciona una calle o edificio primero');
             return;
         }
-        
+
+        // Desactivar todos los switches de escenarios si están activos
+        const toggleBloqueoCarril = document.getElementById('toggleBloqueoCarril');
+        const toggleInundacion = document.getElementById('toggleInundacion');
+        const toggleObstaculo = document.getElementById('toggleObstaculo');
+
+        if (toggleBloqueoCarril?.checked || toggleInundacion?.checked || toggleObstaculo?.checked) {
+            // Desactivar todos los toggles
+            if (toggleBloqueoCarril?.checked) {
+                toggleBloqueoCarril.checked = false;
+                toggleBloqueoCarril.dispatchEvent(new Event('change'));
+            }
+            if (toggleInundacion?.checked) {
+                toggleInundacion.checked = false;
+                toggleInundacion.dispatchEvent(new Event('change'));
+            }
+            if (toggleObstaculo?.checked) {
+                toggleObstaculo.checked = false;
+                toggleObstaculo.dispatchEvent(new Event('change'));
+            }
+            console.log('✅ Switches de escenarios desactivados para entrar en Modo Edición');
+        }
+
         this.modoEdicion = true;
         
         if (calle) {
