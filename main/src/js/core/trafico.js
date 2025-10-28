@@ -345,10 +345,13 @@ const backgroundAreas = [
         label: "Área IPN/Politécnico",
         // Polígono con 8 vértices que define el área del Politécnico
         vertices: [
-           { x: 720, y: 810 },   // Vértice 1 (arriba izquierda)
+           { x: 848, y: 1089 },   // Vértice 1 (arriba izquierda)
+           { x: 917, y: 765 },  // Vértice 2 (arriba derecha)
+           { x: 1395, y: 847 },  // Vértice 2 (arriba derecha)
+           { x: 1418, y: 552 },  // Vértice 2 (arriba derecha)
             { x: 1847, y: 364 },  // Vértice 2 (arriba derecha)
-            { x: 2077, y: 571 }, // Vértice 3 (derecha arriba)
-            { x: 1897, y: 944 }, // Vértice 4 (derecha abajo)
+            { x: 2391, y: 948 }, // Vértice 3 (derecha arriba)
+            { x: 2405, y: 1027 }, // Vértice 4 (derecha abajo)
             { x: 2763, y: 1091 }, // Vértice 5 (abajo derecha)
             { x: 2594, y: 2008 },  // Vértice 6 (abajo izquierda)
             { x: 1816, y: 1810 },  // Vértice 7 (izquierda abajo)
@@ -1924,7 +1927,7 @@ function calcularLimitesMapa() {
         });
     });
 
-    const margen = 200;
+    const margen = 800;
     return {
         minX: minX - margen,
         minY: minY - margen,
@@ -2284,24 +2287,24 @@ function iniciarSimulacion() {
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 9, TIPOS.CONEXION, 1745, 386, 28, 0.0, 3, 0.02);
     
-    const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal ←", 258, TIPOS.CONEXION, 1907, 256, 202, 0.0, 3, 0.02);
+    //const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal ←", 258, TIPOS.CONEXION, 1907, 256, 202, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_6 = crearCalle("Av. Miguel Othon de Mendizabal 6", 10, TIPOS.CONEXION, 1780, 345, 208, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 13, TIPOS.CONEXION, 1884, 268, 221, 0.0, 3, 0.02);
 
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 180, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
-    const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard ←", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
-    const Avenida_Cien_Metros = crearCalle("Av. Cien Metros →", 382, TIPOS.CONEXION, 596, 577, -70, 0.0, 3, 0.01);
-    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 382, TIPOS.CONEXION, 1290, 2375, 110, 0.9, 3, 0.01);
+    //const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard ←", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
+    //const Avenida_Cien_Metros = crearCalle("Av. Cien Metros →", 230, TIPOS.CONEXION, 596, 577, -70, 0.0, 3, 0.01);
+    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1029, 1656, 110, 0.9, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 1020, 760, -10, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz 2", 300, TIPOS.CONEXION, 2486, 972, 170, 0.0, 3, 0.01);
-    const Avenida_IPN = crearCalle("Av. IPN", 320, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
-    const Avenida_IPN2 = crearCalle("Av. IPN 2", 320, TIPOS.CONEXION, 2545, 2525, 80, 0.0, 2, 0.01);
-    const Avenida_Guanajuato = crearCalle("Av. Guanajuato", 100, TIPOS.CONEXION, 1180, 2035, -14, 0.0, 1, 0.01);
-    const Avenida_Montevideo = crearCalle("Av. Montevideo", 308, TIPOS.CONEXION, 1230, 2160, -12, 0.0, 3, 0.01);
-    const Avenida_Montevideo2 = crearCalle("Av. Montevideo 2", 308, TIPOS.CONEXION, 2720, 2460, 168, 0.0, 3, 0.01);
-    const Avenida_Otavalo = crearCalle("Av. Otavalo", 150, TIPOS.CONEXION, 1765, 2050, -11, 0.0, 1, 0.01);
-    const Avenida_17_de_mayo = crearCalle("Av. 17 de mayo", 122, TIPOS.CONEXION, 1520, 2395, 72, 0.0, 1, 0.01);
+    const Avenida_IPN = crearCalle("Av. IPN", 230, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
+    //const Avenida_IPN2 = crearCalle("Av. IPN 2", 230, TIPOS.CONEXION, 2596, 2219, 80, 0.0, 2, 0.01);
+    //const Avenida_Guanajuato = crearCalle("Av. Guanajuato", 100, TIPOS.CONEXION, 1180, 2035, -14, 0.0, 1, 0.01);
+    //const Avenida_Montevideo = crearCalle("Av. Montevideo", 308, TIPOS.CONEXION, 1230, 2160, -12, 0.0, 3, 0.01);
+    //const Avenida_Montevideo_2 = crearCalle("Av. Montevideo 2", 308, TIPOS.CONEXION, 2720, 2460, 168, 0.0, 3, 0.01);
+    //const Avenida_Otavalo = crearCalle("Av. Otavalo", 150, TIPOS.CONEXION, 1765, 2050, -11, 0.0, 1, 0.01);
+    //const Avenida_17_de_mayo = crearCalle("Av. 17 de mayo", 122, TIPOS.CONEXION, 1520, 2395, 72, 0.0, 1, 0.01);
     const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro →", 178, TIPOS.CONEXION, 1783, 1814, 80, 0.0, 2, 0.01);
     const Calle_Luis_Enrique_Erro_2 = crearCalle("Calle Luis Enrique Erro Tramo 2 →", 65, TIPOS.CONEXION, 1952, 888, 80, 0.0, 2, 0.01);
     const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro ←", 176, TIPOS.CONEXION, 1919, 934, 260, 0.0, 2, 0.01);
@@ -2312,9 +2315,9 @@ function iniciarSimulacion() {
     //const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 1820, 1825, 155, 0.0, 2, 0.01);
     const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 185, TIPOS.CONEXION, 985, 1485, -24, 0.0, 2, 0.01);
     //const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 160, TIPOS.CONEXION, 1825, 1860, -14, 0.0, 2, 0.01);
-    const Avenida_Sierravista = crearCalle("Av. Sierravista", 50, TIPOS.CONEXION, 2940, 1445, 132, 0.0, 1, 0.01);
-    const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
-    const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 2825, 2095, 171, 0.0, 1, 0.01);
+    //const Avenida_Sierravista = crearCalle("Av. Sierravista", 50, TIPOS.CONEXION, 2940, 1445, 132, 0.0, 1, 0.01);
+    //const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
+    //const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 2825, 2095, 171, 0.0, 1, 0.01);
     
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 638, 584, 110, 0.5, 3, 0.01);
     const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 589, 558, -70, 0.3, 3, 0.01);
@@ -2351,31 +2354,6 @@ function iniciarSimulacion() {
 
     
 
-    // Vértices para Av. Miguel Bernard ←
-    Avenida_Miguel_Bernard2.vertices = [
-        { indiceCelda: 0, anguloOffset: 0 },
-        { indiceCelda: 10, anguloOffset: 0 },
-        { indiceCelda: 20, anguloOffset: 0 },
-        { indiceCelda: 30, anguloOffset: 0 },
-        { indiceCelda: 40, anguloOffset: 0 },
-        { indiceCelda: 50, anguloOffset: 0 },
-        { indiceCelda: 60, anguloOffset: 0 },
-        { indiceCelda: 70, anguloOffset: 0 },
-        { indiceCelda: 80, anguloOffset: 0 },
-        { indiceCelda: 90, anguloOffset: 0 },
-        { indiceCelda: 100, anguloOffset: 0 },
-        { indiceCelda: 110, anguloOffset: 0 },
-        { indiceCelda: 120, anguloOffset: 0 },
-        { indiceCelda: 130, anguloOffset: 0 },
-        { indiceCelda: 140, anguloOffset: 0 },
-        { indiceCelda: 150, anguloOffset: 0 },
-        { indiceCelda: 160, anguloOffset: 0 },
-        { indiceCelda: 170, anguloOffset: 0 },
-        { indiceCelda: 180, anguloOffset: -14.205962673951502 },
-        { indiceCelda: 190, anguloOffset: -23.537916581209004 },
-        { indiceCelda: 194, anguloOffset: -21.51222188728547 }
-    ];
-    Avenida_Miguel_Bernard2.esCurva = true;
     
     Avenida_Miguel_Bernard.vertices = [
         { indiceCelda: 0, anguloOffset: 29.183651591046115 },
@@ -2572,19 +2550,19 @@ function iniciarSimulacion() {
         Avenida_Miguel_Othon_de_Mendizabal_6, 
         Avenida_Miguel_Othon_de_Mendizabal_5
     ));
-    */
+    
     conexionesCA.push(...crearConexionProbabilistica(
         Avenida_Cien_Metros2,
         2,
         Avenida_Miguel_Othon_de_Mendizabal_1,
         [
-            { carrilDestino: 0, posOrigen: 334, posDestino: 0, probabilidad: 0.2 },
-            { carrilDestino: 1, posOrigen: 333, posDestino: 0, probabilidad: 0.2 },
-            { carrilDestino: 2, posOrigen: 332, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 0, posOrigen: 134, posDestino: 0, probabilidad: 0.2 },
+            { carrilDestino: 1, posOrigen: 133, posDestino: 0, probabilidad: 0.2 },
+            { carrilDestino: 2, posOrigen: 132, posDestino: 0, probabilidad: 0.5 }
         ]
-    ));
+    ));*/
 
-    conexionesCA.push(...crearConexionIncorporacion(
+    /*conexionesCA.push(...crearConexionIncorporacion(
         Avenida_Montevideo2,
         Avenida_Cien_Metros2,
         2,
@@ -2594,12 +2572,12 @@ function iniciarSimulacion() {
         Avenida_Miguel_Othon_de_Mendizabal_5,
         Avenida_Cien_Metros2,
         2,
-        339
-    ));
+        139
+    ));*/
 
     conexionesCA.push(...crearConexionLineal(
         Generador_1, 
-        Avenida_Cien_Metros
+        Avenida_Cien_Metros2
     ));
     
 
@@ -2886,7 +2864,7 @@ canvas.addEventListener("wheel", event => {
     const escala_anterior = escala;
     escala = escala_anterior * Math.pow(zoomIntensity, direction);
 
-    const minEscala = 0.7;
+    const minEscala = 0.5;
     const maxEscala = 20.0;
     escala = Math.max(minEscala, Math.min(maxEscala, escala));
     if (escala === escala_anterior) {

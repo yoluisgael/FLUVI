@@ -13,7 +13,7 @@ class CameraController {
         this.offsetY = 0;
 
         // Límites de zoom (mismos valores que Canvas 2D original)
-        this.minScale = 0.7;  // Zoom out mínimo
+        this.minScale = 0.5;  // Zoom out mínimo
         this.maxScale = 20.0; // Zoom in máximo
 
         this.isDragging = false;
