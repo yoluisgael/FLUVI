@@ -292,6 +292,14 @@ estadioAmericanoImg.src = "assets/images/buildings/ESTADIO AMERICANO.png";
 const estadioMinisImg = new Image();
 estadioMinisImg.src = "assets/images/buildings/ESTADIO AMERICANO MINIS.png";
 
+// Cargar la imagen de Campo Beisbol
+const campoBeisbolImg = new Image();
+campoBeisbolImg.src = "assets/images/buildings/campo beisbol.png";
+
+// Cargar la imagen de Campo ESCOM
+const campoEscomImg = new Image();
+campoEscomImg.src = "assets/images/buildings/campo escom.jpg";
+
 // Mapeo de labels a imágenes (definido globalmente para eficiencia)
 const buildingImageMap = {
     "CONO": conoImg,
@@ -308,15 +316,24 @@ const buildingImageMap = {
     "ESTADIO AMERICANO": estadioAmericanoImg,
     // Edificios ESIME - todos usan la misma imagen
     "ESIME": esimeImg,
-    "ESIME Edificio 3": esimeImg,
     "ESIME Edificio 2": esimeImg,
+    "ESIME Edificio 3": esimeImg,
     "ESIME Edificio 4": esimeImg,
     "ESIME Edificio 5": esimeImg,
     "ESFM": esimeImg,
     "ESIQIE Edificio 7": esimeImg,
     "ESIQIE Edificio 8": esimeImg,
     "ESIQUIE": esimeImg,
-    "ESIA": esimeImg
+    "ESIA": esimeImg,
+    // Edificios administrativos que usan imagen de CIC
+    "POI-IPN": cicImg,
+    "OIC-IPN": cicImg,
+    "SAD-IPN": cicImg,
+    "SIIS-IPN": cicImg,
+    "SECADEMICA-IPN": cicImg,
+    // Campos deportivos
+    "BEISBOL": campoBeisbolImg,
+    "CAMPO ESCOM": campoEscomImg
 };
 
 // ========== ÁREAS DE FONDO (RENDERIZADAS CON PIXI.GRAPHICS) ==========
@@ -351,7 +368,7 @@ const edificios = [
     // ========== ZONA SUPERIOR IZQUIERDA (cerca de Av. Miguel Othon de Mendizabal) ==========
 
     // Torres
-    { x: 1223, y: 740, width: 300, height: 20, color: "#29293aff", angle: 350, label: "PLAZA TORRES LINDAVISTA" },
+    { x: 1280, y: 728, width: 300, height: 150, color: "#29293aff", angle: 350, label: "PLAZA TORRES LINDAVISTA" },
 
     // ESCOM
     { x: 1071, y: 859, width: 95, height: 160, color: "#0047a3ff", angle: 350, label: "ESCOM" },

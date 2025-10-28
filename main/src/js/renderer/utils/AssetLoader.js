@@ -44,6 +44,7 @@ class AssetLoader {
             { name: 'edificio inteligente', url: 'assets/images/buildings/EDIFICIO INTELIGENTE.png' },
             { name: 'esime', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
             { name: 'esime edificio 2', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
+            { name: 'esime edificio 3', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
             { name: 'esime edificio 4', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
             { name: 'esime edificio 5', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
             { name: 'esfm', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
@@ -51,7 +52,16 @@ class AssetLoader {
             { name: 'esiqie edificio 8', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
             { name: 'esiquie', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
             { name: 'esia', url: 'assets/images/buildings/ESIME ESIQIE ESFM ETC.png' },
-            { name: 'estadio americano', url: 'assets/images/buildings/ESTADIO AMERICANO.png' }
+            { name: 'estadio americano', url: 'assets/images/buildings/ESTADIO AMERICANO.png' },
+            // Edificios administrativos
+            { name: 'poi-ipn', url: 'assets/images/buildings/CIC.png' },
+            { name: 'oic-ipn', url: 'assets/images/buildings/CIC.png' },
+            { name: 'sad-ipn', url: 'assets/images/buildings/CIC.png' },
+            { name: 'siis-ipn', url: 'assets/images/buildings/CIC.png' },
+            { name: 'secademica-ipn', url: 'assets/images/buildings/CIC.png' },
+            // Campos deportivos
+            { name: 'beisbol', url: 'assets/images/buildings/campo beisbol.png' },
+            { name: 'campo escom', url: 'assets/images/buildings/campo escom.jpg' }
 
             // NOTA: fondo.png removido - ahora usamos BackgroundAreaRenderer con PIXI.Graphics
             // para renderizar áreas de fondo de manera mucho más eficiente (vectorial vs textura pesada)
