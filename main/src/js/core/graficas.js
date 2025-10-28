@@ -4,7 +4,7 @@
 
 // ==================== VARIABLES GLOBALES ====================
 
-// Historial de métricas con límite de 50 puntos de datos
+// Historial de métricas con límite de 50 puntos de datos (solo para gráficas)
 const metricsHistory = {
     timestamps: [],
     density: [],
@@ -15,10 +15,20 @@ const metricsHistory = {
     maxDataPoints: 50
 };
 
+// Historial COMPLETO de métricas sin límite (para exportación CSV)
+const completeMetricsHistory = {
+    timestamps: [],
+    density: [],
+    netGeneration: [],
+    throughput: [],
+    speed: [],
+    entropy: []
+};
+
 // Variables auxiliares para el cálculo de flujo vehicular
 let previousCarCount = 0;
 let flowMeasureInterval = 1000;
-let lastFlowMeasure = Date.now();
+let lastFlowMeasure = null; // Inicializar como null, se establecerá en primera medición
 let lastFlowValue = 0; // Almacena el último flujo calculado para evitar parpadeos
 
 // Estado anterior de las calles para calcular transiciones del autómata celular
@@ -354,7 +364,14 @@ function calculateMetrics() {
     }
 
     // Calcular tasa de cambio neta de población (antes llamado "flujo")
-    const now = Date.now();
+    // Usar tiempo virtual si está disponible, de lo contrario usar tiempo real
+    const now = window.obtenerMillisVirtuales ? window.obtenerMillisVirtuales() : Date.now();
+
+    // Inicializar en primera medición
+    if (lastFlowMeasure === null) {
+        lastFlowMeasure = now;
+    }
+
     const timeDiff = (now - lastFlowMeasure) / 1000;
 
     // Solo actualizar cada segundo, pero mantener el último valor calculado
@@ -393,11 +410,18 @@ function calculateMetrics() {
  * @param {Object} metrics - Métricas calculadas
  */
 function updateMetricsHistory(metrics) {
-    const now = new Date();
-    const timeStr = now.getHours().toString().padStart(2, '0') + ':' +
-                    now.getMinutes().toString().padStart(2, '0') + ':' +
-                    now.getSeconds().toString().padStart(2, '0');
+    // Usar tiempo virtual si está disponible, de lo contrario usar tiempo real
+    let timeStr;
+    if (window.obtenerTimestampCorto) {
+        timeStr = window.obtenerTimestampCorto();
+    } else {
+        const now = new Date();
+        timeStr = now.getHours().toString().padStart(2, '0') + ':' +
+                  now.getMinutes().toString().padStart(2, '0') + ':' +
+                  now.getSeconds().toString().padStart(2, '0');
+    }
 
+    // Agregar al historial limitado (para gráficas)
     metricsHistory.timestamps.push(timeStr);
     metricsHistory.density.push(parseFloat(metrics.density));
     metricsHistory.netGeneration.push(parseFloat(metrics.netGeneration));
@@ -405,7 +429,15 @@ function updateMetricsHistory(metrics) {
     metricsHistory.speed.push(parseFloat(metrics.speed));
     metricsHistory.entropy.push(parseFloat(metrics.entropy));
 
-    // Limitar el historial al número máximo de puntos de datos
+    // Agregar al historial COMPLETO (sin límite, para exportación)
+    completeMetricsHistory.timestamps.push(timeStr);
+    completeMetricsHistory.density.push(parseFloat(metrics.density));
+    completeMetricsHistory.netGeneration.push(parseFloat(metrics.netGeneration));
+    completeMetricsHistory.throughput.push(parseFloat(metrics.throughput));
+    completeMetricsHistory.speed.push(parseFloat(metrics.speed));
+    completeMetricsHistory.entropy.push(parseFloat(metrics.entropy));
+
+    // Limitar el historial de gráficas al número máximo de puntos de datos
     if (metricsHistory.timestamps.length > metricsHistory.maxDataPoints) {
         metricsHistory.timestamps.shift();
         metricsHistory.density.shift();
@@ -926,10 +958,10 @@ function actualizarColoresGraficas(modoOscuro) {
 // ==================== FUNCIONES DE EXPORTACIÓN DE MÉTRICAS ====================
 
 /**
- * Exporta las métricas a formato CSV
+ * Exporta las métricas a formato CSV (TODAS las medidas desde el inicio)
  */
 function descargarMetricasCSV() {
-    if (metricsHistory.timestamps.length === 0) {
+    if (completeMetricsHistory.timestamps.length === 0) {
         alert('No hay métricas para exportar. Ejecuta la simulación primero.');
         return;
     }
@@ -943,37 +975,57 @@ function descargarMetricasCSV() {
         return { avg: avg.toFixed(2), min: min.toFixed(2), max: max.toFixed(2) };
     };
 
-    // Calcular estadísticas
-    const densityStats = calcularEstadisticas(metricsHistory.density);
-    const throughputStats = calcularEstadisticas(metricsHistory.throughput);
-    const netGenStats = calcularEstadisticas(metricsHistory.netGeneration);
-    const speedStats = calcularEstadisticas(metricsHistory.speed);
-    const entropyStats = calcularEstadisticas(metricsHistory.entropy);
+    // Calcular estadísticas del historial COMPLETO
+    const densityStats = calcularEstadisticas(completeMetricsHistory.density);
+    const throughputStats = calcularEstadisticas(completeMetricsHistory.throughput);
+    const netGenStats = calcularEstadisticas(completeMetricsHistory.netGeneration);
+    const speedStats = calcularEstadisticas(completeMetricsHistory.speed);
+    const entropyStats = calcularEstadisticas(completeMetricsHistory.entropy);
 
-    // Encabezado de datos
-    let csvContent = 'Timestamp,Density (%),Throughput (veh/s),Net Generation (veh/s),Speed (% movement),Entropy (bits)\n';
-
-    // Datos de series temporales
-    for (let i = 0; i < metricsHistory.timestamps.length; i++) {
-        csvContent += `${metricsHistory.timestamps[i]},${metricsHistory.density[i]},${metricsHistory.throughput[i]},${metricsHistory.netGeneration[i]},${metricsHistory.speed[i]},${metricsHistory.entropy[i]}\n`;
+    // Metadata del tiempo virtual (en español)
+    let csvContent = '';
+    if (window.configuracionTiempo && window.obtenerTimestampVirtual) {
+        csvContent += 'FLUVI - Simulador de Trafico - Exportacion de Metricas\n';
+        csvContent += `Tiempo Virtual: ${window.obtenerTimestampVirtual()}\n`;
+        csvContent += `Perfiles Dinamicos Activos: ${window.configuracionTiempo.usarPerfiles ? 'Si' : 'No'}\n`;
+        csvContent += `Tiempo por Paso: ${window.SEGUNDOS_POR_PASO || 1.0} segundo(s) simulados\n`;
+        csvContent += `Total de Mediciones: ${completeMetricsHistory.timestamps.length}\n`;
+        csvContent += '\n';
     }
 
-    // Agregar línea en blanco y sección de estadísticas
+    // Encabezado de datos (en español)
+    csvContent += 'Marca de Tiempo,Densidad (%),Flujo (veh/s),Generacion Neta (veh/s),Velocidad (% movimiento),Entropia (bits)\n';
+
+    // Datos de series temporales (TODAS las medidas desde el inicio)
+    for (let i = 0; i < completeMetricsHistory.timestamps.length; i++) {
+        csvContent += `${completeMetricsHistory.timestamps[i]},${completeMetricsHistory.density[i]},${completeMetricsHistory.throughput[i]},${completeMetricsHistory.netGeneration[i]},${completeMetricsHistory.speed[i]},${completeMetricsHistory.entropy[i]}\n`;
+    }
+
+    // Agregar línea en blanco y sección de estadísticas (en español)
     csvContent += '\n';
-    csvContent += 'STATISTICS\n';
-    csvContent += 'Metric,Average,Minimum,Maximum\n';
-    csvContent += `Density (%),${densityStats.avg},${densityStats.min},${densityStats.max}\n`;
-    csvContent += `Throughput (veh/s),${throughputStats.avg},${throughputStats.min},${throughputStats.max}\n`;
-    csvContent += `Net Generation (veh/s),${netGenStats.avg},${netGenStats.min},${netGenStats.max}\n`;
-    csvContent += `Speed (% movement),${speedStats.avg},${speedStats.min},${speedStats.max}\n`;
-    csvContent += `Entropy (bits),${entropyStats.avg},${entropyStats.min},${entropyStats.max}\n`;
+    csvContent += 'ESTADISTICAS\n';
+    csvContent += 'Metrica,Promedio,Minimo,Maximo\n';
+    csvContent += `Densidad (%),${densityStats.avg},${densityStats.min},${densityStats.max}\n`;
+    csvContent += `Flujo (veh/s),${throughputStats.avg},${throughputStats.min},${throughputStats.max}\n`;
+    csvContent += `Generacion Neta (veh/s),${netGenStats.avg},${netGenStats.min},${netGenStats.max}\n`;
+    csvContent += `Velocidad (% movimiento),${speedStats.avg},${speedStats.min},${speedStats.max}\n`;
+    csvContent += `Entropia (bits),${entropyStats.avg},${entropyStats.min},${entropyStats.max}\n`;
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
 
-    const now = new Date();
-    const fileName = `metricas_trafico_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}.csv`;
+    // Generar nombre de archivo con tiempo virtual si está disponible
+    let fileName;
+    if (window.configuracionTiempo && window.obtenerDiaString) {
+        const dia = window.obtenerDiaString();
+        const hora = Math.floor(window.configuracionTiempo.horaActual).toString().padStart(2, '0');
+        const minuto = Math.floor(window.configuracionTiempo.minutoActual).toString().padStart(2, '0');
+        fileName = `metricas_trafico_${dia}_${hora}h${minuto}m.csv`;
+    } else {
+        const now = new Date();
+        fileName = `metricas_trafico_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}.csv`;
+    }
 
     link.setAttribute('href', url);
     link.setAttribute('download', fileName);
@@ -982,7 +1034,7 @@ function descargarMetricasCSV() {
     link.click();
     document.body.removeChild(link);
 
-    console.log(`Métricas exportadas a CSV: ${fileName}`);
+    console.log(`✅ Métricas exportadas a CSV: ${fileName} (${completeMetricsHistory.timestamps.length} mediciones)`);
 }
 
 /**
@@ -1002,20 +1054,38 @@ function descargarMetricasJSON() {
         return { avg: avg.toFixed(2), min: min.toFixed(2), max: max.toFixed(2) };
     };
 
+    // Construir metadata con información de tiempo virtual
+    const metadata = {
+        version: '2.2',
+        exportDate: new Date().toISOString(),
+        simulationName: 'FLUVI Traffic Simulation',
+        totalDataPoints: metricsHistory.timestamps.length,
+        metricsDescription: {
+            density: 'Porcentaje de celdas ocupadas',
+            throughput: 'Flujo vehicular real (Q = Densidad × Velocidad) en veh/s',
+            netGeneration: 'Tasa de cambio neta de población vehicular en veh/s',
+            speed: 'Porcentaje de vehículos en movimiento',
+            entropy: 'Entropía de Shannon del autómata celular en bits (mide diversidad de reglas/transiciones aplicadas: vacío, avanzar, detenerse, salir, generar)'
+        }
+    };
+
+    // Agregar información de tiempo virtual si está disponible
+    if (window.configuracionTiempo && window.obtenerTimestampVirtual) {
+        metadata.virtualTime = {
+            currentTime: window.obtenerTimestampVirtual(),
+            day: window.obtenerDiaString(),
+            hour: Math.floor(window.configuracionTiempo.horaActual),
+            minute: Math.floor(window.configuracionTiempo.minutoActual),
+            second: Math.floor(window.configuracionTiempo.segundoActual),
+            profilesActive: window.configuracionTiempo.usarPerfiles,
+            secondsPerStep: window.SEGUNDOS_POR_PASO || 1.0,
+            currentMultiplier: window.obtenerMultiplicadorTrafico ? window.obtenerMultiplicadorTrafico() : 1.0,
+            trafficDescription: window.obtenerDescripcionTrafico ? window.obtenerDescripcionTrafico() : 'Unknown'
+        };
+    }
+
     const data = {
-        metadata: {
-            version: '2.1',
-            exportDate: new Date().toISOString(),
-            simulationName: 'FLUVI Traffic Simulation',
-            totalDataPoints: metricsHistory.timestamps.length,
-            metricsDescription: {
-                density: 'Porcentaje de celdas ocupadas',
-                throughput: 'Flujo vehicular real (Q = Densidad × Velocidad) en veh/s',
-                netGeneration: 'Tasa de cambio neta de población vehicular en veh/s',
-                speed: 'Porcentaje de vehículos en movimiento',
-                entropy: 'Entropía de Shannon del autómata celular en bits (mide diversidad de reglas/transiciones aplicadas: vacío, avanzar, detenerse, salir, generar)'
-            }
-        },
+        metadata: metadata,
         metrics: {
             timestamps: metricsHistory.timestamps,
             density: metricsHistory.density,
@@ -1038,8 +1108,17 @@ function descargarMetricasJSON() {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
 
-    const now = new Date();
-    const fileName = `metricas_trafico_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}.json`;
+    // Generar nombre de archivo con tiempo virtual si está disponible
+    let fileName;
+    if (window.configuracionTiempo && window.obtenerDiaString) {
+        const dia = window.obtenerDiaString();
+        const hora = Math.floor(window.configuracionTiempo.horaActual).toString().padStart(2, '0');
+        const minuto = Math.floor(window.configuracionTiempo.minutoActual).toString().padStart(2, '0');
+        fileName = `metricas_trafico_${dia}_${hora}h${minuto}m.json`;
+    } else {
+        const now = new Date();
+        fileName = `metricas_trafico_${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}.json`;
+    }
 
     link.setAttribute('href', url);
     link.setAttribute('download', fileName);
@@ -1055,12 +1134,13 @@ function descargarMetricasJSON() {
  * Limpia el historial de métricas y actualiza las gráficas
  */
 function limpiarMetricas() {
-    if (metricsHistory.timestamps.length === 0) {
+    if (completeMetricsHistory.timestamps.length === 0) {
         alert('No hay métricas para limpiar.');
         return;
     }
 
     if (confirm('¿Estás seguro de que deseas limpiar todas las métricas? Esta acción no se puede deshacer.')) {
+        // Limpiar historial de gráficas
         metricsHistory.timestamps = [];
         metricsHistory.density = [];
         metricsHistory.throughput = [];
@@ -1068,9 +1148,17 @@ function limpiarMetricas() {
         metricsHistory.speed = [];
         metricsHistory.entropy = [];
 
+        // Limpiar historial COMPLETO
+        completeMetricsHistory.timestamps = [];
+        completeMetricsHistory.density = [];
+        completeMetricsHistory.throughput = [];
+        completeMetricsHistory.netGeneration = [];
+        completeMetricsHistory.speed = [];
+        completeMetricsHistory.entropy = [];
+
         updateCharts();
 
-        console.log('Métricas limpiadas exitosamente');
+        console.log('✅ Métricas limpiadas exitosamente (historial completo y gráficas)');
         alert('Métricas limpiadas exitosamente');
     }
 }

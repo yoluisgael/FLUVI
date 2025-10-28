@@ -1408,28 +1408,18 @@
     <div class="info-bar">
       <div class="info-bar-content">
         <span class="info-item">
-          <span class="info-label">Generation:</span>
-          <span id="infoGeneration" class="info-value">0</span>
-        </span>
-        <span class="info-separator">|</span>
-        <span class="info-item">
-          <span class="info-label">Population:</span>
+          <span class="info-label">Carros:</span>
           <span id="infoPopulation" class="info-value">0</span>
         </span>
         <span class="info-separator">|</span>
         <span class="info-item">
-          <span class="info-label">Rule:</span>
-          <span id="infoRule" class="info-value">184</span>
-        </span>
-        <span class="info-separator">|</span>
-        <span class="info-item">
-          <span class="info-label">Time/Frame:</span>
-          <span id="infoTimePerFrame" class="info-value">1.0s</span>
-        </span>
-        <span class="info-separator">|</span>
-        <span class="info-item">
-          <span class="info-label">Sim. Time:</span>
+          <span class="info-label">Hora:</span>
           <span id="infoSimulatedDateTime" class="info-value">--/--/---- --:--:--</span>
+        </span>
+        <span class="info-separator">|</span>
+        <span class="info-item">
+          <span class="info-label">Multiplicador de tráfico por hora:</span>
+          <span id="infoTrafficMultiplier" class="info-value">1.0×</span>
         </span>
       </div>
     </div>
@@ -1473,6 +1463,12 @@
             <label for="probabilidadSlider" class="form-label mb-0 small">Generación:</label>
             <input type="range" class="form-range" id="probabilidadSlider" min="0" max="100" step="1" style="width: 80px;">
             <span id="probabilidadValor" class="badge bg-primary">10</span>
+          </div>
+
+          <!-- Toggle de perfiles dinámicos -->
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="togglePerfilesDinamicos" checked onchange="togglePerfiles(this.checked)" data-bs-toggle="tooltip" data-bs-title="Activar/desactivar perfiles dinámicos de tráfico según día y hora">
+            <label class="form-check-label small" for="togglePerfilesDinamicos">Perfiles</label>
           </div>
         </div>
       </div>
@@ -1616,6 +1612,7 @@
   <script src="src/js/ui/etiquetas.js"></script>
   <script src="src/js/core/ClickActionManager.js"></script>
   <script src="src/js/core/escenarios.js"></script>
+  <script src="src/js/core/tiempo.js"></script>
   <script src="src/js/core/trafico.js"></script>
   <script src="src/js/core/graficas.js"></script>
   <script src="src/js/ui/editor.js"></script>
@@ -1873,22 +1870,13 @@
   <!-- Sistema de Información en Tiempo Real (estilo Golly) -->
   <script>
     (function() {
-      // Variables globales para el sistema de información
-      let generation = 0;
-      let lastFrameTime = Date.now();
-      let frameCount = 0;
-      let totalFrameTime = 0;
-      let avgTimePerFrame = 1.0; // segundos por frame
-
-      // Tiempo simulado
+      // Tiempo simulado (usado para compatibilidad con sistema anterior)
       let simulatedStartDate = new Date();
       let simulatedCurrentDate = new Date(simulatedStartDate);
 
       // Referencias a elementos del DOM
-      const infoGeneration = document.getElementById('infoGeneration');
       const infoPopulation = document.getElementById('infoPopulation');
-      const infoRule = document.getElementById('infoRule');
-      const infoTimePerFrame = document.getElementById('infoTimePerFrame');
+      const infoTrafficMultiplier = document.getElementById('infoTrafficMultiplier');
       const infoSimulatedDateTime = document.getElementById('infoSimulatedDateTime');
 
       // Función para calcular la población (vehículos en todas las calles)
@@ -1929,58 +1917,51 @@
 
       // Función para actualizar la información
       function updateInfo() {
-        // Actualizar generación
-        generation++;
-        infoGeneration.textContent = generation.toLocaleString();
-
-        // Calcular tiempo real por frame (cuánto tarda el navegador)
-        const currentTime = Date.now();
-        const frameTime = (currentTime - lastFrameTime) / 1000; // en segundos
-        lastFrameTime = currentTime;
-
-        // Promedio móvil de los últimos 10 frames
-        frameCount++;
-        totalFrameTime += frameTime;
-        if (frameCount > 10) {
-          totalFrameTime -= avgTimePerFrame;
-          frameCount = 10;
-        }
-        avgTimePerFrame = totalFrameTime / frameCount;
-
-        // Actualizar tiempo real por frame (tiempo de procesamiento)
-        infoTimePerFrame.textContent = `${avgTimePerFrame.toFixed(3)}s`;
-
         // Actualizar población
         const population = calculatePopulation();
         infoPopulation.textContent = population.toLocaleString();
 
-        // Calcular tiempo simulado físicamente correcto
-        // Cada generación (frame) representa el avance de 1 celda (5 metros) en el mundo simulado
-        // Independientemente de qué tan rápido ejecute el navegador los frames (controlado por el slider),
-        // el tiempo que transcurre en el mundo simulado por cada celda avanzada es constante: 0.6 segundos
+        // Actualizar multiplicador de tráfico
+        if (window.obtenerMultiplicadorTrafico && infoTrafficMultiplier) {
+          const multiplicador = window.obtenerMultiplicadorTrafico();
+          infoTrafficMultiplier.textContent = multiplicador.toFixed(1) + '×';
+        }
 
-        // Tiempo simulado que avanza en cada frame (constante, no depende del slider de velocidad)
-        const simulatedTimeIncrement = REAL_TIME_PER_CELL_SECONDS * 1000; // en milisegundos
-
-        // Actualizar tiempo simulado
-        simulatedCurrentDate = new Date(simulatedCurrentDate.getTime() + simulatedTimeIncrement);
-        infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+        // Actualizar tiempo simulado usando el sistema de tiempo virtual
+        // El tiempo virtual se actualiza en trafico.js con avanzarTiempo()
+        if (window.obtenerTimestampVirtual) {
+          infoSimulatedDateTime.textContent = window.obtenerTimestampVirtual();
+        } else {
+          // Fallback al sistema anterior si el tiempo virtual no está disponible
+          const simulatedTimeIncrement = REAL_TIME_PER_CELL_SECONDS * 1000;
+          simulatedCurrentDate = new Date(simulatedCurrentDate.getTime() + simulatedTimeIncrement);
+          infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+        }
       }
 
       // Función para resetear la información
       function resetInfo() {
-        generation = 0;
-        frameCount = 0;
-        totalFrameTime = 0;
-        avgTimePerFrame = 1.0;
-        lastFrameTime = Date.now();
         simulatedStartDate = new Date();
         simulatedCurrentDate = new Date(simulatedStartDate);
 
-        infoGeneration.textContent = '0';
         infoPopulation.textContent = '0';
-        infoTimePerFrame.textContent = '1.0s';
-        infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+
+        // Resetear multiplicador de tráfico
+        if (window.obtenerMultiplicadorTrafico && infoTrafficMultiplier) {
+          const multiplicador = window.obtenerMultiplicadorTrafico();
+          infoTrafficMultiplier.textContent = multiplicador.toFixed(1) + '×';
+        }
+
+        // Resetear tiempo virtual
+        if (window.reiniciarTiempo) {
+          window.reiniciarTiempo();
+        }
+
+        if (window.obtenerTimestampVirtual) {
+          infoSimulatedDateTime.textContent = window.obtenerTimestampVirtual();
+        } else {
+          infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+        }
       }
 
       // Exponer funciones y variables globalmente
@@ -1993,9 +1974,20 @@
         enumerable: true
       });
 
-      // Inicializar con fecha y hora actuales
+      // Inicializar con tiempo virtual
       document.addEventListener('DOMContentLoaded', function() {
-        infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+        // Inicializar multiplicador de tráfico
+        if (window.obtenerMultiplicadorTrafico && infoTrafficMultiplier) {
+          const multiplicador = window.obtenerMultiplicadorTrafico();
+          infoTrafficMultiplier.textContent = multiplicador.toFixed(1) + '×';
+        }
+
+        // Inicializar tiempo
+        if (window.obtenerTimestampVirtual) {
+          infoSimulatedDateTime.textContent = window.obtenerTimestampVirtual();
+        } else {
+          infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+        }
         console.log('✓ Sistema de información en tiempo real inicializado');
       });
     })();
@@ -2191,5 +2183,6 @@
     white-space: nowrap;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   "></div>
+
 </body>
 </html>

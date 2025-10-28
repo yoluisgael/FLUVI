@@ -320,9 +320,24 @@ body {
 }
 
 #velocidadSlider {
-  border: solid 1px #82CFD0;
+  border: none;
+  outline: none;
   border-radius: 10px;
   color: rgba(0, 0, 0, 0.95);
+}
+
+#velocidadSlider:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Asegurar que labels dentro del control bar estén centrados */
+#controlBar .form-label {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
 }
 
 /* ========== GRÁFICAS Y CONTENEDORES ========== */

@@ -786,7 +786,9 @@ function guardarSimulacion() {
                 }]
             };
         }) : [],
-        edificios: window.edificios || []
+        edificios: window.edificios || [],
+        // Guardar configuración de tiempo virtual si está disponible
+        configuracionTiempo: window.tiempoToJSON ? window.tiempoToJSON() : null
     };
 
     // Convertir a JSON
@@ -878,6 +880,14 @@ function cargarSimulacion(event) {
                 }
 
                 console.log(`✅ ${window.edificios.length} edificios cargados, selector actualizado y renderizados`);
+            }
+
+            // Cargar configuración de tiempo virtual si existe
+            if (datosSimulacion.configuracionTiempo && window.tiempoFromJSON) {
+                window.tiempoFromJSON(datosSimulacion.configuracionTiempo);
+                console.log(`⏰ Configuración de tiempo virtual cargada`);
+            } else {
+                console.log(`⏰ No se encontró configuración de tiempo, usando valores por defecto`);
             }
 
             // Cargar conexiones (en segundo paso para asegurar que las calles existan)

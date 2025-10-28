@@ -167,14 +167,14 @@ const btnActualizarCalle = document.getElementById("btnActualizarCalle");
 
 let animationId; // Variable para guardar el ID de la animación
 let tiempoAnterior = 0;
-let intervaloDeseado = 500; // Intervalo en milisegundos (100ms = 10 actualizaciones por segundo)
+let intervaloDeseado = 125; // Intervalo en milisegundos (125ms = ~8 frames por segundo)
 
 let isPaused = false;
 let mostrarIntersecciones = false;
 const minVelocidadSlider = 1;
 const maxVelocidadSlider = 100;
-const maxIntervalo = 1000;
-const minIntervalo = 0;  // 0ms = velocidad máxima (1 frame sin delay)
+const maxIntervalo = 250;  // 250ms = 4 veces más rápido que antes (era 1000ms)
+const minIntervalo = 0;    // 0ms = velocidad máxima (1 frame sin delay)
 
 // Configuración
 let calles = [];
@@ -1059,8 +1059,15 @@ function tieneConexionSalida(calle, carril, posicion) {
 // Función para generar células en arreglos GENERADOR
 function generarCelulas(calle) {
     if (calle.tipo === TIPOS.GENERADOR) {
+        // Aplicar multiplicador de tiempo si está activo
+        let probEfectiva = calle.probabilidadGeneracion;
+        if (window.configuracionTiempo?.usarPerfiles && window.obtenerMultiplicadorTrafico) {
+            const multiplicador = window.obtenerMultiplicadorTrafico();
+            probEfectiva *= multiplicador;
+        }
+
         for (let carril = 0; carril < calle.carriles; carril++) {
-            if (calle.arreglo[carril][0] === 0 && Math.random() < calle.probabilidadGeneracion) {
+            if (calle.arreglo[carril][0] === 0 && Math.random() < probEfectiva) {
                 // Generar tipo aleatorio de vehículo (1-6)
                 const tipoVehiculo = Math.floor(Math.random() * 6) + 1;
                 calle.arreglo[carril][0] = tipoVehiculo;
@@ -2670,6 +2677,11 @@ function iniciarSimulacion() {
         calles.forEach((calle, index) => {
             actualizarCalle(calle, index);
         });
+
+        // Avanzar tiempo virtual (función definida en tiempo.js)
+        if (window.avanzarTiempo) {
+            window.avanzarTiempo();
+        }
 
         // Actualizar métricas (función definida en graficas.js)
         if (window.updateMetrics) {

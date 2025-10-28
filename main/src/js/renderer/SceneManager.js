@@ -89,11 +89,27 @@ class SceneManager {
     }
 
     update(delta) {
-        // Actualizar color de fondo según ciclo día/noche
-        if (window.simulatedCurrentDate && this.dayNightCycle) {
-            const backgroundColor = this.dayNightCycle.getBackgroundColor(window.simulatedCurrentDate);
-            if (backgroundColor !== this.app.renderer.background.color) {
-                this.app.renderer.background.color = backgroundColor;
+        // Actualizar color de fondo según ciclo día/noche usando tiempo virtual
+        if (this.dayNightCycle) {
+            let simulatedDate;
+
+            // Usar tiempo virtual si está disponible
+            if (window.configuracionTiempo) {
+                // Crear un Date a partir del tiempo virtual
+                simulatedDate = new Date();
+                simulatedDate.setHours(Math.floor(window.configuracionTiempo.horaActual));
+                simulatedDate.setMinutes(Math.floor(window.configuracionTiempo.minutoActual));
+                simulatedDate.setSeconds(Math.floor(window.configuracionTiempo.segundoActual));
+            } else if (window.simulatedCurrentDate) {
+                // Fallback al sistema anterior
+                simulatedDate = window.simulatedCurrentDate;
+            }
+
+            if (simulatedDate) {
+                const backgroundColor = this.dayNightCycle.getBackgroundColor(simulatedDate);
+                if (backgroundColor !== this.app.renderer.background.color) {
+                    this.app.renderer.background.color = backgroundColor;
+                }
             }
         }
 
