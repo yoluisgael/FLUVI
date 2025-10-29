@@ -61,7 +61,11 @@ class AssetLoader {
             { name: 'secademica-ipn', url: 'assets/images/buildings/CIC.png' },
             // Campos deportivos
             { name: 'beisbol', url: 'assets/images/buildings/campo beisbol.png' },
-            { name: 'campo escom', url: 'assets/images/buildings/campo escom.jpg' }
+            { name: 'campo escom', url: 'assets/images/buildings/campo escom.jpg' },
+
+            // Estacionamientos y EST
+            { name: 'estacionamiento', url: 'assets/images/buildings/estacionamientos.png' },
+            { name: 'est', url: 'assets/images/buildings/EST.png' }
 
             // NOTA: fondo.png removido - ahora usamos BackgroundAreaRenderer con PIXI.Graphics
             // para renderizar áreas de fondo de manera mucho más eficiente (vectorial vs textura pesada)

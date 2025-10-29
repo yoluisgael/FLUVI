@@ -377,13 +377,13 @@ const edificios = [
     { x: 1071, y: 859, width: 95, height: 160, color: "#0047a3ff", angle: 350, label: "ESCOM" },
     
     // ESTACIONAMIENTO ESCOM
-    { x: 1199, y: 916, width: 180, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO ESCOM" },
+    { x: 1199, y: 916, width: 180, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO ESCOM", imagen: "estacionamiento" },
     
     // CIC
     { x: 1041, y: 1008, width: 90, height: 90, color: "#0047a3ff", angle: 350, label: "CIC" },
 
     // ESTACIONAMIENTO CIC
-    { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO CIC" },
+    { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO CIC", imagen: "estacionamiento" },
     
 
     { x: 1513, y: 915, width: 100, height: 60, color: "#0047a3ff", angle: 260, label: "ESTABLO DE BURROS" },
@@ -393,9 +393,9 @@ const edificios = [
     { x: 1756, y: 1065, width: 154, height: 270, color: "#164916ff", angle: 170, label: "CAMPO BURROS BLANCOS" }, //9:16
     
     // Campo de Beisbol
-    { x: 1974, y: 1273, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" },
+    { x: 1974, y: 1273, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
     { x: 1963, y: 1413, width: 100, height: 200, color: "#164916ff", angle: 350, label: "BEISBOL" },
-    { x: 1923, y: 1548, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" },
+    { x: 1923, y: 1548, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
  
     
     { x: 1643, y: 1592, width: 140, height: 100, color: "#0047a3ff", angle: 350, label: "C.F.I.E" },
@@ -442,15 +442,15 @@ const edificios = [
     { x: 2331, y: 1488, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 3" },
     { x: 2319, y: 1562, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 2" },
     { x: 2306, y: 1632, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME" },
-    { x: 2584, y: 1370, width: 90, height: 90, color: "#57126fff", angle: 350, label: "EST" },
-    { x: 2551, y: 1537, width: 45, height: 140, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" }, 
+    { x: 2584, y: 1370, width: 90, height: 90, color: "#57126fff", angle: 350, label: "EST", imagen: "est" },
+    { x: 2551, y: 1537, width: 45, height: 140, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" }, 
     
     // Edificio Z (vertical largo)
     { x: 2216, y: 897, width: 100, height: 100, color: "#4b0000ff", angle: 350, label: "ESIA" },
     
     // Centro Cultural JTB
     { x: 2306, y: 1754, width: 90, height: 60, color: "#8b4513", angle: 350, label: "CENTRO CULTURAL JTB" },
-    { x: 2399, y: 1904, width: 200, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO" },
+    { x: 2399, y: 1904, width: 200, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
 ];
 
 // Obtener el contexto del minimapa
