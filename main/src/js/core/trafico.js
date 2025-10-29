@@ -371,7 +371,7 @@ const edificios = [
     // ========== ZONA SUPERIOR IZQUIERDA (cerca de Av. Miguel Othon de Mendizabal) ==========
 
     // Torres
-    { x: 1280, y: 728, width: 300, height: 150, color: "#29293aff", angle: 350, label: "PLAZA TORRES LINDAVISTA" },
+    { x: 1239, y: 701, width: 250, height: 120, color: "#29293aff", angle: 334, label: "PLAZA TORRES LINDAVISTA" },
 
     // ESCOM
     { x: 1071, y: 859, width: 95, height: 160, color: "#0047a3ff", angle: 350, label: "ESCOM" },
