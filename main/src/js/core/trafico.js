@@ -2835,6 +2835,7 @@ function iniciarSimulacion() {
         // Calcular y exponer velocidad de simulación normalizada (frames por segundo)
         // A 1000ms = 1 fps, a 0ms = máxima velocidad posible del navegador
         window.velocidadSimulacion = intervaloDeseado > 0 ? maxIntervalo / intervaloDeseado : Infinity;
+        window.intervaloDeseado = intervaloDeseado;
 
         velocidadSlider.addEventListener('input', () => {
             const valorActualSlider = parseFloat(velocidadSlider.value);
@@ -2843,6 +2844,7 @@ function iniciarSimulacion() {
 
             // Actualizar velocidad de simulación normalizada (protección contra división por cero)
             window.velocidadSimulacion = intervaloDeseado > 0 ? maxIntervalo / intervaloDeseado : Infinity;
+            window.intervaloDeseado = intervaloDeseado;
         });
     }
 

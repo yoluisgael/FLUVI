@@ -353,6 +353,7 @@ function tiempoFromJSON(data) {
 // ==================== EXPONER AL SCOPE GLOBAL ====================
 
 window.configuracionTiempo = configuracionTiempo;
+window.multiplicadorCache = multiplicadorCache;
 window.avanzarTiempo = avanzarTiempo;
 window.obtenerMultiplicadorTrafico = obtenerMultiplicadorTrafico;
 window.obtenerDiaString = obtenerDiaString;
