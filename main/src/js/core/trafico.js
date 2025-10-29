@@ -268,6 +268,10 @@ cfieImg.src = "assets/images/buildings/C.F.I.E.png";
 const campoBurrosImg = new Image();
 campoBurrosImg.src = "assets/images/buildings/CAMPO BURROS BLANCOS ESTADIO WILFRIDO MASSIEU.png";
 
+// Cargar la imagen de Establo de Burros
+const establoBurrosImg = new Image();
+establoBurrosImg.src = "assets/images/buildings/establo de burros.png";
+
 // Cargar la imagen de Centro Cultural JTB
 const centroCulturalImg = new Image();
 centroCulturalImg.src = "assets/images/buildings/CENTRO CULTURAL JTB.png";
@@ -298,7 +302,7 @@ campoBeisbolImg.src = "assets/images/buildings/campo beisbol.png";
 
 // Cargar la imagen de Campo ESCOM
 const campoEscomImg = new Image();
-campoEscomImg.src = "assets/images/buildings/campo escom.jpg";
+campoEscomImg.src = "assets/images/buildings/campo escom.png";
 
 // Mapeo de labels a imágenes (definido globalmente para eficiencia)
 const buildingImageMap = {
@@ -310,6 +314,7 @@ const buildingImageMap = {
     "Alberca": albercaImg,
     "C.F.I.E": cfieImg,
     "CAMPO BURROS BLANCOS": campoBurrosImg,
+    "ESTABLO DE BURROS": establoBurrosImg,
     "CENTRO CULTURAL JTB": centroCulturalImg,
     "DIRECCIÓN GENERAL": direccionGeneralImg,
     "EDIFICIO INTELIGENTE": edificioInteligenteImg,
@@ -386,19 +391,19 @@ const edificios = [
     { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO CIC", imagen: "estacionamiento" },
     
 
-    { x: 1513, y: 915, width: 100, height: 60, color: "#0047a3ff", angle: 260, label: "ESTABLO DE BURROS" },
+    { x: 1489, y: 893, width: 100, height: 60, color: "#0047a3ff", angle: 170, label: "ESTABLO DE BURROS" },
     
-    { x: 1375, y: 946, width: 180, height: 80, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
+     { x: 1375, y: 946, width: 180, height: 90, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
 
     { x: 1756, y: 1065, width: 154, height: 270, color: "#164916ff", angle: 170, label: "CAMPO BURROS BLANCOS" }, //9:16
     
     // Campo de Beisbol
-    { x: 1974, y: 1273, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
-    { x: 1963, y: 1413, width: 100, height: 200, color: "#164916ff", angle: 350, label: "BEISBOL" },
-    { x: 1923, y: 1548, width: 160, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
+    { x: 1974, y: 1273, width: 160, height: 70, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
+    { x: 1963, y: 1413, width: 150, height: 200, color: "#164916ff", angle: 350, label: "BEISBOL" },
+    { x: 1923, y: 1548, width: 160, height: 70, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
  
     
-    { x: 1643, y: 1592, width: 140, height: 100, color: "#0047a3ff", angle: 350, label: "C.F.I.E" },
+    { x: 1643, y: 1592, width: 140, height: 140, color: "#0047a3ff", angle: 350, label: "C.F.I.E" },
 
     // CONO
     { x: 1937, y: 910, width: 45, height: 45, color: "#0d0e10ff", angle: 12, label: "CONO" },
@@ -409,25 +414,25 @@ const edificios = [
     { x: 2018, y: 1107, width: 250, height: 180, color: "#164916ff", angle: 260, label: "ESTADIO AMERICANO" },
     
     // Alberca
-    { x: 2136, y: 1497, width: 80, height: 70, color: "#4169E1", angle: 250, label: "Alberca" },
+     { x: 2136, y: 1497, width: 110, height: 110, color: "#4169E1", angle: 259, label: "Alberca" },
     
     // Gimnasio
-    { x: 1891, y: 1617, width: 70, height: 50, color: "#8b4513", angle: 350, label: "GIMNASIO" },
+    { x: 1918, y: 1648, width: 90, height: 90, color: "#8b4513", angle: 350, label: "GIMNASIO" },
     
     // PLANETARIO
-    { x: 1876, y: 1740, width: 80, height: 80, color: "#4b0000ff", angle: 350, label: "PLANETARIO" },
+    { x: 1876, y: 1740, width: 100, height: 100, color: "#4b0000ff", angle: 350, label: "PLANETARIO" },
     
     // CENLEX
     { x: 2050, y: 1689, width: 70, height: 45, color: "#8b4513", angle: 350, label: "CENLEX" },
     
 
-    { x: 1605, y: 540, width: 35, height: 30, color: "#29293aff", angle: 350, label: "OIC-IPN" },
-    { x: 1456, y: 605, width: 40, height: 35, color: "#8b7355", angle: 350, label: "POI-IPN" },
-    { x: 1756, y: 466, width: 35, height: 30, color: "#29293aff", angle: 350, label: "SAD-IPN" },
+    { x: 1605, y: 540, width: 70, height: 70, color: "#29293aff", angle: 350, label: "OIC-IPN" },
+    { x: 1456, y: 605, width: 70, height: 70, color: "#8b7355", angle: 350, label: "POI-IPN" },
+    { x: 1756, y: 466, width: 70, height: 70, color: "#29293aff", angle: 350, label: "SAD-IPN" },
     { x: 1734, y: 600, width: 90, height: 90, color: "#8b7355", angle: 350, label: "DIRECCIÓN GENERAL" },
-    { x: 1819, y: 810, width: 40, height: 35, color: "#8b7355", angle: 350, label: "SIIS-IPN" },
-    { x: 1444, y: 746, width: 40, height: 35, color: "#8b7355", angle: 350, label: "EDIFICIO INTELIGENTE" },
-    { x: 1623, y: 760, width: 40, height: 35, color: "#8b7355", angle: 350, label: "SECADEMICA-IPN" },
+    { x: 1819, y: 810, width: 70, height: 70, color: "#8b7355", angle: 350, label: "SIIS-IPN" },
+    { x: 1444, y: 746, width: 70, height: 70, color: "#8b7355", angle: 350, label: "EDIFICIO INTELIGENTE" },
+    { x: 1623, y: 760, width: 70, height: 70, color: "#8b7355", angle: 350, label: "SECADEMICA-IPN" },
     
 
 
@@ -442,7 +447,7 @@ const edificios = [
     { x: 2331, y: 1488, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 3" },
     { x: 2319, y: 1562, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 2" },
     { x: 2306, y: 1632, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME" },
-    { x: 2584, y: 1370, width: 90, height: 90, color: "#57126fff", angle: 350, label: "EST", imagen: "est" },
+    { x: 2584, y: 1370, width: 90, height: 90, color: "#57126fff", angle: 296, label: "EST", imagen: "est" },
     { x: 2551, y: 1537, width: 45, height: 140, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" }, 
     
     // Edificio Z (vertical largo)

@@ -39,6 +39,7 @@ class AssetLoader {
             { name: 'plaza torres lindavista', url: 'assets/images/buildings/torres_lindavista.png' },
             { name: 'alberca', url: 'assets/images/buildings/ALBERCA.png' },
             { name: 'campo burros blancos', url: 'assets/images/buildings/CAMPO BURROS BLANCOS ESTADIO WILFRIDO MASSIEU.png' },
+            { name: 'establo de burros', url: 'assets/images/buildings/establo de burros.png' },
             { name: 'centro cultural jtb', url: 'assets/images/buildings/CENTRO CULTURAL JTB.png' },
             { name: 'dirección general', url: 'assets/images/buildings/Dirección General.png' },
             { name: 'edificio inteligente', url: 'assets/images/buildings/EDIFICIO INTELIGENTE.png' },
@@ -61,7 +62,7 @@ class AssetLoader {
             { name: 'secademica-ipn', url: 'assets/images/buildings/CIC.png' },
             // Campos deportivos
             { name: 'beisbol', url: 'assets/images/buildings/campo beisbol.png' },
-            { name: 'campo escom', url: 'assets/images/buildings/campo escom.jpg' },
+            { name: 'campo escom', url: 'assets/images/buildings/campo escom.png' },
 
             // Estacionamientos y EST
             { name: 'estacionamiento', url: 'assets/images/buildings/estacionamientos.png' },
