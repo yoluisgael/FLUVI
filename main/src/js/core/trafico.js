@@ -2307,7 +2307,7 @@ function iniciarSimulacion() {
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 180, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
     //const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard ←", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
     //const Avenida_Cien_Metros = crearCalle("Av. Cien Metros →", 230, TIPOS.CONEXION, 596, 577, -70, 0.0, 3, 0.01);
-    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1029, 1656, 110, 0.9, 3, 0.01);
+    const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1034, 1671, 110, 0.9, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 1020, 760, -10, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz 2", 300, TIPOS.CONEXION, 2486, 972, 170, 0.0, 3, 0.01);
     const Avenida_IPN = crearCalle("Av. IPN", 230, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
@@ -2331,8 +2331,8 @@ function iniciarSimulacion() {
     //const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
     //const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 2825, 2095, 171, 0.0, 1, 0.01);
     
-    const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 638, 584, 110, 0.5, 3, 0.01);
-    const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 589, 558, -70, 0.3, 3, 0.01);
+    const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0.5, 3, 0.01);
+    const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.01);
     // Vértices para Av. Miguel Othon de Mendizabal →
     Avenida_Miguel_Othon_de_Mendizabal_1.vertices = [
         { indiceCelda: 0, anguloOffset: 0 },

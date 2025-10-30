@@ -1065,6 +1065,7 @@ class EditorCalles {
         const handleRadius = 20; // Radio del handle en px
         const margen = 25; // Margen desde los bordes de la ventana del usuario
         const separacionMinima = 50; // Distancia mínima entre handles para evitar traslape
+        const offsetMinimo = 30; // Distancia mínima del handle al borde del objeto (en píxeles mundo)
 
         // Calcular límites reales del área disponible para handles
         // SIEMPRE dentro de la ventana visible del usuario (canvas)
@@ -1073,10 +1074,14 @@ class EditorCalles {
         const areaMinY = margen;
         const areaMaxY = canvas.height - handleRadius * 2 - margen;
 
-        // Calcular posiciones ideales de los handles
+        // Calcular posiciones ideales de los handles y dimensiones del objeto
         let centroX, centroY, rotX, rotY;
+        let objectWidth, objectHeight;
 
         if (this.tipoObjetoEditando === 'calle') {
+            objectWidth = this.objetoEditando.tamano * celda_tamano;
+            objectHeight = this.objetoEditando.carriles * celda_tamano;
+
             // Verificar si la calle tiene curvas para usar el cálculo apropiado
             if (this.objetoEditando.esCurva && window.calcularCentroCalleCurva) {
                 // Para calles curvadas, usar el centro calculado de la trayectoria
@@ -1098,27 +1103,64 @@ class EditorCalles {
                 // Para calles rectas, usar el cálculo tradicional
                 const screenX = this.objetoEditando.x * escala + offsetX;
                 const screenY = this.objetoEditando.y * escala + offsetY;
+                const angle = this.objetoEditando.angulo * Math.PI / 180;
+                const cos = Math.cos(angle);
+                const sin = Math.sin(angle);
 
-                centroX = screenX + (this.objetoEditando.tamano * celda_tamano * escala) / 2;
-                centroY = screenY + (this.objetoEditando.carriles * celda_tamano * escala) / 2;
+                centroX = screenX + (objectWidth * escala * cos / 2) - (objectHeight * escala * sin / 2);
+                centroY = screenY + (objectWidth * escala * sin / 2) + (objectHeight * escala * cos / 2);
 
-                rotX = screenX + (this.objetoEditando.tamano * celda_tamano * escala);
-                rotY = screenY;
+                rotX = screenX + (objectWidth * escala * cos);
+                rotY = screenY + (objectWidth * escala * sin);
+
+                // NUEVA LÓGICA: Si la calle es pequeña, colocar handles fuera
+                const objetoPequeno = objectWidth < 80 || objectHeight < 80;
+                if (objetoPequeno) {
+                    // Handle de movimiento: arriba del objeto (perpendicular)
+                    const moveOffsetDistance = (objectHeight / 2 + offsetMinimo) * escala;
+                    centroX = screenX + (objectWidth * escala * cos / 2) - moveOffsetDistance * sin;
+                    centroY = screenY + (objectWidth * escala * sin / 2) + moveOffsetDistance * cos;
+
+                    // Handle de rotación: a la derecha del objeto
+                    const rotOffsetDistance = (objectWidth + offsetMinimo) * escala;
+                    rotX = screenX + rotOffsetDistance * cos;
+                    rotY = screenY + rotOffsetDistance * sin;
+                }
             }
 
         } else if (this.tipoObjetoEditando === 'edificio') {
+            objectWidth = this.objetoEditando.width || 100;
+            objectHeight = this.objetoEditando.height || 100;
+
             const screenX = this.objetoEditando.x * escala + offsetX;
             const screenY = this.objetoEditando.y * escala + offsetY;
 
-            centroX = screenX;
-            centroY = screenY;
-
             const angle = (this.objetoEditando.angle || 0) * Math.PI / 180;
-            const offsetRotX = (this.objetoEditando.width / 2) * Math.cos(angle) * escala;
-            const offsetRotY = (this.objetoEditando.width / 2) * Math.sin(angle) * escala;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+
+            centroX = screenX + (objectWidth * escala * cos / 2) - (objectHeight * escala * sin / 2);
+            centroY = screenY + (objectWidth * escala * sin / 2) + (objectHeight * escala * cos / 2);
+
+            const offsetRotX = (objectWidth / 2) * cos * escala;
+            const offsetRotY = (objectWidth / 2) * sin * escala;
 
             rotX = screenX + offsetRotX;
             rotY = screenY + offsetRotY;
+
+            // NUEVA LÓGICA: Si el edificio es pequeño, colocar handles fuera
+            const objetoPequeno = objectWidth < 80 || objectHeight < 80;
+            if (objetoPequeno) {
+                // Handle de movimiento: arriba del edificio
+                const moveOffsetDistance = (objectHeight / 2 + offsetMinimo) * escala;
+                centroX = screenX + (objectWidth * escala * cos / 2) - moveOffsetDistance * sin;
+                centroY = screenY + (objectWidth * escala * sin / 2) + moveOffsetDistance * cos;
+
+                // Handle de rotación: a la derecha del edificio
+                const rotOffsetDistance = (objectWidth / 2 + offsetMinimo) * escala;
+                rotX = screenX + rotOffsetDistance * cos;
+                rotY = screenY + rotOffsetDistance * sin;
+            }
         }
 
         // Calcular posiciones ideales de los handles (donde "quieren" estar)

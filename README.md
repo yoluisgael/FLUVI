@@ -76,6 +76,13 @@ Usa el panel lateral para:
 - **SHIFT + Arrastre**: Mover calles
 - **Click en calle/edificio**: Ver información
 - **Handles** (círculos): Mover y rotar calles
+- **Z**: Toggle modo edición de vértices (activar/desactivar)
+  - Cuando está activo, arrastra cualquier vértice para crear curvas
+  - Presiona Z nuevamente para desactivar el modo
+
+**Atajos de Teclado:**
+- **Ctrl+B**: Ocultar/mostrar panel lateral (sidebar)
+- **Enter**: Aplicar cambios en el modal de fecha/hora (cuando los campos están enfocados)
 
 ### Detener el Servidor
 
@@ -128,6 +135,7 @@ FLUVI/
 │       ├── js/
 │       │   ├── core/                      # Lógica central de simulación
 │       │   │   ├── trafico.js             # Motor principal de simulación y autómatas celulares
+│       │   │   ├── tiempo.js              # Sistema de tiempo virtual (día/hora)
 │       │   │   ├── graficas.js            # Sistema de métricas (densidad, flujo, velocidad)
 │       │   │   ├── curvas.js              # Sistema de curvas y vértices en calles
 │       │   │   └── ClickActionManager.js  # Gestor de clicks e interacciones
@@ -148,6 +156,14 @@ FLUVI/
 │       │   │       ├── AssetLoader.js     # Cargador de texturas y assets
 │       │   │       └── CoordinateConverter.js # Conversión de coordenadas
 │       │   └── ui/                        # Módulos de interfaz de usuario
+│       │       ├── darkMode.js            # Sistema de modo oscuro
+│       │       ├── loadingSystem.js       # Sistema de carga con progreso
+│       │       ├── tooltips.js            # Inicialización de tooltips Bootstrap
+│       │       ├── modalFixes.js          # Correcciones para modales
+│       │       ├── consoleControl.js      # Control de logs de consola
+│       │       ├── sidebarToggle.js       # Toggle del sidebar (Ctrl+B)
+│       │       ├── infoBar.js             # Barra de información en tiempo real
+│       │       ├── timeControl.js         # Control de fecha y hora del simulador
 │       │       ├── editor.js              # Editor visual de calles
 │       │       ├── constructor.js         # Constructor de mapas
 │       │       └── etiquetas.js           # Sistema de etiquetas
@@ -170,12 +186,19 @@ FLUVI/
 - **Multi-carril**: Soporte para múltiples carriles con cambios de carril dinámicos
 - **Intersecciones**: Detección y resolución de colisiones con sistema de prioridad
 - **Conexiones**: Tres tipos de conexiones (lineal, incorporación, probabilística)
+- **Sistema de Tiempo Virtual**: Simulación de días de la semana y horarios con avance dinámico
+- **Multiplicador de Tráfico Dinámico**: Generación de vehículos que varía según día y hora (horas pico, valle, etc.)
+- **Control Manual de Fecha/Hora**: Capacidad de modificar el tiempo simulado en cualquier momento
 
 ### Interfaz de Usuario
 - **Editor Visual**: Arrastra y rota calles con handles interactivos
 - **Constructor de Mapas**: Crea simulaciones personalizadas desde cero
+- **Barra de Información en Tiempo Real**: Muestra generación, población de vehículos, hora simulada, tiempo por frame y multiplicador de tráfico
+- **Control de Fecha y Hora**: Interfaz intuitiva para cambiar el día y hora del simulador con vista previa
 - **Métricas en Tiempo Real**: Gráficas de densidad, flujo y velocidad
 - **Minimapa**: Vista general del área de simulación
+- **Modo Oscuro**: Toggle entre tema claro y oscuro con persistencia
+- **Control de Sidebar**: Oculta/muestra el panel lateral con Ctrl+B
 
 ### Funcionalidades Avanzadas
 - **Calles Curvas**: Sistema de vértices con interpolación angular
@@ -186,6 +209,61 @@ FLUVI/
 - **Exportar/Importar**: Guarda y carga simulaciones en formato JSON
 - **Renderizado por Capas**: Sistema de z-index para orden correcto de visualización
 - **Cámara Interactiva**: Zoom con scroll y pan arrastrando el canvas
+
+## Barra de Información (Info Bar)
+
+La barra de información en tiempo real muestra métricas clave de la simulación en la parte superior de la pantalla:
+
+### Generación
+- **Descripción**: Contador de iteraciones del autómata celular (frames de simulación)
+- **Formato**: Número entero con separadores de miles
+- **Uso**: Indica cuántos pasos de simulación se han ejecutado desde el inicio
+
+### Vehículos
+- **Descripción**: Total de vehículos activos en todas las calles
+- **Cálculo**: Cuenta todas las celdas con valores 1-6 (tipos de vehículos)
+- **Formato**: Número entero con separadores de miles
+- **Uso**: Monitorea la población vehicular en tiempo real
+
+### Hora
+- **Descripción**: Tiempo simulado actual (día, hora, minutos, segundos)
+- **Formato**: `Día HH:MM:SS` (ej: "Lunes 14:35:42")
+- **Sistema**: Tiempo virtual sincronizado con el multiplicador de tráfico
+- **Control**: Modificable desde "Configuración de Escenarios" con interfaz modal
+
+### Tiempo/Frame
+- **Descripción**: Tiempo simulado que representa cada frame/generación
+- **Formato**: Número decimal en segundos (ej: "0.512s")
+- **Uso**: Indica cuánto tiempo simulado avanza en cada paso de simulación
+
+### Multiplicador de Generación de Vehículos por Hora
+- **Descripción**: Factor dinámico que modifica la tasa de generación de vehículos
+- **Formato**: Número decimal con una cifra decimal + símbolo "×" (ej: "1.5×")
+- **Rango**: Varía según el día de la semana y la hora del día
+- **Sistema**: Basado en perfiles de tráfico realistas (hora pico, hora valle)
+- **Uso**: Simula patrones de tráfico reales con mayor generación en horas pico
+
+### Control de Fecha y Hora del Simulador
+
+El sistema permite modificar manualmente la fecha y hora del simulador mediante una interfaz modal intuitiva:
+
+**Ubicación**: Configuración de Escenarios → Control de Fecha y Hora
+
+**Características**:
+- Selector de día de la semana (Domingo a Sábado)
+- Inputs numéricos para hora (0-23) y minutos (0-59)
+- Vista previa en tiempo real del tiempo seleccionado
+- Validación automática de rangos
+- Aplicación con Enter o botón de confirmación
+- Sincronización perfecta entre sidebar y barra de información
+- Invalidación del cache de multiplicador al cambiar fecha/hora
+
+**Uso**:
+1. Click en "Abrir Configurador de Tiempo"
+2. Selecciona día, hora y minutos deseados
+3. Verifica la vista previa
+4. Click en "✅ Confirmar y Aplicar"
+5. El simulador ajusta inmediatamente el tiempo virtual
 
 ## Métricas del Sistema
 
@@ -339,6 +417,48 @@ p_i = (cantidad de veces que se usó la regla i) / (total de celdas)
 - **Detección de Colisiones**: Sistema de intersecciones y resolución
 
 ## Arquitectura Técnica
+
+### Arquitectura Modular de JavaScript
+
+El proyecto utiliza una arquitectura modular con scripts separados por responsabilidad:
+
+**Módulos Core (`src/js/core/`)**:
+- `trafico.js`: Motor principal de simulación con autómatas celulares, control de velocidad y generación de vehículos
+- `tiempo.js`: Sistema de tiempo virtual con soporte para días de la semana, horas, minutos y segundos. Incluye perfiles de multiplicador de tráfico por día/hora
+- `graficas.js`: Recolección y cálculo de métricas (densidad, flujo, velocidad, entropía)
+- `curvas.js`: Sistema de curvas Bézier para calles con interpolación angular
+- `ClickActionManager.js`: Gestión centralizada de eventos de click e interacciones
+
+**Módulos UI (`src/js/ui/`)**:
+- `infoBar.js`: Sistema de información en tiempo real que actualiza la barra superior con generación, población, hora simulada, tiempo/frame y multiplicador
+- `timeControl.js`: Control modal para modificar fecha y hora del simulador con sincronización perfecta
+- `darkMode.js`: Toggle de modo oscuro con persistencia en localStorage
+- `loadingSystem.js`: Pantalla de carga con barra de progreso durante inicialización
+- `tooltips.js`: Inicialización de tooltips de Bootstrap 5 en elementos UI
+- `modalFixes.js`: Correcciones para advertencias de accesibilidad en modales
+- `consoleControl.js`: Sistema de activación/desactivación de logs de consola
+- `sidebarToggle.js`: Control del panel lateral con atajo Ctrl+B y redimensionamiento de canvas
+- `editor.js`: Editor visual de calles con modo de edición de vértices (toggle con tecla Z)
+- `constructor.js`: Constructor interactivo de mapas desde cero
+- `etiquetas.js`: Sistema de tooltips informativos sobre calles y edificios
+
+**Módulos Renderer (`src/js/renderer/`)**:
+- `PixiApp.js`: Singleton que maneja el ciclo de vida de PixiJS (WebGL/Canvas2D)
+- `SceneManager.js`: Gestión de scene graph con sistema de capas y z-index
+- `CameraController.js`: Control de cámara con zoom (scroll) y pan (arrastre)
+- `DayNightCycle.js`: Interpolación de colores de fondo según hora simulada
+- `EditorHandles.js`: Handles visuales para mover y rotar calles en modo edición
+- Renderizadores especializados en `renderers/`: Cada tipo de objeto (calles, vehículos, edificios, conexiones, UI, minimapa) tiene su propio renderizador
+- Utilidades en `utils/`: Carga de assets y conversión de coordenadas
+
+**Beneficios de la Arquitectura Modular**:
+- ✅ **Separación de Responsabilidades**: Cada módulo tiene una función específica y bien definida
+- ✅ **Mantenibilidad**: Cambios en un módulo no afectan a otros
+- ✅ **Escalabilidad**: Fácil agregar nuevas funcionalidades sin modificar código existente
+- ✅ **Reutilización**: Módulos pueden ser reutilizados en otros proyectos
+- ✅ **Testing**: Cada módulo puede ser probado independientemente
+- ✅ **Debugging**: Más fácil localizar y corregir errores
+- ✅ **Colaboración**: Múltiples desarrolladores pueden trabajar en paralelo
 
 ### Flujo de Inicialización
 

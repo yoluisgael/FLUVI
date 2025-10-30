@@ -302,9 +302,12 @@ class EditorHandles {
         if (!this.currentObject) return;
 
         const celda_tamano = window.celda_tamano || 5;
+        const handleRadius = 20; // Radio del handle en píxeles mundo
+        const offsetMinimo = 30; // Distancia mínima del handle al borde del objeto
 
-        // Calcular centro del objeto
+        // Calcular centro del objeto y dimensiones
         let centroX, centroY, rotX, rotY;
+        let objectWidth, objectHeight;
 
         if (this.objectType === 'calle') {
             const calle = this.currentObject;
@@ -313,6 +316,10 @@ class EditorHandles {
                 const centro = window.calcularCentroCalleCurva(calle);
                 centroX = centro.x;
                 centroY = centro.y;
+
+                // Para calles curvas, estimar dimensiones aproximadas
+                objectWidth = calle.tamano * celda_tamano;
+                objectHeight = calle.carriles * celda_tamano;
 
                 if (window.calcularPuntoFinalCalleCurva) {
                     const puntoFinal = window.calcularPuntoFinalCalleCurva(calle);
@@ -327,28 +334,72 @@ class EditorHandles {
                 const cos = Math.cos(angle);
                 const sin = Math.sin(angle);
 
-                const centerLocalX = (calle.tamano * celda_tamano) / 2;
-                const centerLocalY = (calle.carriles * celda_tamano) / 2;
+                objectWidth = calle.tamano * celda_tamano;
+                objectHeight = calle.carriles * celda_tamano;
+
+                const centerLocalX = objectWidth / 2;
+                const centerLocalY = objectHeight / 2;
 
                 centroX = calle.x + (centerLocalX * cos - centerLocalY * sin);
                 centroY = calle.y + (centerLocalX * sin + centerLocalY * cos);
 
-                const rotOffsetLocalX = calle.tamano * celda_tamano;
+                const rotOffsetLocalX = objectWidth;
                 rotX = calle.x + (rotOffsetLocalX * cos);
                 rotY = calle.y + (rotOffsetLocalX * sin);
             }
         } else {
             // Es un edificio
             const edificio = this.currentObject;
-            centroX = edificio.x + (edificio.width || 100) / 2;
-            centroY = edificio.y + (edificio.height || 100) / 2;
+            objectWidth = edificio.width || 100;
+            objectHeight = edificio.height || 100;
+
+            centroX = edificio.x + objectWidth / 2;
+            centroY = edificio.y + objectHeight / 2;
 
             const angle = (edificio.angle || 0) * Math.PI / 180;
-            const offsetX = (edificio.width || 100) / 2 * Math.cos(angle);
-            const offsetY = (edificio.width || 100) / 2 * Math.sin(angle);
+            const offsetX = objectWidth / 2 * Math.cos(angle);
+            const offsetY = objectWidth / 2 * Math.sin(angle);
 
             rotX = edificio.x + offsetX;
             rotY = edificio.y + offsetY;
+        }
+
+        // NUEVA LÓGICA: Determinar si el objeto es pequeño y ajustar handles para que estén fuera
+        const objetoPequeno = objectWidth < 80 || objectHeight < 80;
+
+        if (objetoPequeno) {
+            // Para objetos pequeños, colocar handles fuera del objeto
+            if (this.objectType === 'calle') {
+                const calle = this.currentObject;
+                const angle = -calle.angulo * Math.PI / 180;
+                const cos = Math.cos(angle);
+                const sin = Math.sin(angle);
+
+                // Handle de movimiento: arriba del objeto (perpendicular)
+                const moveOffsetDistance = objectHeight / 2 + offsetMinimo;
+                centroX = calle.x + (objectWidth / 2 * cos - moveOffsetDistance * sin);
+                centroY = calle.y + (objectWidth / 2 * sin + moveOffsetDistance * cos);
+
+                // Handle de rotación: a la derecha del objeto
+                const rotOffsetDistance = objectWidth + offsetMinimo;
+                rotX = calle.x + (rotOffsetDistance * cos);
+                rotY = calle.y + (rotOffsetDistance * sin);
+
+            } else {
+                // Edificio pequeño
+                const edificio = this.currentObject;
+                const angle = (edificio.angle || 0) * Math.PI / 180;
+
+                // Handle de movimiento: arriba del edificio
+                const moveOffsetDistance = objectHeight / 2 + offsetMinimo;
+                centroX = edificio.x + objectWidth / 2 * Math.cos(angle) - moveOffsetDistance * Math.sin(angle);
+                centroY = edificio.y + objectWidth / 2 * Math.sin(angle) + moveOffsetDistance * Math.cos(angle);
+
+                // Handle de rotación: a la derecha del edificio
+                const rotOffsetDistance = objectWidth / 2 + offsetMinimo;
+                rotX = edificio.x + rotOffsetDistance * Math.cos(angle);
+                rotY = edificio.y + rotOffsetDistance * Math.sin(angle);
+            }
         }
 
         // Posicionar handles
