@@ -1605,18 +1605,18 @@
       <!-- Control Bar -->
       <div id="canvasControlBar">
         <div id="controlBar" class="align-items-center">
+          <!-- Grupo de controles de simulación -->
+          <div class="btn-group" role="group">
+            <button id="btnPauseResume" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-title="Pausar o reanudar la simulación de tráfico">⏸</button>
+            <button id="btnPaso" class="btn btn-success btn-sm" disabled data-bs-toggle="tooltip" data-bs-title="Avanzar un paso de la simulación (solo disponible cuando está en pausa)">⏭</button>
+          </div>
+
           <!-- Grupo de controles de visualización -->
           <div class="btn-group" role="group">
             <button id="btnConexiones" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las conexiones entre calles en el canvas">🔗</button>
             <button id="btnVertices" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los vértices de las calles para edición">📍</button>
             <button id="btnIntersecciones" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los puntos de intersección entre calles">✖️</button>
             <button id="btnEtiquetas" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las etiquetas con nombres de calles y edificios">🏷️</button>
-          </div>
-
-          <!-- Grupo de controles de simulación -->
-          <div class="btn-group" role="group">
-            <button id="btnPauseResume" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-title="Pausar o reanudar la simulación de tráfico">⏸</button>
-            <button id="btnPaso" class="btn btn-success btn-sm" disabled data-bs-toggle="tooltip" data-bs-title="Avanzar un paso de la simulación (solo disponible cuando está en pausa)">⏭</button>
           </div>
 
           <!-- Grupo de acciones -->
