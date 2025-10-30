@@ -2643,13 +2643,80 @@ function iniciarSimulacion() {
 
     btnActualizarCalle.addEventListener("click", () => {
         const calleIndex = selectCalle.value;
-        const nuevaProbabilidad = parseFloat(inputProbabilidadGeneracion.value / 100);
-        const nuevaProbabilidadSalto = parseFloat(inputProbabilidadSalto.value / 100);
-        if (calleIndex !== "" && (!isNaN(nuevaProbabilidad) || !isNaN(nuevaProbabilidadSalto))) {
-            calles[calleIndex].probabilidadGeneracion = nuevaProbabilidad;
-            calles[calleIndex].probabilidadSaltoDeCarril = nuevaProbabilidadSalto;
-            console.log(`✏️ Actualizada ${calles[calleIndex].nombre}: Gen=${nuevaProbabilidad}, Salto=${nuevaProbabilidadSalto}`);
+        const valorGeneracion = parseFloat(inputProbabilidadGeneracion.value);
+        const valorSalto = parseFloat(inputProbabilidadSalto.value);
+
+        // Validar que haya una calle seleccionada
+        if (calleIndex === "") {
+            mostrarNotificacion('error', 'Error', 'Por favor selecciona una calle primero.');
+            return;
         }
+
+        // Validar valores de probabilidad de generación
+        if (isNaN(valorGeneracion) || valorGeneracion < 0 || valorGeneracion > 100) {
+            inputProbabilidadGeneracion.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'La probabilidad de generación debe estar entre 0 y 100.');
+            return;
+        } else {
+            inputProbabilidadGeneracion.classList.remove('is-invalid');
+        }
+
+        // Validar valores de probabilidad de salto
+        if (isNaN(valorSalto) || valorSalto < 0 || valorSalto > 100) {
+            inputProbabilidadSalto.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'La probabilidad de cambio de carril debe estar entre 0 y 100.');
+            return;
+        } else {
+            inputProbabilidadSalto.classList.remove('is-invalid');
+        }
+
+        // Aplicar cambios (convertir a 0-1)
+        const nuevaProbabilidad = valorGeneracion / 100;
+        const nuevaProbabilidadSalto = valorSalto / 100;
+
+        const nombreCalle = calles[calleIndex].nombre;
+        calles[calleIndex].probabilidadGeneracion = nuevaProbabilidad;
+        calles[calleIndex].probabilidadSaltoDeCarril = nuevaProbabilidadSalto;
+
+        console.log(`✏️ Actualizada ${nombreCalle}: Gen=${nuevaProbabilidad}, Salto=${nuevaProbabilidadSalto}`);
+
+        // Mostrar notificación de éxito
+        mostrarNotificacion('success', 'Cambios Aplicados',
+            `Se actualizaron las probabilidades de "${nombreCalle}":\n` +
+            `• Generación: ${valorGeneracion}%\n` +
+            `• Cambio de carril: ${valorSalto}%`);
+    });
+
+    // Validación en tiempo real para inputs de probabilidades
+    inputProbabilidadGeneracion.addEventListener('input', function() {
+        const valor = parseFloat(this.value);
+        if (isNaN(valor) || valor < 0 || valor > 100) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    inputProbabilidadSalto.addEventListener('input', function() {
+        const valor = parseFloat(this.value);
+        if (isNaN(valor) || valor < 0 || valor > 100) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    // Prevenir valores fuera del rango al pegar o escribir
+    [inputProbabilidadGeneracion, inputProbabilidadSalto].forEach(input => {
+        input.addEventListener('blur', function() {
+            let valor = parseFloat(this.value);
+            if (!isNaN(valor)) {
+                // Forzar el valor dentro del rango 0-100
+                if (valor < 0) valor = 0;
+                if (valor > 100) valor = 100;
+                this.value = valor;
+            }
+        });
     });
 
     function paso() {

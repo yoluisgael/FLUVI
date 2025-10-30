@@ -1988,3 +1988,27 @@ body.dark-mode .config-header .config-title {
 body.dark-mode .config-chevron {
     color: #888;
 }
+
+/* ========== ICONOS DE INFORMACIÓN ========== */
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    cursor: help;
+    color: #0d6efd;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.info-icon:hover {
+    color: #0b5ed7;
+    transform: scale(1.1);
+}
+
+body.dark-mode .info-icon {
+    color: #5a9fd4;
+}
+
+body.dark-mode .info-icon:hover {
+    color: #7bb4e6;
+}
