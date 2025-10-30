@@ -610,15 +610,28 @@ function dibujarMinimapa() {
 // Evento para guardar la calle seleccionada y mostrar valores en los inputs
 selectCalle.addEventListener("change", () => {
     const calleIndex = selectCalle.value;
+    const campoGeneracion = document.getElementById('campoGeneracionConfig');
+
     if (calleIndex !== "") {
         calleSeleccionada = calles[calleIndex];
         window.calleSeleccionada = calleSeleccionada; // Exponer globalmente
-        // Mostrar valores actuales en los inputs
-        inputProbabilidadGeneracion.value = calleSeleccionada.probabilidadGeneracion * 100; // Conversión a porcentaje
+
+        // Mostrar u ocultar campo de probabilidad de generación según el tipo
+        if (calleSeleccionada.tipo === TIPOS.GENERADOR) {
+            campoGeneracion.style.display = 'block';
+            inputProbabilidadGeneracion.value = calleSeleccionada.probabilidadGeneracion * 100; // Conversión a porcentaje
+        } else {
+            // Ocultar para calles de tipo CONEXION y DEVORADOR
+            campoGeneracion.style.display = 'none';
+            inputProbabilidadGeneracion.value = 0; // Resetear valor
+        }
+
+        // Mostrar valor de probabilidad de salto (siempre visible)
         inputProbabilidadSalto.value = calleSeleccionada.probabilidadSaltoDeCarril * 100; // Conversión a porcentaje
     } else {
         calleSeleccionada = null;
         window.calleSeleccionada = null;
+        campoGeneracion.style.display = 'none';
     }
     renderizarCanvas();
 });
@@ -2643,7 +2656,6 @@ function iniciarSimulacion() {
 
     btnActualizarCalle.addEventListener("click", () => {
         const calleIndex = selectCalle.value;
-        const valorGeneracion = parseFloat(inputProbabilidadGeneracion.value);
         const valorSalto = parseFloat(inputProbabilidadSalto.value);
 
         // Validar que haya una calle seleccionada
@@ -2652,16 +2664,30 @@ function iniciarSimulacion() {
             return;
         }
 
-        // Validar valores de probabilidad de generación
-        if (isNaN(valorGeneracion) || valorGeneracion < 0 || valorGeneracion > 100) {
-            inputProbabilidadGeneracion.classList.add('is-invalid');
-            mostrarNotificacion('error', 'Error de Validación', 'La probabilidad de generación debe estar entre 0 y 100.');
-            return;
-        } else {
-            inputProbabilidadGeneracion.classList.remove('is-invalid');
+        const calleActual = calles[calleIndex];
+        const nombreCalle = calleActual.nombre;
+        const esTipoGenerador = calleActual.tipo === TIPOS.GENERADOR;
+
+        let valorGeneracion = 0;
+        let mensajeGeneracion = '';
+
+        // Solo validar y actualizar probabilidad de generación si es tipo GENERADOR
+        if (esTipoGenerador) {
+            valorGeneracion = parseFloat(inputProbabilidadGeneracion.value);
+
+            // Validar valores de probabilidad de generación
+            if (isNaN(valorGeneracion) || valorGeneracion < 0 || valorGeneracion > 100) {
+                inputProbabilidadGeneracion.classList.add('is-invalid');
+                mostrarNotificacion('error', 'Error de Validación', 'La probabilidad de generación debe estar entre 0 y 100.');
+                return;
+            } else {
+                inputProbabilidadGeneracion.classList.remove('is-invalid');
+            }
+
+            mensajeGeneracion = `• Generación: ${valorGeneracion}%\n`;
         }
 
-        // Validar valores de probabilidad de salto
+        // Validar valores de probabilidad de salto (siempre se valida)
         if (isNaN(valorSalto) || valorSalto < 0 || valorSalto > 100) {
             inputProbabilidadSalto.classList.add('is-invalid');
             mostrarNotificacion('error', 'Error de Validación', 'La probabilidad de cambio de carril debe estar entre 0 y 100.');
@@ -2671,19 +2697,22 @@ function iniciarSimulacion() {
         }
 
         // Aplicar cambios (convertir a 0-1)
-        const nuevaProbabilidad = valorGeneracion / 100;
         const nuevaProbabilidadSalto = valorSalto / 100;
 
-        const nombreCalle = calles[calleIndex].nombre;
-        calles[calleIndex].probabilidadGeneracion = nuevaProbabilidad;
-        calles[calleIndex].probabilidadSaltoDeCarril = nuevaProbabilidadSalto;
+        if (esTipoGenerador) {
+            const nuevaProbabilidad = valorGeneracion / 100;
+            calleActual.probabilidadGeneracion = nuevaProbabilidad;
+            console.log(`✏️ Actualizada ${nombreCalle}: Gen=${nuevaProbabilidad}, Salto=${nuevaProbabilidadSalto}`);
+        } else {
+            console.log(`✏️ Actualizada ${nombreCalle}: Salto=${nuevaProbabilidadSalto} (no aplica generación, tipo: ${calleActual.tipo})`);
+        }
 
-        console.log(`✏️ Actualizada ${nombreCalle}: Gen=${nuevaProbabilidad}, Salto=${nuevaProbabilidadSalto}`);
+        calleActual.probabilidadSaltoDeCarril = nuevaProbabilidadSalto;
 
         // Mostrar notificación de éxito
         mostrarNotificacion('success', 'Cambios Aplicados',
             `Se actualizaron las probabilidades de "${nombreCalle}":\n` +
-            `• Generación: ${valorGeneracion}%\n` +
+            mensajeGeneracion +
             `• Cambio de carril: ${valorSalto}%`);
     });
 

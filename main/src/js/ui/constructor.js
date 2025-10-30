@@ -135,48 +135,185 @@ function mostrarDialogoNuevaCalle() {
     const modal = new bootstrap.Modal(document.getElementById('modalNuevaCalle'));
     modal.show();
 
+    // Configurar visibilidad del campo de probabilidad de generación según el tipo
+    const selectTipoCalle = document.getElementById('selectTipoCalle');
+    const campoGeneracionModal = document.getElementById('campoGeneracionModal');
+    const inputProbGenCalle = document.getElementById('inputProbGenCalle');
+
+    // Función para mostrar/ocultar el campo según el tipo
+    function actualizarVisibilidadCampoGeneracion() {
+        const tipoSeleccionado = selectTipoCalle.value;
+        if (tipoSeleccionado === 'GENERADOR') {
+            campoGeneracionModal.style.display = 'block';
+            inputProbGenCalle.required = true;
+        } else {
+            campoGeneracionModal.style.display = 'none';
+            inputProbGenCalle.required = false;
+            inputProbGenCalle.value = '0'; // Resetear a 0 para tipos que no generan
+        }
+    }
+
+    // Ejecutar al cargar para establecer estado inicial
+    actualizarVisibilidadCampoGeneracion();
+
+    // Event listener para cambios en el selector de tipo
+    selectTipoCalle.addEventListener('change', actualizarVisibilidadCampoGeneracion);
+
     // Configurar evento del botón confirmar (solo una vez)
     const btnConfirmar = document.getElementById('btnConfirmarNuevaCalle');
     const nuevoHandler = function() {
-        const nombre = document.getElementById('inputNombreCalle').value;
-        const tamano = parseInt(document.getElementById('inputTamanoCalle').value);
+        // Obtener referencias a los inputs
+        const inputNombre = document.getElementById('inputNombreCalle');
+        const inputTamano = document.getElementById('inputTamanoCalle');
+        const inputCarriles = document.getElementById('inputCarrilesCalle');
+        const inputX = document.getElementById('inputXCalle');
+        const inputY = document.getElementById('inputYCalle');
+        const inputAngulo = document.getElementById('inputAnguloCalle');
+        const inputProbGen = document.getElementById('inputProbGenCalle');
+        const inputProbSalto = document.getElementById('inputProbSaltoCalle');
+
+        // Obtener valores
+        const nombre = inputNombre.value.trim();
+        const tamano = parseInt(inputTamano.value);
         const tipo = document.getElementById('selectTipoCalle').value;
-        const carriles = parseInt(document.getElementById('inputCarrilesCalle').value);
-        const x = parseFloat(document.getElementById('inputXCalle').value);
-        const y = parseFloat(document.getElementById('inputYCalle').value);
-        const angulo = parseFloat(document.getElementById('inputAnguloCalle').value);
-        const probGen = parseFloat(document.getElementById('inputProbGenCalle').value);
-        const probSalto = parseFloat(document.getElementById('inputProbSaltoCalle').value);
+        const carriles = parseInt(inputCarriles.value);
+        const x = parseFloat(inputX.value);
+        const y = parseFloat(inputY.value);
+        const angulo = parseFloat(inputAngulo.value);
+        const probGen = parseFloat(inputProbGen.value);
+        const probSalto = parseFloat(inputProbSalto.value);
 
-        // Validaciones
-        if (!nombre || nombre.trim() === '') {
-            alert("❌ El nombre es obligatorio");
+        // Flag para validación
+        let isValid = true;
+
+        // Validar nombre (solo letras, números, espacios, guiones y puntos)
+        const nombreRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-\.]+$/;
+        if (!nombre || nombre === '') {
+            inputNombre.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'El nombre de la calle es obligatorio.');
+            isValid = false;
+        } else if (!nombreRegex.test(nombre)) {
+            inputNombre.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'El nombre contiene caracteres inválidos. Solo letras, números, espacios, guiones y puntos.');
+            isValid = false;
+        } else {
+            inputNombre.classList.remove('is-invalid');
+        }
+
+        // Validar tamaño (1-2500)
+        if (isNaN(tamano) || tamano < 1 || tamano > 2500) {
+            inputTamano.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'El tamaño debe estar entre 1 y 2500 celdas.');
+            isValid = false;
+        } else {
+            inputTamano.classList.remove('is-invalid');
+        }
+
+        // Validar carriles (1-10)
+        if (isNaN(carriles) || carriles < 1 || carriles > 10) {
+            inputCarriles.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'El número de carriles debe estar entre 1 y 10.');
+            isValid = false;
+        } else {
+            inputCarriles.classList.remove('is-invalid');
+        }
+
+        // Validar posiciones X, Y
+        if (isNaN(x)) {
+            inputX.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'La posición X es inválida.');
+            isValid = false;
+        } else {
+            inputX.classList.remove('is-invalid');
+        }
+
+        if (isNaN(y)) {
+            inputY.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'La posición Y es inválida.');
+            isValid = false;
+        } else {
+            inputY.classList.remove('is-invalid');
+        }
+
+        // Validar ángulo (0-360)
+        if (isNaN(angulo) || angulo < 0 || angulo > 360) {
+            inputAngulo.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'El ángulo debe estar entre 0 y 360 grados.');
+            isValid = false;
+        } else {
+            inputAngulo.classList.remove('is-invalid');
+        }
+
+        // Validar probabilidad de generación (0-100) - SOLO para tipo GENERADOR
+        if (tipo === 'GENERADOR') {
+            if (isNaN(probGen) || probGen < 0 || probGen > 100) {
+                inputProbGen.classList.add('is-invalid');
+                mostrarNotificacion('error', 'Error de Validación', 'La probabilidad de generación debe estar entre 0 y 100.');
+                isValid = false;
+            } else {
+                inputProbGen.classList.remove('is-invalid');
+            }
+        } else {
+            // Para tipos CONEXION y DEVORADOR, establecer probabilidad en 0
+            probGen = 0;
+            inputProbGen.classList.remove('is-invalid');
+        }
+
+        // Validar probabilidad de salto (0-100)
+        if (isNaN(probSalto) || probSalto < 0 || probSalto > 100) {
+            inputProbSalto.classList.add('is-invalid');
+            mostrarNotificacion('error', 'Error de Validación', 'La probabilidad de cambio de carril debe estar entre 0 y 100.');
+            isValid = false;
+        } else {
+            inputProbSalto.classList.remove('is-invalid');
+        }
+
+        // Si hay errores de validación, no continuar
+        if (!isValid) {
             return;
         }
 
-        if (isNaN(tamano) || tamano <= 0) {
-            alert("❌ Tamaño inválido");
-            return;
-        }
-
-        if (isNaN(x) || isNaN(y) || isNaN(angulo) || isNaN(carriles) || isNaN(probGen) || isNaN(probSalto)) {
-            alert("❌ Valores inválidos. Verifica todos los campos numéricos.");
-            return;
-        }
-
-        if (probGen < 0 || probGen > 1 || probSalto < 0 || probSalto > 1) {
-            alert("❌ Las probabilidades deben estar entre 0 y 1");
-            return;
-        }
+        // Convertir probabilidades de porcentaje (0-100) a decimal (0-1)
+        const probGenDecimal = probGen / 100;
+        const probSaltoDecimal = probSalto / 100;
 
         // Agregar calle
-        agregarCalle(nombre, tamano, tipo, x, y, angulo, probGen, carriles, probSalto);
+        agregarCalle(nombre, tamano, tipo, x, y, angulo, probGenDecimal, carriles, probSaltoDecimal);
+
+        // Construir mensaje de notificación
+        let mensajeNotificacion = `La calle "${nombre}" se ha creado exitosamente con:\n` +
+            `• Tamaño: ${tamano} celdas\n` +
+            `• Carriles: ${carriles}\n` +
+            `• Tipo: ${tipo}`;
+
+        // Solo mostrar probabilidad de generación si es tipo GENERADOR
+        if (tipo === 'GENERADOR') {
+            mensajeNotificacion += `\n• Prob. Generación: ${probGen}%`;
+        }
+
+        // Mostrar notificación de éxito
+        mostrarNotificacion('success', 'Calle Creada', mensajeNotificacion);
 
         // Cerrar modal
         modal.hide();
 
-        // Limpiar formulario
-        document.getElementById('inputNombreCalle').value = '';
+        // Limpiar formulario y validaciones
+        inputNombre.value = '';
+        inputNombre.classList.remove('is-invalid');
+        inputTamano.value = '100';
+        inputTamano.classList.remove('is-invalid');
+        inputCarriles.value = '3';
+        inputCarriles.classList.remove('is-invalid');
+        inputX.value = '500';
+        inputX.classList.remove('is-invalid');
+        inputY.value = '500';
+        inputY.classList.remove('is-invalid');
+        inputAngulo.value = '0';
+        inputAngulo.classList.remove('is-invalid');
+        inputProbGen.value = '50';
+        inputProbGen.classList.remove('is-invalid');
+        inputProbSalto.value = '2';
+        inputProbSalto.classList.remove('is-invalid');
 
         // Remover listener
         btnConfirmar.removeEventListener('click', nuevoHandler);
@@ -184,6 +321,126 @@ function mostrarDialogoNuevaCalle() {
 
     btnConfirmar.removeEventListener('click', nuevoHandler);
     btnConfirmar.addEventListener('click', nuevoHandler);
+
+    // ==================== VALIDACIÓN EN TIEMPO REAL ====================
+
+    // Validar nombre en tiempo real
+    const inputNombre = document.getElementById('inputNombreCalle');
+    const nombreRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-\.]+$/;
+    inputNombre.addEventListener('input', function() {
+        const valor = this.value.trim();
+        if (valor === '' || !nombreRegex.test(valor)) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    // Validar tamaño en tiempo real (1-2500)
+    const inputTamano = document.getElementById('inputTamanoCalle');
+    inputTamano.addEventListener('input', function() {
+        const valor = parseInt(this.value);
+        if (isNaN(valor) || valor < 1 || valor > 2500) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    // Validar carriles en tiempo real (1-10)
+    const inputCarriles = document.getElementById('inputCarrilesCalle');
+    inputCarriles.addEventListener('input', function() {
+        const valor = parseInt(this.value);
+        if (isNaN(valor) || valor < 1 || valor > 10) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    // Validar ángulo en tiempo real (0-360)
+    const inputAngulo = document.getElementById('inputAnguloCalle');
+    inputAngulo.addEventListener('input', function() {
+        const valor = parseFloat(this.value);
+        if (isNaN(valor) || valor < 0 || valor > 360) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    // Validar probabilidad de generación en tiempo real (0-100)
+    const inputProbGen = document.getElementById('inputProbGenCalle');
+    inputProbGen.addEventListener('input', function() {
+        const valor = parseFloat(this.value);
+        if (isNaN(valor) || valor < 0 || valor > 100) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    // Validar probabilidad de salto en tiempo real (0-100)
+    const inputProbSalto = document.getElementById('inputProbSaltoCalle');
+    inputProbSalto.addEventListener('input', function() {
+        const valor = parseFloat(this.value);
+        if (isNaN(valor) || valor < 0 || valor > 100) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    // Corrección automática al perder el foco
+    inputTamano.addEventListener('blur', function() {
+        let valor = parseInt(this.value);
+        if (!isNaN(valor)) {
+            if (valor < 1) valor = 1;
+            if (valor > 2500) valor = 2500;
+            this.value = valor;
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    inputCarriles.addEventListener('blur', function() {
+        let valor = parseInt(this.value);
+        if (!isNaN(valor)) {
+            if (valor < 1) valor = 1;
+            if (valor > 10) valor = 10;
+            this.value = valor;
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    inputAngulo.addEventListener('blur', function() {
+        let valor = parseFloat(this.value);
+        if (!isNaN(valor)) {
+            if (valor < 0) valor = 0;
+            if (valor > 360) valor = 360;
+            this.value = valor;
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    inputProbGen.addEventListener('blur', function() {
+        let valor = parseFloat(this.value);
+        if (!isNaN(valor)) {
+            if (valor < 0) valor = 0;
+            if (valor > 100) valor = 100;
+            this.value = Math.round(valor); // Redondear a número entero
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    inputProbSalto.addEventListener('blur', function() {
+        let valor = parseFloat(this.value);
+        if (!isNaN(valor)) {
+            if (valor < 0) valor = 0;
+            if (valor > 100) valor = 100;
+            this.value = Math.round(valor); // Redondear a número entero
+            this.classList.remove('is-invalid');
+        }
+    });
 }
 
 // ==================== AGREGAR CALLE ====================

@@ -146,10 +146,11 @@
 
             <!-- Campos de probabilidad -->
             <div id="calleConfigFields">
-              <div class="mb-3">
+              <!-- Probabilidad de Generación (solo para calles de tipo GENERADOR) -->
+              <div class="mb-3" id="campoGeneracionConfig">
                 <label for="inputProbabilidadGeneracion" class="form-label">
                   Probabilidad de Generación (%)
-                  <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Controla la frecuencia con la que se generan nuevos vehículos en esta calle. 0% = sin vehículos, 100% = generación máxima continua.">
+                  <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Controla la frecuencia con la que se generan nuevos vehículos en esta calle. 0% = sin vehículos, 100% = generación máxima continua. Solo disponible para calles de tipo GENERADOR.">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
                       <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                       <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533z"/>
@@ -161,6 +162,7 @@
                 <div class="invalid-feedback">
                   Por favor ingresa un valor entre 0 y 100.
                 </div>
+                <small class="form-text text-muted">Ejemplo: "47" que sera equivalente a 47%.</small>
               </div>
 
               <div class="mb-3">
@@ -829,11 +831,18 @@
         <div class="modal-body">
           <div class="mb-3">
             <label for="inputNombreCalle" class="form-label">Nombre:</label>
-            <input type="text" class="form-control" id="inputNombreCalle" placeholder="Ej: Calle Principal">
+            <input type="text" class="form-control" id="inputNombreCalle" placeholder="Ej: Calle Principal" required maxlength="100">
+            <div class="invalid-feedback">
+              El nombre debe contener solo caracteres válidos (letras, números, espacios, guiones y puntos).
+            </div>
           </div>
           <div class="mb-3">
             <label for="inputTamanoCalle" class="form-label">Tamaño (celdas):</label>
-            <input type="number" class="form-control" id="inputTamanoCalle" placeholder="100" min="1" value="100">
+            <input type="number" class="form-control" id="inputTamanoCalle" placeholder="100" min="1" max="2500" value="100" required>
+            <div class="invalid-feedback">
+              El tamaño debe estar entre 1 y 2500 celdas.
+            </div>
+            <small class="form-text text-muted">Máximo: 2500 celdas</small>
           </div>
           <div class="mb-3">
             <label for="selectTipoCalle" class="form-label">Tipo:</label>
@@ -845,29 +854,69 @@
           </div>
           <div class="mb-3">
             <label for="inputCarrilesCalle" class="form-label">Número de Carriles:</label>
-            <input type="number" class="form-control" id="inputCarrilesCalle" placeholder="3" min="1" value="3">
+            <input type="number" class="form-control" id="inputCarrilesCalle" placeholder="3" min="1" max="10" value="3" required>
+            <div class="invalid-feedback">
+              El número de carriles debe estar entre 1 y 10.
+            </div>
+            <small class="form-text text-muted">Máximo: 10 carriles</small>
           </div>
           <div class="row">
             <div class="col-md-4 mb-3">
               <label for="inputXCalle" class="form-label">Posición X:</label>
-              <input type="number" class="form-control" id="inputXCalle" placeholder="500" value="500">
+              <input type="number" class="form-control" id="inputXCalle" placeholder="500" value="500" required>
+              <div class="invalid-feedback">
+                Requerido.
+              </div>
             </div>
             <div class="col-md-4 mb-3">
               <label for="inputYCalle" class="form-label">Posición Y:</label>
-              <input type="number" class="form-control" id="inputYCalle" placeholder="500" value="500">
+              <input type="number" class="form-control" id="inputYCalle" placeholder="500" value="500" required>
+              <div class="invalid-feedback">
+                Requerido.
+              </div>
             </div>
             <div class="col-md-4 mb-3">
               <label for="inputAnguloCalle" class="form-label">Ángulo (°):</label>
-              <input type="number" class="form-control" id="inputAnguloCalle" placeholder="0" min="0" max="360" value="0">
+              <input type="number" class="form-control" id="inputAnguloCalle" placeholder="0" min="0" max="360" value="0" required>
+              <div class="invalid-feedback">
+                Debe estar entre 0 y 360°.
+              </div>
             </div>
           </div>
-          <div class="mb-3">
-            <label for="inputProbGenCalle" class="form-label">Probabilidad de Generación (0-1):</label>
-            <input type="number" class="form-control" id="inputProbGenCalle" placeholder="0.5" min="0" max="1" step="0.01" value="0.5">
+          <!-- Probabilidad de Generación (solo para tipo GENERADOR) -->
+          <div class="mb-3" id="campoGeneracionModal">
+            <label for="inputProbGenCalle" class="form-label">
+              Probabilidad de Generación (%)
+              <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Controla la frecuencia con la que se generan nuevos vehículos. 0% = sin vehículos, 100% = generación máxima continua. Solo disponible para calles de tipo GENERADOR.">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533z"/>
+                  <circle cx="8" cy="4.5" r="1"/>
+                </svg>
+              </span>
+            </label>
+            <input type="number" class="form-control" id="inputProbGenCalle" placeholder="50" min="0" max="100" step="1" value="50">
+            <div class="invalid-feedback">
+              La probabilidad debe estar entre 0 y 100.
+            </div>
+            <small class="form-text text-muted">Ejemplo: 50 = 50%, 100 = 100%. Solo disponible para calles de tipo GENERADOR.</small>
           </div>
           <div class="mb-3">
-            <label for="inputProbSaltoCalle" class="form-label">Probabilidad de Cambio de Carril (0-1):</label>
-            <input type="number" class="form-control" id="inputProbSaltoCalle" placeholder="0.02" min="0" max="1" step="0.01" value="0.02">
+            <label for="inputProbSaltoCalle" class="form-label">
+              Probabilidad de Cambio de Carril (%)
+              <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Define la probabilidad de que un vehículo cambie de carril cuando es posible. Valores bajos (0-5%) simulan tráfico ordenado, valores altos (>20%) generan más cambios de carril.">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                  <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533z"/>
+                  <circle cx="8" cy="4.5" r="1"/>
+                </svg>
+              </span>
+            </label>
+            <input type="number" class="form-control" id="inputProbSaltoCalle" placeholder="2" min="0" max="100" step="1" value="2" required>
+            <div class="invalid-feedback">
+              La probabilidad debe estar entre 0 y 100.
+            </div>
+            <small class="form-text text-muted">Ejemplo: 2 = 2%, 10 = 10%</small>
           </div>
         </div>
         <div class="modal-footer">
