@@ -21,7 +21,6 @@ let toggleObstaculo;
 let paintModeIndicatorBloqueo;
 let paintModeIndicatorInundacion;
 let paintModeIndicatorObstaculo;
-let btnClearBloqueos;
 let selectorEmojiObstaculo;
 let canvasEscenarios;
 
@@ -38,12 +37,11 @@ function inicializarEscenarios() {
     paintModeIndicatorBloqueo = document.getElementById('paintModeIndicator');
     paintModeIndicatorInundacion = document.getElementById('paintModeIndicatorInundacion');
     paintModeIndicatorObstaculo = document.getElementById('paintModeIndicatorObstaculo');
-    btnClearBloqueos = document.getElementById('btnClearBloqueos');
     selectorEmojiObstaculo = document.getElementById('selectorEmojiObstaculo');
     canvasEscenarios = document.getElementById('simuladorCanvas');
 
     // Verificar que existen los elementos esenciales
-    if (!toggleBloqueoCarril || !paintModeIndicatorBloqueo || !btnClearBloqueos || !canvasEscenarios) {
+    if (!toggleBloqueoCarril || !paintModeIndicatorBloqueo || !canvasEscenarios) {
         console.error('❌ No se encontraron todos los elementos necesarios para escenarios');
         return;
     }
@@ -92,11 +90,6 @@ function inicializarEscenarios() {
             console.log('🎨 Textura de obstáculo seleccionada:', e.target.value);
         });
     }
-
-    // Event listener para limpiar bloqueos
-    btnClearBloqueos.addEventListener('click', () => {
-        limpiarTodosLosBloqueos();
-    });
 
     console.log('✅ Módulo de escenarios inicializado');
     console.log('ℹ️ Los clicks en el canvas son manejados por CalleRenderer con prioridad al modo bloqueo');
@@ -259,10 +252,248 @@ function importarBloqueos(bloqueosArray) {
     }
 }
 
+// ============================================================
+// SISTEMA DE GUARDADO Y CARGA DE ESCENARIOS
+// ============================================================
+
+/**
+ * Guarda el escenario actual en localStorage
+ * @param {string} nombre - Nombre del escenario
+ * @param {string} descripcion - Descripción opcional
+ * @returns {boolean} - true si se guardó exitosamente
+ */
+function crearEscenarioJSON(nombre, descripcion = '') {
+    if (!nombre || nombre.trim() === '') {
+        console.error('❌ El nombre del escenario es obligatorio');
+        return null;
+    }
+
+    try {
+        // Capturar configuración actual de las calles
+        const callesConfig = window.calles.map(calle => ({
+            id: calle.id || calle.nombre, // ID único de la calle
+            nombre: calle.nombre,
+            tamano: calle.tamano,
+            carriles: calle.carriles
+        }));
+
+        // Capturar todas las celdas bloqueadas
+        const celdasBloqueadasArray = [];
+        estadoEscenarios.celdasBloqueadas.forEach((valor, key) => {
+            const [calleId, carril, indice] = key.split(':');
+
+            // Encontrar la calle correspondiente (buscar por id o nombre)
+            const calle = window.calles.find(c => c.id === calleId || c.nombre === calleId);
+            if (calle) {
+                celdasBloqueadasArray.push({
+                    calleNombre: calle.nombre,
+                    calleId: calle.id || calle.nombre,
+                    carril: parseInt(carril),
+                    indice: parseInt(indice),
+                    tipo: valor.tipo,
+                    texture: valor.texture || null
+                });
+            }
+        });
+
+        // Crear objeto del escenario
+        const escenario = {
+            version: '1.0',
+            id: Date.now().toString(),
+            nombre: nombre.trim(),
+            descripcion: descripcion.trim(),
+            fechaCreacion: new Date().toISOString(),
+            callesConfig: callesConfig,
+            celdasBloqueadas: celdasBloqueadasArray,
+            estadisticas: {
+                totalBloqueos: celdasBloqueadasArray.filter(c => c.tipo === 'bloqueo').length,
+                totalInundaciones: celdasBloqueadasArray.filter(c => c.tipo === 'inundacion').length,
+                totalObstaculos: celdasBloqueadasArray.filter(c => c.tipo === 'obstaculo').length
+            }
+        };
+
+        console.log('✅ Escenario creado exitosamente:', escenario);
+        return escenario;
+
+    } catch (error) {
+        console.error('❌ Error al crear escenario:', error);
+        return null;
+    }
+}
+
+/**
+ * Obtiene todos los escenarios guardados
+ * @returns {Array} - Array de escenarios
+ */
+function obtenerEscenariosGuardados() {
+    try {
+        const data = localStorage.getItem('escenariosGuardados');
+        return data ? JSON.parse(data) : [];
+    } catch (error) {
+        console.error('❌ Error al obtener escenarios guardados:', error);
+        return [];
+    }
+}
+
+/**
+ * Valida si un escenario es compatible con la configuración actual
+ * @param {Object} escenario - Escenario a validar
+ * @returns {Object} - { valido: boolean, errores: Array }
+ */
+function validarEscenario(escenario) {
+    const errores = [];
+
+    // Validar que existan las calles referenciadas
+    escenario.callesConfig.forEach(calleGuardada => {
+        const calleActual = window.calles.find(c =>
+            (c.id && c.id === calleGuardada.id) || c.nombre === calleGuardada.nombre
+        );
+
+        if (!calleActual) {
+            errores.push(`La calle "${calleGuardada.nombre}" no existe en el simulador actual`);
+        } else {
+            // Validar longitud (tamano)
+            if (calleActual.tamano !== calleGuardada.tamano) {
+                errores.push(
+                    `La calle "${calleGuardada.nombre}" tiene una longitud diferente ` +
+                    `(actual: ${calleActual.tamano} celdas, guardada: ${calleGuardada.tamano} celdas)`
+                );
+            }
+
+            // Validar número de carriles
+            if (calleActual.carriles !== calleGuardada.carriles) {
+                errores.push(
+                    `La calle "${calleGuardada.nombre}" tiene un número diferente de carriles ` +
+                    `(actual: ${calleActual.carriles}, guardado: ${calleGuardada.carriles})`
+                );
+            }
+        }
+    });
+
+    return {
+        valido: errores.length === 0,
+        errores: errores
+    };
+}
+
+/**
+ * Carga un escenario desde un objeto JSON
+ * @param {Object} escenario - Objeto del escenario a cargar
+ * @returns {Object} - { exito: boolean, mensaje: string }
+ */
+function cargarEscenarioDesdeJSON(escenario) {
+    try {
+        if (!escenario) {
+            return { exito: false, mensaje: 'Escenario no válido' };
+        }
+
+        // Validar compatibilidad
+        const validacion = validarEscenario(escenario);
+        if (!validacion.valido) {
+            const mensajeError = 'No se puede cargar el escenario:\n\n' +
+                validacion.errores.map(e => `• ${e}`).join('\n');
+            return { exito: false, mensaje: mensajeError };
+        }
+
+        // Limpiar todos los bloqueos actuales
+        limpiarTodosLosBloqueos();
+
+        // Cargar celdas bloqueadas
+        let celdasCargadas = 0;
+        escenario.celdasBloqueadas.forEach(celda => {
+            const calle = window.calles.find(c =>
+                (c.id && c.id === celda.calleId) || c.nombre === celda.calleNombre
+            );
+
+            if (calle && calle.arreglo && calle.arreglo[celda.carril] && calle.arreglo[celda.carril][celda.indice] !== undefined) {
+                // Marcar la celda como bloqueada en el arreglo
+                calle.arreglo[celda.carril][celda.indice] = 7;
+
+                // IMPORTANTE: Usar calle.id (o nombre si no hay id) para la clave
+                const calleId = calle.id || calle.nombre;
+                const key = `${calleId}:${celda.carril}:${celda.indice}`;
+
+                // Registrar en el mapa de celdas bloqueadas con metadata completa
+                estadoEscenarios.celdasBloqueadas.set(key, {
+                    tipo: celda.tipo,
+                    texture: celda.texture
+                });
+
+                console.log(`✓ Celda cargada: ${key} - Tipo: ${celda.tipo}, Textura: ${celda.texture}`);
+                celdasCargadas++;
+            } else {
+                console.warn(`⚠️ No se pudo cargar celda en ${celda.calleNombre}[${celda.carril}][${celda.indice}]`);
+            }
+        });
+
+        // Guardar el escenario actualmente cargado
+        window.escenarioActualCargado = {
+            id: escenario.id,
+            nombre: escenario.nombre,
+            fechaCarga: new Date().toISOString()
+        };
+
+        // Forzar actualización del renderizado visual
+        if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+            console.log('🎨 Actualizando renderizado PixiJS...');
+
+            // Forzar actualización del CarroRenderer para mostrar los obstáculos
+            if (window.pixiApp.sceneManager.carroRenderer) {
+                window.pixiApp.sceneManager.carroRenderer.updateAll(window.calles);
+            }
+        }
+
+        // Renderizar el canvas (para modo Canvas 2D)
+        if (window.renderizarCanvas) {
+            window.renderizarCanvas();
+        }
+
+        console.log(`✅ Escenario "${escenario.nombre}" cargado exitosamente. Celdas cargadas: ${celdasCargadas}`);
+        return {
+            exito: true,
+            mensaje: `Escenario cargado exitosamente\n${celdasCargadas} celdas aplicadas`,
+            escenario: escenario
+        };
+
+    } catch (error) {
+        console.error('❌ Error al cargar escenario:', error);
+        return { exito: false, mensaje: 'Error al cargar el escenario: ' + error.message };
+    }
+}
+
+/**
+ * Elimina un escenario guardado
+ * @param {string} escenarioId - ID del escenario a eliminar
+ * @returns {boolean} - true si se eliminó exitosamente
+ */
+function eliminarEscenario(escenarioId) {
+    try {
+        let escenarios = obtenerEscenariosGuardados();
+        const indiceAntes = escenarios.length;
+
+        escenarios = escenarios.filter(e => e.id !== escenarioId);
+
+        if (escenarios.length === indiceAntes) {
+            return false; // No se encontró el escenario
+        }
+
+        localStorage.setItem('escenariosGuardados', JSON.stringify(escenarios));
+        console.log('✅ Escenario eliminado exitosamente');
+        return true;
+
+    } catch (error) {
+        console.error('❌ Error al eliminar escenario:', error);
+        return false;
+    }
+}
+
 // Exponer funciones globalmente
 window.inicializarEscenarios = inicializarEscenarios;
 window.exportarBloqueos = exportarBloqueos;
 window.importarBloqueos = importarBloqueos;
 window.estadoEscenarios = estadoEscenarios;
+window.crearEscenarioJSON = crearEscenarioJSON;
+window.validarEscenario = validarEscenario;
+window.cargarEscenarioDesdeJSON = cargarEscenarioDesdeJSON;
 
 console.log('✅ escenarios.js cargado');

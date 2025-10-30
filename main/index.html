@@ -228,9 +228,6 @@
                     ✏️ Modo Pintado Activo
                   </div>
                   <p class="small text-muted mb-2">Haz clic o arrastra sobre las celdas de la calle para bloquearlas</p>
-                  <button id="btnClearBloqueos" class="btn btn-sm btn-outline-danger w-100" data-bs-toggle="tooltip" data-bs-title="Eliminar todos los bloqueos de carriles">
-                    🗑️ Limpiar Bloqueos
-                  </button>
                 </div>
               </div>
             </div>
@@ -289,8 +286,46 @@
               </div>
             </div>
 
+            <!-- Gestión de Escenarios -->
+            <hr class="mt-4 mb-3">
+            <div class="mb-3">
+              <h6 class="mb-3 d-flex align-items-center">
+                💾 Gestión de Escenarios
+                <span class="info-icon ms-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Guarda y carga configuraciones completas de obstáculos, inundaciones y bloqueos.">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                    <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533z"/>
+                    <circle cx="8" cy="4.5" r="1"/>
+                  </svg>
+                </span>
+              </h6>
+
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <button type="button" class="btn btn-success w-100" id="btnGuardarEscenario" data-bs-toggle="tooltip" data-bs-title="Guardar la configuración actual de obstáculos">
+                    <i class="bi bi-save"></i> 💾 Guardar
+                  </button>
+                </div>
+                <div class="col-6">
+                  <button type="button" class="btn btn-primary w-100" id="btnCargarEscenario" data-bs-toggle="tooltip" data-bs-title="Cargar un escenario guardado previamente">
+                    <i class="bi bi-folder-open"></i> 📂 Cargar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Escenario actual cargado -->
+              <div id="escenarioActualInfo" class="alert alert-success p-2 small mb-2" style="display: none;">
+                <strong>✓ Escenario activo:</strong> <span id="escenarioActualNombre">Ninguno</span><br>
+                <small class="text-muted">Guardado: <span id="escenarioActualFecha">-</span></small>
+              </div>
+
+              <p class="text-muted small mb-0">
+                <strong>ℹ️ Nota:</strong> Los escenarios incluyen todos los obstáculos, inundaciones y bloqueos configurados.
+              </p>
+            </div>
+
             <div class="alert alert-info p-2 small mt-3 mb-0">
-              <strong>💡 Tip:</strong> Las celdas bloqueadas se marcan con valor <code>7</code> y los vehículos no podrán atravesarlas.
+              <strong>💡 Toma en cuenta que:</strong> Los vehículos no podrán atravesar las celdas bloqueadas.
             </div>
 
             <!-- Control de Fecha y Hora del Simulador -->
@@ -1644,6 +1679,7 @@
   <script src="src/js/ui/etiquetas.js"></script>
   <script src="src/js/core/ClickActionManager.js"></script>
   <script src="src/js/core/escenarios.js"></script>
+  <script src="src/js/ui/gestionEscenarios.js"></script>
   <script src="src/js/core/tiempo.js"></script>
   <script src="src/js/core/trafico.js"></script>
   <script src="src/js/core/graficas.js"></script>
@@ -1690,6 +1726,91 @@
   <!-- Contenedor de Toasts para notificaciones -->
   <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 11000;">
     <!-- Los toasts se insertarán dinámicamente aquí -->
+  </div>
+
+  <!-- Modal: Guardar Escenario -->
+  <div class="modal fade" id="modalGuardarEscenario" tabindex="-1" aria-labelledby="modalGuardarEscenarioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="modalGuardarEscenarioLabel">💾 Guardar Escenario</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="inputNombreEscenario" class="form-label">Nombre del Escenario:</label>
+            <input type="text" class="form-control" id="inputNombreEscenario" placeholder="Ej: Tráfico Pesado Día Lluvioso" required maxlength="50">
+            <div class="invalid-feedback">
+              El nombre es obligatorio (máximo 50 caracteres).
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="inputDescripcionEscenario" class="form-label">Descripción (opcional):</label>
+            <textarea class="form-control" id="inputDescripcionEscenario" rows="3" placeholder="Describe brevemente este escenario..." maxlength="200"></textarea>
+            <small class="form-text text-muted">Máximo 200 caracteres</small>
+          </div>
+          <div class="alert alert-info p-2 small mb-0">
+            <strong>ℹ️ Se guardará:</strong>
+            <ul class="mb-0 mt-1">
+              <li>Todos los obstáculos (baches, construcciones, árboles)</li>
+              <li>Todas las áreas inundadas</li>
+              <li>Todos los bloqueos de carril</li>
+              <li>Configuración de cada calle afectada</li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" id="btnConfirmarGuardarEscenario">💾 Guardar Escenario</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Cargar Escenario -->
+  <div class="modal fade" id="modalCargarEscenario" tabindex="-1" aria-labelledby="modalCargarEscenarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="modalCargarEscenarioLabel">📂 Cargar Escenario</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-3">Selecciona un escenario guardado para cargarlo. <strong>Nota:</strong> Se eliminarán todos los obstáculos actuales antes de cargar.</p>
+
+          <!-- Botón para cargar desde archivo JSON -->
+          <div class="mb-3">
+            <label for="inputCargarJSON" class="btn btn-outline-success w-100">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload me-2" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
+              </svg>
+              📤 Subir Archivo JSON
+            </label>
+            <input type="file" id="inputCargarJSON" class="d-none" accept=".json" onchange="cargarDesdeArchivoJSON(event)">
+            <small class="form-text text-muted d-block mt-1">
+              Carga un escenario desde un archivo .json previamente descargado
+            </small>
+          </div>
+
+          <hr>
+
+          <h6 class="mb-2">Escenarios en el navegador:</h6>
+
+          <div id="listaEscenariosGuardados" class="list-group">
+            <!-- Los escenarios se cargarán dinámicamente aquí -->
+          </div>
+
+          <div id="noEscenariosMessage" class="alert alert-warning text-center" style="display: none;">
+            <strong>⚠️ No hay escenarios guardados</strong><br>
+            <small>Guarda un escenario primero usando el botón "Guardar" o sube un archivo JSON</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
   </div>
 
 </body>

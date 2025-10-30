@@ -639,6 +639,7 @@ selectCalle.addEventListener("change", () => {
 // Función para crear una calle con posición, ángulo y tamaño
 function crearCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion, carriles = 1, probabilidadSaltoDeCarril = 0.05) {
     let calle = {
+        id: nombre, // ID único basado en el nombre
         nombre: nombre,
         tamano: tamano,
         tipo: tipo,

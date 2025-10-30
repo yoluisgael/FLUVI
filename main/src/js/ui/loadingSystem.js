@@ -87,6 +87,12 @@
           inicializarEscenarios();
         }
 
+        // Inicializar gestión de escenarios
+        if (typeof inicializarGestionEscenarios !== 'undefined') {
+          updateLoadingStatus('Inicializando gestión de escenarios...');
+          inicializarGestionEscenarios();
+        }
+
         hideLoadingScreen();
       } else {
         // Esperar un poco más si no está listo
