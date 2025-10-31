@@ -765,14 +765,14 @@
             <div class="col-md-6 mb-4">
               <div class="card border-info">
                 <div class="card-body">
-                  <h5 class="card-title text-info">🌊 Modo Curva</h5>
+                  <h5 class="card-title text-info">🌊 Calles Curvas</h5>
                   <ul class="list-unstyled">
                     <li>1. Selecciona una calle</li>
-                    <li>2. Activa "Mostrar Conexiones"</li>
-                    <li>3. Haz clic en "Activar Curvas"</li>
-                    <li>4. Arrastra vértices perpendicular a la calle</li>
-                    <li>5. Curva máxima: ±30°</li>
-                    <li>6. Usa "Resetear" para restaurar</li>
+                    <li>2. Activa "Modo Edición"</li>
+                    <li>3. Haz clic en "Editar Vértices"</li>
+                    <li>4. Arrastra vértices para crear curvas</li>
+                    <li>5. Ángulo máximo: ±40° por celda</li>
+                    <li>6. Usa "Resetear Vértices" para restaurar</li>
                   </ul>
                 </div>
               </div>
@@ -781,26 +781,13 @@
             <div class="col-md-6 mb-4">
               <div class="card border-info">
                 <div class="card-body">
-                  <h5 class="card-title text-info">⏸️ Simulación</h5>
+                  <h5 class="card-title text-info">⏸️ Control de Simulación</h5>
                   <ul class="list-unstyled">
-                    <li><strong>Pause/Resume:</strong> Detener/continuar</li>
-                    <li><strong>Paso:</strong> Avanzar frame por frame</li>
-                    <li><strong>Velocidad:</strong> Slider de velocidad</li>
-                    <li><strong>Generación:</strong> % global de vehículos</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6 mb-4">
-              <div class="card border-danger">
-                <div class="card-body">
-                  <h5 class="card-title text-danger">🚦 Intersecciones</h5>
-                  <p>Las intersecciones detectan colisiones entre calles. Al activar la visualización verás:</p>
-                  <ul class="list-unstyled">
-                    <li>🟣 <strong>Círculos morados:</strong> Puntos de intersección</li>
-                    <li>🚗 Sistema de prioridad alternada</li>
-                    <li>⏱️ Los vehículos esperan su turno</li>
+                    <li><strong>Pause/Resume:</strong> Detener/continuar simulación</li>
+                    <li><strong>Paso a Paso:</strong> Avanzar frame por frame</li>
+                    <li><strong>Velocidad:</strong> Ajustar frames por segundo</li>
+                    <li><strong>Generación:</strong> % de aparición de vehículos</li>
+                    <li><strong>Hora/Fecha:</strong> Control de tiempo simulado</li>
                   </ul>
                 </div>
               </div>
@@ -831,6 +818,37 @@
                     <li><strong>Modo edición:</strong> Arrastra y rota objetos visualmente</li>
                     <li><strong>Conexiones:</strong> Conecta calles para crear flujo de tráfico</li>
                     <li><strong>Guardar/Cargar:</strong> Exporta e importa simulaciones como JSON</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="card border-warning">
+                <div class="card-body">
+                  <h5 class="card-title text-warning">🅿️ Estacionamientos</h5>
+                  <ul class="list-unstyled">
+                    <li><strong>Configuración:</strong> Marca edificio como estacionamiento</li>
+                    <li><strong>Capacidad:</strong> Define máximo de vehículos</li>
+                    <li><strong>Conexiones:</strong> Pares de entrada/salida en calles</li>
+                    <li><strong>Probabilidades:</strong> Ajusta entrada/salida por cada hora (0-100%)</li>
+                    <li><strong>Perfiles:</strong> Normal, Oficina, Centro Comercial</li>
+                    <li><strong>Validación:</strong> Previene configuraciones inválidas</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="card border-primary">
+                <div class="card-body">
+                  <h5 class="card-title text-primary">💾 Gestión de Escenarios</h5>
+                  <ul class="list-unstyled">
+                    <li><strong>Guardar:</strong> Exporta configuración completa como JSON</li>
+                    <li><strong>Cargar:</strong> Importa escenarios previamente guardados</li>
+                    <li><strong>Incluye:</strong> Calles, edificios, estacionamientos</li>
+                    <li><strong>Conexiones:</strong> Mantiene todas las conexiones entre calles</li>
+                    <li><strong>Probabilidades:</strong> Preserva configuraciones horarias</li>
                   </ul>
                 </div>
               </div>
@@ -1679,7 +1697,6 @@
           <div class="btn-group" role="group">
             <button id="btnConexiones" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las conexiones entre calles en el canvas">🔗</button>
             <button id="btnVertices" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los vértices de las calles para edición">📍</button>
-            <button id="btnIntersecciones" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los puntos de intersección entre calles">✖️</button>
             <button id="btnEtiquetas" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las etiquetas con nombres de calles y edificios">🏷️</button>
             <button id="btnContadores" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar contadores de ocupación de estacionamientos">🔢</button>
           </div>

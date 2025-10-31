@@ -138,6 +138,7 @@ FLUVI/
 │       │   │   ├── tiempo.js              # Sistema de tiempo virtual (día/hora)
 │       │   │   ├── graficas.js            # Sistema de métricas (densidad, flujo, velocidad)
 │       │   │   ├── curvas.js              # Sistema de curvas y vértices en calles
+│       │   │   ├── estacionamientos.js    # Sistema de estacionamientos inteligentes
 │       │   │   └── ClickActionManager.js  # Gestor de clicks e interacciones
 │       │   ├── renderer/                  # Sistema de renderizado con PixiJS
 │       │   │   ├── PixiApp.js             # Aplicación principal de PixiJS (Singleton)
@@ -166,6 +167,7 @@ FLUVI/
 │       │       ├── timeControl.js         # Control de fecha y hora del simulador
 │       │       ├── editor.js              # Editor visual de calles
 │       │       ├── constructor.js         # Constructor de mapas
+│       │       ├── edificioUI.js          # Interfaz de configuración de estacionamientos
 │       │       └── etiquetas.js           # Sistema de etiquetas
 │       └── css/                           # Hojas de estilo
 │           ├── estilos.css                # Estilos principales
@@ -184,11 +186,12 @@ FLUVI/
 ### Simulación de Tráfico
 - **Autómatas Celulares**: Implementación de Regla 184 modificada
 - **Multi-carril**: Soporte para múltiples carriles con cambios de carril dinámicos
-- **Intersecciones**: Detección y resolución de colisiones con sistema de prioridad
-- **Conexiones**: Tres tipos de conexiones (lineal, incorporación, probabilística)
+- **Conexiones**: Tres tipos de conexiones (lineal, incorporación, probabilística) entre calles
 - **Sistema de Tiempo Virtual**: Simulación de días de la semana y horarios con avance dinámico
 - **Multiplicador de Tráfico Dinámico**: Generación de vehículos que varía según día y hora (horas pico, valle, etc.)
 - **Control Manual de Fecha/Hora**: Capacidad de modificar el tiempo simulado en cualquier momento
+- **Estacionamientos Inteligentes**: Sistema de entrada/salida de vehículos con probabilidades configurables por hora
+- **Gestión de Escenarios**: Guarda y carga configuraciones completas de simulación
 
 ### Interfaz de Usuario
 - **Editor Visual**: Arrastra y rota calles con handles interactivos
@@ -209,6 +212,60 @@ FLUVI/
 - **Exportar/Importar**: Guarda y carga simulaciones en formato JSON
 - **Renderizado por Capas**: Sistema de z-index para orden correcto de visualización
 - **Cámara Interactiva**: Zoom con scroll y pan arrastrando el canvas
+
+## Estacionamientos Inteligentes
+
+El sistema permite convertir edificios en estacionamientos funcionales que interactúan con el flujo vehicular.
+
+### Configuración de Estacionamientos
+
+**Parámetros básicos:**
+- **Capacidad**: Número máximo de vehículos que puede almacenar el estacionamiento
+- **Conexiones de Entrada**: Celdas específicas en las calles donde los vehículos pueden entrar
+- **Conexiones de Salida**: Celdas donde se generan vehículos que salen del estacionamiento
+
+**Probabilidades por Hora:**
+- **Probabilidad de Entrada** (0-100%): Porcentaje de vehículos que deciden entrar al pasar por una celda de entrada
+- **Probabilidad de Salida** (0-100%): Porcentaje de probabilidad de que salga un vehículo del estacionamiento cada frame
+- Configurables para cada una de las 24 horas del día
+- Perfiles predefinidos: Normal, Oficina, Centro Comercial
+
+### Comportamiento del Sistema
+
+**Entrada de Vehículos:**
+- Los vehículos que llegan a una celda de entrada son evaluados según la probabilidad configurada para esa hora
+- Si aceptan entrar, desaparecen del tráfico y el contador del estacionamiento aumenta
+- Si rechazan, continúan su trayecto normalmente
+- Sistema de absorción anticipada: detecta vehículos antes de que lleguen a la entrada
+
+**Salida de Vehículos:**
+- Los vehículos se generan en las celdas de salida según la probabilidad horaria
+- Solo se genera un vehículo si la celda de salida y la celda anterior están vacías (evita colisiones)
+- El tipo de vehículo generado es aleatorio (1-6)
+- El contador del estacionamiento disminuye al generar cada vehículo
+
+**Validaciones:**
+- No se pueden crear entradas y salidas en la misma celda
+- Se valida que las celdas estén dentro de los límites de la calle (carriles y posiciones válidas)
+- El estacionamiento no permite entradas si está lleno
+- No genera salidas si está vacío
+
+### Gestión de Escenarios
+
+El sistema permite guardar y cargar configuraciones completas de simulación que incluyen:
+
+**Información Guardada:**
+- Todas las calles con sus posiciones, ángulos, carriles y vértices (curvas)
+- Todos los edificios con sus propiedades visuales
+- Configuración completa de estacionamientos (capacidad, conexiones, probabilidades)
+- Conexiones entre calles
+- Parámetros de simulación (probabilidades de generación, cambio de carril)
+
+**Funcionalidades:**
+- **Guardar Escenario**: Exporta la configuración actual como archivo JSON
+- **Cargar Escenario**: Importa una configuración previamente guardada
+- Los estacionamientos mantienen sus probabilidades por hora al guardar/cargar
+- Permite crear bibliotecas de escenarios de prueba
 
 ## Barra de Información (Info Bar)
 
@@ -414,7 +471,7 @@ p_i = (cantidad de veces que se usó la regla i) / (total de celdas)
 ### Simulación
 - **Autómatas Celulares**: Motor de simulación basado en Regla 184 modificada
 - **Sistema Multi-carril**: Lógica de cambio de carril y prioridades
-- **Detección de Colisiones**: Sistema de intersecciones y resolución
+- **Gestión de Conexiones**: Sistema de conexiones entre calles con prioridades
 
 ## Arquitectura Técnica
 
@@ -476,7 +533,7 @@ El proyecto utiliza una arquitectura modular con scripts separados por responsab
 ### Sistema de Capas (Z-Index)
 
 ```
-Layer Debug (z: 40)      → Vértices, intersecciones (modo debug)
+Layer Debug (z: 40)      → Vértices, elementos de depuración
 Layer UI (z: 30)         → Etiquetas, handles de edición
 Layer Buildings (z: 25)  → Edificios
 Layer Vehicles (z: 20)   → Vehículos (animados)
