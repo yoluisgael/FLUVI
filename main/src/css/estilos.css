@@ -284,16 +284,45 @@ body {
 #controlBar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: nowrap; /* Por defecto, NO wrappear */
   white-space: nowrap;
 }
 
 /* Control bar: permitir wrap solo en pantallas pequeñas */
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
   #controlBar {
     flex-wrap: wrap; /* Permitir wrap en pantallas pequeñas */
     justify-content: center;
+    gap: 4px;
+  }
+
+  /* Reducir padding del contenedor en pantallas pequeñas */
+  #canvasControlBar {
+    padding: 10px 15px;
+  }
+
+  /* Reducir ancho de los sliders */
+  #controlBar input[type="range"] {
+    width: 70px !important;
+  }
+
+  /* Reducir tamaño de badges */
+  #controlBar .badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  /* Reducir tamaño de labels */
+  #controlBar .form-label {
+    font-size: 0.75rem;
+  }
+
+  /* Reducir espacio de botones */
+  #controlBar .btn {
+    margin: 0 2px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
   }
 }
 

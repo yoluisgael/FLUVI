@@ -297,6 +297,36 @@ function togglePerfiles(usar) {
     configuracionTiempo.usarPerfiles = usar;
     multiplicadorCache.ultimaDia = -1; // Invalidar cache
     console.log(`⏰ Perfiles de tráfico: ${usar ? 'ACTIVADOS' : 'DESACTIVADOS'}`);
+
+    // Controlar el estado del slider de generación
+    const probabilidadSlider = document.getElementById('probabilidadSlider');
+    const probabilidadValor = document.getElementById('probabilidadValor');
+
+    if (probabilidadSlider && probabilidadValor) {
+        if (usar) {
+            // Perfiles ACTIVADOS -> Deshabilitar slider
+            probabilidadSlider.disabled = true;
+            probabilidadValor.classList.remove('bg-primary');
+            probabilidadValor.classList.add('bg-secondary');
+            console.log('🔒 Slider de generación deshabilitado (usando perfiles dinámicos)');
+        } else {
+            // Perfiles DESACTIVADOS -> Habilitar slider
+            probabilidadSlider.disabled = false;
+            probabilidadValor.classList.remove('bg-secondary');
+            probabilidadValor.classList.add('bg-primary');
+
+            // Aplicar la probabilidad global a todos los generadores
+            if (window.calles && window.probabilidadGeneracionGeneral !== undefined) {
+                window.calles.forEach(calle => {
+                    if (calle.tipo === 'generador') {
+                        calle.probabilidadGeneracion = window.probabilidadGeneracionGeneral;
+                    }
+                });
+                console.log(`✅ Probabilidad global aplicada: ${(window.probabilidadGeneracionGeneral * 100).toFixed(0)}%`);
+            }
+            console.log('🔓 Slider de generación habilitado (control manual)');
+        }
+    }
 }
 
 /**

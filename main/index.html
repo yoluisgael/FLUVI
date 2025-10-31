@@ -1628,19 +1628,19 @@
           <!-- Controles de velocidad -->
           <div class="d-flex align-items-center gap-1">
             <label for="velocidadSlider" class="form-label mb-0 small">Velocidad:</label>
-            <input type="range" class="form-range" id="velocidadSlider" min="1" max="100" step="1" style="width: 80px;">
+            <input type="range" class="form-range" id="velocidadSlider" min="1" max="100" step="1" style="width: 80px;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Controla la velocidad de la simulación (cuántos ciclos por segundo)">
             <span id="velocidadValor" class="badge bg-primary">10</span>
           </div>
 
           <!-- Controles de generación -->
           <div class="d-flex align-items-center gap-1">
             <label for="probabilidadSlider" class="form-label mb-0 small">Generación:</label>
-            <input type="range" class="form-range" id="probabilidadSlider" min="0" max="100" step="1" style="width: 80px;">
-            <span id="probabilidadValor" class="badge bg-primary">10</span>
+            <input type="range" class="form-range" id="probabilidadSlider" min="0" max="100" step="1" style="width: 80px;" disabled data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Controla la probabilidad de generación de vehículos en todos los arreglos tipo GENERADOR (solo activo cuando Perfiles está desactivado)">
+            <span id="probabilidadValor" class="badge bg-secondary">10</span>
           </div>
 
           <!-- Toggle de perfiles dinámicos -->
-          <div class="form-check form-switch">
+          <div class="form-check form-switch flex-shrink-0">
             <input class="form-check-input" type="checkbox" id="togglePerfilesDinamicos" checked onchange="togglePerfiles(this.checked)" data-bs-toggle="tooltip" data-bs-title="Activar/desactivar perfiles dinámicos de tráfico según día y hora">
             <label class="form-check-label small" for="togglePerfilesDinamicos">Perfiles</label>
           </div>
