@@ -2890,11 +2890,19 @@ function iniciarSimulacion() {
 
     function animate(tiempoActual) {
         if (!tiempoAnterior) tiempoAnterior = tiempoActual;
-        const tiempoTranscurrido = tiempoActual - tiempoAnterior;
-        if (tiempoTranscurrido >= intervaloDeseado) {
-            paso();
+
+        // 🔧 FIX: Solo ejecutar paso() si NO está pausado
+        if (!isPaused) {
+            const tiempoTranscurrido = tiempoActual - tiempoAnterior;
+            if (tiempoTranscurrido >= intervaloDeseado) {
+                paso();
+                tiempoAnterior = tiempoActual;
+            }
+        } else {
+            // Si está pausado, actualizar tiempoAnterior para evitar saltos temporales
             tiempoAnterior = tiempoActual;
         }
+
         animationId = requestAnimationFrame(animate);
     }
 
@@ -2904,14 +2912,16 @@ function iniciarSimulacion() {
         btnPauseResume.addEventListener('click', () => {
             isPaused = !isPaused;
             if (isPaused) {
-                cancelAnimationFrame(animationId);
+                // No cancelar animationFrame - dejar que siga corriendo pero sin ejecutar paso()
                 btnPauseResume.textContent = '▶️';
                 btnPaso.disabled = false;
+                console.log('⏸️ Simulación pausada');
             } else {
+                // Resetear tiempoAnterior para evitar saltos temporales al reanudar
                 tiempoAnterior = performance.now();
-                animationId = requestAnimationFrame(animate);
                 btnPauseResume.textContent = '⏸';
                 btnPaso.disabled = true;
+                console.log('▶️ Simulación reanudada');
             }
         });
     }

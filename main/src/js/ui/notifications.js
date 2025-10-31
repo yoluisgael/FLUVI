@@ -111,6 +111,35 @@ function mostrarInfo(titulo, mensaje, duracion) {
     mostrarNotificacion('info', titulo, mensaje, duracion);
 }
 
+/**
+ * Sobrescribir alert() nativo para usar toasts Bootstrap
+ * Mantiene una referencia al alert() original por si se necesita
+ */
+window.alertOriginal = window.alert;
+
+window.alert = function(mensaje) {
+    // Determinar el tipo de notificación basado en el mensaje
+    let tipo = 'info';
+    let titulo = 'Notificación';
+
+    if (mensaje.includes('✅') || mensaje.includes('exitosa') || mensaje.includes('exitosamente') || mensaje.includes('guardad')) {
+        tipo = 'success';
+        titulo = 'Éxito';
+    } else if (mensaje.includes('❌') || mensaje.includes('Error') || mensaje.includes('error')) {
+        tipo = 'error';
+        titulo = 'Error';
+    } else if (mensaje.includes('⚠️') || mensaje.includes('Advertencia') || mensaje.includes('advertencia')) {
+        tipo = 'warning';
+        titulo = 'Advertencia';
+    }
+
+    // Limpiar emojis del título si ya están en el mensaje
+    const mensajeLimpio = mensaje.replace(/^(✅|❌|⚠️|ℹ️)\s*/, '');
+
+    // Mostrar como toast
+    mostrarNotificacion(tipo, titulo, mensajeLimpio, 5000);
+};
+
 // Exponer funciones globalmente
 window.mostrarNotificacion = mostrarNotificacion;
 window.mostrarExito = mostrarExito;
@@ -118,4 +147,4 @@ window.mostrarError = mostrarError;
 window.mostrarAdvertencia = mostrarAdvertencia;
 window.mostrarInfo = mostrarInfo;
 
-console.log('✅ Sistema de notificaciones cargado');
+console.log('✅ Sistema de notificaciones cargado (alert() sobrescrito con toasts Bootstrap)');

@@ -14,6 +14,46 @@ const estadoEscenarios = {
     celdasBloqueadas: new Map() // key: "calleId:carril:indice", value: { tipo: string, texture?: string }
 };
 
+/**
+ * Muestra una alerta Bootstrap temporal
+ * @param {string} mensaje - Mensaje a mostrar
+ * @param {string} tipo - Tipo de alerta: 'warning', 'danger', 'info', 'success'
+ * @param {number} duracion - Duración en ms (por defecto 4000)
+ */
+function mostrarAlertaBootstrap(mensaje, tipo = 'warning', duracion = 4000) {
+    // Crear contenedor si no existe
+    let contenedor = document.getElementById('alertContainer');
+    if (!contenedor) {
+        contenedor = document.createElement('div');
+        contenedor.id = 'alertContainer';
+        contenedor.style.position = 'fixed';
+        contenedor.style.top = '20px';
+        contenedor.style.right = '20px';
+        contenedor.style.zIndex = '9999';
+        contenedor.style.maxWidth = '400px';
+        document.body.appendChild(contenedor);
+    }
+
+    // Crear alerta
+    const alerta = document.createElement('div');
+    alerta.className = `alert alert-${tipo} alert-dismissible fade show`;
+    alerta.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+    alerta.setAttribute('role', 'alert');
+
+    alerta.innerHTML = `
+        <strong>⚠️</strong> ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+
+    contenedor.appendChild(alerta);
+
+    // Auto-cerrar después de la duración especificada
+    setTimeout(() => {
+        alerta.classList.remove('show');
+        setTimeout(() => alerta.remove(), 150);
+    }, duracion);
+}
+
 // Referencias a elementos del DOM
 let toggleBloqueoCarril;
 let toggleInundacion;
@@ -49,6 +89,18 @@ function inicializarEscenarios() {
     // Event listener para el toggle de bloqueo de carril
     toggleBloqueoCarril.addEventListener('change', (e) => {
         if (e.target.checked) {
+            // Verificar si hay otro modo activo
+            if (estadoEscenarios.tipoEscenarioActivo) {
+                e.preventDefault();
+                toggleBloqueoCarril.checked = false;
+                const modoActual = estadoEscenarios.tipoEscenarioActivo === 'inundacion' ? 'Inundación' : 'Obstáculo';
+                mostrarAlertaBootstrap(
+                    `Ya tienes el modo "<strong>${modoActual}</strong>" activo.<br>Debes desactivarlo primero antes de activar otro modo de escenario.`,
+                    'warning',
+                    5000
+                );
+                return;
+            }
             activarEscenario('bloqueo');
         } else {
             desactivarEscenario();
@@ -59,6 +111,18 @@ function inicializarEscenarios() {
     if (toggleInundacion) {
         toggleInundacion.addEventListener('change', (e) => {
             if (e.target.checked) {
+                // Verificar si hay otro modo activo
+                if (estadoEscenarios.tipoEscenarioActivo) {
+                    e.preventDefault();
+                    toggleInundacion.checked = false;
+                    const modoActual = estadoEscenarios.tipoEscenarioActivo === 'bloqueo' ? 'Bloqueo de Carril' : 'Obstáculo';
+                    mostrarAlertaBootstrap(
+                        `Ya tienes el modo "<strong>${modoActual}</strong>" activo.<br>Debes desactivarlo primero antes de activar otro modo de escenario.`,
+                        'warning',
+                        5000
+                    );
+                    return;
+                }
                 activarEscenario('inundacion');
             } else {
                 desactivarEscenario();
@@ -70,6 +134,18 @@ function inicializarEscenarios() {
     if (toggleObstaculo) {
         toggleObstaculo.addEventListener('change', (e) => {
             if (e.target.checked) {
+                // Verificar si hay otro modo activo
+                if (estadoEscenarios.tipoEscenarioActivo) {
+                    e.preventDefault();
+                    toggleObstaculo.checked = false;
+                    const modoActual = estadoEscenarios.tipoEscenarioActivo === 'bloqueo' ? 'Bloqueo de Carril' : 'Inundación';
+                    mostrarAlertaBootstrap(
+                        `Ya tienes el modo "<strong>${modoActual}</strong>" activo.<br>Debes desactivarlo primero antes de activar otro modo de escenario.`,
+                        'warning',
+                        5000
+                    );
+                    return;
+                }
                 activarEscenario('obstaculo');
                 // Mostrar selector de emoji
                 const container = document.getElementById('selectorObstaculoContainer');
@@ -105,11 +181,6 @@ function activarEscenario(tipo) {
         console.log('✅ Modo Edición desactivado para activar escenario');
     }
 
-    // Desactivar otros toggles
-    if (tipo !== 'bloqueo' && toggleBloqueoCarril) toggleBloqueoCarril.checked = false;
-    if (tipo !== 'inundacion' && toggleInundacion) toggleInundacion.checked = false;
-    if (tipo !== 'obstaculo' && toggleObstaculo) toggleObstaculo.checked = false;
-
     estadoEscenarios.modoBloqueoActivo = true;
     estadoEscenarios.tipoEscenarioActivo = tipo;
 
@@ -132,6 +203,9 @@ function desactivarEscenario() {
  * Activa o desactiva el modo bloqueo
  */
 function toggleModoBloqueo(activar, tipo = 'bloqueo') {
+    const btnPauseResume = document.getElementById('btnPauseResume');
+    const btnPaso = document.getElementById('btnPaso');
+
     if (activar) {
         console.log(`🚧 Modo ${tipo} ACTIVADO`);
 
@@ -145,15 +219,24 @@ function toggleModoBloqueo(activar, tipo = 'bloqueo') {
             paintModeIndicatorBloqueo.style.display = 'block';
         } else if (tipo === 'inundacion' && paintModeIndicatorInundacion) {
             paintModeIndicatorInundacion.style.display = 'block';
+
+            // 🌧️ ACTIVAR EFECTO DE LLUVIA para modo inundación
+            if (window.pixiApp && window.RainEffect) {
+                if (!window.pixiApp.rainEffect) {
+                    window.pixiApp.rainEffect = new window.RainEffect(window.pixiApp.app);
+                }
+                window.pixiApp.rainEffect.start();
+                console.log('🌧️ Efecto de lluvia activado');
+            }
         } else if (tipo === 'obstaculo' && paintModeIndicatorObstaculo) {
             paintModeIndicatorObstaculo.style.display = 'block';
         }
 
         canvasEscenarios.classList.add('blocking-mode');
 
-        // Pausar simulación si está corriendo
-        if (window.isPaused === false && typeof window.pauseSimulation === 'function') {
-            window.pauseSimulation();
+        // ⏸️ Pausar simulación (simplemente hacer click en el botón)
+        if (btnPauseResume && !window.isPaused) {
+            btnPauseResume.click();
             console.log('⏸️ Simulación pausada automáticamente');
         }
     } else {
@@ -164,8 +247,20 @@ function toggleModoBloqueo(activar, tipo = 'bloqueo') {
         if (paintModeIndicatorInundacion) paintModeIndicatorInundacion.style.display = 'none';
         if (paintModeIndicatorObstaculo) paintModeIndicatorObstaculo.style.display = 'none';
 
+        // 🌧️ DESACTIVAR EFECTO DE LLUVIA
+        if (window.pixiApp && window.pixiApp.rainEffect) {
+            window.pixiApp.rainEffect.stop();
+            console.log('🌧️ Efecto de lluvia desactivado');
+        }
+
         canvasEscenarios.classList.remove('blocking-mode');
         estadoEscenarios.isPainting = false;
+
+        // ▶️ Reanudar simulación (simplemente hacer click en el botón)
+        if (btnPauseResume && window.isPaused) {
+            btnPauseResume.click();
+            console.log('▶️ Simulación reanudada automáticamente');
+        }
     }
 }
 

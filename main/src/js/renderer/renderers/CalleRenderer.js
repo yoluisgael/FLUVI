@@ -348,6 +348,12 @@ class CalleRenderer {
                         if (this.scene && this.scene.carroRenderer && window.calles) {
                             console.log('🔄 Actualizando CarroRenderer para mostrar bloqueo');
                             this.scene.carroRenderer.updateAll(window.calles);
+
+                            // Si la simulación está pausada, forzar render manual de PixiJS
+                            if (window.isPaused && window.pixiApp && window.pixiApp.app) {
+                                window.pixiApp.app.render();
+                                console.log('🎨 Render manual de PixiJS forzado (simulación pausada)');
+                            }
                         }
                     }
                 }
