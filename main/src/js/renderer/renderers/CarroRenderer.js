@@ -154,6 +154,12 @@ class CarroRenderer {
 
                 sprite.zIndex = 1;
                 sprite.eventMode = 'none';
+            } else if (tipo === 8 || tipo === 9) {
+                // Tipos 8 y 9: Conexiones de estacionamiento
+                // YA NO se renderizan como cuadros de colores
+                // Las conexiones se dibujan como líneas en ConexionRenderer
+                // Simplemente no crear sprite para estos tipos
+                return;
             } else {
                 // Para vehículos normales (tipo 1-6)
                 sprite = this.acquireSprite();

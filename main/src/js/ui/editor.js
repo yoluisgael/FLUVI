@@ -158,6 +158,12 @@ class EditorCalles {
             window.edificioSeleccionado = null;
             this.actualizarInputsPosicion();
             this.actualizarEstadoBotonEdicion();
+
+            // Actualizar botón "Editar Edificio"
+            if (window.actualizarBotonEditarEdificio) {
+                window.actualizarBotonEditarEdificio();
+            }
+
             if (window.renderizarCanvas) window.renderizarCanvas();
         });
         
@@ -201,6 +207,11 @@ class EditorCalles {
             }
             this.actualizarEstadoBotonEdicion();
 
+            // Actualizar botón "Editar Edificio" (ocultar cuando calle seleccionada)
+            if (window.actualizarBotonEditarEdificio) {
+                window.actualizarBotonEditarEdificio();
+            }
+
             // Si estamos en modo edición, cambiar a la nueva calle
             if (this.modoEdicion && window.calleSeleccionada) {
                 this.objetoEditando = window.calleSeleccionada;
@@ -235,6 +246,11 @@ class EditorCalles {
                 window.edificioSeleccionado = null;
             }
             this.actualizarEstadoBotonEdicion();
+
+            // Actualizar botón "Editar Edificio"
+            if (window.actualizarBotonEditarEdificio) {
+                window.actualizarBotonEditarEdificio();
+            }
 
             // Si estamos en modo edición, cambiar al nuevo edificio
             if (this.modoEdicion && window.edificioSeleccionado) {

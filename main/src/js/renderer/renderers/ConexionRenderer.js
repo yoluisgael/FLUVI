@@ -159,6 +159,108 @@ class ConexionRenderer {
         graphics.endFill();
     }
 
+    /**
+     * Renderiza conexiones de estacionamiento (líneas desde edificios a celdas)
+     */
+    renderEstacionamientos() {
+        if (!window.edificios || !window.calles) return;
+
+        // Filtrar edificios que son estacionamientos
+        const estacionamientos = window.edificios.filter(e => e.esEstacionamiento && e.conexiones && e.conexiones.length > 0);
+
+        estacionamientos.forEach(edificio => {
+            edificio.conexiones.forEach(conexion => {
+                // Encontrar la calle
+                const calle = window.calles.find(c => c.id === conexion.calleId || c.nombre === conexion.calleId);
+                if (!calle) return;
+
+                // Obtener coordenadas de la celda
+                let coordCelda;
+                if (calle.esCurva && calle.vertices && calle.vertices.length > 0) {
+                    if (typeof window.obtenerCoordenadasGlobalesCeldaConCurva === 'function') {
+                        coordCelda = window.obtenerCoordenadasGlobalesCeldaConCurva(calle, conexion.carril, conexion.indice);
+                    } else {
+                        return;
+                    }
+                } else {
+                    if (typeof window.obtenerCoordenadasGlobalesCelda === 'function') {
+                        coordCelda = window.obtenerCoordenadasGlobalesCelda(calle, conexion.carril, conexion.indice);
+                    } else {
+                        return;
+                    }
+                }
+
+                // Calcular punto en el perímetro del edificio más cercano a la celda
+                const puntoEdificio = this.calcularPuntoPerimetro(edificio, coordCelda.x, coordCelda.y);
+
+                // Crear gráficos para la línea
+                const graphics = new PIXI.Graphics();
+
+                // Color según tipo: verde para entrada, azul para salida
+                const color = conexion.tipo === 'entrada' ? 0x00FF00 : 0x0000FF;
+                const lineWidth = 1.5;
+
+                // Dibujar línea punteada
+                this.drawDashedLine(graphics, puntoEdificio.x, puntoEdificio.y, coordCelda.x, coordCelda.y, color, lineWidth, [5, 3]);
+
+                // Dibujar círculo pequeño en la celda
+                graphics.lineStyle(0);
+                graphics.beginFill(color, 0.8);
+                graphics.drawCircle(coordCelda.x, coordCelda.y, 3);
+                graphics.endFill();
+
+                // Agregar al layer de conexiones
+                graphics.zIndex = 5;
+                this.scene.getLayer('connections').addChild(graphics);
+
+                // Guardar referencia para limpiar después
+                const key = `estacionamiento_${edificio.id || edificio.label}_${conexion.tipo}_${conexion.carril}_${conexion.indice}`;
+                this.scene.conexionGraphics.set(key, graphics);
+            });
+        });
+    }
+
+    /**
+     * Calcula el punto en el perímetro del edificio más cercano a un punto dado
+     */
+    calcularPuntoPerimetro(edificio, targetX, targetY) {
+        const cx = edificio.x;
+        const cy = edificio.y;
+        const w = edificio.width;
+        const h = edificio.height;
+        const angle = (edificio.angle || 0) * Math.PI / 180;
+
+        // Calcular vector desde centro del edificio al punto objetivo
+        const dx = targetX - cx;
+        const dy = targetY - cy;
+
+        // Rotar el vector al sistema de coordenadas del edificio
+        const cos = Math.cos(-angle);
+        const sin = Math.sin(-angle);
+        const dxRot = dx * cos - dy * sin;
+        const dyRot = dx * sin + dy * cos;
+
+        // Calcular punto de intersección con el rectángulo
+        let px, py;
+        const ratio = Math.abs(dyRot * w / (dxRot * h));
+
+        if (ratio > 1) {
+            // Intersecta con lado superior o inferior
+            py = dyRot > 0 ? h / 2 : -h / 2;
+            px = (dxRot * h) / (2 * Math.abs(dyRot));
+        } else {
+            // Intersecta con lado izquierdo o derecho
+            px = dxRot > 0 ? w / 2 : -w / 2;
+            py = (dyRot * w) / (2 * Math.abs(dxRot));
+        }
+
+        // Rotar de vuelta al sistema global
+        const pxGlobal = px * cos - py * sin + cx;
+        const pyGlobal = px * sin + py * cos + cy;
+
+        return { x: pxGlobal, y: pyGlobal };
+    }
+
     clearAll() {
         this.scene.conexionGraphics.forEach((graphics, conexion) => {
             graphics.destroy();

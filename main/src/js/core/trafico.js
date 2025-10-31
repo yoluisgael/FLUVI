@@ -21,6 +21,7 @@ let mapaIntersecciones = new Map();
 let mostrarConexiones = false; // Variable para controlar visualización de conexiones
 let mostrarVertices = false; // Variable para controlar visualización de vértices
 let mostrarEtiquetas = true; // Variable para controlar visualización de etiquetas de nombres
+let mostrarContadores = false; // Variable para controlar visualización de contadores de estacionamientos
 let colorFondoCanvas = "#c6cbcd"; // Color de fondo del canvas (almacenado para detección automática)
 let prioridadPar = true;
 
@@ -29,6 +30,7 @@ window.mostrarConexiones = mostrarConexiones;
 window.mostrarVertices = mostrarVertices;
 window.mostrarEtiquetas = mostrarEtiquetas;
 window.mostrarIntersecciones = false;
+window.mostrarContadores = mostrarContadores;
 
 // Ajustar tamaño inicial del canvas
 function resizeCanvas() {
@@ -1116,6 +1118,88 @@ function actualizarCalle(calle, calleIndex) {
                 }
                 continue;
             }
+
+            // ========== PROCESAMIENTO DE ESTACIONAMIENTOS ==========
+            // Verificar si esta celda tiene una conexión de estacionamiento
+            if (calle.conexionesEstacionamiento) {
+                const claveConexion = `${c}-${i}`;
+                const conexion = calle.conexionesEstacionamiento.get(claveConexion);
+
+                if (conexion) {
+                    const edificio = conexion.edificio;
+
+                    if (conexion.tipo === 'entrada' && edificio && edificio.esEstacionamiento) {
+                        // ENTRADA: Verificar si hay un vehículo en esta celda O en la celda anterior
+                        const vehiculoEnCelda = calle.arreglo[c][i];
+                        const vehiculoEnCeldaAnterior = (i > 0) ? calle.arreglo[c][i - 1] : 0;
+
+                        // Procesar vehículo en la celda de entrada
+                        if (vehiculoEnCelda >= 1 && vehiculoEnCelda <= 6) {
+                            console.log(`🔍 ENTRADA DETECTADA: Vehículo tipo ${vehiculoEnCelda} en celda de entrada [${c},${i}] de "${edificio.label}"`);
+
+                            // Obtener hora actual del simulador
+                            const horaActual = window.configuracionTiempo?.horaActual || 0;
+
+                            // Intentar absorber el vehículo con probabilidad
+                            const absorbido = window.procesarEntradaVehiculo?.(edificio, vehiculoEnCelda, horaActual);
+                            console.log(`🎲 PROBABILIDAD ENTRADA: ${absorbido ? 'ACEPTADO' : 'RECHAZADO'} para "${edificio.label}"`);
+
+                            if (absorbido) {
+                                // Vehículo absorbido - eliminar de la celda actual
+                                nuevaCalle[c][i] = 0;
+                                console.log(`✅ ENTRADA EXITOSA: Vehículo tipo ${vehiculoEnCelda} absorbido por "${edificio.label}" en [${c},${i}] - Celda eliminada`);
+                                continue;
+                            } else {
+                                console.log(`❌ ENTRADA RECHAZADA: Vehículo tipo ${vehiculoEnCelda} NO fue absorbido por "${edificio.label}" - sigue su camino`);
+                            }
+                        }
+                        // Procesar vehículo que está LLEGANDO a la entrada (en celda anterior)
+                        else if (vehiculoEnCeldaAnterior >= 1 && vehiculoEnCeldaAnterior <= 6 && vehiculoEnCelda === 0) {
+                            console.log(`🔍 ENTRADA ANTICIPADA: Vehículo tipo ${vehiculoEnCeldaAnterior} en celda anterior [${c},${i-1}] acercándose a entrada de "${edificio.label}"`);
+
+                            // Obtener hora actual del simulador
+                            const horaActual = window.configuracionTiempo?.horaActual || 0;
+
+                            // Intentar absorber el vehículo con probabilidad
+                            const absorbido = window.procesarEntradaVehiculo?.(edificio, vehiculoEnCeldaAnterior, horaActual);
+                            console.log(`🎲 PROBABILIDAD ENTRADA ANTICIPADA: ${absorbido ? 'ACEPTADO' : 'RECHAZADO'} para "${edificio.label}"`);
+
+                            if (absorbido) {
+                                // Vehículo absorbido - eliminar de la celda ANTERIOR y marcar entrada como vacía
+                                if (i > 0) {
+                                    nuevaCalle[c][i - 1] = 0;
+                                }
+                                nuevaCalle[c][i] = 0;
+                                console.log(`✅ ENTRADA ANTICIPADA EXITOSA: Vehículo tipo ${vehiculoEnCeldaAnterior} absorbido desde [${c},${i-1}] por "${edificio.label}"`);
+                                continue;
+                            }
+                        }
+                    } else if (conexion.tipo === 'salida' && edificio && edificio.esEstacionamiento) {
+                        // SALIDA: Verificar si la celda de salida Y la celda ANTERIOR están vacías
+                        const celdaSalidaVacia = calle.arreglo[c][i] === 0;
+                        const celdaAnteriorVacia = (i > 0) ? calle.arreglo[c][i - 1] === 0 : true;
+
+                        // Solo generar vehículo si ambas celdas están vacías (para evitar colisiones)
+                        if (celdaSalidaVacia && celdaAnteriorVacia) {
+                            // Obtener hora actual del simulador
+                            const horaActual = window.configuracionTiempo?.horaActual || 0;
+
+                            // Intentar generar un vehículo con probabilidad
+                            const tipoVehiculo = window.intentarGenerarSalida?.(edificio, horaActual);
+
+                            if (tipoVehiculo !== null) {
+                                // Vehículo generado - colocarlo en esta celda
+                                nuevaCalle[c][i] = tipoVehiculo;
+                                console.log(`✅ SALIDA EXITOSA: Vehículo tipo ${tipoVehiculo} generado desde "${edificio.label}" en [${c},${i}]`);
+                                continue;
+                            }
+                        } else if (!celdaAnteriorVacia) {
+                            console.log(`⏸️ SALIDA BLOQUEADA: No se puede generar salida en "${edificio.label}" [${c},${i}] - celda anterior [${i-1}] ocupada`);
+                        }
+                    }
+                }
+            }
+            // ========== FIN PROCESAMIENTO DE ESTACIONAMIENTOS ==========
 
             // Si tiene conexión de salida, no mover
             if (tieneConexionSalida(calle, c, i) && calle.arreglo[c][i] > 0) {
@@ -2789,6 +2873,11 @@ function iniciarSimulacion() {
         if (window.updateMetrics) {
             window.updateMetrics();
         }
+
+        // Actualizar contadores de estacionamientos si están visibles
+        if (window.mostrarContadores && window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+            window.pixiApp.sceneManager.renderContadores();
+        }
         renderizarCanvas();
 
         // Actualizar información en tiempo real (barra estilo Golly)
@@ -2891,6 +2980,24 @@ function iniciarSimulacion() {
             window.mostrarEtiquetas = mostrarEtiquetas; // Sincronizar con window
             // Cambiar entre etiqueta visible y etiqueta tachada
             btnEtiquetas.textContent = mostrarEtiquetas ? '🏷️' : '🚫';
+            renderizarCanvas();
+        });
+    }
+
+    const btnContadores = document.getElementById('btnContadores');
+    if (btnContadores) {
+        btnContadores.addEventListener('click', () => {
+            window.mostrarContadores = !window.mostrarContadores;
+            btnContadores.textContent = window.mostrarContadores ? '🔢' : '🚫';
+
+            // Si usamos PixiJS, forzar re-renderizado
+            if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                if (window.mostrarContadores) {
+                    window.pixiApp.sceneManager.renderContadores();
+                } else {
+                    window.pixiApp.sceneManager.clearContadores();
+                }
+            }
             renderizarCanvas();
         });
     }

@@ -46,6 +46,12 @@ function configurarEventosConstructor() {
         btnAgregarEdificio.addEventListener('click', mostrarDialogoNuevoEdificio);
     }
 
+    // Botón Editar Edificio
+    const btnEditarEdificio = document.getElementById('btnEditarEdificio');
+    if (btnEditarEdificio) {
+        btnEditarEdificio.addEventListener('click', editarEdificioSeleccionado);
+    }
+
     // Botón Agregar Conexión
     const btnAgregarConexion = document.getElementById('btnAgregarConexion');
     if (btnAgregarConexion) {
@@ -768,51 +774,166 @@ function crearConexionProbabilisticaSimple(origen, carrilOrigen, destino, carril
 // ==================== DIÁLOGO NUEVO EDIFICIO ====================
 
 function mostrarDialogoNuevoEdificio() {
-    // Mostrar el modal
-    const modal = new bootstrap.Modal(document.getElementById('modalNuevoEdificio'));
-    modal.show();
+    console.log('🏢 mostrarDialogoNuevoEdificio() llamada');
 
-    // Configurar evento del botón confirmar
-    const btnConfirmar = document.getElementById('btnConfirmarNuevoEdificio');
-    const nuevoHandler = function() {
-        const label = document.getElementById('inputNombreEdificio').value;
-        const x = parseFloat(document.getElementById('inputXEdificio').value);
-        const y = parseFloat(document.getElementById('inputYEdificio').value);
-        const width = parseFloat(document.getElementById('inputWidthEdificio').value);
-        const height = parseFloat(document.getElementById('inputHeightEdificio').value);
-        const angle = parseFloat(document.getElementById('inputAnguloEdificio').value);
-
-        // Validaciones
-        if (!label || label.trim() === '') {
-            alert("❌ El nombre es obligatorio");
-            return;
-        }
-
-        if (isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height) || isNaN(angle)) {
-            alert("❌ Valores inválidos. Verifica todos los campos numéricos.");
-            return;
-        }
-
-        if (width <= 0 || height <= 0) {
-            alert("❌ El ancho y alto deben ser mayores a 0");
-            return;
-        }
-
-        // Agregar edificio
-        agregarEdificio(label, x, y, width, height, angle);
-
-        // Cerrar modal
-        modal.hide();
-
+    try {
         // Limpiar formulario
-        document.getElementById('inputNombreEdificio').value = '';
+        const inputNombre = document.getElementById('inputNombreEdificio');
+        const checkEst = document.getElementById('checkEstacionamiento');
+        const listaConex = document.getElementById('listaConexionesEdificio');
 
-        // Remover listener
+        if (inputNombre) inputNombre.value = '';
+        if (checkEst) checkEst.checked = false;
+        if (window.toggleEstacionamientoConfig) toggleEstacionamientoConfig(false);
+        if (listaConex) listaConex.innerHTML = '';
+        window.contadorPares = 0;
+
+        // Restaurar título y botón para modo crear
+        const modalElement = document.getElementById('modalNuevoEdificio');
+        if (!modalElement) {
+            console.error('❌ No se encontró el modal modalNuevoEdificio');
+            return;
+        }
+
+        const modalTitle = modalElement.querySelector('#modalNuevoEdificioLabel');
+        const btnConfirmar = document.getElementById('btnConfirmarNuevoEdificio');
+
+        if (modalTitle) modalTitle.textContent = '🏢 Agregar Nuevo Edificio';
+        if (btnConfirmar) btnConfirmar.textContent = '✓ Crear Edificio';
+
+        // Cambiar color del header a verde para modo agregar
+        const modalHeader = modalElement.querySelector('.modal-header');
+        if (modalHeader) {
+            modalHeader.classList.remove('bg-primary', 'bg-warning', 'text-dark');
+            modalHeader.classList.add('bg-success', 'text-white');
+        }
+
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+        console.log('✅ Modal mostrado');
+
+        // Configurar evento del botón confirmar
+        const nuevoHandler = function() {
+            const label = document.getElementById('inputNombreEdificio').value;
+            const x = parseFloat(document.getElementById('inputXEdificio').value);
+            const y = parseFloat(document.getElementById('inputYEdificio').value);
+            const width = parseFloat(document.getElementById('inputWidthEdificio').value);
+            const height = parseFloat(document.getElementById('inputHeightEdificio').value);
+            const angle = parseFloat(document.getElementById('inputAnguloEdificio').value);
+
+            // Validaciones básicas
+            if (!label || label.trim() === '') {
+                alert("❌ El nombre es obligatorio");
+                return;
+            }
+
+            if (isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height) || isNaN(angle)) {
+                alert("❌ Valores inválidos. Verifica todos los campos numéricos.");
+                return;
+            }
+
+            if (width <= 0 || height <= 0) {
+                alert("❌ El ancho y alto deben ser mayores a 0");
+                return;
+            }
+
+            // Agregar edificio
+            const edificio = agregarEdificio(label, x, y, width, height, angle);
+
+            // Configurar como estacionamiento si está marcado
+            const esEstacionamiento = document.getElementById('checkEstacionamiento').checked;
+            if (esEstacionamiento) {
+                const capacidad = parseInt(document.getElementById('inputCapacidad').value) || 50;
+                const conexiones = window.recolectarConexiones();
+                const { probEntrada, probSalida } = window.recolectarProbabilidades();
+
+                if (conexiones.length === 0) {
+                    mostrarToast('Sin conexiones, el edificio será decorativo', 'warning');
+                } else {
+                    // Configurar estacionamiento
+                    edificio.capacidadMaxima = capacidad;
+                    edificio.probabilidadesEntrada = probEntrada;
+                    edificio.probabilidadesSalida = probSalida;
+
+                    const exito = window.configurarEstacionamiento(edificio, conexiones, capacidad);
+                    if (exito) {
+                        console.log('✅ Edificio configurado como estacionamiento');
+                    } else {
+                        mostrarToast('Error al configurar estacionamiento. Verifica las conexiones.', 'danger');
+                    }
+                }
+            }
+
+            // Cerrar modal
+            modal.hide();
+
+            // Remover listener
+            btnConfirmar.removeEventListener('click', nuevoHandler);
+        };
+
         btnConfirmar.removeEventListener('click', nuevoHandler);
+        btnConfirmar.addEventListener('click', nuevoHandler);
+
+    } catch (error) {
+        console.error('❌ Error en mostrarDialogoNuevoEdificio:', error);
+    }
+}
+
+// ==================== UTILIDADES ====================
+
+/**
+ * Muestra un toast de Bootstrap
+ * @param {string} mensaje - Mensaje a mostrar
+ * @param {string} tipo - 'success', 'danger', 'warning', 'info'
+ */
+function mostrarToast(mensaje, tipo = 'success') {
+    const container = document.querySelector('.toast-container');
+    if (!container) {
+        console.warn('⚠️ Contenedor de toasts no encontrado, usando alert');
+        alert(mensaje);
+        return;
+    }
+
+    // Mapeo de tipos a iconos y colores
+    const config = {
+        success: { icon: '✅', bg: 'bg-success', textClass: 'text-white' },
+        danger: { icon: '❌', bg: 'bg-danger', textClass: 'text-white' },
+        warning: { icon: '⚠️', bg: 'bg-warning', textClass: 'text-dark' },
+        info: { icon: 'ℹ️', bg: 'bg-info', textClass: 'text-white' }
     };
 
-    btnConfirmar.removeEventListener('click', nuevoHandler);
-    btnConfirmar.addEventListener('click', nuevoHandler);
+    const { icon, bg, textClass} = config[tipo] || config.success;
+
+    // Crear el toast
+    const toastId = `toast-${Date.now()}`;
+    const toastHTML = `
+        <div id="${toastId}" class="toast ${bg} ${textClass}" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header ${bg} ${textClass}">
+                <strong class="me-auto">${icon} Notificación</strong>
+                <button type="button" class="btn-close ${textClass === 'text-white' ? 'btn-close-white' : ''}" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ${mensaje}
+            </div>
+        </div>
+    `;
+
+    // Insertar el toast
+    container.insertAdjacentHTML('beforeend', toastHTML);
+
+    // Inicializar y mostrar el toast
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, {
+        autohide: true,
+        delay: 4000
+    });
+    toast.show();
+
+    // Eliminar del DOM después de ocultarse
+    toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+    });
 }
 
 // ==================== AGREGAR EDIFICIO ====================
@@ -825,13 +946,24 @@ function agregarEdificio(label, x, y, width, height, angle) {
 
     // Crear edificio
     const edificio = {
+        id: `edificio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         label: label,
         x: x,
         y: y,
         width: width,
         height: height,
         angle: angle || 0,
-        color: '#8B4513' // Color café por defecto
+        color: '#8B4513', // Color café por defecto
+
+        // Sistema de estacionamiento
+        esEstacionamiento: false,
+        capacidadMaxima: 50,
+        vehiculosActuales: 0,
+        conexiones: [], // Array de objetos {tipo: 'entrada'|'salida', calle, carril, indice, probabilidad}
+
+        // Probabilidades por hora (24 horas)
+        probabilidadesEntrada: Array(24).fill(0.3), // 30% por defecto
+        probabilidadesSalida: Array(24).fill(0.2)   // 20% por defecto
     };
 
     // Agregar a la lista global
@@ -854,8 +986,222 @@ function agregarEdificio(label, x, y, width, height, angle) {
     }
 
     console.log(`✅ Edificio "${label}" agregado a la simulación`);
-    alert(`Edificio "${label}" agregado exitosamente`);
+    return edificio;
 }
+
+// ==================== EDITAR EDIFICIO ====================
+
+/**
+ * Actualiza el estado del botón "Editar Edificio" según la selección
+ */
+function actualizarBotonEditarEdificio() {
+    const btnEditarEdificio = document.getElementById('btnEditarEdificio');
+    if (!btnEditarEdificio) return;
+
+    // Mostrar el botón solo si hay un edificio seleccionado
+    if (window.edificioSeleccionado) {
+        btnEditarEdificio.style.display = 'block';
+    } else {
+        btnEditarEdificio.style.display = 'none';
+    }
+}
+
+/**
+ * Abre el modal de edificio en modo edición
+ */
+function editarEdificioSeleccionado() {
+    if (!window.edificioSeleccionado) {
+        alert('⚠️ No hay edificio seleccionado');
+        return;
+    }
+
+    const edificio = window.edificioSeleccionado;
+    console.log('✏️ Editando edificio:', edificio.label);
+
+    // Abrir modal
+    const modal = document.getElementById('modalNuevoEdificio');
+    if (!modal) {
+        console.error('❌ Modal modalNuevoEdificio no encontrado');
+        return;
+    }
+
+    // Cambiar título y botón para modo edición
+    const modalTitle = modal.querySelector('#modalNuevoEdificioLabel');
+    const btnConfirmar = document.getElementById('btnConfirmarNuevoEdificio');
+
+    if (modalTitle) modalTitle.textContent = '✏️ Editar Edificio';
+    if (btnConfirmar) btnConfirmar.textContent = '✓ Actualizar Edificio';
+
+    // Cambiar color del header a amarillo para modo edición
+    const modalHeader = modal.querySelector('.modal-header');
+    if (modalHeader) {
+        modalHeader.classList.remove('bg-primary', 'bg-success');
+        modalHeader.classList.add('bg-warning', 'text-dark');
+    }
+
+    const bsModal = new bootstrap.Modal(modal);
+
+    // Poblar campos básicos
+    document.getElementById('inputNombreEdificio').value = edificio.label || '';
+    document.getElementById('inputXEdificio').value = edificio.x || 0;
+    document.getElementById('inputYEdificio').value = edificio.y || 0;
+    document.getElementById('inputWidthEdificio').value = edificio.width || 50;
+    document.getElementById('inputHeightEdificio').value = edificio.height || 50;
+    document.getElementById('inputAnguloEdificio').value = edificio.angle || 0;
+
+    // Configurar estacionamiento si aplica
+    const checkEstacionamiento = document.getElementById('checkEstacionamiento');
+    checkEstacionamiento.checked = edificio.esEstacionamiento || false;
+    window.toggleEstacionamientoConfig(checkEstacionamiento.checked);
+
+    if (edificio.esEstacionamiento) {
+        // Capacidad
+        document.getElementById('inputCapacidad').value = edificio.capacidadMaxima || 50;
+
+        // Poblar conexiones existentes
+        window.contadorPares = 0;
+        const listaConexiones = document.getElementById('listaConexionesEdificio');
+        if (listaConexiones) {
+            listaConexiones.innerHTML = ''; // Limpiar
+
+            // Agrupar conexiones en pares (entrada + salida)
+            const entradas = edificio.conexiones.filter(c => c.tipo === 'entrada');
+            const salidas = edificio.conexiones.filter(c => c.tipo === 'salida');
+            const maxPares = Math.max(entradas.length, salidas.length);
+
+            for (let i = 0; i < maxPares; i++) {
+                window.agregarParConexion();
+                const parId = `par_${window.contadorPares}`;
+
+                // Poblar entrada (convertir de 0-indexed a 1-indexed para mostrar)
+                if (entradas[i]) {
+                    const entrada = entradas[i];
+                    document.getElementById(`${parId}_entrada_calle`).value = entrada.calleId || '';
+                    document.getElementById(`${parId}_entrada_carril`).value = (entrada.carril + 1) || 1;
+                    document.getElementById(`${parId}_entrada_indice`).value = (entrada.indice + 1) || 1;
+                }
+
+                // Poblar salida (convertir de 0-indexed a 1-indexed para mostrar)
+                if (salidas[i]) {
+                    const salida = salidas[i];
+                    document.getElementById(`${parId}_salida_calle`).value = salida.calleId || '';
+                    document.getElementById(`${parId}_salida_carril`).value = (salida.carril + 1) || 1;
+                    document.getElementById(`${parId}_salida_indice`).value = (salida.indice + 1) || 1;
+                }
+            }
+        }
+
+        // Poblar probabilidades por hora
+        if (edificio.probabilidadesEntrada && edificio.probabilidadesSalida) {
+            for (let hora = 0; hora < 24; hora++) {
+                const sliderEntrada = document.getElementById(`probEntrada_${hora}`);
+                const badgeEntrada = document.getElementById(`valEntrada_${hora}`);
+                const sliderSalida = document.getElementById(`probSalida_${hora}`);
+                const badgeSalida = document.getElementById(`valSalida_${hora}`);
+
+                if (sliderEntrada && badgeEntrada) {
+                    // IMPORTANTE: Usar ?? en lugar de || para permitir valor 0
+                    const valorEntrada = Math.round((edificio.probabilidadesEntrada[hora] ?? 0.3) * 100);
+                    sliderEntrada.value = valorEntrada;
+                    badgeEntrada.textContent = valorEntrada + '%';
+                }
+
+                if (sliderSalida && badgeSalida) {
+                    // IMPORTANTE: Usar ?? en lugar de || para permitir valor 0
+                    const valorSalida = Math.round((edificio.probabilidadesSalida[hora] ?? 0.2) * 100);
+                    sliderSalida.value = valorSalida;
+                    badgeSalida.textContent = valorSalida + '%';
+                }
+            }
+        }
+    }
+
+    bsModal.show();
+
+    // Cambiar el handler del botón de confirmación para modo edición
+    const btnEditar = document.getElementById('btnConfirmarNuevoEdificio');
+    if (btnEditar) {
+        // Remover listeners previos
+        const nuevoBtn = btnEditar.cloneNode(true);
+        btnEditar.parentNode.replaceChild(nuevoBtn, btnEditar);
+
+        // Agregar nuevo listener para modo edición
+        nuevoBtn.addEventListener('click', () => {
+            // Recolectar valores del formulario
+            edificio.label = document.getElementById('inputNombreEdificio').value || 'Edificio';
+            edificio.x = parseFloat(document.getElementById('inputXEdificio').value) || 0;
+            edificio.y = parseFloat(document.getElementById('inputYEdificio').value) || 0;
+            edificio.width = parseFloat(document.getElementById('inputWidthEdificio').value) || 50;
+            edificio.height = parseFloat(document.getElementById('inputHeightEdificio').value) || 50;
+            edificio.angle = parseFloat(document.getElementById('inputAnguloEdificio').value) || 0;
+
+            // Actualizar configuración de estacionamiento
+            const esEstacionamiento = document.getElementById('checkEstacionamiento').checked;
+            edificio.esEstacionamiento = esEstacionamiento;
+
+            if (esEstacionamiento) {
+                const capacidad = parseInt(document.getElementById('inputCapacidad').value) || 50;
+                const conexiones = window.recolectarConexiones();
+                const { probEntrada, probSalida } = window.recolectarProbabilidades();
+
+                // Limpiar conexiones antiguas del mapa
+                if (window.limpiarConexionesEdificio) {
+                    window.limpiarConexionesEdificio(edificio);
+                }
+
+                // Actualizar propiedades
+                edificio.capacidadMaxima = capacidad;
+                edificio.probabilidadesEntrada = probEntrada;
+                edificio.probabilidadesSalida = probSalida;
+
+                // Reconfigurar como estacionamiento
+                if (conexiones.length > 0) {
+                    window.configurarEstacionamiento(edificio, conexiones, capacidad);
+                } else {
+                    edificio.conexiones = [];
+                    mostrarToast('Sin conexiones, el edificio será decorativo', 'warning');
+                }
+            } else {
+                // Desactivar estacionamiento
+                if (window.limpiarConexionesEdificio) {
+                    window.limpiarConexionesEdificio(edificio);
+                }
+                edificio.conexiones = [];
+            }
+
+            // Actualizar selectores
+            actualizarSelectorEdificios();
+
+            // Re-renderizar
+            if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                // Re-renderizar el edificio actualizado
+                window.pixiApp.sceneManager.edificioRenderer?.renderAll(window.edificios);
+
+                // Re-renderizar conexiones de estacionamiento si aplica
+                if (edificio.esEstacionamiento) {
+                    window.pixiApp.sceneManager.conexionRenderer?.renderEstacionamientos();
+                }
+
+                // Re-renderizar contadores si están visibles
+                if (window.mostrarContadores) {
+                    window.pixiApp.sceneManager.renderContadores();
+                }
+            }
+
+            if (window.renderizarCanvas) {
+                window.renderizarCanvas();
+            }
+
+            bsModal.hide();
+            console.log(`✅ Edificio "${edificio.label}" actualizado`);
+            mostrarToast(`Edificio "${edificio.label}" actualizado exitosamente`, 'success');
+        });
+    }
+}
+
+// Exponer funciones globalmente
+window.actualizarBotonEditarEdificio = actualizarBotonEditarEdificio;
+window.editarEdificioSeleccionado = editarEdificioSeleccionado;
 
 // ==================== ACTUALIZAR SELECTORES ====================
 

@@ -351,9 +351,100 @@ class UIRenderer {
         this.scene.verticeSprites.clear();
     }
 
+    /**
+     * Renderiza contadores de ocupación para edificios tipo estacionamiento
+     */
+    updateContadores() {
+        if (!window.edificios || !window.mostrarContadores) {
+            this.clearContadores();
+            return;
+        }
+
+        // Limpiar contadores anteriores
+        this.clearContadores();
+
+        // Inicializar Map si no existe
+        if (!this.contadores) {
+            this.contadores = new Map();
+        }
+
+        // Filtrar edificios que son estacionamientos
+        const estacionamientos = window.edificios.filter(e => e.esEstacionamiento);
+
+        estacionamientos.forEach(edificio => {
+            const container = new PIXI.Container();
+
+            // Posición: debajo del edificio
+            const offsetY = (edificio.height / 2) + 15; // 15px debajo del edificio
+            container.x = edificio.x;
+            container.y = edificio.y + offsetY;
+
+            // Texto del contador: (ocupados/capacidad)
+            const ocupacion = edificio.vehiculosActuales || 0;
+            const capacidad = edificio.capacidadMaxima || 0;
+            const textoContador = `(${ocupacion}/${capacidad})`;
+
+            // Crear fondo semi-transparente
+            const padding = 4;
+            const bgColor = 0x000000;
+            const bgAlpha = 0.7;
+
+            // Crear texto
+            const textColor = 0xFFFFFF; // Blanco para contraste con fondo negro
+            const fontSize = 12;
+
+            const text = new PIXI.Text(textoContador, {
+                fontFamily: 'Arial',
+                fontSize: fontSize,
+                fill: textColor,
+                align: 'center'
+            });
+            text.anchor.set(0.5, 0.5);
+
+            // Crear fondo
+            const bg = new PIXI.Graphics();
+            bg.beginFill(bgColor, bgAlpha);
+            bg.drawRoundedRect(
+                -text.width / 2 - padding,
+                -text.height / 2 - padding,
+                text.width + padding * 2,
+                text.height + padding * 2,
+                4 // radio de esquinas redondeadas
+            );
+            bg.endFill();
+
+            // Agregar fondo y texto al container
+            container.addChild(bg);
+            container.addChild(text);
+
+            // Aplicar rotación del edificio (inversa para mantener texto legible)
+            container.rotation = -(edificio.angle || 0) * Math.PI / 180;
+
+            // Z-index alto para que esté encima de todo
+            container.zIndex = 100;
+
+            // Agregar al layer de UI
+            this.scene.getLayer('ui').addChild(container);
+
+            // Guardar referencia
+            const key = edificio.id || edificio.label;
+            this.contadores.set(key, container);
+        });
+    }
+
+    clearContadores() {
+        if (!this.contadores) return;
+
+        this.contadores.forEach((container, key) => {
+            container.destroy({ children: true });
+        });
+        this.contadores.clear();
+    }
+
     clearAll() {
         this.clearEtiquetas();
         this.clearVertices();
+        this.clearContadores();
     }
 }
 

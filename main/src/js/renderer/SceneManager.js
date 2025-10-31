@@ -227,6 +227,15 @@ class SceneManager {
             this.conexionRenderer.renderAll(window.conexiones);
         }
 
+        // Renderizar conexiones de estacionamiento (siempre visibles)
+        if (this.conexionRenderer && window.edificios) {
+            const estacionamientos = window.edificios.filter(e => e.esEstacionamiento && e.conexiones && e.conexiones.length > 0);
+            if (estacionamientos.length > 0) {
+                console.log(`  → Renderizando conexiones de ${estacionamientos.length} estacionamientos`);
+                this.conexionRenderer.renderEstacionamientos();
+            }
+        }
+
         // Renderizar intersecciones si están visibles
         if (window.mostrarIntersecciones && window.intersecciones && window.intersecciones.length > 0) {
             this.renderIntersecciones();
@@ -242,7 +251,24 @@ class SceneManager {
             this.uiRenderer.updateEtiquetas(window.calles);
         }
 
+        // Renderizar contadores de estacionamientos si están visibles
+        if (window.mostrarContadores && this.uiRenderer && window.edificios) {
+            this.uiRenderer.updateContadores();
+        }
+
         console.log('✅ SceneManager.renderAll() completado');
+    }
+
+    renderContadores() {
+        if (this.uiRenderer && window.edificios) {
+            this.uiRenderer.updateContadores();
+        }
+    }
+
+    clearContadores() {
+        if (this.uiRenderer) {
+            this.uiRenderer.clearContadores();
+        }
     }
 
     renderIntersecciones() {

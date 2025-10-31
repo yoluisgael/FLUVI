@@ -509,6 +509,9 @@
               <button id="btnAgregarEdificio" class="btn btn-outline-success btn-sm" data-bs-toggle="tooltip" data-bs-title="Abrir formulario para crear un nuevo edificio en el mapa">
                 🏢 Agregar Edificio
               </button>
+              <button id="btnEditarEdificio" class="btn btn-outline-warning btn-sm" style="display: none;" data-bs-toggle="tooltip" data-bs-title="Editar configuración del edificio seleccionado (Ctrl+Click para seleccionar)">
+                ✏️ Editar Edificio
+              </button>
               <button id="btnAgregarConexion" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-title="Crear una conexión entre dos calles para flujo de tráfico">
                 🔗 Agregar Conexión
               </button>
@@ -965,14 +968,16 @@
   </div>
 
   <!-- Modal Nuevo Edificio -->
-  <div class="modal fade" id="modalNuevoEdificio" tabindex="-1" aria-labelledby="modalNuevoEdificioLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+  <div class="modal fade" id="modalNuevoEdificio" tabindex="-1" aria-labelledby="modalNuevoEdificioLabel" aria-hidden="true" data-bs-theme="auto">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="modalNuevoEdificioLabel">🏢 Agregar Nuevo Edificio</h5>
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title fw-bold" id="modalNuevoEdificioLabel">🏢 Agregar Nuevo Edificio</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+          <!-- Información básica -->
+          <h6 class="border-bottom pb-2 mb-3 fw-semibold">📋 Información Básica</h6>
           <div class="mb-3">
             <label for="inputNombreEdificio" class="form-label">Nombre:</label>
             <input type="text" class="form-control" id="inputNombreEdificio" placeholder="Ej: Edificio Central">
@@ -1001,10 +1006,69 @@
             <label for="inputAnguloEdificio" class="form-label">Ángulo (°):</label>
             <input type="number" class="form-control" id="inputAnguloEdificio" placeholder="0" min="0" max="360" value="0">
           </div>
+
+          <!-- Configuración de Estacionamiento -->
+          <hr>
+          <h6 class="border-bottom pb-2 mb-3 fw-semibold">🅿️ Configuración de Estacionamiento</h6>
+
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="checkEstacionamiento" onchange="toggleEstacionamientoConfig(this.checked)" style="cursor: pointer;">
+            <label class="form-check-label fw-semibold" for="checkEstacionamiento" style="cursor: pointer;">
+              Funciona como estacionamiento
+            </label>
+          </div>
+
+          <div id="configEstacionamiento" style="display: none;">
+            <!-- Capacidad -->
+            <div class="mb-3">
+              <label for="inputCapacidad" class="form-label">Capacidad máxima de vehículos:</label>
+              <input type="number" class="form-control" id="inputCapacidad" min="1" max="500" value="50">
+            </div>
+
+            <!-- Conexiones -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Conexiones (Entradas/Salidas):</label>
+              <div class="alert alert-info small mb-2" role="alert">
+                <strong>⚠️ Importante:</strong> Las conexiones deben venir en pares (1 entrada → 1 salida). Máximo 10 pares.
+                <br><small class="text-muted">La entrada y salida NO pueden estar en la misma celda del mismo carril.</small>
+              </div>
+
+              <div id="listaConexionesEdificio" class="mb-2 border rounded p-2" style="max-height: 400px; overflow-y: auto; min-height: 50px; background-color: var(--bs-light-bg-subtle);"></div>
+
+              <button type="button" class="btn btn-sm btn-primary" onclick="agregarParConexion()">
+                ➕ Agregar Par (Entrada + Salida)
+              </button>
+            </div>
+
+            <!-- Probabilidades por hora -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Probabilidades de Entrada/Salida por Hora:</label>
+              <div class="alert alert-warning small mb-2" role="alert">
+                <strong>⏰ Configuración:</strong> Ajusta las probabilidades para cada hora del día (0-23). Los valores van de 0% a 100%.
+              </div>
+
+              <div class="btn-group btn-group-sm mb-3 d-flex" role="group">
+                <button type="button" class="btn btn-outline-primary flex-fill" onclick="aplicarPerfilHorario('normal')">Normal</button>
+                <button type="button" class="btn btn-outline-primary flex-fill" onclick="aplicarPerfilHorario('oficina')">Oficina</button>
+                <button type="button" class="btn btn-outline-primary flex-fill" onclick="aplicarPerfilHorario('centro')">Centro Comercial</button>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold text-success">🟢 Entrada (%)</label>
+                  <div id="slidersProbEntrada" class="border rounded p-2" style="max-height: 200px; overflow-y: auto; background-color: var(--bs-light-bg-subtle);"></div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold text-primary">🔵 Salida (%)</label>
+                  <div id="slidersProbSalida" class="border rounded p-2" style="max-height: 200px; overflow-y: auto; background-color: var(--bs-light-bg-subtle);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-toggle="tooltip" data-bs-title="Cerrar sin crear el edificio">Cancelar</button>
-          <button type="button" class="btn btn-success" id="btnConfirmarNuevoEdificio" data-bs-toggle="tooltip" data-bs-title="Crear el edificio con los parámetros ingresados">✓ Crear Edificio</button>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">✖ Cancelar</button>
+          <button type="button" class="btn btn-primary" id="btnConfirmarNuevoEdificio">✓ Crear Edificio</button>
         </div>
       </div>
     </div>
@@ -1617,6 +1681,7 @@
             <button id="btnVertices" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los vértices de las calles para edición">📍</button>
             <button id="btnIntersecciones" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar los puntos de intersección entre calles">✖️</button>
             <button id="btnEtiquetas" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar las etiquetas con nombres de calles y edificios">🏷️</button>
+            <button id="btnContadores" class="btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-title="Mostrar/ocultar contadores de ocupación de estacionamientos">🔢</button>
           </div>
 
           <!-- Grupo de acciones -->
@@ -1683,9 +1748,11 @@
   <script src="src/js/core/escenarios.js"></script>
   <script src="src/js/ui/gestionEscenarios.js"></script>
   <script src="src/js/core/tiempo.js"></script>
+  <script src="src/js/core/estacionamientos.js"></script>
   <script src="src/js/core/trafico.js"></script>
   <script src="src/js/core/graficas.js"></script>
   <script src="src/js/ui/editor.js"></script>
+  <script src="src/js/ui/edificioUI.js"></script>
   <script src="src/js/ui/constructor.js"></script>
 
   <!-- Bootstrap JS local (incluye Popper) -->
