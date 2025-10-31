@@ -1450,6 +1450,279 @@ body.dark-mode .toast-header.text-dark {
     color: #ffe8b3 !important;
 }
 
+/* ==================== MODAL DE MAPA DE CALOR ==================== */
+
+/* Header con gradiente */
+.heatmap-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1.5rem;
+}
+
+.heatmap-icon {
+    font-size: 2.5rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.heatmap-header .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Body */
+.heatmap-body {
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* Panel de información */
+.heatmap-info-panel {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Tarjetas de estadísticas */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+}
+
+/* Leyenda mejorada */
+.heatmap-legend {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.legend-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.legend-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.legend-color {
+    width: 50px;
+    height: 30px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 2px solid white;
+}
+
+.legend-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.legend-text strong {
+    font-size: 0.875rem;
+    color: #2c3e50;
+}
+
+.legend-text span {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+/* Contenedor del canvas */
+.heatmap-canvas-wrapper {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.heatmap-canvas-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    overflow: auto;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+#heatmapCanvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Loading mejorado */
+.heatmap-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.loading-content {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.loading-text {
+    margin-top: 1rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+/* Footer */
+.heatmap-footer {
+    background: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-info {
+    flex: 1;
+}
+
+/* ==================== MODO OSCURO ==================== */
+
+body.dark-mode .heatmap-header {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+}
+
+body.dark-mode .heatmap-body {
+    background: linear-gradient(180deg, #1a202c 0%, #2d3748 100%);
+}
+
+body.dark-mode .stat-card {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .stat-label {
+    color: #a0aec0;
+}
+
+body.dark-mode .stat-value {
+    color: #e2e8f0;
+}
+
+body.dark-mode .heatmap-legend {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .legend-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .legend-text strong {
+    color: #e2e8f0;
+}
+
+body.dark-mode .legend-text span {
+    color: #a0aec0;
+}
+
+body.dark-mode .legend-color {
+    border-color: #4a5568;
+}
+
+body.dark-mode .heatmap-canvas-container {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .loading-content {
+    background: #2d3748;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .loading-text {
+    color: #e2e8f0;
+}
+
+body.dark-mode .heatmap-footer {
+    background: #1a202c;
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .footer-info .text-muted {
+    color: #a0aec0 !important;
+}
+
 /* Badge de modo edición en modo oscuro */
 body.dark-mode .edit-mode-badge {
     background-color: #3d5a80;

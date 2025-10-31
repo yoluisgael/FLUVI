@@ -1193,6 +1193,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnLimpiarMetricas) {
         btnLimpiarMetricas.addEventListener('click', limpiarMetricas);
     }
+
+    // Botón para abrir modal de mapa de calor
+    const btnMapaCalor = document.getElementById('btnMapaCalor');
+    if (btnMapaCalor) {
+        btnMapaCalor.addEventListener('click', () => {
+            if (!window.heatmapModal) {
+                mostrarError('Error', 'El módulo de mapa de calor no está cargado');
+                return;
+            }
+
+            // Abrir el modal (se renderiza una sola vez al abrirse)
+            window.heatmapModal.open();
+            console.log('🌡️ Abriendo modal de mapa de calor');
+        });
+    }
 });
 
 // ==================== EXPONER FUNCIONES AL SCOPE GLOBAL ====================

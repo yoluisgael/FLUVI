@@ -629,6 +629,14 @@
               </div>
             </div>
 
+            <!-- Mapa de Calor -->
+            <div class="mb-3">
+              <h6 class="mb-2">🌡️ Visualización</h6>
+              <button id="btnMapaCalor" class="btn btn-outline-primary btn-sm w-100" data-bs-toggle="tooltip" data-bs-title="Muestra un mapa de calor sobre las calles indicando densidad de tráfico">
+                <span id="iconMapaCalor">🔲</span> Activar Mapa de Calor
+              </button>
+            </div>
+
             <hr class="my-3">
 
             <h6 class="mb-3">💾 Exportar Métricas</h6>
@@ -1648,6 +1656,135 @@
     </div>
   </div>
 
+  <!-- Modal de Mapa de Calor -->
+  <div class="modal fade" id="modalMapaCalor" tabindex="-1" aria-labelledby="modalMapaCalorLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content heatmap-modal">
+        <!-- Header elegante con gradiente -->
+        <div class="modal-header heatmap-header">
+          <div class="d-flex align-items-center gap-3">
+            <div class="heatmap-icon">🌡️</div>
+            <div>
+              <h5 class="modal-title mb-0" id="modalMapaCalorLabel">Mapa de Calor - Análisis de Tráfico</h5>
+              <small class="text-muted" id="heatmapSubtitle">Snapshot en tiempo real</small>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body heatmap-body">
+          <!-- Panel de Información Superior -->
+          <div class="heatmap-info-panel">
+            <div class="row g-3 mb-4">
+              <!-- Estadísticas en tiempo real -->
+              <div class="col-md-3 col-6">
+                <div class="stat-card">
+                  <div class="stat-icon">🚗</div>
+                  <div class="stat-content">
+                    <div class="stat-label">Vehículos Activos</div>
+                    <div class="stat-value" id="heatmapVehicles">--</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6">
+                <div class="stat-card">
+                  <div class="stat-icon">🛣️</div>
+                  <div class="stat-content">
+                    <div class="stat-label">Calles Renderizadas</div>
+                    <div class="stat-value" id="heatmapStreets">--</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6">
+                <div class="stat-card">
+                  <div class="stat-icon">⏱️</div>
+                  <div class="stat-content">
+                    <div class="stat-label">Tiempo de Generación</div>
+                    <div class="stat-value" id="heatmapTime">--</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6">
+                <div class="stat-card">
+                  <div class="stat-icon">🕐</div>
+                  <div class="stat-content">
+                    <div class="stat-label">Hora Simulada</div>
+                    <div class="stat-value" id="heatmapSimTime">--</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Leyenda mejorada -->
+            <div class="heatmap-legend">
+              <h6 class="legend-title">📊 Interpretación del Mapa</h6>
+              <div class="legend-items">
+                <div class="legend-item">
+                  <div class="legend-color" style="background: linear-gradient(90deg, #00ff00 0%, #7fff00 100%);"></div>
+                  <div class="legend-text">
+                    <strong>Verde</strong>
+                    <span>Tráfico fluido - Alta velocidad</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: linear-gradient(90deg, #ffff00 0%, #ffa500 100%);"></div>
+                  <div class="legend-text">
+                    <strong>Amarillo</strong>
+                    <span>Tráfico moderado - Velocidad media</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: linear-gradient(90deg, #ff6600 0%, #ff0000 100%);"></div>
+                  <div class="legend-text">
+                    <strong>Rojo</strong>
+                    <span>Congestionamiento - Velocidad baja</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color" style="background: #e0e0e0;"></div>
+                  <div class="legend-text">
+                    <strong>Gris</strong>
+                    <span>Sin vehículos - Celdas vacías</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canvas del Mapa de Calor -->
+          <div class="heatmap-canvas-wrapper">
+            <div id="heatmapCanvasContainer" class="heatmap-canvas-container">
+              <canvas id="heatmapCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Mensaje de carga elegante -->
+          <div id="heatmapLoading" class="heatmap-loading">
+            <div class="loading-content">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Generando mapa de calor...</span>
+              </div>
+              <p class="loading-text">Generando mapa de calor...</p>
+              <small class="text-muted">Analizando densidad de tráfico en tiempo real</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer mejorado -->
+        <div class="modal-footer heatmap-footer">
+          <div class="footer-info">
+            <small class="text-muted">
+              💡 Este análisis representa un snapshot instantáneo del estado actual del tráfico
+            </small>
+          </div>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle"></i> Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Content -->
   <div class="main-content">
     <!-- Barra de Información estilo Golly -->
@@ -1760,6 +1897,7 @@
 
   <!-- Scripts modulares del simulador -->
   <script src="src/js/ui/notifications.js"></script>
+  <script src="src/js/ui/HeatmapModal.js"></script>
   <script src="src/js/core/curvas.js"></script>
   <script src="src/js/ui/etiquetas.js"></script>
   <script src="src/js/core/ClickActionManager.js"></script>
