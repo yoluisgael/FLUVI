@@ -63,6 +63,17 @@ class AssetLoader {
             // Campos deportivos
             { name: 'beisbol', url: 'assets/images/buildings/campo beisbol.png' },
             { name: 'campo escom', url: 'assets/images/buildings/campo escom.png' },
+            { name: 'campo tiro con arco', url: 'assets/images/buildings/campo tiro con arco.png' },
+
+            // Instalaciones deportivas y culturales
+            { name: 'gimnasio', url: 'assets/images/buildings/GIMNASIO.png' },
+            { name: 'cenlex', url: 'assets/images/buildings/cenlex.png' },
+
+            // Edificios académicos adicionales
+            { name: 'cidetec', url: 'assets/images/buildings/CIDETEC falta en el mapa.png' },
+            { name: 'dae', url: 'assets/images/buildings/DAE_falta_en_el_mapa.png' },
+            { name: 'cendi', url: 'assets/images/buildings/CIC.png' },
+            { name: 'biblioteca', url: 'assets/images/buildings/CIC.png' },
 
             // Estacionamientos y EST
             { name: 'estacionamiento', url: 'assets/images/buildings/estacionamientos.png' },

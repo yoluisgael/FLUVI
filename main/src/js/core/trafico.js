@@ -391,21 +391,36 @@ const edificios = [
 
     // ESTACIONAMIENTO CIC
     { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO CIC", imagen: "estacionamiento" },
-    
+
+    // CIDETEC (Centro de Investigación y Desarrollo Tecnológico) - Abajo del CIC
+    { x: 1156, y: 1136, width: 90, height: 80, color: "#0047a3ff", angle: 350, label: "CIDETEC", imagen: "cidetec" },
+
+    // CENDI (Centro de Desarrollo Infantil) - Abajo del CIC
+    { x: 1015, y: 1119, width: 80, height: 80, color: "#0047a3ff", angle: 350, label: "CENDI", imagen: "cic" },
+
 
     { x: 1489, y: 893, width: 100, height: 60, color: "#0047a3ff", angle: 170, label: "ESTABLO DE BURROS" },
     
      { x: 1375, y: 946, width: 180, height: 90, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
 
     { x: 1756, y: 1065, width: 154, height: 270, color: "#164916ff", angle: 170, label: "CAMPO BURROS BLANCOS" }, //9:16
-    
+
+    // Campo de Tiro con Arco
+    { x: 1550, y: 1100, width: 100, height: 80, color: "#164916ff", angle: 350, label: "CAMPO TIRO CON ARCO", imagen: "campo tiro con arco" },
+
     // Campo de Beisbol
     { x: 1974, y: 1273, width: 160, height: 70, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
     { x: 1963, y: 1413, width: 150, height: 200, color: "#164916ff", angle: 350, label: "BEISBOL" },
     { x: 1923, y: 1548, width: 160, height: 70, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
  
     
-    { x: 1643, y: 1592, width: 140, height: 140, color: "#0047a3ff", angle: 350, label: "C.F.I.E" },
+    { x: 1688, y: 1662, width: 140, height: 140, color: "#0047a3ff", angle: 350, label: "C.F.I.E" },
+
+    // ENCB (Escuela Nacional de Ciencias Biológicas)
+    { x: 1392, y: 1529, width: 100, height: 80, color: "#0047a3ff", angle: 350, label: "ENCB", imagen: "cic" },
+
+    // UPIEM (Unidad Profesional Interdisciplinaria en Ingeniería y Tecnologías Avanzadas)
+    { x: 1522, y: 1591, width: 100, height: 80, color: "#0047a3ff", angle: 350, label: "UPIEM", imagen: "cic" },
 
     // CONO
     { x: 1937, y: 910, width: 45, height: 45, color: "#0d0e10ff", angle: 12, label: "CONO" },
@@ -419,14 +434,13 @@ const edificios = [
      { x: 2136, y: 1497, width: 110, height: 110, color: "#4169E1", angle: 259, label: "Alberca" },
     
     // Gimnasio
-    { x: 1918, y: 1648, width: 90, height: 90, color: "#8b4513", angle: 350, label: "GIMNASIO" },
+    { x: 1918, y: 1648, width: 90, height: 90, color: "#8b4513", angle: 350, label: "GIMNASIO", imagen: "gimnasio" },
     
     // PLANETARIO
     { x: 1876, y: 1740, width: 100, height: 100, color: "#4b0000ff", angle: 350, label: "PLANETARIO" },
     
     // CENLEX
-    { x: 2050, y: 1689, width: 70, height: 45, color: "#8b4513", angle: 350, label: "CENLEX" },
-    
+    { x: 2050, y: 1689, width: 70, height: 45, color: "#8b4513", angle: 350, label: "CENLEX", imagen: "cenlex" },
 
     { x: 1605, y: 540, width: 70, height: 70, color: "#29293aff", angle: 350, label: "OIC-IPN" },
     { x: 1456, y: 605, width: 70, height: 70, color: "#8b7355", angle: 350, label: "POI-IPN" },
@@ -457,6 +471,10 @@ const edificios = [
     
     // Centro Cultural JTB
     { x: 2306, y: 1754, width: 90, height: 60, color: "#8b4513", angle: 350, label: "CENTRO CULTURAL JTB" },
+
+    // BIBLIOTECA (cerca del Centro Cultural JTB)
+    { x: 2504, y: 1793, width: 90, height: 70, color: "#0047a3ff", angle: 258, label: "BIBLIOTECA", imagen: "cic" },
+
     { x: 2399, y: 1904, width: 200, height: 50, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
 ];
 
@@ -2406,8 +2424,8 @@ function iniciarSimulacion() {
     //const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard ←", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
     //const Avenida_Cien_Metros = crearCalle("Av. Cien Metros →", 230, TIPOS.CONEXION, 596, 577, -70, 0.0, 3, 0.01);
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1034, 1671, 110, 0.9, 3, 0.01);
-    const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz", 380, TIPOS.CONEXION, 1020, 760, -10, 0.0, 3, 0.01);
-    const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz 2", 300, TIPOS.CONEXION, 2486, 972, 170, 0.0, 3, 0.01);
+    const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz →", 377, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
+    const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz ←", 300, TIPOS.CONEXION, 2486, 972, 170, 0.0, 3, 0.01);
     const Avenida_IPN = crearCalle("Av. IPN", 230, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
     //const Avenida_IPN2 = crearCalle("Av. IPN 2", 230, TIPOS.CONEXION, 2596, 2219, 80, 0.0, 2, 0.01);
     //const Avenida_Guanajuato = crearCalle("Av. Guanajuato", 100, TIPOS.CONEXION, 1180, 2035, -14, 0.0, 1, 0.01);
@@ -2610,7 +2628,49 @@ function iniciarSimulacion() {
         { indiceCelda: 299, anguloOffset: -45 }
     ];
     Avenida_Juan_de_Dios_Batiz2.esCurva = true;
-    
+
+    Avenida_Juan_de_Dios_Batiz.vertices = [
+        { indiceCelda: 0, anguloOffset: -40 },
+        { indiceCelda: 10, anguloOffset: 0 },
+        { indiceCelda: 20, anguloOffset: 0 },
+        { indiceCelda: 30, anguloOffset: 0 },
+        { indiceCelda: 40, anguloOffset: 0 },
+        { indiceCelda: 50, anguloOffset: 0 },
+        { indiceCelda: 60, anguloOffset: 0 },
+        { indiceCelda: 70, anguloOffset: 0 },
+        { indiceCelda: 80, anguloOffset: 0 },
+        { indiceCelda: 90, anguloOffset: 0 },
+        { indiceCelda: 100, anguloOffset: 0 },
+        { indiceCelda: 110, anguloOffset: 0 },
+        { indiceCelda: 120, anguloOffset: 0 },
+        { indiceCelda: 130, anguloOffset: 0 },
+        { indiceCelda: 140, anguloOffset: 0 },
+        { indiceCelda: 150, anguloOffset: 0 },
+        { indiceCelda: 160, anguloOffset: 0 },
+        { indiceCelda: 170, anguloOffset: 0 },
+        { indiceCelda: 180, anguloOffset: 0 },
+        { indiceCelda: 190, anguloOffset: 0 },
+        { indiceCelda: 200, anguloOffset: 0 },
+        { indiceCelda: 210, anguloOffset: 0 },
+        { indiceCelda: 220, anguloOffset: 0 },
+        { indiceCelda: 230, anguloOffset: 0 },
+        { indiceCelda: 240, anguloOffset: 0 },
+        { indiceCelda: 250, anguloOffset: 0 },
+        { indiceCelda: 260, anguloOffset: 0 },
+        { indiceCelda: 270, anguloOffset: 0 },
+        { indiceCelda: 280, anguloOffset: 0 },
+        { indiceCelda: 290, anguloOffset: 0 },
+        { indiceCelda: 300, anguloOffset: 0 },
+        { indiceCelda: 310, anguloOffset: 0 },
+        { indiceCelda: 320, anguloOffset: 0 },
+        { indiceCelda: 330, anguloOffset: 0 },
+        { indiceCelda: 340, anguloOffset: 0 },
+        { indiceCelda: 350, anguloOffset: 0 },
+        { indiceCelda: 360, anguloOffset: 0 },
+        { indiceCelda: 370, anguloOffset: 0 },
+        { indiceCelda: 376, anguloOffset: 0 }
+    ];
+    Avenida_Juan_de_Dios_Batiz.esCurva = true;
 
     
     const conexionesCA = [];
