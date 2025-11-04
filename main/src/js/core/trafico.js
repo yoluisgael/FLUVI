@@ -13,23 +13,16 @@ window.USE_PIXI = localStorage.getItem('usePixi') !== 'false'; // Por defecto tr
 
 console.log(`ℹ️ USE_PIXI = ${window.USE_PIXI}`);
 
-// Constantes de intersecciones
-let intersecciones = []; 
-const celdasIntersectadas = new Set();
-let mapaIntersecciones = new Map(); 
-
 let mostrarConexiones = false; // Variable para controlar visualización de conexiones
 let mostrarVertices = false; // Variable para controlar visualización de vértices
 let mostrarEtiquetas = true; // Variable para controlar visualización de etiquetas de nombres
 let mostrarContadores = false; // Variable para controlar visualización de contadores de estacionamientos
 let colorFondoCanvas = "#c6cbcd"; // Color de fondo del canvas (almacenado para detección automática)
-let prioridadPar = true;
 
 // Exponer variables globales para PixiJS
 window.mostrarConexiones = mostrarConexiones;
 window.mostrarVertices = mostrarVertices;
 window.mostrarEtiquetas = mostrarEtiquetas;
-window.mostrarIntersecciones = false;
 window.mostrarContadores = mostrarContadores;
 
 // Ajustar tamaño inicial del canvas
@@ -172,7 +165,6 @@ let tiempoAnterior = 0;
 let intervaloDeseado = 125; // Intervalo en milisegundos (125ms = ~8 frames por segundo)
 
 let isPaused = false;
-let mostrarIntersecciones = false;
 const minVelocidadSlider = 1;
 const maxVelocidadSlider = 100;
 const maxIntervalo = 250;  // 250ms = 4 veces más rápido que antes (era 1000ms)
@@ -210,8 +202,6 @@ window.offsetX = offsetX;
 window.offsetY = offsetY;
 window.celda_tamano = celda_tamano;
 window.renderizarCanvas = renderizarCanvas;
-window.inicializarIntersecciones = inicializarIntersecciones;
-window.construirMapaIntersecciones = construirMapaIntersecciones;
 window.modoSeleccion = "configuracion"; // Para diferenciar entre "configuracion" y "constructor"
 
 // Cargar las imágenes de los 6 tipos de carros
@@ -919,164 +909,9 @@ function distancia(p1, p2) {
   return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
 }
 
-// Detecta y almacena las intersecciones entre celdas de diferentes calles.
-function inicializarIntersecciones() {
-    console.log("Inicializando detección de intersecciones...");
-    intersecciones = [];
-    celdasIntersectadas.clear();
 
-    const umbralDistancia = celda_tamano;
 
-    for (let j = 0; j < calles.length; j++) {
-        const calle1 = calles[j];
-        for (let k = j + 1; k < calles.length; k++) {
-            const calle2 = calles[k];
 
-            for (let c1 = 0; c1 < calle1.carriles; c1++) {
-                for (let i1 = 0; i1 < calle1.tamano; i1++) {
-                    const idCelda1 = `${j}-${c1}-${i1}`;
-
-                    if (celdasIntersectadas.has(idCelda1)) {
-                        continue;
-                    }
-
-                    const centro1 = obtenerCoordenadasGlobalesCelda(calle1, c1, i1);
-
-                    for (let c2 = 0; c2 < calle2.carriles; c2++) {
-                        for (let i2 = 0; i2 < calle2.tamano; i2++) {
-                            const idCelda2 = `${k}-${c2}-${i2}`;
-
-                            if (celdasIntersectadas.has(idCelda2)) {
-                                continue;
-                            }
-
-                            const centro2 = obtenerCoordenadasGlobalesCelda(calle2, c2, i2);
-
-                            if (distancia(centro1, centro2) < umbralDistancia) {
-                                const nuevaInterseccion = {
-                                    calle1: calle1,
-                                    calle1Index: j,
-                                    carril1: c1,
-                                    indice1: i1,
-                                    calle2: calle2,
-                                    calle2Index: k,
-                                    carril2: c2,
-                                    indice2: i2,
-                                    coords: { x: (centro1.x + centro2.x) / 2, y: (centro1.y + centro2.y) / 2 }
-                                };
-                                intersecciones.push(nuevaInterseccion);
-
-                                celdasIntersectadas.add(idCelda1);
-                                celdasIntersectadas.add(idCelda2);
-
-                                console.log(`Intersección: Calle ${j}[${c1},${i1}] (${calle1.nombre}) con Calle ${k}[${c2},${i2}] (${calle2.nombre})`);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    console.log(`Detección finalizada. ${intersecciones.length} intersecciones encontradas.`);
-}
-
-// Construye un mapa de búsqueda rápida para intersecciones
-function construirMapaIntersecciones() {
-    mapaIntersecciones.clear();
-    intersecciones.forEach(inter => {
-        const id1 = `${inter.calle1Index}-${inter.carril1}-${inter.indice1}`;
-        const id2 = `${inter.calle2Index}-${inter.carril2}-${inter.indice2}`;
-
-        mapaIntersecciones.set(id1, {
-            calle: inter.calle2,
-            carril: inter.carril2,
-            indice: inter.indice2
-        });
-        mapaIntersecciones.set(id2, {
-            calle: inter.calle1,
-            carril: inter.carril1,
-            indice: inter.indice1
-        });
-    });
-    console.log(`Mapa de lookup de intersecciones construido con ${mapaIntersecciones.size} entradas.`);
-}
-
-// Regresa un carro en caso de haber dos en la misma intersección
-function checarIntersecciones() {
-    intersecciones.forEach(inter => {
-        const { calle1Index, carril1, indice1, calle2Index, carril2, indice2 } = inter;
-
-        const calle1 = calles[calle1Index];
-        const calle2 = calles[calle2Index];
-
-        if (!calle1?.arreglo?.[carril1]?.[indice1] === undefined ||
-            !calle2?.arreglo?.[carril2]?.[indice2] === undefined) {
-             return;
-        }
-
-        const estadoActualI1 = calle1.arreglo[carril1][indice1];
-        const estadoActualI2 = calle2.arreglo[carril2][indice2];
-
-        if (estadoActualI1 > 0 && estadoActualI2 > 0) {
-            let vehiculoPerdedor;
-            let calleGanadora, carrilesGanador, indiceGanador, vehiculoGanador;
-
-            if (prioridadPar) {
-                callePerdedora = calle2; carrilPerdedor = carril2; indicePerdedor = indice2;
-                vehiculoPerdedor = estadoActualI2;
-                calleGanadora = calle1; carrilesGanador = carril1; indiceGanador = indice1;
-                vehiculoGanador = estadoActualI1;
-            } else {
-                callePerdedora = calle1; carrilPerdedor = carril1; indicePerdedor = indice1;
-                vehiculoPerdedor = estadoActualI1;
-                calleGanadora = calle2; carrilesGanador = carril2; indiceGanador = indice2;
-                vehiculoGanador = estadoActualI2;
-            }
-
-            console.log(`⚠️ INTERSECCIÓN: Colisión detectada!`);
-            console.log(`   🏆 Ganador: [${calleGanadora.nombre}][Carril ${carrilesGanador}, Pos ${indiceGanador}] Vehículo tipo ${vehiculoGanador}`);
-            console.log(`   ⏮️ Perdedor: [${callePerdedora.nombre}][Carril ${carrilPerdedor}, Pos ${indicePerdedor}] Vehículo tipo ${vehiculoPerdedor} retrocede`);
-
-            callePerdedora.arreglo[carrilPerdedor][indicePerdedor] = 0;
-
-            let indiceAnteriorPerdedor = indicePerdedor - 1;
-            if (indiceAnteriorPerdedor >= 0) {
-                 if (callePerdedora.arreglo[carrilPerdedor]?.[indiceAnteriorPerdedor] !== undefined) {
-                     // Preservar el tipo de vehículo al retroceder
-                     callePerdedora.arreglo[carrilPerdedor][indiceAnteriorPerdedor] = vehiculoPerdedor;
-                 }
-            }
-        }
-    });
-}
-
-// Elimina un carro en las intersecciones sin regresos
-function suavizarIntersecciones() {
-    intersecciones.forEach(inter => {
-        const { calle1Index, carril1, indice1, calle2Index, carril2, indice2 } = inter;
-
-        const calle1 = calles[calle1Index];
-        const calle2 = calles[calle2Index];
-
-        if (!calle1?.arreglo?.[carril1]?.[indice1] === undefined ||
-            !calle2?.arreglo?.[carril2]?.[indice2] === undefined) {
-             return;
-        }
-
-        const estadoActualI1 = calle1.arreglo[carril1][indice1];
-        const estadoActualI2 = calle2.arreglo[carril2][indice2];
-
-        if (estadoActualI1 > 0 && estadoActualI2 > 0) {
-            if (prioridadPar) {
-                callePerdedora = calle2; carrilPerdedor = carril2; indicePerdedor = indice2;
-            } else {
-                callePerdedora = calle1; carrilPerdedor = carril1; indicePerdedor = indice1;
-            }
-
-            callePerdedora.arreglo[carrilPerdedor][indicePerdedor] = 0;
-        }
-    });
-}
 
 function marcarCelulaEsperando(calle, carril, posicion) {
     calle.celulasEsperando[carril][posicion] = true;
@@ -1241,14 +1076,7 @@ function actualizarCalle(calle, calleIndex) {
             // para evitar que el vehículo actual intente moverse ahí
             // (esto ya se maneja implícitamente, pero lo hacemos explícito)
 
-            const idCeldaActual = `${calleIndex}-${c}-${i}`;
-            const infoIntersec = mapaIntersecciones.get(idCeldaActual);
-            let derechaReal = der;
-            if (infoIntersec && i === calle.tamano - 1) {
-                derechaReal = infoIntersec.calle.arreglo[infoIntersec.carril][infoIntersec.indice];
-            }
-
-            const patron = `${izq},${centro},${derechaReal}`;
+            const patron = `${izq},${centro},${der}`;
             const resultadoRegla = reglas[patron];
 
             if (resultadoRegla !== undefined) {
@@ -1933,21 +1761,6 @@ function dibujarCarros() {
     });
 }
 
-function dibujarInterseccionesDetectadas() {
-    if(!mostrarIntersecciones)
-        return;
-
-    ctx.save();
-    ctx.fillStyle = "rgba(255, 0, 255, 0.5)";
-    const radio = celda_tamano / 2;
-  
-    intersecciones.forEach(inter => {
-        ctx.beginPath();
-        ctx.arc(inter.coords.x, inter.coords.y, radio, 0, 2 * Math.PI);
-        ctx.fill();
-    });
-    ctx.restore();
-}
 
 // Función para dibujar todas las conexiones
 function dibujarConexionesDetectadas() {
@@ -2015,7 +1828,6 @@ function renderizarCanvas() {
     dibujarEdificios();
     dibujarCalles();
     dibujarCarros();
-    dibujarInterseccionesDetectadas();
     dibujarConexionesDetectadas();
     dibujarVertices();
     dibujarEtiquetasCalles();
@@ -2423,6 +2235,8 @@ function iniciarSimulacion() {
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 180, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
     //const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard ←", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
     //const Avenida_Cien_Metros = crearCalle("Av. Cien Metros →", 230, TIPOS.CONEXION, 596, 577, -70, 0.0, 3, 0.01);
+    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 343, TIPOS.CONEXION, 986, 1502, 345, 0.0, 2, 0.01);
+    
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1034, 1671, 110, 0.9, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz →", 377, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz ←", 300, TIPOS.CONEXION, 2486, 972, 170, 0.0, 3, 0.01);
@@ -2441,7 +2255,6 @@ function iniciarSimulacion() {
     const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo 2", 183, TIPOS.CONEXION, 2320, 1000, -100, 0.0, 1, 0.01);
     const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu ←", 346, TIPOS.CONEXION, 2605, 2027, 166, 0.0, 2, 0.01);
     //const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 1820, 1825, 155, 0.0, 2, 0.01);
-    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 341, TIPOS.CONEXION, 986, 1502, 345, 0.0, 2, 0.01);
     //const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 160, TIPOS.CONEXION, 1825, 1860, -14, 0.0, 2, 0.01);
     //const Avenida_Sierravista = crearCalle("Av. Sierravista", 50, TIPOS.CONEXION, 2940, 1445, 132, 0.0, 1, 0.01);
     //const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
@@ -2672,6 +2485,45 @@ function iniciarSimulacion() {
     ];
     Avenida_Juan_de_Dios_Batiz.esCurva = true;
 
+    Avenida_Wilfrido_Massieu_2.vertices = [  
+        { indiceCelda: 0, anguloOffset: 34.01911280594667 },  
+        { indiceCelda: 10, anguloOffset: -5.980887194053331 },  
+        { indiceCelda: 20, anguloOffset: -7.198865443321912 },  
+        { indiceCelda: 30, anguloOffset: -9.216817554150742 },  
+        { indiceCelda: 40, anguloOffset: -11.43441987037647 },  
+        { indiceCelda: 50, anguloOffset: -7.965630398413504 },  
+        { indiceCelda: 60, anguloOffset: -9.182982789846694 },  
+        { indiceCelda: 70, anguloOffset: -9.071958977500396 },  
+        { indiceCelda: 80, anguloOffset: -9.340882674320676 },  
+        { indiceCelda: 90, anguloOffset: -9.941219007364822 },  
+        { indiceCelda: 100, anguloOffset: -7.796220976167478 },  
+        { indiceCelda: 110, anguloOffset: -8.149011588852922 },  
+        { indiceCelda: 120, anguloOffset: -11.320184193589338 },  
+        { indiceCelda: 130, anguloOffset: -13.180076970400824 },  
+        { indiceCelda: 140, anguloOffset: -8.438919002612998 },  
+        { indiceCelda: 150, anguloOffset: -8.808264032898121 },  
+        { indiceCelda: 160, anguloOffset: -11.51936318301416 },  
+        { indiceCelda: 170, anguloOffset: -8.390324170084245 },  
+        { indiceCelda: 180, anguloOffset: 0 },  
+        { indiceCelda: 190, anguloOffset: 1.7460387687726275 },  
+        { indiceCelda: 200, anguloOffset: 0 },  
+        { indiceCelda: 210, anguloOffset: 0.4575348257035403 },  
+        { indiceCelda: 220, anguloOffset: 0 },  
+        { indiceCelda: 230, anguloOffset: 0 },  
+        { indiceCelda: 240, anguloOffset: 0 },  
+        { indiceCelda: 250, anguloOffset: 0 },  
+        { indiceCelda: 260, anguloOffset: 2.499802263561486 },  
+        { indiceCelda: 270, anguloOffset: 1.2519063810628852 },  
+        { indiceCelda: 280, anguloOffset: 1.1394180248672738 },  
+        { indiceCelda: 290, anguloOffset: 2.0211681202770686 },  
+        { indiceCelda: 300, anguloOffset: 2.0022947448441974 },  
+        { indiceCelda: 310, anguloOffset: 2.0691502053190396 },  
+        { indiceCelda: 320, anguloOffset: 1.6508201426792355 },  
+        { indiceCelda: 330, anguloOffset: 0.37393566172394005 },  
+        { indiceCelda: 340, anguloOffset: 5.088991945668468 },  
+        { indiceCelda: 342, anguloOffset: 3.3003800222679205 }  
+    ];  
+    Avenida_Wilfrido_Massieu_2.esCurva = true;  
     
     const conexionesCA = [];
 
@@ -2761,8 +2613,8 @@ function iniciarSimulacion() {
         2,
         Avenida_Wilfrido_Massieu_2,
         [
-            { carrilDestino: 0, posOrigen: 35, posDestino: 0, probabilidad: 0.9 },
-            { carrilDestino: 1, posOrigen: 34, posDestino: 0, probabilidad: 0.2 }
+            { carrilDestino: 0, posOrigen: 35, posDestino: 0, probabilidad: 0.3 },
+            { carrilDestino: 1, posOrigen: 34, posDestino: 0, probabilidad: 0.9 }
         ]
     ));
 
@@ -2778,7 +2630,6 @@ function iniciarSimulacion() {
     });
 
     const btnPauseResume = document.getElementById('btnPauseResume');
-    const btnIntersecciones = document.getElementById('btnIntersecciones');
     const btnConexiones = document.getElementById('btnConexiones');
 
     const btnPaso = document.getElementById('btnPaso');
@@ -2805,8 +2656,6 @@ function iniciarSimulacion() {
         return Math.round(minVelocidadSlider + (normalizado * rangoSlider));
     }
 
-    inicializarIntersecciones();
-    construirMapaIntersecciones();
     intervaloDeseado = calcularIntervaloDesdeSlider(50);
 
     btnActualizarCalle.addEventListener("click", () => {
@@ -2954,8 +2803,6 @@ function iniciarSimulacion() {
         if (window.updateSimulationInfo) {
             window.updateSimulationInfo();
         }
-
-        prioridadPar = !prioridadPar;
     }
 
     function animate(tiempoActual) {
@@ -2996,14 +2843,6 @@ function iniciarSimulacion() {
         });
     }
 
-    if (btnIntersecciones) {
-        btnIntersecciones.addEventListener('click', () => {
-            mostrarIntersecciones = !mostrarIntersecciones;
-            // Solo emoji, el tooltip ya explica la función
-            btnIntersecciones.textContent = mostrarIntersecciones ? '✖️' : '✖️';
-            renderizarCanvas();
-        });
-    }
     if (btnConexiones) {
         btnConexiones.addEventListener('click', () => {
             mostrarConexiones = !mostrarConexiones;
@@ -3116,7 +2955,6 @@ function iniciarSimulacion() {
                     }
                 }
             });
-            suavizarIntersecciones();
             renderizarCanvas();
         });
     }
@@ -3503,14 +3341,6 @@ canvas.addEventListener("mouseup", () => {
         console.log('✅ Arrastre de calle finalizado:', draggedStreet.nombre,
                     `Nueva posición: (${Math.round(draggedStreet.x)}, ${Math.round(draggedStreet.y)})`);
 
-        // Recalcular intersecciones después de mover la calle
-        if (window.inicializarIntersecciones) {
-            window.inicializarIntersecciones();
-        }
-        if (window.construirMapaIntersecciones) {
-            window.construirMapaIntersecciones();
-        }
-
         isDraggingStreet = false;
         draggedStreet = null;
         canvas.style.cursor = 'grab';
@@ -3776,8 +3606,6 @@ selectCalle.addEventListener("change", () => {
 });
 
 window.renderizarCanvas = renderizarCanvas;
-window.inicializarIntersecciones = inicializarIntersecciones;
-window.construirMapaIntersecciones = construirMapaIntersecciones;
 window.encontrarCeldaMasCercana = encontrarCeldaMasCercana;
 window.dibujarMinimapa = dibujarMinimapa;
 window.calcularLimitesMapa = calcularLimitesMapa;

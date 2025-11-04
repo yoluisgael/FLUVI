@@ -4,7 +4,7 @@
 (function() {
   // Ejecutar inmediatamente para aplicar clase al body antes de renderizar
   const modoOscuroGuardado = localStorage.getItem('modoOscuro');
-  if (modoOscuroGuardado === 'true') {
+  if (modoOscuroGuardado === 'true' && document.body) {
     document.body.classList.add('dark-mode');
   }
 })();
