@@ -10,6 +10,7 @@ class CalleRenderer {
         this.celda_tamano = window.celda_tamano || 5;
         this.draggingVertexIndex = -1; // Índice del vértice que se está arrastrando
         this.draggingCalle = null; // Calle del vértice que se está arrastrando
+        this.influenceCircle = null; // Círculo de influencia visual para el vértice siendo arrastrado
     }
 
     renderAll(calles) {
@@ -790,6 +791,9 @@ class CalleRenderer {
         // Re-renderizar vértices una vez para aplicar el efecto translúcido
         this.renderVertices(calle);
 
+        // NUEVO: Crear círculo de influencia visual
+        this.createInfluenceCircle(calle, vertice, index);
+
         // Función de arrastre
         const onPointerMove = (e) => {
             console.log(`🖱️ onPointerMove disparado, isDragging: ${dragData.isDragging}`);
@@ -836,6 +840,9 @@ class CalleRenderer {
                     }
 
                     this.renderVertices(dragData.calle);
+
+                    // NUEVO: Actualizar posición del círculo de influencia
+                    this.updateInfluenceCircle(dragData.calle, dragData.vertice, dragData.index);
                 } else {
                     console.warn('⚠️ No se pudo actualizar el ángulo del vértice');
                 }
@@ -855,6 +862,9 @@ class CalleRenderer {
             this.draggingVertexIndex = -1;
             this.draggingCalle = null;
 
+            // NUEVO: Eliminar círculo de influencia
+            this.clearInfluenceCircle();
+
             // Restaurar cursor
             const canvas = this.scene.app.view;
             if (canvas) {
@@ -872,6 +882,97 @@ class CalleRenderer {
         this.scene.app.stage.on('pointermove', onPointerMove);
         this.scene.app.stage.on('pointerup', onPointerUp);
         this.scene.app.stage.on('pointerupoutside', onPointerUp);
+    }
+
+    // ==================== CÍRCULO DE INFLUENCIA VISUAL ====================
+
+    createInfluenceCircle(calle, vertice, index) {
+        // Limpiar círculo anterior si existe
+        this.clearInfluenceCircle();
+
+        // Calcular posición del vértice
+        const pos = window.calcularPosicionVertice
+            ? window.calcularPosicionVertice(calle, vertice)
+            : null;
+
+        if (!pos) {
+            console.warn('⚠️ No se pudo calcular la posición del vértice para el círculo de influencia');
+            return;
+        }
+
+        // Crear el círculo de influencia
+        this.influenceCircle = new PIXI.Graphics();
+
+        // Círculo exterior (área de influencia) - translúcido y pulsante
+        this.influenceCircle.lineStyle(3, 0x00FFFF, 0.6); // Cian brillante
+        this.influenceCircle.beginFill(0x00FFFF, 0.1); // Relleno muy translúcido
+        this.influenceCircle.drawCircle(0, 0, 40); // Radio de 40 píxeles
+        this.influenceCircle.endFill();
+
+        // Círculo interior (indicador de centro)
+        this.influenceCircle.lineStyle(2, 0xFFFFFF, 0.8);
+        this.influenceCircle.drawCircle(0, 0, 5);
+
+        // Cruz en el centro para mayor precisión
+        this.influenceCircle.lineStyle(2, 0xFFFFFF, 0.8);
+        this.influenceCircle.moveTo(-8, 0);
+        this.influenceCircle.lineTo(8, 0);
+        this.influenceCircle.moveTo(0, -8);
+        this.influenceCircle.lineTo(0, 8);
+
+        // Posicionar el círculo
+        this.influenceCircle.x = pos.x;
+        this.influenceCircle.y = pos.y;
+        this.influenceCircle.zIndex = 2000; // Muy alto para estar encima de todo
+
+        // Hacer que el vértice que se está arrastrando sea más grande y brillante
+        const verticesContainer = this.scene.verticeSprites.get(calle);
+        if (verticesContainer) {
+            const vertexGraphic = verticesContainer.children[index];
+            if (vertexGraphic) {
+                vertexGraphic.scale.set(1.5); // 50% más grande
+                vertexGraphic.alpha = 1.0; // Completamente opaco (los demás son translúcidos)
+            }
+        }
+
+        // Agregar a la capa UI para que esté encima de todo
+        const uiLayer = this.scene.getLayer('ui');
+        uiLayer.addChild(this.influenceCircle);
+
+        console.log(`✨ Círculo de influencia creado en vértice ${index} posición (${pos.x.toFixed(2)}, ${pos.y.toFixed(2)})`);
+    }
+
+    updateInfluenceCircle(calle, vertice, index) {
+        if (!this.influenceCircle) return;
+
+        // Calcular nueva posición del vértice
+        const pos = window.calcularPosicionVertice
+            ? window.calcularPosicionVertice(calle, vertice)
+            : null;
+
+        if (!pos) return;
+
+        // Actualizar posición del círculo
+        this.influenceCircle.x = pos.x;
+        this.influenceCircle.y = pos.y;
+
+        // Mantener el vértice arrastrado más grande y opaco
+        const verticesContainer = this.scene.verticeSprites.get(calle);
+        if (verticesContainer) {
+            const vertexGraphic = verticesContainer.children[index];
+            if (vertexGraphic) {
+                vertexGraphic.scale.set(1.5);
+                vertexGraphic.alpha = 1.0;
+            }
+        }
+    }
+
+    clearInfluenceCircle() {
+        if (this.influenceCircle) {
+            this.influenceCircle.destroy();
+            this.influenceCircle = null;
+            console.log('🧹 Círculo de influencia eliminado');
+        }
     }
 }
 
