@@ -687,10 +687,10 @@ class CalleRenderer {
             // IMPORTANTE: Asegurar que el vértice está por encima de todo
             graphics.zIndex = 1000 + index;
 
-            // IMPORTANTE: Si este vértice se está arrastrando, hacerlo translúcido
-            if (this.draggingCalle === calle && this.draggingVertexIndex === index) {
+            // IMPORTANTE: Si estamos arrastrando CUALQUIER vértice de esta calle, hacer TODOS translúcidos
+            if (this.draggingCalle === calle && this.draggingVertexIndex >= 0) {
                 graphics.alpha = 0.3;
-                console.log(`      → Vértice ${index} está siendo ARRASTRADO (translúcido)`);
+                console.log(`      → Vértice ${index} translúcido (arrastrando vértice ${this.draggingVertexIndex})`);
             }
 
             // TODOS los vértices ahora son editables (primero, último e intermedios)

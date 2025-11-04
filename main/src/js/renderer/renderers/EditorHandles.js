@@ -108,6 +108,11 @@ class EditorHandles {
                     window.editorCalles.actualizarInputsPosicion();
                 }
 
+                // NUEVO: Restaurar opacidad normal de vértices
+                if (this.objectType === 'calle' && this.currentObject && this.currentObject.vertices) {
+                    this.setVerticesTranslucency(false);
+                }
+
                 // Si es una calle, recalcular intersecciones
                 if (this.currentObject && this.objectType === 'calle') {
                     console.log('✅ Arrastre finalizado:', this.currentObject.nombre,
@@ -154,6 +159,11 @@ class EditorHandles {
                 // Actualizar inputs de UI ahora que terminó el drag
                 if (window.editorCalles) {
                     window.editorCalles.actualizarInputsPosicion();
+                }
+
+                // NUEVO: Restaurar opacidad normal de vértices
+                if (this.objectType === 'calle' && this.currentObject && this.currentObject.vertices) {
+                    this.setVerticesTranslucency(false);
                 }
 
                 // Finalizar arrastre SHIFT+Click
@@ -273,6 +283,12 @@ class EditorHandles {
                 this.dragInitialX = this.currentObject.x;
                 this.dragInitialY = this.currentObject.y;
                 view.style.cursor = 'move';
+
+                // NUEVO: Si es una calle, hacer vértices translúcidos
+                if (this.objectType === 'calle' && this.currentObject.vertices) {
+                    this.setVerticesTranslucency(true);
+                }
+
                 console.log('🖱️ Iniciando arrastre con SHIFT+Click');
             }
         };
@@ -427,6 +443,11 @@ class EditorHandles {
             this.scene.app.view.style.cursor = 'move';
         }
 
+        // NUEVO: Si es una calle, hacer vértices translúcidos
+        if (this.objectType === 'calle' && this.currentObject.vertices) {
+            this.setVerticesTranslucency(true);
+        }
+
         // NO guardar posición inicial para usar movimiento incremental (más fluido)
         console.log('🖱️ Iniciando arrastre de movimiento (handle PixiJS)');
     }
@@ -500,6 +521,11 @@ class EditorHandles {
         // Cambiar cursor del canvas completo
         if (this.scene.app.view) {
             this.scene.app.view.style.cursor = 'grabbing';
+        }
+
+        // NUEVO: Si es una calle, hacer vértices translúcidos
+        if (this.objectType === 'calle' && this.currentObject.vertices) {
+            this.setVerticesTranslucency(true);
         }
 
         const pos = event.data.global;
@@ -640,6 +666,28 @@ class EditorHandles {
                 }
             }
         }
+    }
+
+    // Función para hacer todos los vértices translúcidos o restaurar opacidad normal
+    setVerticesTranslucency(translucent) {
+        if (!this.currentObject || !this.currentObject.vertices) return;
+
+        const calle = this.currentObject;
+        const verticesContainer = this.scene.verticeSprites.get(calle);
+
+        if (!verticesContainer) {
+            console.log('⚠️ No se encontró contenedor de vértices para la calle');
+            return;
+        }
+
+        const targetAlpha = translucent ? 0.3 : 1.0;
+
+        // Iterar sobre todos los vértices y cambiar su opacidad
+        verticesContainer.children.forEach((vertexGraphic, index) => {
+            vertexGraphic.alpha = targetAlpha;
+        });
+
+        console.log(`🎨 Vértices de ${calle.nombre} ${translucent ? 'translúcidos' : 'restaurados'} (alpha: ${targetAlpha})`);
     }
 
     clearHandles() {
