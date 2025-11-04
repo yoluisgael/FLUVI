@@ -664,6 +664,19 @@ body {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  animation: elegantBlink 3s ease-in-out infinite;
+}
+
+/* Animación de parpadeo elegante para el logo */
+@keyframes elegantBlink {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.98);
+  }
 }
 
 .loading-header p {
@@ -1947,6 +1960,21 @@ body.dark-mode .loading-header h1 {
 
 body.dark-mode .loading-logo {
     filter: brightness(0.9) contrast(1.1);
+    animation: elegantBlinkDark 3s ease-in-out infinite;
+}
+
+/* Animación de parpadeo elegante para el logo en modo oscuro */
+@keyframes elegantBlinkDark {
+    0%, 100% {
+        opacity: 1;
+        filter: brightness(0.9) contrast(1.1);
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.4;
+        filter: brightness(0.75) contrast(1.1);
+        transform: scale(0.98);
+    }
 }
 
 body.dark-mode .loading-header p {
