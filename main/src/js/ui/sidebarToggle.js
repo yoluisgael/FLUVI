@@ -17,11 +17,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Función para aplicar el estado del sidebar
   function applySidebarState(animate = true) {
+    const isMobile = window.innerWidth <= 1024;
+
     if (sidebarVisible) {
       // Mostrar sidebar
       sidebar.classList.remove('hidden');
       mainContent.classList.remove('expanded');
       document.body.classList.remove('sidebar-collapsed');
+
+      // En móviles, agregar clase para mostrar backdrop
+      if (isMobile) {
+        document.body.classList.add('sidebar-open');
+      }
 
       // Mostrar botón flotante = oculto
       toggleBtnFloat.style.display = 'none';
@@ -30,6 +37,11 @@ document.addEventListener('DOMContentLoaded', function() {
       sidebar.classList.add('hidden');
       mainContent.classList.add('expanded');
       document.body.classList.add('sidebar-collapsed');
+
+      // En móviles, remover clase de backdrop
+      if (isMobile) {
+        document.body.classList.remove('sidebar-open');
+      }
 
       // Mostrar botón flotante después de la animación
       setTimeout(() => {
@@ -54,16 +66,26 @@ document.addEventListener('DOMContentLoaded', function() {
   // Función para redimensionar el canvas al tamaño correcto
   function resizeCanvasToFit() {
     const header = document.querySelector('header');
-    const sidebarWidth = sidebarVisible ? (window.innerWidth > 768 ? 380 : 0) : 0;
+    const isMobile = window.innerWidth <= 1024;
+
+    // En móviles, el sidebar NO afecta el ancho del canvas (se superpone)
+    // En desktop, el sidebar sí reduce el ancho disponible
+    let sidebarWidth = 0;
+    if (!isMobile && sidebarVisible) {
+      sidebarWidth = 390; // Ancho del sidebar en desktop
+    }
+
     const headerHeight = header ? header.offsetHeight : 0;
+    const infoBar = document.querySelector('.info-bar');
+    const infoBarHeight = infoBar ? infoBar.offsetHeight : 0;
 
     const newWidth = window.innerWidth - sidebarWidth;
-    const newHeight = window.innerHeight - headerHeight;
+    const newHeight = window.innerHeight - headerHeight - infoBarHeight;
 
     // Si usamos PixiJS, redimensionar su renderer
     if (window.USE_PIXI && window.pixiApp && window.pixiApp.app) {
       window.pixiApp.app.renderer.resize(newWidth, newHeight);
-      console.log(`🖼️ Canvas PixiJS redimensionado: ${newWidth}x${newHeight}`);
+      console.log(`🖼️ Canvas PixiJS redimensionado: ${newWidth}x${newHeight} (móvil: ${isMobile})`);
     } else {
       // Canvas 2D tradicional
       const canvas = document.getElementById('simuladorCanvas');
@@ -96,6 +118,36 @@ document.addEventListener('DOMContentLoaded', function() {
       e.preventDefault();
       toggleSidebar();
     }
+  });
+
+  // Cerrar sidebar al hacer clic en el backdrop (solo en móviles)
+  document.addEventListener('click', function(e) {
+    const isMobile = window.innerWidth <= 1024;
+
+    if (isMobile && sidebarVisible && document.body.classList.contains('sidebar-open')) {
+      // Si el clic fue fuera del sidebar
+      if (!sidebar.contains(e.target) && !toggleBtnFloat.contains(e.target)) {
+        toggleSidebar();
+      }
+    }
+  });
+
+  // Manejar resize de ventana para ajustar comportamiento
+  let resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      const isMobile = window.innerWidth <= 1024;
+
+      // Actualizar clases según el tamaño de pantalla
+      if (isMobile && sidebarVisible) {
+        document.body.classList.add('sidebar-open');
+      } else {
+        document.body.classList.remove('sidebar-open');
+      }
+
+      resizeCanvasToFit();
+    }, 250);
   });
 
   console.log('✓ Sistema de toggle del sidebar inicializado (Ctrl+B para toggle)');
