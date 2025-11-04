@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador de Calles Dinámicas</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="src/assets/logos/favicon.png">
+  <link rel="shortcut icon" href="src/assets/logos/favicon.png">
+
   <!-- Bootstrap CSS local -->
   <link href="./src/bootstrap-5.0.2-dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Chart.js local -->
@@ -22,7 +27,7 @@
   <div id="loadingScreen">
     <div class="loading-content">
       <div class="loading-header">
-        <h1>Simulador de Tráfico FLUVI</h1>
+        <img src="src/assets/logos/logo_horizontal.png" alt="FLUVI" class="loading-logo">
         <p>Cargando simulación...</p>
       </div>
 
@@ -32,43 +37,33 @@
 
       <div class="instructions">
         <div class="instruction-card">
-          <h3>🖱️ Controles Básicos</h3>
-          <p>Usa la rueda del mouse para hacer zoom. Arrastra el canvas para moverte. Haz clic en las celdas para agregar/quitar vehículos.</p>
+          <h3>🖱️ Navega</h3>
+          <p>Zoom con la rueda, arrastra para moverte por el mapa</p>
         </div>
 
         <div class="instruction-card">
-          <h3>⚙️ Selección Rápida</h3>
-          <p>Presiona Ctrl+Clic (⌘+Clic en Mac) sobre calles o edificios en el canvas para seleccionarlos al instante. También puedes usar los menús desplegables.</p>
+          <h3>⚙️ Selección</h3>
+          <p>Ctrl+Clic sobre calles o edificios para configurarlos rápidamente</p>
         </div>
 
         <div class="instruction-card">
-          <h3>⏸️ Simulación</h3>
-          <p>Pausa, avanza paso a paso, ajusta la velocidad y visualiza métricas de tu simulación.</p>
+          <h3>⏸️ Controla</h3>
+          <p>Pausa, ajusta la velocidad y observa las métricas en tiempo real</p>
         </div>
 
         <div class="instruction-card">
-          <h3>✏️ Modo Edición</h3>
-          <p>Selecciona una calle o edificio y activa el modo edición para reposicionar y rotar visualmente.</p>
+          <h3>✏️ Edita</h3>
+          <p>Activa el modo edición para mover y rotar calles o edificios</p>
         </div>
 
         <div class="instruction-card">
-          <h3>🌊 Curvas en Calles</h3>
-          <p>Activa el modo curva y arrastra los vértices perpendiculares a la calle para crear curvaturas suaves.</p>
+          <h3>🌊 Personaliza</h3>
+          <p>Crea curvas en calles, activa intersecciones y visualiza conexiones</p>
         </div>
 
         <div class="instruction-card">
-          <h3>🚦 Intersecciones</h3>
-          <p>Activa la visualización de intersecciones para ver conflictos de tráfico entre calles.</p>
-        </div>
-
-        <div class="instruction-card">
-          <h3>🔗 Conexiones</h3>
-          <p>Muestra las conexiones entre calles: lineales (verde), incorporación (naranja) y probabilísticas (morado).</p>
-        </div>
-
-        <div class="instruction-card">
-          <h3>🏗️ Constructor de Mapas</h3>
-          <p>Crea tus propias simulaciones desde cero, guárdalas como JSON y carga mapas personalizados.</p>
+          <h3>🏗️ Construye</h3>
+          <p>Diseña tus propios mapas y guárdalos para usarlos después</p>
         </div>
       </div>
 

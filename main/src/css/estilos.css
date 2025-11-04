@@ -598,6 +598,15 @@ body {
   font-weight: 700;
 }
 
+.loading-logo {
+  max-width: min(400px, 70vw);
+  height: auto;
+  margin-bottom: 15px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .loading-header p {
   color: #6c757d;
   font-size: clamp(1rem, 2vw, 1.1rem);
@@ -1819,6 +1828,10 @@ body.dark-mode .loading-content {
 
 body.dark-mode .loading-header h1 {
     color: #5a9fd4;
+}
+
+body.dark-mode .loading-logo {
+    filter: brightness(0.9) contrast(1.1);
 }
 
 body.dark-mode .loading-header p {
