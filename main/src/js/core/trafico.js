@@ -346,8 +346,8 @@ const backgroundAreas = [
            { x: 917, y: 765 },  // Vértice 2 (arriba derecha)
            { x: 1395, y: 847 },  // Vértice 2 (arriba derecha)
            { x: 1418, y: 552 },  // Vértice 2 (arriba derecha)
-            { x: 1847, y: 364 },  // Vértice 2 (arriba derecha)
-            { x: 2391, y: 948 }, // Vértice 3 (derecha arriba)
+            { x: 1873, y: 352 },  // Vértice 2 (arriba derecha)
+            { x: 2401, y: 895 }, // Vértice 3 (derecha arriba)
             { x: 2405, y: 1027 }, // Vértice 4 (derecha abajo)
             { x: 2763, y: 1091 }, // Vértice 5 (abajo derecha)
             { x: 2594, y: 2008 },  // Vértice 6 (abajo izquierda)
@@ -371,13 +371,13 @@ const edificios = [
     { x: 1239, y: 701, width: 250, height: 120, color: "#29293aff", angle: 334, label: "PLAZA TORRES LINDAVISTA" },
 
     // ESCOM
-    { x: 1071, y: 859, width: 95, height: 160, color: "#0047a3ff", angle: 350, label: "ESCOM" },
+    { x: 1065, y: 894, width: 95, height: 160, color: "#0047a3ff", angle: 350, label: "ESCOM" },
     
     // ESTACIONAMIENTO ESCOM
-    { x: 1199, y: 916, width: 180, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO ESCOM", imagen: "estacionamiento" },
+    { x: 1171, y: 902, width: 180, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO ESCOM", imagen: "estacionamiento" },
     
     // CIC
-    { x: 1041, y: 1008, width: 90, height: 90, color: "#0047a3ff", angle: 350, label: "CIC" },
+    { x: 1033, y: 1030, width: 90, height: 90, color: "#0047a3ff", angle: 350, label: "CIC" },
 
     // ESTACIONAMIENTO CIC
     { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO CIC", imagen: "estacionamiento" },
@@ -391,7 +391,7 @@ const edificios = [
 
     { x: 1489, y: 893, width: 100, height: 60, color: "#0047a3ff", angle: 170, label: "ESTABLO DE BURROS" },
     
-     { x: 1375, y: 946, width: 180, height: 90, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
+     { x: 1256, y: 926, width: 180, height: 90, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
 
     { x: 1756, y: 1065, width: 154, height: 270, color: "#164916ff", angle: 170, label: "CAMPO BURROS BLANCOS" }, //9:16
 
@@ -413,7 +413,7 @@ const edificios = [
     { x: 1522, y: 1591, width: 100, height: 80, color: "#0047a3ff", angle: 350, label: "UPIEM", imagen: "cic" },
 
     // CONO
-    { x: 1937, y: 910, width: 45, height: 45, color: "#0d0e10ff", angle: 12, label: "CONO" },
+    { x: 1937, y: 905, width: 45, height: 45, color: "#0d0e10ff", angle: 352, label: "CONO" },
 
 
     // ========== ZONA CENTRAL (entre Luis Enrique Erro y Miguel Anda y Barredo) ==========
@@ -2222,6 +2222,10 @@ async function inicializarMotorGrafico() {
 function iniciarSimulacion() {
     const retrono1 = crearCalle("retorno1", 6, TIPOS.CONEXION, 1916, 922, 80, 0.0, 2, 0.01);
     const retrono2 = crearCalle("retorno2", 6, TIPOS.CONEXION, 1941, 926, 80, 0.0, 2, 0.01);
+    const retronotorres = crearCalle("retronotorres →", 7, TIPOS.CONEXION, 1029, 766, 72, 0.0, 1, 0.01);
+    const retronotorres2 = crearCalle("retronotorres ←", 7, TIPOS.CONEXION, 1033, 768, 72, 0.0, 1, 0.01);
+    const retronoESCOM = crearCalle("retornoESCOM ←", 6, TIPOS.CONEXION, 1222, 766, 259, 0.0, 1, 0.01);
+    const retronoESCOM2 = crearCalle("retornoESCOM →", 6, TIPOS.CONEXION, 1206, 798, 79, 0.0, 1, 0.01);
     // Sistema 1: Avenida Wilfrido Massieu
 
     const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal →", 248, TIPOS.CONEXION, 729, 805, 22, 0.0, 3, 0.02);
