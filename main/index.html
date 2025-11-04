@@ -858,16 +858,46 @@
             </div>
 
             <div class="col-12">
-              <div class="card bg-light">
+              <div class="card border-primary">
                 <div class="card-body">
                   <h5 class="card-title">📊 Métricas del Simulador</h5>
-                  <ul class="list-unstyled">
-                    <li><strong>Densidad de Tráfico:</strong> % de ocupación de las calles</li>
-                    <li><strong>Flujo Vehicular:</strong> Carros por segundo moviéndose</li>
-                    <li><strong>Velocidad Promedio:</strong> % de vehículos en movimiento</li>
-                  </ul>
-                  <div class="alert alert-info mb-0 mt-3">
-                    <small><strong>💡 Tip:</strong> Las métricas se actualizan cada 5 frames de simulación para optimizar el rendimiento.</small>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h6 class="text-primary mt-2">📈 Métricas Principales</h6>
+                      <ul class="list-unstyled mb-3">
+                        <li><strong>Densidad:</strong> % de ocupación de las calles (0-100%)</li>
+                        <li><strong>Flujo Vehicular:</strong> Vehículos/segundo según Q=k×v</li>
+                        <li><strong>Tasa de Cambio:</strong> Crecimiento neto de población (veh/s)</li>
+                        <li><strong>Velocidad Promedio:</strong> % de vehículos en movimiento</li>
+                        <li><strong>Entropía de Shannon:</strong> Diversidad de reglas del AC (bits)</li>
+                      </ul>
+                    </div>
+                    <div class="col-md-6">
+                      <h6 class="text-success mt-2">📊 Interpretación Inteligente</h6>
+                      <ul class="list-unstyled mb-3">
+                        <li>🟢 <strong>Óptimo:</strong> Máxima eficiencia del sistema</li>
+                        <li>🟡 <strong>Moderado:</strong> Condiciones aceptables</li>
+                        <li>🟠 <strong>Congestionado:</strong> Alta densidad con lentitud</li>
+                        <li>🔴 <strong>Colapso:</strong> Calles paralizadas</li>
+                        <li>🔵 <strong>Sub-utilizado:</strong> Baja ocupación</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <h6 class="text-warning mt-2">🛠️ Herramientas Disponibles</h6>
+                      <ul class="list-unstyled mb-2">
+                        <li><strong>5 Gráficas en Tiempo Real:</strong> Visualiza todas las métricas con Chart.js</li>
+                        <li><strong>Panel de Estado:</strong> Interpretación automática del tráfico con recomendaciones</li>
+                        <li><strong>Exportar CSV:</strong> Descarga historial completo con estadísticas</li>
+                        <li><strong>Exportar JSON:</strong> Formato estructurado con metadata</li>
+                        <li><strong>Limpiar Métricas:</strong> Reinicia el historial de mediciones</li>
+                        <li><strong>Mapa de Calor:</strong> Visualiza densidad por zona geográfica</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="alert alert-info mb-0 mt-2">
+                    <small><strong>💡 Tips:</strong> Las métricas se actualizan cada 5 frames para optimizar rendimiento. El historial de gráficas muestra últimos 50 puntos, pero el CSV exporta TODAS las mediciones desde el inicio.</small>
                   </div>
                 </div>
               </div>
@@ -1652,7 +1682,7 @@
   </div>
 
   <!-- Modal de Mapa de Calor -->
-  <div class="modal fade" id="modalMapaCalor" tabindex="-1" aria-labelledby="modalMapaCalorLabel" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal fade" id="modalMapaCalor" tabindex="-1" aria-labelledby="modalMapaCalorLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-fullscreen">
       <div class="modal-content heatmap-modal">
         <!-- Header elegante con gradiente -->
