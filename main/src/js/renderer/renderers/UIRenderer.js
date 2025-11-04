@@ -50,6 +50,12 @@ class UIRenderer {
     }
 
     createEtiquetasParaCalle(calle) {
+        // CONDICIÓN: No renderizar etiquetas para calles de tipo CONEXION menores a 8 celdas
+        // (Son retornos y no necesitan mostrar su nombre)
+        if (calle.tipo === 'conexion' && calle.tamano < 8) {
+            return; // Salir sin crear etiquetas
+        }
+
         // Calcular número de repeticiones según el tamaño de la calle
         const umbralRepeticion = 200;
         const numRepeticiones = Math.max(1, Math.ceil(calle.tamano / umbralRepeticion));

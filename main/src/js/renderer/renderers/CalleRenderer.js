@@ -187,7 +187,7 @@ class CalleRenderer {
 
     addSelectionBorder(container, calle) {
         const graphics = new PIXI.Graphics();
-        graphics.lineStyle(2, window.modoSeleccion === "constructor" ? 0xFFA500 : 0xFFD700);
+        graphics.lineStyle(1, window.modoSeleccion === "constructor" ? 0xFFA500 : 0xFFD700);
         graphics.drawRect(
             0,
             0,
@@ -202,7 +202,7 @@ class CalleRenderer {
         const graphics = new PIXI.Graphics();
         const color = window.modoSeleccion === "constructor" ? 0xFFA500 : 0xFFD700;
 
-        graphics.lineStyle(2, color, 1);
+        graphics.lineStyle(1, color, 1);
 
         // Dibujar contorno siguiendo ambos bordes de la calle curva (sin offset)
         if (window.obtenerCoordenadasGlobalesCeldaConCurva) {

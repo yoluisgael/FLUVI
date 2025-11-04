@@ -125,8 +125,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const isMobile = window.innerWidth <= 1024;
 
     if (isMobile && sidebarVisible && document.body.classList.contains('sidebar-open')) {
-      // Si el clic fue fuera del sidebar
-      if (!sidebar.contains(e.target) && !toggleBtnFloat.contains(e.target)) {
+      // Verificar si el clic fue dentro de un modal
+      const clickedModal = e.target.closest('.modal');
+
+      // Si el clic fue fuera del sidebar Y no dentro de un modal
+      if (!sidebar.contains(e.target) && !toggleBtnFloat.contains(e.target) && !clickedModal) {
         toggleSidebar();
       }
     }

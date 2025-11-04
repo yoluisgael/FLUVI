@@ -186,7 +186,7 @@ function mostrarDialogoNuevaCalle() {
         const x = parseFloat(inputX.value);
         const y = parseFloat(inputY.value);
         const angulo = parseFloat(inputAngulo.value);
-        const probGen = parseFloat(inputProbGen.value);
+        let probGen = parseFloat(inputProbGen.value); // let en lugar de const porque puede ser reasignada
         const probSalto = parseFloat(inputProbSalto.value);
 
         // Flag para validación
@@ -526,6 +526,183 @@ function agregarCalle(nombre, tamano, tipo, x, y, angulo, probabilidadGeneracion
 
 // ==================== DIÁLOGO NUEVA CONEXIÓN ====================
 
+// ========== FUNCIONES DE VALIDACIÓN GLOBALES ==========
+
+// Función para validar si ya existe una conexión duplicada
+function validarConexionDuplicada(origenIdx, carrilOrigen, destinoIdx, carrilDestino) {
+    if (!window.conexiones) return false;
+
+    // Buscar conexión duplicada exacta
+    const duplicada = window.conexiones.find(conn => {
+        return conn.origen === window.calles[origenIdx] &&
+               conn.destino === window.calles[destinoIdx] &&
+               conn.carrilOrigen === carrilOrigen &&
+               conn.carrilDestino === carrilDestino;
+    });
+
+    return duplicada !== undefined;
+}
+
+// Función para validar que no haya carriles destino duplicados
+function validarCarrilesUnicos() {
+    const selectDestino = document.getElementById('selectCalleDestino');
+    const destinoIdx = parseInt(selectDestino.value);
+    if (isNaN(destinoIdx)) return true;
+
+    const destino = window.calles[destinoIdx];
+    const numCarriles = destino.carriles;
+
+    const carrilesUsados = new Set();
+    let hayDuplicados = false;
+
+    for (let i = 0; i < numCarriles; i++) {
+        const selectCarril = document.getElementById(`carrilDestinoSalida${i}`);
+        const probInput = document.getElementById(`probSalida${i}`);
+
+        if (!selectCarril || !probInput) continue;
+
+        const probabilidad = parseFloat(probInput.value);
+
+        // Solo validar si la probabilidad es > 0 (salida activa)
+        if (probabilidad > 0) {
+            const carrilDestino = parseInt(selectCarril.value);
+
+            if (carrilesUsados.has(carrilDestino)) {
+                // Duplicado encontrado
+                selectCarril.classList.add('is-invalid');
+                hayDuplicados = true;
+            } else {
+                selectCarril.classList.remove('is-invalid');
+                carrilesUsados.add(carrilDestino);
+            }
+        } else {
+            selectCarril.classList.remove('is-invalid');
+        }
+    }
+
+    return !hayDuplicados;
+}
+
+// Función para validar un campo de probabilidad individual
+function validarProbabilidadSalida(index) {
+    const probInput = document.getElementById(`probSalida${index}`);
+    if (!probInput) return true;
+
+    const prob = parseFloat(probInput.value);
+
+    if (isNaN(prob) || prob < 0 || prob > 100) {
+        probInput.classList.add('is-invalid');
+        return false;
+    } else {
+        probInput.classList.remove('is-invalid');
+        return true;
+    }
+}
+
+// Función para validar suma de probabilidades = 100%
+function validarSumaProbabilidades() {
+    const selectDestino = document.getElementById('selectCalleDestino');
+    const destinoIdx = parseInt(selectDestino.value);
+    if (isNaN(destinoIdx)) return true;
+
+    const destino = window.calles[destinoIdx];
+    const numCarriles = destino.carriles;
+
+    let suma = 0;
+    for (let i = 0; i < numCarriles; i++) {
+        const probInput = document.getElementById(`probSalida${i}`);
+        if (probInput) {
+            const prob = parseFloat(probInput.value) || 0;
+            suma += prob;
+        }
+    }
+
+    // Mostrar advertencia si la suma no es 100%
+    const contenedor = document.getElementById('contenedorDistribucionesProbabilisticas');
+    if (!contenedor) return true; // Si no existe el contenedor, salir
+
+    let alertaSuma = contenedor.querySelector('.alerta-suma-probabilidades');
+
+    if (Math.abs(suma - 100) > 0.01) {
+        if (!alertaSuma) {
+            alertaSuma = document.createElement('div');
+            alertaSuma.className = 'alert alert-warning alert-sm mt-2 alerta-suma-probabilidades';
+            alertaSuma.innerHTML = `<strong>⚠️ Advertencia:</strong> La suma de probabilidades es <strong>${suma.toFixed(1)}%</strong>. Se recomienda que sume 100% para una distribución correcta.`;
+            contenedor.insertBefore(alertaSuma, contenedor.firstChild);
+        } else {
+            alertaSuma.innerHTML = `<strong>⚠️ Advertencia:</strong> La suma de probabilidades es <strong>${suma.toFixed(1)}%</strong>. Se recomienda que sume 100% para una distribución correcta.`;
+        }
+        return false;
+    } else {
+        if (alertaSuma) {
+            alertaSuma.remove();
+        }
+        return true;
+    }
+}
+
+// Función para validar posiciones
+function validarPosiciones(index) {
+    const selectOrigen = document.getElementById('selectCalleOrigen');
+    const selectDestino = document.getElementById('selectCalleDestino');
+    const origenIdx = parseInt(selectOrigen.value);
+    const destinoIdx = parseInt(selectDestino.value);
+
+    if (isNaN(origenIdx) || isNaN(destinoIdx)) return true;
+
+    const origen = window.calles[origenIdx];
+    const destino = window.calles[destinoIdx];
+
+    const posOrigenInput = document.getElementById(`posOrigenSalida${index}`);
+    const posDestinoInput = document.getElementById(`posDestinoSalida${index}`);
+
+    if (!posOrigenInput || !posDestinoInput) return true;
+
+    let isValid = true;
+
+    // Validar posición origen
+    const posOrigen = parseInt(posOrigenInput.value);
+    if (isNaN(posOrigen) || posOrigen < 1 || posOrigen > origen.tamano) {
+        posOrigenInput.classList.add('is-invalid');
+        isValid = false;
+    } else {
+        posOrigenInput.classList.remove('is-invalid');
+    }
+
+    // Validar posición destino
+    const posDestino = parseInt(posDestinoInput.value);
+    if (isNaN(posDestino) || posDestino < 1 || posDestino > destino.tamano) {
+        posDestinoInput.classList.add('is-invalid');
+        isValid = false;
+    } else {
+        posDestinoInput.classList.remove('is-invalid');
+    }
+
+    return isValid;
+}
+
+// Función para validar carril origen
+function validarCarrilOrigen() {
+    const selectCarrilOrigenProb = document.getElementById('selectCarrilOrigenProb');
+    if (!selectCarrilOrigenProb) return true;
+
+    const selectOrigen = document.getElementById('selectCalleOrigen');
+    const origenIdx = parseInt(selectOrigen.value);
+    if (isNaN(origenIdx)) return true;
+
+    const origen = window.calles[origenIdx];
+    const carrilOrigen = parseInt(selectCarrilOrigenProb.value);
+
+    // Validar que sea un carril válido (0-based)
+    if (isNaN(carrilOrigen) || carrilOrigen < 0 || carrilOrigen >= origen.carriles) {
+        selectCarrilOrigenProb.classList.add('is-invalid');
+        return false;
+    } else {
+        selectCarrilOrigenProb.classList.remove('is-invalid');
+        return true;
+    }
+}
+
 function mostrarDialogoNuevaConexion() {
     if (!window.calles || window.calles.length < 2) {
         alert("❌ Necesitas al menos 2 calles para crear una conexión");
@@ -552,7 +729,19 @@ function mostrarDialogoNuevaConexion() {
     });
 
     // Mostrar el modal
-    const modal = new bootstrap.Modal(document.getElementById('modalNuevaConexion'));
+    const modalElement = document.getElementById('modalNuevaConexion');
+    const modal = new bootstrap.Modal(modalElement);
+
+    // Agregar listener para limpiar el foco cuando se cierre el modal
+    modalElement.addEventListener('hidden.bs.modal', function handleModalHidden() {
+        // Remover el foco de cualquier elemento dentro del modal
+        if (document.activeElement && modalElement.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+        // Remover este listener para evitar acumulación
+        modalElement.removeEventListener('hidden.bs.modal', handleModalHidden);
+    });
+
     modal.show();
 
     // Configurar cambio de tipo de conexión para mostrar/ocultar campos
@@ -564,7 +753,253 @@ function mostrarDialogoNuevaConexion() {
         const tipo = this.value;
         camposIncorporacion.style.display = tipo === 'INCORPORACION' ? 'block' : 'none';
         camposProbabilistica.style.display = tipo === 'PROBABILISTICA' ? 'block' : 'none';
+
+        // Poblar selectores según el tipo
+        if (tipo === 'INCORPORACION') {
+            poblarSelectorCarrilDestinoIncorp();
+        } else if (tipo === 'PROBABILISTICA') {
+            poblarSelectorCarrilOrigen();
+            generarFormulariosDistribucion();
+        }
     });
+
+    // Detectar cambio en calle destino para regenerar formularios/selectores
+    selectDestino.addEventListener('change', function() {
+        const tipo = selectTipoConexion.value;
+        if (tipo === 'PROBABILISTICA') {
+            generarFormulariosDistribucion();
+        } else if (tipo === 'INCORPORACION') {
+            poblarSelectorCarrilDestinoIncorp();
+        }
+    });
+
+    // Detectar cambio en calle origen para poblar selector de carril origen
+    selectOrigen.addEventListener('change', function() {
+        if (selectTipoConexion.value === 'PROBABILISTICA') {
+            poblarSelectorCarrilOrigen();
+        }
+    });
+
+    // Función para poblar selector de carril origen (PROBABILISTICA)
+    function poblarSelectorCarrilOrigen() {
+        const selectCarrilOrigenProb = document.getElementById('selectCarrilOrigenProb');
+        if (!selectCarrilOrigenProb) return;
+
+        const origenIdx = parseInt(selectOrigen.value);
+
+        if (isNaN(origenIdx) || origenIdx < 0 || origenIdx >= window.calles.length) {
+            selectCarrilOrigenProb.innerHTML = '<option value="">Selecciona una calle origen primero</option>';
+            return;
+        }
+
+        const origen = window.calles[origenIdx];
+        const numCarriles = origen.carriles;
+
+        let html = '';
+        for (let i = 0; i < numCarriles; i++) {
+            html += `<option value="${i}">Carril ${i + 1}</option>`;
+        }
+
+        selectCarrilOrigenProb.innerHTML = html;
+        // Seleccionar primer carril por defecto
+        selectCarrilOrigenProb.value = '0';
+    }
+
+    // Función para poblar selector de carril destino (INCORPORACION)
+    function poblarSelectorCarrilDestinoIncorp() {
+        const selectCarrilDestinoIncorp = document.getElementById('selectCarrilDestinoIncorp');
+        const inputPosInicial = document.getElementById('inputPosInicial');
+
+        if (!selectCarrilDestinoIncorp) return;
+
+        const destinoIdx = parseInt(selectDestino.value);
+
+        if (isNaN(destinoIdx) || destinoIdx < 0 || destinoIdx >= window.calles.length) {
+            selectCarrilDestinoIncorp.innerHTML = '<option value="">Selecciona una calle destino primero</option>';
+            if (inputPosInicial) {
+                inputPosInicial.removeAttribute('max');
+            }
+            return;
+        }
+
+        const destino = window.calles[destinoIdx];
+        const numCarriles = destino.carriles;
+
+        let html = '';
+        for (let i = 0; i < numCarriles; i++) {
+            html += `<option value="${i}">Carril ${i + 1}</option>`;
+        }
+
+        selectCarrilDestinoIncorp.innerHTML = html;
+        // Seleccionar primer carril por defecto
+        selectCarrilDestinoIncorp.value = '0';
+
+        // Actualizar límite máximo de posición inicial
+        if (inputPosInicial) {
+            inputPosInicial.setAttribute('max', destino.tamano);
+            inputPosInicial.setAttribute('placeholder', `1-${destino.tamano}`);
+
+            // Actualizar texto de ayuda
+            const helpText = inputPosInicial.nextElementSibling;
+            if (helpText && helpText.classList.contains('text-muted')) {
+                helpText.textContent = `Posición en la calle destino (máx: ${destino.tamano})`;
+            }
+        }
+    }
+
+    // Validar carril origen cuando cambie
+    const selectCarrilOrigenProb = document.getElementById('selectCarrilOrigenProb');
+    if (selectCarrilOrigenProb) {
+        selectCarrilOrigenProb.addEventListener('change', validarCarrilOrigen);
+    }
+
+    // Función para generar formularios de distribución automáticamente
+    function generarFormulariosDistribucion() {
+        const contenedor = document.getElementById('contenedorDistribucionesProbabilisticas');
+        const destinoIdx = parseInt(selectDestino.value);
+        const origenIdx = parseInt(selectOrigen.value);
+
+        if (isNaN(destinoIdx) || destinoIdx < 0 || destinoIdx >= window.calles.length) {
+            contenedor.innerHTML = '<p class="text-muted text-center py-3">Selecciona una calle destino para configurar las salidas</p>';
+            return;
+        }
+
+        if (isNaN(origenIdx) || origenIdx < 0 || origenIdx >= window.calles.length) {
+            contenedor.innerHTML = '<p class="text-muted text-center py-3">Selecciona una calle origen primero</p>';
+            return;
+        }
+
+        const origen = window.calles[origenIdx];
+        const destino = window.calles[destinoIdx];
+        const numCarriles = destino.carriles;
+
+        let html = `
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    Configuración de Salidas
+                    <span class="badge bg-secondary">${numCarriles} carril${numCarriles > 1 ? 'es' : ''} disponibles</span>
+                </label>
+                <div class="accordion" id="accordionDistribuciones">
+        `;
+
+        // Generar opciones de carriles destino (en formato humano: 1, 2, 3...)
+        let opcionesCarriles = '';
+        for (let c = 0; c < numCarriles; c++) {
+            opcionesCarriles += `<option value="${c}">Carril ${c + 1}</option>`;
+        }
+
+        for (let i = 0; i < numCarriles; i++) {
+            const collapseId = `collapseSalida${i}`;
+            const isFirst = i === 0;
+
+            // Distribuir probabilidades por defecto equitativamente
+            const probPorDefecto = Math.floor(100 / numCarriles);
+            const probExtra = 100 - (probPorDefecto * numCarriles); // Redondeo extra
+
+            html += `
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button ${!isFirst ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}">
+                            🎯 Salida ${i + 1}
+                        </button>
+                    </h2>
+                    <div id="${collapseId}" class="accordion-collapse collapse ${isFirst ? 'show' : ''}" data-bs-parent="#accordionDistribuciones">
+                        <div class="accordion-body">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <label class="form-label small">Carril Destino</label>
+                                    <select class="form-select form-select-sm" id="carrilDestinoSalida${i}">
+                                        ${opcionesCarriles}
+                                    </select>
+                                    <small class="text-muted">A qué carril van los vehículos</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small">Probabilidad (%)</label>
+                                    <input type="number" class="form-control form-control-sm"
+                                           id="probSalida${i}"
+                                           placeholder="0-100"
+                                           min="0"
+                                           max="100"
+                                           step="1"
+                                           value="${probPorDefecto + (i === 0 ? probExtra : 0)}">
+                                    <small class="text-muted">% de vehículos que toman esta salida</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small">Posición Origen (celda)</label>
+                                    <input type="number" class="form-control form-control-sm"
+                                           id="posOrigenSalida${i}"
+                                           placeholder="1-${origen.tamano}"
+                                           min="1"
+                                           max="${origen.tamano}"
+                                           value="${origen.tamano}">
+                                    <small class="text-muted">Celda donde se origina (máx: ${origen.tamano})</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small">Posición Destino (celda)</label>
+                                    <input type="number" class="form-control form-control-sm"
+                                           id="posDestinoSalida${i}"
+                                           placeholder="1-${destino.tamano}"
+                                           min="1"
+                                           max="${destino.tamano}"
+                                           value="1">
+                                    <small class="text-muted">Celda donde llegan (máx: ${destino.tamano})</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        html += `
+                </div>
+                <div class="alert alert-warning small mt-2 mb-0">
+                    <strong>⚠️ Importante:</strong>
+                    <ul class="mb-0 mt-1">
+                        <li>La suma de probabilidades debería ser ~100%</li>
+                        <li>Cada carril destino solo puede usarse una vez</li>
+                        <li>Las posiciones se cuentan desde 1 (no desde 0)</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+
+        contenedor.innerHTML = html;
+
+        // Agregar listeners para validación en tiempo real
+        for (let i = 0; i < numCarriles; i++) {
+            const selectCarril = document.getElementById(`carrilDestinoSalida${i}`);
+            const probInput = document.getElementById(`probSalida${i}`);
+            const posOrigenInput = document.getElementById(`posOrigenSalida${i}`);
+            const posDestinoInput = document.getElementById(`posDestinoSalida${i}`);
+
+            if (selectCarril) {
+                selectCarril.value = i; // Valor por defecto: cada salida va a su carril correspondiente
+                selectCarril.addEventListener('change', () => {
+                    validarCarrilesUnicos();
+                });
+            }
+
+            if (probInput) {
+                probInput.addEventListener('input', () => {
+                    validarProbabilidadSalida(i);
+                    validarSumaProbabilidades();
+                });
+            }
+
+            if (posOrigenInput) {
+                posOrigenInput.addEventListener('input', () => {
+                    validarPosiciones(i);
+                });
+            }
+
+            if (posDestinoInput) {
+                posDestinoInput.addEventListener('input', () => {
+                    validarPosiciones(i);
+                });
+            }
+        }
+    }
 
     // Configurar evento del botón confirmar
     const btnConfirmar = document.getElementById('btnConfirmarNuevaConexion');
@@ -594,48 +1029,155 @@ function mostrarDialogoNuevaConexion() {
         let conexionesCreadas = [];
 
         if (tipo === "LINEAL") {
-            conexionesCreadas = crearConexionLinealSimple(origen, destino);
-        } else if (tipo === "INCORPORACION") {
-            const carrilDestino = parseInt(document.getElementById('inputCarrilDestino').value);
-            const posInicial = parseInt(document.getElementById('inputPosInicial').value);
-
-            if (isNaN(carrilDestino) || isNaN(posInicial)) {
-                alert("❌ Valores inválidos para incorporación");
+            // VALIDACIÓN DE DUPLICADOS: Verificar si ya existe una conexión lineal
+            // Las conexiones lineales conectan cada carril i de origen al carril i de destino
+            // Verificamos si ya existe la conexión del primer carril
+            if (validarConexionDuplicada(origenIdx, 0, destinoIdx, 0)) {
+                alert(`❌ Ya existe una conexión lineal de "${origen.nombre}" a "${destino.nombre}".\n\nLas conexiones lineales unen todos los carriles 1:1, por lo que no se pueden duplicar.`);
                 return;
             }
 
+            conexionesCreadas = crearConexionLinealSimple(origen, destino);
+        } else if (tipo === "INCORPORACION") {
+            const selectCarrilDestinoIncorp = document.getElementById('selectCarrilDestinoIncorp');
+            const inputPosInicial = document.getElementById('inputPosInicial');
+
+            const carrilDestino = parseInt(selectCarrilDestinoIncorp.value);
+            const posInicialHumana = parseInt(inputPosInicial.value);
+
+            if (isNaN(carrilDestino)) {
+                alert("❌ Selecciona un carril destino válido");
+                selectCarrilDestinoIncorp.classList.add('is-invalid');
+                return;
+            }
+
+            if (isNaN(posInicialHumana)) {
+                alert("❌ La posición inicial es inválida");
+                inputPosInicial.classList.add('is-invalid');
+                return;
+            }
+
+            // Validar rango de carril destino (0-based)
             if (carrilDestino < 0 || carrilDestino >= destino.carriles) {
                 alert(`❌ El carril destino debe estar entre 0 y ${destino.carriles - 1}`);
+                selectCarrilDestinoIncorp.classList.add('is-invalid');
+                return;
+            }
+
+            // Validar rango de posición inicial (1-based para el usuario)
+            if (posInicialHumana < 1 || posInicialHumana > destino.tamano) {
+                alert(`❌ La posición inicial debe estar entre 1 y ${destino.tamano} (tamaño de calle destino)`);
+                inputPosInicial.classList.add('is-invalid');
+                return;
+            }
+
+            // Convertir de índice humano a índice de computadora
+            const posInicial = posInicialHumana - 1;
+
+            // VALIDACIÓN DE DUPLICADOS: Verificar si ya existe una conexión de incorporación
+            // Las conexiones de incorporación conectan TODOS los carriles de origen al carrilDestino
+            // Así que verificamos si ya existe alguna conexión del primer carril de origen al carril destino
+            if (validarConexionDuplicada(origenIdx, 0, destinoIdx, carrilDestino)) {
+                alert(`❌ Ya existe una conexión de incorporación de "${origen.nombre}" al carril ${carrilDestino + 1} de "${destino.nombre}".\n\nLas conexiones de incorporación unen TODOS los carriles de origen a un carril destino, por lo que no se pueden duplicar.`);
+                selectCarrilDestinoIncorp.classList.add('is-invalid');
                 return;
             }
 
             conexionesCreadas = crearConexionIncorporacionSimple(origen, destino, carrilDestino, posInicial);
         } else if (tipo === "PROBABILISTICA") {
-            const carrilOrigen = parseInt(document.getElementById('inputCarrilOrigen').value);
-            const carrilDestino = parseInt(document.getElementById('inputCarrilDestinoProb').value);
-            const probabilidad = parseFloat(document.getElementById('inputProbabilidad').value);
+            const carrilOrigen = parseInt(document.getElementById('selectCarrilOrigenProb').value);
 
-            if (isNaN(carrilOrigen) || isNaN(carrilDestino) || isNaN(probabilidad)) {
-                alert("❌ Valores inválidos para conexión probabilística");
+            if (isNaN(carrilOrigen)) {
+                alert("❌ Selecciona un carril origen válido");
                 return;
             }
 
+            // Validar que esté en el rango correcto (0-based)
             if (carrilOrigen < 0 || carrilOrigen >= origen.carriles) {
                 alert(`❌ El carril origen debe estar entre 0 y ${origen.carriles - 1}`);
                 return;
             }
 
-            if (carrilDestino < 0 || carrilDestino >= destino.carriles) {
-                alert(`❌ El carril destino debe estar entre 0 y ${destino.carriles - 1}`);
+            // Validar que no haya carriles duplicados
+            if (!validarCarrilesUnicos()) {
+                alert("❌ Hay carriles destino duplicados. Cada carril solo puede usarse una vez.");
                 return;
             }
 
-            if (probabilidad < 0 || probabilidad > 1) {
-                alert("❌ La probabilidad debe estar entre 0 y 1");
+            // Recopilar distribuciones desde el formulario
+            const distribuciones = [];
+            for (let i = 0; i < destino.carriles; i++) {
+                const carrilDestinoSelect = document.getElementById(`carrilDestinoSalida${i}`);
+                const probabilidadInput = document.getElementById(`probSalida${i}`);
+                const posOrigenInput = document.getElementById(`posOrigenSalida${i}`);
+                const posDestinoInput = document.getElementById(`posDestinoSalida${i}`);
+
+                if (!carrilDestinoSelect || !probabilidadInput || !posOrigenInput || !posDestinoInput) {
+                    continue; // Saltar si faltan campos
+                }
+
+                const carrilDestino = parseInt(carrilDestinoSelect.value); // Ya viene como índice 0-based
+                const probabilidad = parseFloat(probabilidadInput.value) / 100; // Convertir % a decimal
+                const posOrigenHumano = parseInt(posOrigenInput.value);
+                const posDestinoHumano = parseInt(posDestinoInput.value);
+
+                // Validar valores
+                if (isNaN(carrilDestino) || isNaN(probabilidad) || isNaN(posOrigenHumano) || isNaN(posDestinoHumano)) {
+                    alert(`❌ Valores inválidos en salida ${i + 1}`);
+                    posOrigenInput.classList.add('is-invalid');
+                    posDestinoInput.classList.add('is-invalid');
+                    return;
+                }
+
+                if (probabilidad < 0 || probabilidad > 1) {
+                    alert(`❌ La probabilidad de la salida ${i + 1} debe estar entre 0 y 100%`);
+                    probabilidadInput.classList.add('is-invalid');
+                    return;
+                }
+
+                // VALIDACIÓN ESTRICTA: Posición origen debe estar entre 1 y tamaño de calle origen
+                if (posOrigenHumano < 1 || posOrigenHumano > origen.tamano) {
+                    alert(`❌ La posición origen de la salida ${i + 1} debe estar entre 1 y ${origen.tamano} (tamaño de calle origen)`);
+                    posOrigenInput.classList.add('is-invalid');
+                    return;
+                }
+
+                // VALIDACIÓN ESTRICTA: Posición destino debe estar entre 1 y tamaño de calle destino
+                if (posDestinoHumano < 1 || posDestinoHumano > destino.tamano) {
+                    alert(`❌ La posición destino de la salida ${i + 1} debe estar entre 1 y ${destino.tamano} (tamaño de calle destino)`);
+                    posDestinoInput.classList.add('is-invalid');
+                    return;
+                }
+
+                // Solo agregar si tiene probabilidad > 0
+                if (probabilidad > 0) {
+                    // VALIDACIÓN DE DUPLICADOS: Verificar si ya existe esta conexión
+                    if (validarConexionDuplicada(origenIdx, carrilOrigen, destinoIdx, carrilDestino)) {
+                        alert(`❌ Ya existe una conexión del carril ${carrilOrigen + 1} de "${origen.nombre}" al carril ${carrilDestino + 1} de "${destino.nombre}". No se permiten conexiones duplicadas.`);
+                        carrilDestinoSelect.classList.add('is-invalid');
+                        return;
+                    }
+
+                    // Convertir de índice humano (1,2,3...) a índice computadora (0,1,2...)
+                    const posOrigen = posOrigenHumano - 1;
+                    const posDestino = posDestinoHumano - 1;
+
+                    distribuciones.push({
+                        carrilDestino: carrilDestino,
+                        posOrigen: posOrigen,
+                        posDestino: posDestino,
+                        probabilidad: probabilidad
+                    });
+                }
+            }
+
+            if (distribuciones.length === 0) {
+                alert("❌ Debes configurar al menos una salida con probabilidad mayor a 0%");
                 return;
             }
 
-            conexionesCreadas = crearConexionProbabilisticaSimple(origen, carrilOrigen, destino, carrilDestino, probabilidad);
+            // Crear conexión con múltiples distribuciones
+            conexionesCreadas = crearConexionProbabilisticaAvanzada(origen, carrilOrigen, destino, distribuciones);
         }
 
         if (conexionesCreadas && conexionesCreadas.length > 0) {
@@ -689,7 +1231,13 @@ function mostrarDialogoNuevaConexion() {
 
             alert(`✅ Conexión ${tipo} creada exitosamente\n\nLa simulación está lista para usar la nueva conexión.`);
 
-            // Cerrar modal
+            // Cerrar modal correctamente
+            // Remover el foco antes de cerrar para evitar errores de accesibilidad
+            const modalElement = document.getElementById('modalNuevaConexion');
+            if (modalElement && document.activeElement) {
+                // Mover el foco fuera del modal antes de cerrarlo
+                document.activeElement.blur();
+            }
             modal.hide();
 
             // Resetear formulario
@@ -698,6 +1246,12 @@ function mostrarDialogoNuevaConexion() {
             selectTipoConexion.value = 'LINEAL';
             camposIncorporacion.style.display = 'none';
             camposProbabilistica.style.display = 'none';
+
+            // Limpiar contenedor de distribuciones
+            const contenedor = document.getElementById('contenedorDistribucionesProbabilisticas');
+            if (contenedor) {
+                contenedor.innerHTML = '<p class="text-muted text-center py-3">Selecciona una calle destino para configurar las salidas</p>';
+            }
 
             // Remover listener
             btnConfirmar.removeEventListener('click', nuevoHandler);
@@ -765,6 +1319,29 @@ function crearConexionProbabilisticaSimple(origen, carrilOrigen, destino, carril
         if (!noPush && window.conexiones) {
             window.conexiones.push(...conexiones);
         }
+
+        return conexiones;
+    }
+    return [];
+}
+
+// Crear conexión probabilística avanzada con múltiples distribuciones
+function crearConexionProbabilisticaAvanzada(origen, carrilOrigen, destino, distribuciones, noPush = false) {
+    if (typeof window.crearConexionProbabilistica === 'function') {
+        // La distribución ya viene en el formato correcto: [{carrilDestino, posOrigen, posDestino, probabilidad}, ...]
+        const conexiones = window.crearConexionProbabilistica(origen, carrilOrigen, destino, distribuciones);
+
+        if (typeof window.registrarConexiones === 'function') {
+            window.registrarConexiones(conexiones);
+        }
+
+        // Solo agregar a window.conexiones si no se especifica noPush
+        if (!noPush && window.conexiones) {
+            window.conexiones.push(...conexiones);
+        }
+
+        console.log(`🎲 Conexión probabilística avanzada creada: ${origen.nombre}[C${carrilOrigen}] → ${destino.nombre}`);
+        console.log(`   → ${distribuciones.length} salida(s) configurada(s)`);
 
         return conexiones;
     }
@@ -1792,6 +2369,85 @@ function actualizarListaConexiones(calleSeleccionada = null) {
     console.log(mensajeLog);
 }
 
+// Función para poblar el modal de edición con datos de UNA conexión probabilística
+function poblarEdicionProbabilistica(conexion) {
+    const origen = conexion.origen;
+    const destino = conexion.destino;
+
+    // Poblar selector de carril origen (solo lectura, no se puede cambiar)
+    const selectCarrilOrigen = document.getElementById('editSelectCarrilOrigenProb');
+    if (selectCarrilOrigen) {
+        let html = '';
+        for (let i = 0; i < origen.carriles; i++) {
+            html += `<option value="${i}">Carril ${i + 1}</option>`;
+        }
+        selectCarrilOrigen.innerHTML = html;
+        selectCarrilOrigen.value = conexion.carrilOrigen;
+        selectCarrilOrigen.disabled = true; // No permitir cambiar el carril origen
+    }
+
+    // Generar formulario SOLO para esta conexión individual
+    const contenedor = document.getElementById('editContenedorDistribucionesProbabilisticas');
+
+    let html = `
+        <div class="alert alert-info small mb-3">
+            <strong>📝 Editando conexión individual:</strong> Carril ${conexion.carrilOrigen + 1} → Carril ${conexion.carrilDestino + 1}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Configuración de Esta Salida</label>
+
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label small">Carril Destino</label>
+                    <select class="form-select form-select-sm" id="editCarrilDestinoSalidaUnica" disabled>
+                        <option value="${conexion.carrilDestino}">Carril ${conexion.carrilDestino + 1}</option>
+                    </select>
+                    <small class="text-muted">No se puede cambiar al editar</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small">Probabilidad (%)</label>
+                    <input type="number" class="form-control form-control-sm"
+                           id="editProbSalidaUnica"
+                           placeholder="0-100"
+                           min="0"
+                           max="100"
+                           step="1"
+                           value="${conexion.probabilidadTransferencia * 100}">
+                    <small class="text-muted">% de vehículos que toman esta salida</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small">Posición Origen (celda)</label>
+                    <input type="number" class="form-control form-control-sm"
+                           id="editPosOrigenSalidaUnica"
+                           placeholder="1-${origen.tamano}"
+                           min="1"
+                           max="${origen.tamano}"
+                           value="${conexion.posOrigen + 1}">
+                    <small class="text-muted">Celda donde se origina (máx: ${origen.tamano})</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small">Posición Destino (celda)</label>
+                    <input type="number" class="form-control form-control-sm"
+                           id="editPosDestinoSalidaUnica"
+                           placeholder="1-${destino.tamano}"
+                           min="1"
+                           max="${destino.tamano}"
+                           value="${conexion.posDestino + 1}">
+                    <small class="text-muted">Celda donde llegan (máx: ${destino.tamano})</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-warning small mt-2 mb-0">
+            <strong>⚠️ Nota:</strong> Solo puedes editar la probabilidad y las posiciones de esta salida específica.
+            Para cambiar el carril origen o destino, elimina esta conexión y crea una nueva.
+        </div>
+    `;
+
+    contenedor.innerHTML = html;
+}
+
 // Editar una conexión existente
 function editarConexion(index) {
     if (!window.conexiones || index < 0 || index >= window.conexiones.length) {
@@ -1826,9 +2482,8 @@ function editarConexion(index) {
         document.getElementById('editInputPosInicial').value = conexion.posDestino || 0;
     } else if (tipo === 'PROBABILISTICA') {
         camposProb.style.display = 'block';
-        document.getElementById('editInputCarrilOrigen').value = conexion.carrilOrigen;
-        document.getElementById('editInputCarrilDestinoProb').value = conexion.carrilDestino;
-        document.getElementById('editInputProbabilidad').value = conexion.probabilidadTransferencia;
+        // Poblar selector de carril origen y formularios de distribución
+        poblarEdicionProbabilistica(conexion);
     }
 
     // Configurar evento de cambio de tipo
@@ -1862,7 +2517,19 @@ function editarConexion(index) {
     btnConfirmar.addEventListener('click', handlerConfirmarEdicion);
 
     // Abrir modal
-    const modal = new bootstrap.Modal(document.getElementById('modalEditarConexion'));
+    const modalEditElement = document.getElementById('modalEditarConexion');
+    const modal = new bootstrap.Modal(modalEditElement);
+
+    // Agregar listener para limpiar el foco cuando se cierre el modal
+    modalEditElement.addEventListener('hidden.bs.modal', function handleEditModalHidden() {
+        // Remover el foco de cualquier elemento dentro del modal
+        if (document.activeElement && modalEditElement.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+        // Remover este listener para evitar acumulación
+        modalEditElement.removeEventListener('hidden.bs.modal', handleEditModalHidden);
+    });
+
     modal.show();
 }
 
@@ -1881,34 +2548,52 @@ function guardarCambiosConexion(index) {
 
     // Extraer valores del formulario según el tipo
     if (tipoNuevo === 'PROBABILISTICA') {
-        const prob = parseFloat(document.getElementById('editInputProbabilidad').value);
-        const carrilOrigen = parseInt(document.getElementById('editInputCarrilOrigen').value);
-        const carrilDestino = parseInt(document.getElementById('editInputCarrilDestinoProb').value);
+        // Obtener valores del formulario de edición individual
+        const probabilidadInput = document.getElementById('editProbSalidaUnica');
+        const posOrigenInput = document.getElementById('editPosOrigenSalidaUnica');
+        const posDestinoInput = document.getElementById('editPosDestinoSalidaUnica');
 
-        if (isNaN(prob) || prob < 0 || prob > 1) {
-            alert('❌ La probabilidad debe estar entre 0 y 1');
-            return;
-        }
-        if (isNaN(carrilOrigen) || isNaN(carrilDestino)) {
-            alert('❌ Los carriles deben ser números válidos');
+        if (!probabilidadInput || !posOrigenInput || !posDestinoInput) {
+            alert('❌ Error al leer valores del formulario');
             return;
         }
 
-        // Validar carriles
-        if (carrilOrigen < 0 || carrilOrigen >= conexion.origen.carriles) {
-            alert(`❌ El carril origen debe estar entre 0 y ${conexion.origen.carriles - 1}`);
-            return;
-        }
-        if (carrilDestino < 0 || carrilDestino >= conexion.destino.carriles) {
-            alert(`❌ El carril destino debe estar entre 0 y ${conexion.destino.carriles - 1}`);
+        const probabilidad = parseFloat(probabilidadInput.value) / 100;
+        const posOrigenHumano = parseInt(posOrigenInput.value);
+        const posDestinoHumano = parseInt(posDestinoInput.value);
+
+        const origen = conexion.origen;
+        const destino = conexion.destino;
+
+        // Validaciones
+        if (isNaN(probabilidad) || probabilidad < 0 || probabilidad > 1) {
+            alert('❌ La probabilidad debe estar entre 0 y 100%');
+            probabilidadInput.classList.add('is-invalid');
             return;
         }
 
-        // Modificar propiedades directamente
-        conexion.tipo = window.TIPOS_CONEXION.PROBABILISTICA;
-        conexion.carrilOrigen = carrilOrigen;
-        conexion.carrilDestino = carrilDestino;
-        conexion.probabilidadTransferencia = prob;
+        if (isNaN(posOrigenHumano) || posOrigenHumano < 1 || posOrigenHumano > origen.tamano) {
+            alert(`❌ La posición origen debe estar entre 1 y ${origen.tamano}`);
+            posOrigenInput.classList.add('is-invalid');
+            return;
+        }
+
+        if (isNaN(posDestinoHumano) || posDestinoHumano < 1 || posDestinoHumano > destino.tamano) {
+            alert(`❌ La posición destino debe estar entre 1 y ${destino.tamano}`);
+            posDestinoInput.classList.add('is-invalid');
+            return;
+        }
+
+        // Convertir a índices de computadora
+        const posOrigen = posOrigenHumano - 1;
+        const posDestino = posDestinoHumano - 1;
+
+        // Modificar directamente la conexión existente
+        conexion.probabilidadTransferencia = probabilidad;
+        conexion.posOrigen = posOrigen;
+        conexion.posDestino = posDestino;
+
+        console.log(`✅ Conexión probabilística actualizada: Carril ${conexion.carrilOrigen + 1} → Carril ${conexion.carrilDestino + 1} (${(probabilidad * 100).toFixed(0)}%)`);
 
     } else if (tipoNuevo === 'INCORPORACION') {
         const carrilDestino = parseInt(document.getElementById('editInputCarrilDestino').value);
@@ -1969,8 +2654,13 @@ function guardarCambiosConexion(index) {
         window.renderizarCanvas();
     }
 
-    // Cerrar modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarConexion'));
+    // Cerrar modal correctamente
+    const modalEditElement = document.getElementById('modalEditarConexion');
+    // Remover el foco antes de cerrar para evitar errores de accesibilidad
+    if (modalEditElement && document.activeElement && modalEditElement.contains(document.activeElement)) {
+        document.activeElement.blur();
+    }
+    const modal = bootstrap.Modal.getInstance(modalEditElement);
     if (modal) modal.hide();
 
     // Limpiar los handlers globales

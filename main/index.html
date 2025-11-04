@@ -1157,29 +1157,41 @@
 
           <!-- Campos específicos para INCORPORACION -->
           <div id="camposIncorporacion" style="display: none;">
-            <div class="mb-3">
-              <label for="inputCarrilDestino" class="form-label">Carril Destino:</label>
-              <input type="number" class="form-control" id="inputCarrilDestino" placeholder="0" min="0" value="0">
+            <div class="alert alert-info small mb-3">
+              <strong>💡 Conexión de Incorporación:</strong> Une una calle origen a un carril específico de la calle destino en una posición inicial.
             </div>
             <div class="mb-3">
-              <label for="inputPosInicial" class="form-label">Posición Inicial:</label>
-              <input type="number" class="form-control" id="inputPosInicial" placeholder="0" min="0" value="0">
+              <label for="selectCarrilDestinoIncorp" class="form-label">Carril Destino:</label>
+              <select class="form-select" id="selectCarrilDestinoIncorp">
+                <option value="">Selecciona una calle destino primero</option>
+              </select>
+              <small class="form-text text-muted">Carril al que se incorporarán los vehículos</small>
+            </div>
+            <div class="mb-3">
+              <label for="inputPosInicial" class="form-label">Posición Inicial (celda):</label>
+              <input type="number" class="form-control" id="inputPosInicial" placeholder="1" min="1" value="1">
+              <small class="form-text text-muted">Posición en la calle destino donde comienza la incorporación</small>
             </div>
           </div>
 
           <!-- Campos específicos para PROBABILISTICA -->
           <div id="camposProbabilistica" style="display: none;">
-            <div class="mb-3">
-              <label for="inputCarrilOrigen" class="form-label">Carril Origen:</label>
-              <input type="number" class="form-control" id="inputCarrilOrigen" placeholder="0" min="0" value="0">
+            <div class="alert alert-info small mb-3">
+              <strong>💡 Conexión Probabilística:</strong> Define un carril origen y configura la probabilidad y posiciones para cada carril destino disponible.
             </div>
+
             <div class="mb-3">
-              <label for="inputCarrilDestinoProb" class="form-label">Carril Destino:</label>
-              <input type="number" class="form-control" id="inputCarrilDestinoProb" placeholder="0" min="0" value="0">
+              <label for="selectCarrilOrigenProb" class="form-label">Carril Origen:</label>
+              <select class="form-select" id="selectCarrilOrigenProb">
+                <option value="">Selecciona una calle origen primero</option>
+              </select>
+              <small class="form-text text-muted">Carril desde el cual saldrán los vehículos</small>
             </div>
-            <div class="mb-3">
-              <label for="inputProbabilidad" class="form-label">Probabilidad (0-1):</label>
-              <input type="number" class="form-control" id="inputProbabilidad" placeholder="0.5" min="0" max="1" step="0.01" value="0.5">
+
+            <!-- Configuración dinámica de distribuciones (uno por cada carril destino) -->
+            <div id="contenedorDistribucionesProbabilisticas">
+              <!-- Se generará dinámicamente según los carriles de la calle destino -->
+              <p class="text-muted text-center py-3">Selecciona una calle destino para configurar las salidas</p>
             </div>
           </div>
         </div>
@@ -1227,17 +1239,21 @@
 
           <!-- Campos específicos para PROBABILISTICA -->
           <div id="editCamposProbabilistica" style="display: none;">
-            <div class="mb-3">
-              <label for="editInputCarrilOrigen" class="form-label">Carril Origen:</label>
-              <input type="number" class="form-control" id="editInputCarrilOrigen" placeholder="0" min="0" value="0">
+            <div class="alert alert-info small mb-3">
+              <strong>💡 Conexión Probabilística:</strong> Define las salidas con sus probabilidades y posiciones.
             </div>
+
             <div class="mb-3">
-              <label for="editInputCarrilDestinoProb" class="form-label">Carril Destino:</label>
-              <input type="number" class="form-control" id="editInputCarrilDestinoProb" placeholder="0" min="0" value="0">
+              <label for="editSelectCarrilOrigenProb" class="form-label">Carril Origen:</label>
+              <select class="form-select" id="editSelectCarrilOrigenProb">
+                <option value="">Cargando...</option>
+              </select>
+              <small class="form-text text-muted">Carril desde el cual saldrán los vehículos</small>
             </div>
-            <div class="mb-3">
-              <label for="editInputProbabilidad" class="form-label">Probabilidad (0-1):</label>
-              <input type="number" class="form-control" id="editInputProbabilidad" placeholder="0.5" min="0" max="1" step="0.01" value="0.5">
+
+            <!-- Configuración dinámica de distribuciones -->
+            <div id="editContenedorDistribucionesProbabilisticas">
+              <p class="text-muted text-center py-3">Cargando configuración...</p>
             </div>
           </div>
         </div>

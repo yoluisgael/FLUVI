@@ -2441,12 +2441,12 @@ function iniciarSimulacion() {
     const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo 2", 183, TIPOS.CONEXION, 2320, 1000, -100, 0.0, 1, 0.01);
     const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu ←", 346, TIPOS.CONEXION, 2605, 2027, 166, 0.0, 2, 0.01);
     //const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 1820, 1825, 155, 0.0, 2, 0.01);
-    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 185, TIPOS.CONEXION, 985, 1485, -24, 0.0, 2, 0.01);
+    const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 341, TIPOS.CONEXION, 986, 1502, 345, 0.0, 2, 0.01);
     //const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 160, TIPOS.CONEXION, 1825, 1860, -14, 0.0, 2, 0.01);
     //const Avenida_Sierravista = crearCalle("Av. Sierravista", 50, TIPOS.CONEXION, 2940, 1445, 132, 0.0, 1, 0.01);
     //const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
     //const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 2825, 2095, 171, 0.0, 1, 0.01);
-    
+    const retrono1 = crearCalle("retorno1", 5, TIPOS.CONEXION, 1915, 921, 79, 0.0, 2, 0.01);
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0.5, 3, 0.01);
     const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.01);
     // Vértices para Av. Miguel Othon de Mendizabal →
@@ -2754,6 +2754,16 @@ function iniciarSimulacion() {
     conexionesCA.push(...crearConexionLineal(
         Calle_Luis_Enrique_Erro_1,
         Calle_Luis_Enrique_Erro_2
+    ));
+
+    conexionesCA.push(...crearConexionProbabilistica(
+        Avenida_Cien_Metros2,
+        2,
+        Avenida_Wilfrido_Massieu_2,
+        [
+            { carrilDestino: 0, posOrigen: 35, posDestino: 0, probabilidad: 0.9 },
+            { carrilDestino: 1, posOrigen: 34, posDestino: 0, probabilidad: 0.2 }
+        ]
     ));
 
 
