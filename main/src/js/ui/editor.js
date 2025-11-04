@@ -197,12 +197,56 @@ class EditorCalles {
             console.log('🛣️ Calle seleccionada en editor:', calleIndex);
 
             if (calleIndex !== "") {
-                window.calleSeleccionada = window.calles[calleIndex];
-                window.edificioSeleccionado = null;
-                window.modoSeleccion = "constructor"; // Modo constructor
+                const calle = window.calles[calleIndex];
+
+                // Solo limpiar y agregar bordes si la calle NO está ya seleccionada
+                // (esto evita duplicados cuando viene de un dispatchEvent desde CalleRenderer)
+                if (window.calleSeleccionada !== calle) {
+                    // Limpiar TODOS los bordes de selección existentes (calles y edificios)
+                    if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                        // Limpiar bordes de calles
+                        if (window.pixiApp.sceneManager.calleRenderer) {
+                            window.pixiApp.sceneManager.calleRenderer.clearAllSelectionBorders();
+                        }
+                        // Limpiar bordes de edificios
+                        if (window.pixiApp.sceneManager.edificioRenderer) {
+                            window.edificios.forEach(e => {
+                                const sprite = window.pixiApp.sceneManager.edificioSprites.get(e);
+                                if (sprite) {
+                                    const border = sprite.getChildByName ? sprite.getChildByName('selectionBorder') : null;
+                                    if (border) {
+                                        sprite.removeChild(border);
+                                        border.destroy();
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    window.calleSeleccionada = calle;
+                    window.edificioSeleccionado = null;
+                    window.modoSeleccion = "constructor"; // Modo constructor
+
+                    // Agregar borde de selección a la calle seleccionada
+                    if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager && window.pixiApp.sceneManager.calleRenderer) {
+                        const container = window.pixiApp.sceneManager.calleSprites.get(calle);
+                        if (container) {
+                            if (calle.esCurva) {
+                                window.pixiApp.sceneManager.calleRenderer.addSelectionBorderCurva(container, calle);
+                            } else {
+                                window.pixiApp.sceneManager.calleRenderer.addSelectionBorder(container, calle);
+                            }
+                        }
+                    }
+                }
+
                 this.actualizarInputsPosicion();
-                console.log('✅ Calle activa para edición:', window.calleSeleccionada.nombre);
+                console.log('✅ Calle activa para edición:', window.calleSeleccionada ? window.calleSeleccionada.nombre : 'ninguna');
             } else {
+                // Si se deselecciona, limpiar bordes
+                if (window.calleSeleccionada && window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager && window.pixiApp.sceneManager.calleRenderer) {
+                    window.pixiApp.sceneManager.calleRenderer.clearAllSelectionBorders();
+                }
                 window.calleSeleccionada = null;
             }
             this.actualizarEstadoBotonEdicion();
@@ -236,13 +280,60 @@ class EditorCalles {
             console.log('🏢 Edificio seleccionado:', edificioIndex);
 
             if (edificioIndex !== "") {
-                window.edificioSeleccionado = window.edificios[edificioIndex];
-                window.edificioSeleccionado.index = parseInt(edificioIndex);
-                window.calleSeleccionada = null;
-                window.modoSeleccion = "constructor"; // Modo constructor
+                const edificio = window.edificios[edificioIndex];
+
+                // Solo limpiar y agregar bordes si el edificio NO está ya seleccionado
+                // (esto evita duplicados cuando viene de un dispatchEvent desde EdificioRenderer)
+                if (window.edificioSeleccionado !== edificio) {
+                    // Limpiar TODOS los bordes de selección existentes (edificios y calles)
+                    if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                        // Limpiar bordes de calles
+                        if (window.pixiApp.sceneManager.calleRenderer) {
+                            window.pixiApp.sceneManager.calleRenderer.clearAllSelectionBorders();
+                        }
+                        // Limpiar bordes de edificios
+                        if (window.pixiApp.sceneManager.edificioRenderer) {
+                            window.edificios.forEach(e => {
+                                const sprite = window.pixiApp.sceneManager.edificioSprites.get(e);
+                                if (sprite) {
+                                    const border = sprite.getChildByName ? sprite.getChildByName('selectionBorder') : null;
+                                    if (border) {
+                                        sprite.removeChild(border);
+                                        border.destroy();
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    window.edificioSeleccionado = edificio;
+                    window.edificioSeleccionado.index = parseInt(edificioIndex);
+                    window.calleSeleccionada = null;
+                    window.modoSeleccion = "constructor"; // Modo constructor
+
+                    // Agregar borde de selección al edificio seleccionado
+                    if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager && window.pixiApp.sceneManager.edificioRenderer) {
+                        const sprite = window.pixiApp.sceneManager.edificioSprites.get(edificio);
+                        if (sprite) {
+                            window.pixiApp.sceneManager.edificioRenderer.addSelectionBorder(sprite, edificio);
+                        }
+                    }
+                }
+
                 this.actualizarInputsPosicion();
-                console.log('✅ Edificio activo:', window.edificioSeleccionado.label);
+                console.log('✅ Edificio activo:', window.edificioSeleccionado ? window.edificioSeleccionado.label : 'ninguno');
             } else {
+                // Si se deselecciona, limpiar bordes
+                if (window.edificioSeleccionado && window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
+                    const sprite = window.pixiApp.sceneManager.edificioSprites.get(window.edificioSeleccionado);
+                    if (sprite) {
+                        const border = sprite.getChildByName ? sprite.getChildByName('selectionBorder') : null;
+                        if (border) {
+                            sprite.removeChild(border);
+                            border.destroy();
+                        }
+                    }
+                }
                 window.edificioSeleccionado = null;
             }
             this.actualizarEstadoBotonEdicion();

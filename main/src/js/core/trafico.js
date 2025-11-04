@@ -2260,6 +2260,7 @@ function iniciarSimulacion() {
     //const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
     //const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 2825, 2095, 171, 0.0, 1, 0.01);
     const retrono1 = crearCalle("retorno1", 5, TIPOS.CONEXION, 1915, 921, 79, 0.0, 2, 0.01);
+    const retrono2 = crearCalle("retorno1", 5, TIPOS.CONEXION, 1941, 924, 79, 0.0, 2, 0.01);
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0.5, 3, 0.01);
     const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.01);
     // Vértices para Av. Miguel Othon de Mendizabal →

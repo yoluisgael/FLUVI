@@ -1828,11 +1828,21 @@ function actualizarSelectorEdificios() {
         selectEdificio.remove(1);
     }
 
-    // Agregar todos los edificios
-    window.edificios.forEach((edificio, index) => {
+    // Crear array de edificios con sus índices originales
+    const edificiosConIndice = window.edificios.map((edificio, index) => ({
+        edificio: edificio,
+        index: index,
+        label: edificio.label || `Edificio ${index + 1}`
+    }));
+
+    // Ordenar alfabéticamente por label
+    edificiosConIndice.sort((a, b) => a.label.localeCompare(b.label, 'es', { sensitivity: 'base' }));
+
+    // Agregar todos los edificios ordenados
+    edificiosConIndice.forEach(item => {
         const option = document.createElement('option');
-        option.value = index;
-        option.textContent = edificio.label || `Edificio ${index + 1}`;
+        option.value = item.index;
+        option.textContent = item.label;
         selectEdificio.appendChild(option);
     });
 }
