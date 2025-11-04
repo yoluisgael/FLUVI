@@ -2232,7 +2232,7 @@ function iniciarSimulacion() {
     //const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 13, TIPOS.CONEXION, 1884, 268, 221, 0.0, 3, 0.02);
 
-    const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 180, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
+    const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 190, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
     //const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard ←", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
     //const Avenida_Cien_Metros = crearCalle("Av. Cien Metros →", 230, TIPOS.CONEXION, 596, 577, -70, 0.0, 3, 0.01);
     const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 343, TIPOS.CONEXION, 986, 1502, 345, 0.0, 2, 0.01);
@@ -2314,9 +2314,10 @@ function iniciarSimulacion() {
         { indiceCelda: 130, anguloOffset: 0 },
         { indiceCelda: 140, anguloOffset: 0 },
         { indiceCelda: 150, anguloOffset: 0 },
-        { indiceCelda: 160, anguloOffset: 0 },
-        { indiceCelda: 170, anguloOffset: 0 },
-        { indiceCelda: 179, anguloOffset: 0 }
+        { indiceCelda: 160, anguloOffset: 7.115972469568073 },
+        { indiceCelda: 170, anguloOffset: -0.30063084350775476 },
+        { indiceCelda: 180, anguloOffset: -22.135882617292083 },
+        { indiceCelda: 190, anguloOffset: -40 }
     ];
     Avenida_Miguel_Bernard.esCurva = true;
     
