@@ -1156,6 +1156,12 @@ class EditorCalles {
             return;
         }
 
+        // Si estamos usando PixiJS, los handles son manejados por EditorHandles.js
+        // No necesitamos actualizar los handles HTML
+        if (window.USE_PIXI && window.editorHandles) {
+            return;
+        }
+
         const escala = window.escala || 1;
         const offsetX = window.offsetX || 0;
         const offsetY = window.offsetY || 0;
@@ -1372,13 +1378,13 @@ class EditorCalles {
             }
         }
 
-        // Aplicar posiciones finales
-        if (this.moveHandle) {
+        // Aplicar posiciones finales (solo si los valores son válidos)
+        if (this.moveHandle && !isNaN(finalMoveX) && !isNaN(finalMoveY)) {
             this.moveHandle.style.left = `${finalMoveX}px`;
             this.moveHandle.style.top = `${finalMoveY}px`;
         }
 
-        if (this.rotationHandle) {
+        if (this.rotationHandle && !isNaN(finalRotX) && !isNaN(finalRotY)) {
             this.rotationHandle.style.left = `${finalRotX}px`;
             this.rotationHandle.style.top = `${finalRotY}px`;
         }

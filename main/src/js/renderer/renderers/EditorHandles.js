@@ -23,6 +23,11 @@ class EditorHandles {
         this.draggedVerticeIndex = -1;
         this.draggedCalle = null;
 
+        // Elementos visuales para rotación
+        this.rotationLine = null; // Línea desde el centro hasta el handle
+        this.rotationOrbit = null; // Círculo de órbita
+        this.rotationAngleLabel = null; // Etiqueta con el ángulo
+
         // Exponer globalmente
         window.editorHandles = this;
     }
@@ -126,6 +131,11 @@ class EditorHandles {
                         window.construirMapaIntersecciones();
                     }
                 }
+            }
+
+            // NUEVO: Limpiar elementos visuales de rotación si se estaba rotando
+            if (this.isDraggingRotate) {
+                this.clearRotationVisuals();
             }
 
             this.isDraggingMove = false;
@@ -369,8 +379,9 @@ class EditorHandles {
             objectWidth = edificio.width || 100;
             objectHeight = edificio.height || 100;
 
-            centroX = edificio.x + objectWidth / 2;
-            centroY = edificio.y + objectHeight / 2;
+            // Para edificios, (x, y) YA ES el centro debido al pivot/anchor
+            centroX = edificio.x;
+            centroY = edificio.y;
 
             const angle = (edificio.angle || 0) * Math.PI / 180;
             const offsetX = objectWidth / 2 * Math.cos(angle);
@@ -407,9 +418,10 @@ class EditorHandles {
                 const angle = (edificio.angle || 0) * Math.PI / 180;
 
                 // Handle de movimiento: arriba del edificio
+                // Como edificio.x y edificio.y YA SON el centro, no sumamos objectWidth/2
                 const moveOffsetDistance = objectHeight / 2 + offsetMinimo;
-                centroX = edificio.x + objectWidth / 2 * Math.cos(angle) - moveOffsetDistance * Math.sin(angle);
-                centroY = edificio.y + objectWidth / 2 * Math.sin(angle) + moveOffsetDistance * Math.cos(angle);
+                centroX = edificio.x - moveOffsetDistance * Math.sin(angle);
+                centroY = edificio.y + moveOffsetDistance * Math.cos(angle);
 
                 // Handle de rotación: a la derecha del edificio
                 const rotOffsetDistance = objectWidth / 2 + offsetMinimo;
@@ -547,14 +559,18 @@ class EditorHandles {
             centroX = calle.x + (centerLocalX * cos - centerLocalY * sin);
             centroY = calle.y + (centerLocalX * sin + centerLocalY * cos);
         } else {
-            centroX = this.currentObject.x + (this.currentObject.width || 100) / 2;
-            centroY = this.currentObject.y + (this.currentObject.height || 100) / 2;
+            // Para edificios, (x, y) YA ES el centro debido al pivot/anchor
+            centroX = this.currentObject.x;
+            centroY = this.currentObject.y;
         }
 
         this.rotationStartAngle = Math.atan2(
             worldPos.y - centroY,
             worldPos.x - centroX
         );
+
+        // NUEVO: Crear elementos visuales de rotación
+        this.createRotationVisuals(centroX, centroY);
 
         console.log('🔄 Iniciando rotación');
     }
@@ -580,8 +596,9 @@ class EditorHandles {
             centroX = calle.x + (centerLocalX * cos - centerLocalY * sin);
             centroY = calle.y + (centerLocalX * sin + centerLocalY * cos);
         } else {
-            centroX = this.currentObject.x + (this.currentObject.width || 100) / 2;
-            centroY = this.currentObject.y + (this.currentObject.height || 100) / 2;
+            // Para edificios, (x, y) YA ES el centro debido al pivot/anchor
+            centroX = this.currentObject.x;
+            centroY = this.currentObject.y;
         }
 
         const currentAngle = Math.atan2(
@@ -621,6 +638,9 @@ class EditorHandles {
 
         // Actualizar posiciones de handles
         this.updateHandlePositions();
+
+        // NUEVO: Actualizar elementos visuales de rotación
+        this.updateRotationVisuals(centroX, centroY);
 
         // Actualizar inputs de UI en tiempo real durante el drag
         if (window.editorCalles) {
@@ -690,6 +710,117 @@ class EditorHandles {
         console.log(`🎨 Vértices de ${calle.nombre} ${translucent ? 'translúcidos' : 'restaurados'} (alpha: ${targetAlpha})`);
     }
 
+    // ==================== ELEMENTOS VISUALES DE ROTACIÓN ====================
+
+    createRotationVisuals(centroX, centroY) {
+        // Limpiar elementos previos
+        this.clearRotationVisuals();
+
+        const uiLayer = this.scene.getLayer('ui');
+
+        // 1. Círculo de órbita (muestra el rango de rotación)
+        this.rotationOrbit = new PIXI.Graphics();
+
+        // Calcular radio desde el centro hasta el handle
+        const dx = this.rotateHandle.x - centroX;
+        const dy = this.rotateHandle.y - centroY;
+        const radius = Math.sqrt(dx * dx + dy * dy);
+
+        // Dibujar círculo de órbita
+        this.rotationOrbit.lineStyle(2, 0xFF00FF, 0.4); // Magenta translúcido
+        this.rotationOrbit.drawCircle(centroX, centroY, radius);
+
+        // Agregar círculo más pequeño en el centro
+        this.rotationOrbit.lineStyle(2, 0xFFFFFF, 0.6);
+        this.rotationOrbit.beginFill(0xFFFFFF, 0.3);
+        this.rotationOrbit.drawCircle(centroX, centroY, 8);
+        this.rotationOrbit.endFill();
+
+        this.rotationOrbit.zIndex = 1999;
+        uiLayer.addChild(this.rotationOrbit);
+
+        // 2. Línea desde el centro hasta el handle
+        this.rotationLine = new PIXI.Graphics();
+        this.rotationLine.lineStyle(3, 0x00FF00, 0.8); // Verde brillante
+        this.rotationLine.moveTo(centroX, centroY);
+        this.rotationLine.lineTo(this.rotateHandle.x, this.rotateHandle.y);
+        this.rotationLine.zIndex = 2001;
+        uiLayer.addChild(this.rotationLine);
+
+        // 3. Etiqueta con el ángulo
+        const currentAngle = this.objectType === 'calle'
+            ? this.currentObject.angulo
+            : (this.currentObject.angle || 0);
+
+        this.rotationAngleLabel = new PIXI.Text(`${Math.round(currentAngle)}°`, {
+            fontFamily: 'Arial',
+            fontSize: 20,
+            fontWeight: 'bold',
+            fill: 0xFFFFFF,
+            stroke: 0x000000,
+            strokeThickness: 4,
+            dropShadow: true,
+            dropShadowColor: 0x000000,
+            dropShadowBlur: 4,
+            dropShadowDistance: 2
+        });
+
+        // Posicionar la etiqueta cerca del handle
+        this.rotationAngleLabel.x = this.rotateHandle.x + 30;
+        this.rotationAngleLabel.y = this.rotateHandle.y - 30;
+        this.rotationAngleLabel.anchor.set(0.5);
+        this.rotationAngleLabel.zIndex = 2002;
+        uiLayer.addChild(this.rotationAngleLabel);
+
+        // 4. Hacer el handle más grande durante el arrastre
+        this.rotateHandle.scale.set(1.3);
+
+        console.log('✨ Elementos visuales de rotación creados');
+    }
+
+    updateRotationVisuals(centroX, centroY) {
+        if (!this.rotationLine || !this.rotationAngleLabel) return;
+
+        // Actualizar línea
+        this.rotationLine.clear();
+        this.rotationLine.lineStyle(3, 0x00FF00, 0.8);
+        this.rotationLine.moveTo(centroX, centroY);
+        this.rotationLine.lineTo(this.rotateHandle.x, this.rotateHandle.y);
+
+        // Actualizar ángulo en la etiqueta
+        const currentAngle = this.objectType === 'calle'
+            ? this.currentObject.angulo
+            : (this.currentObject.angle || 0);
+
+        this.rotationAngleLabel.text = `${Math.round(currentAngle)}°`;
+        this.rotationAngleLabel.x = this.rotateHandle.x + 30;
+        this.rotationAngleLabel.y = this.rotateHandle.y - 30;
+    }
+
+    clearRotationVisuals() {
+        if (this.rotationLine) {
+            this.rotationLine.destroy();
+            this.rotationLine = null;
+        }
+
+        if (this.rotationOrbit) {
+            this.rotationOrbit.destroy();
+            this.rotationOrbit = null;
+        }
+
+        if (this.rotationAngleLabel) {
+            this.rotationAngleLabel.destroy();
+            this.rotationAngleLabel = null;
+        }
+
+        // Restaurar tamaño normal del handle
+        if (this.rotateHandle) {
+            this.rotateHandle.scale.set(1.0);
+        }
+
+        console.log('🧹 Elementos visuales de rotación eliminados');
+    }
+
     clearHandles() {
         if (this.moveHandle) {
             this.moveHandle.destroy();
@@ -700,6 +831,9 @@ class EditorHandles {
             this.rotateHandle.destroy();
             this.rotateHandle = null;
         }
+
+        // Limpiar elementos visuales de rotación
+        this.clearRotationVisuals();
 
         // Limpiar SHIFT+Click handler
         this.disableShiftDrag();

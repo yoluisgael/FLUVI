@@ -2226,9 +2226,6 @@ function iniciarSimulacion() {
     const retronotorres2 = crearCalle("retronotorres ←", 7, TIPOS.CONEXION, 1033, 768, 72, 0.0, 1, 0.01);
     const retronoESCOM = crearCalle("retornoESCOM ←", 6, TIPOS.CONEXION, 1222, 766, 259, 0.0, 1, 0.01);
     const retronoESCOM2 = crearCalle("retornoESCOM →", 6, TIPOS.CONEXION, 1206, 798, 79, 0.0, 1, 0.01);
-    // Sistema 1: Avenida Wilfrido Massieu
-
-    const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal →", 248, TIPOS.CONEXION, 729, 805, 22, 0.0, 3, 0.02);
     
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
@@ -2238,6 +2235,10 @@ function iniciarSimulacion() {
     //const Avenida_Miguel_Othon_de_Mendizabal_6 = crearCalle("Av. Miguel Othon de Mendizabal 6", 10, TIPOS.CONEXION, 1780, 345, 208, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 13, TIPOS.CONEXION, 1884, 268, 221, 0.0, 3, 0.02);
+    // Sistema 1: Avenida Wilfrido Massieu
+    const María_L_Estampa_Ortigoza = crearCalle("Calle M. Luisa Estampa Ort. →", 50, TIPOS.CONEXION, 1389, 788, 86, 0.0, 1, 0.01);
+    const María_L_Estampa_Ortigoza2 = crearCalle("Calle M. Luisa Estampa Ort. ←", 49, TIPOS.CONEXION, 1395, 540, 264, 0.0, 1, 0.01);
+    const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal →", 248, TIPOS.CONEXION, 729, 805, 22, 0.0, 3, 0.02);
     const Calle_Luis_Enrique_Erro_2 = crearCalle("Calle Luis Enrique Erro Tramo 2 →", 65, TIPOS.CONEXION, 1952, 888, 80, 0.0, 2, 0.01);
     const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz ←", 301, TIPOS.CONEXION, 2484, 974, 170, 0.0, 3, 0.01);
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 190, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
@@ -2250,7 +2251,7 @@ function iniciarSimulacion() {
     const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo ←", 184, TIPOS.CONEXION, 2327, 1004, 259, 0.0, 2, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz →", 377, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
     
-    const Avenida_IPN = crearCalle("Av. IPN", 230, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
+    const Avenida_IPN = crearCalle("Av. IPN ←", 230, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
     //const Avenida_IPN2 = crearCalle("Av. IPN 2", 230, TIPOS.CONEXION, 2596, 2219, 80, 0.0, 2, 0.01);
     //const Avenida_Guanajuato = crearCalle("Av. Guanajuato", 100, TIPOS.CONEXION, 1180, 2035, -14, 0.0, 1, 0.01);
     //const Avenida_Montevideo = crearCalle("Av. Montevideo", 308, TIPOS.CONEXION, 1230, 2160, -12, 0.0, 3, 0.01);
@@ -2270,6 +2271,27 @@ function iniciarSimulacion() {
     
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0.5, 3, 0.01);
     const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.01);
+    
+    María_L_Estampa_Ortigoza2.vertices = [  
+        { indiceCelda: 0, anguloOffset: 33.26229205895698 },  
+        { indiceCelda: 10, anguloOffset: 5.788936485168125 },  
+        { indiceCelda: 20, anguloOffset: -4.722625436006455 },  
+        { indiceCelda: 30, anguloOffset: 2.53504905354953 },  
+        { indiceCelda: 40, anguloOffset: 2.101814511806475 },  
+        { indiceCelda: 48, anguloOffset: -2.6525930720032487 }  
+    ];  
+    María_L_Estampa_Ortigoza2.esCurva = true;  
+
+    María_L_Estampa_Ortigoza.vertices = [  
+        { indiceCelda: 0, anguloOffset: -6.75246815978369 },  
+        { indiceCelda: 10, anguloOffset: 0 },  
+        { indiceCelda: 20, anguloOffset: 0 },  
+        { indiceCelda: 30, anguloOffset: -4.7146542518544425 },  
+        { indiceCelda: 40, anguloOffset: -1.1090452039524306 },  
+        { indiceCelda: 49, anguloOffset: 26.392890085209743 }  
+    ];  
+    María_L_Estampa_Ortigoza.esCurva = true; 
+    
     // Vértices para Av. Miguel Othon de Mendizabal →
     Avenida_Miguel_Othon_de_Mendizabal_1.vertices = [
         { indiceCelda: 0, anguloOffset: 0 },
