@@ -1147,7 +1147,23 @@ function cambioCarril(calle) {
 
             // Solo procesar si hay vehículo válido (1-6) Y no está esperando
             if (vehiculo >= 1 && vehiculo <= 6 && !calle.celulasEsperando[c][i]) {
-                if (Math.random() < calle.probabilidadSaltoDeCarril) {
+                // 🚧 DETECCIÓN DE OBSTRUCCIONES ADELANTE
+                // Verificar si hay una obstrucción (valor 7) en las próximas 3 celdas
+                let hayObstruccionAdelante = false;
+                const distanciaDeteccion = 3; // Mirar 3 celdas adelante
+
+                for (let offset = 1; offset <= distanciaDeteccion && (i + offset) < calle.tamano; offset++) {
+                    if (calle.arreglo[c][i + offset] === 7) {
+                        hayObstruccionAdelante = true;
+                        break;
+                    }
+                }
+
+                // Determinar probabilidad de cambio de carril
+                // Si hay obstrucción adelante: 30%, sino: probabilidad normal de la calle
+                const probabilidadCambio = hayObstruccionAdelante ? 0.30 : calle.probabilidadSaltoDeCarril;
+
+                if (Math.random() < probabilidadCambio) {
                     const carrilesDisponibles = [];
 
                     // CAMBIO DIAGONAL SUPERIOR: carril-1, posición+1

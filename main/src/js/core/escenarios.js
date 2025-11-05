@@ -744,6 +744,12 @@ function generarEscenarioBachesAleatorios() {
             return;
         }
 
+        // Omitir calles de un solo carril (evitar bloqueo total)
+        if (calle.carriles <= 1) {
+            console.log(`  ⏭️ Calle "${calle.nombre}" tiene solo 1 carril, se omite (evitar bloqueo total)`);
+            return;
+        }
+
         console.log(`  🛣️ Procesando calle "${calle.nombre}" (${calle.carriles} carriles, ${calle.tamano} celdas)`);
 
         // Determinar zonas de conexión (primeras y últimas 5 celdas)

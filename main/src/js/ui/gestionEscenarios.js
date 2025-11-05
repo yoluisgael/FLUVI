@@ -24,6 +24,47 @@ let btnEscenarioInundacionMasiva;
 let btnEscenarioBachesAleatorios;
 
 /**
+ * Actualiza el estilo de los botones de escenarios base según modo oscuro/luz de la UI
+ */
+function actualizarFondoEscenariosBase() {
+    // Detectar si la UI está en modo oscuro
+    const modoOscuro = document.body.classList.contains('dark-mode');
+
+    // Aplicar estilos a los botones de escenarios base
+    const botonesEscenarios = [
+        btnEscenarioInundacionMasiva,
+        btnEscenarioBachesAleatorios
+    ];
+
+    botonesEscenarios.forEach(btn => {
+        if (btn) {
+            if (modoOscuro) {
+                // Modo oscuro: fondo oscuro, texto claro
+                btn.style.setProperty('background-color', '#2b2b2b', 'important');
+                btn.style.setProperty('color', '#ffffff', 'important');
+                btn.style.setProperty('border-color', '#444', 'important');
+            } else {
+                // Modo claro: fondo blanco, texto oscuro
+                btn.style.setProperty('background-color', '#ffffff', 'important');
+                btn.style.setProperty('color', '#000000', 'important');
+                btn.style.setProperty('border-color', '#dee2e6', 'important');
+            }
+
+            // Aplicar también a los elementos internos
+            const titulo = btn.querySelector('h6');
+            const descripcion = btn.querySelector('p');
+
+            if (titulo) {
+                titulo.style.setProperty('color', modoOscuro ? '#ffffff' : '#000000', 'important');
+            }
+            if (descripcion) {
+                descripcion.style.setProperty('color', modoOscuro ? '#b8b8b8' : '#6c757d', 'important');
+            }
+        }
+    });
+}
+
+/**
  * Inicializa el módulo de gestión de escenarios
  */
 function inicializarGestionEscenarios() {
@@ -93,6 +134,24 @@ function inicializarGestionEscenarios() {
             cargarEscenarioBaseUI('baches_aleatorios');
         });
     }
+
+    // Actualizar fondo de escenarios base inicialmente
+    actualizarFondoEscenariosBase();
+
+    // Observar cambios en la clase 'dark-mode' del body
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                actualizarFondoEscenariosBase();
+            }
+        });
+    });
+
+    // Iniciar observación
+    observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
 
     console.log('✅ Gestión de escenarios inicializada');
 }
@@ -454,5 +513,6 @@ function cargarDesdeArchivoJSON(event) {
 window.inicializarGestionEscenarios = inicializarGestionEscenarios;
 window.cargarEscenarioUI = cargarEscenarioUI;
 window.cargarDesdeArchivoJSON = cargarDesdeArchivoJSON;
+window.actualizarFondoEscenariosBase = actualizarFondoEscenariosBase;
 
 console.log('✅ gestionEscenarios.js cargado');
