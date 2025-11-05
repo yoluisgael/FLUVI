@@ -233,12 +233,6 @@ function toggleModoBloqueo(activar, tipo = 'bloqueo') {
         }
 
         canvasEscenarios.classList.add('blocking-mode');
-
-        // ⏸️ Pausar simulación (simplemente hacer click en el botón)
-        if (btnPauseResume && !window.isPaused) {
-            btnPauseResume.click();
-            console.log('⏸️ Simulación pausada automáticamente');
-        }
     } else {
         console.log('🚧 Modo escenario DESACTIVADO');
 
@@ -255,12 +249,6 @@ function toggleModoBloqueo(activar, tipo = 'bloqueo') {
 
         canvasEscenarios.classList.remove('blocking-mode');
         estadoEscenarios.isPainting = false;
-
-        // ▶️ Reanudar simulación (simplemente hacer click en el botón)
-        if (btnPauseResume && window.isPaused) {
-            btnPauseResume.click();
-            console.log('▶️ Simulación reanudada automáticamente');
-        }
     }
 }
 
