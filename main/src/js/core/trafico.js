@@ -2280,7 +2280,7 @@ function iniciarSimulacion() {
     
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1034, 1671, 110, 0.9, 3, 0.01);
     const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro ←", 177, TIPOS.CONEXION, 1920, 928, 260, 0.0, 2, 0.01);
-    const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo ←", 184, TIPOS.CONEXION, 2327, 1004, 259, 0.0, 2, 0.01);
+    const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo ←", 184, TIPOS.CONEXION, 2322, 1004, 258, 0.0, 2, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz →", 377, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
     
     const Avenida_IPN = crearCalle("Av. IPN ←", 230, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);

@@ -665,14 +665,19 @@ class EditorHandles {
 
         const deltaAngle = (currentAngle - this.rotationStartAngle) * 180 / Math.PI;
 
+        // Factor de sensibilidad para rotación (0.5 = 50% de la velocidad original)
+        // Valores más bajos = rotación más lenta y controlada
+        const rotationSensitivity = 0.5;
+        const adjustedDeltaAngle = deltaAngle * rotationSensitivity;
+
         if (this.objectType === 'calle') {
-            this.currentObject.angulo = (this.currentObject.angulo + deltaAngle) % 360;
+            this.currentObject.angulo = (this.currentObject.angulo + adjustedDeltaAngle) % 360;
             if (this.currentObject.angulo < 0) {
                 this.currentObject.angulo += 360;
             }
         } else {
             if (!this.currentObject.angle) this.currentObject.angle = 0;
-            this.currentObject.angle = (this.currentObject.angle + deltaAngle) % 360;
+            this.currentObject.angle = (this.currentObject.angle + adjustedDeltaAngle) % 360;
             if (this.currentObject.angle < 0) {
                 this.currentObject.angle += 360;
             }
