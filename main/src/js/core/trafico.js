@@ -2236,6 +2236,8 @@ function iniciarSimulacion() {
     const retronoBatiz2 = crearCalle("retorno Batiz →", 6, TIPOS.CONEXION, 1729, 890, 79, 0.0, 1, 0.01);
     const retronoBatizD = crearCalle("retrono Batiz F. ←", 6, TIPOS.CONEXION, 2040, 910, 259, 0.0, 1, 0.01);
     const retronoBatizD2 = crearCalle("retorno Batiz F. →", 6, TIPOS.CONEXION, 2024, 942, 79, 0.0, 1, 0.01);
+    const retronoSec = crearCalle("retrono SECAD ←", 7, TIPOS.CONEXION, 2272, 949, 259, 0.0, 1, 0.01);
+    const retronoSec2 = crearCalle("retorno SECAD →", 7, TIPOS.CONEXION, 2255, 986, 79, 0.0, 1, 0.01);
     
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
