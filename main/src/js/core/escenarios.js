@@ -713,8 +713,132 @@ function generarEscenarioInundacionMasiva() {
 }
 
 /**
+ * Genera el escenario base "Baches Aleatorios"
+ * Coloca baches aleatoriamente con 5% de probabilidad en todas las calles
+ * @returns {Object} - Objeto del escenario generado
+ */
+function generarEscenarioBachesAleatorios() {
+    console.log('🕳️ Generando escenario: Baches Aleatorios');
+
+    // Limpiar bloqueos actuales primero
+    if (typeof limpiarTodosLosBloqueos === 'function') {
+        estadoEscenarios.celdasBloqueadas.clear();
+        window.calles.forEach(calle => {
+            for (let carril = 0; carril < calle.carriles; carril++) {
+                for (let i = 0; i < calle.tamano; i++) {
+                    if (calle.arreglo[carril][i] === 7) {
+                        calle.arreglo[carril][i] = 0;
+                    }
+                }
+            }
+        });
+    }
+
+    let celdasConBaches = 0;
+    const probabilidadBache = 0.05; // 5%
+
+    // Iterar sobre todas las calles
+    window.calles.forEach(calle => {
+        if (!calle.arreglo) {
+            console.log(`  ⏭️ Calle "${calle.nombre}" no tiene arreglo, se omite`);
+            return;
+        }
+
+        console.log(`  🛣️ Procesando calle "${calle.nombre}" (${calle.carriles} carriles, ${calle.tamano} celdas)`);
+
+        // Determinar zonas de conexión (primeras y últimas 5 celdas)
+        const zonaInicioConexion = 5;
+        const zonaFinConexion = calle.tamano - 5;
+
+        let bachesEnCalle = 0;
+
+        // Iterar sobre todos los carriles
+        for (let carril = 0; carril < calle.carriles; carril++) {
+            for (let indice = 0; indice < calle.tamano; indice++) {
+                // Verificar si estamos en zona de conexión
+                const esZonaConexion = (indice < zonaInicioConexion || indice >= zonaFinConexion);
+
+                // No poner baches en zonas de conexión para mantener flujo
+                if (esZonaConexion) {
+                    continue;
+                }
+
+                // Generar número aleatorio para decidir si poner bache
+                if (Math.random() < probabilidadBache) {
+                    // Limpiar cualquier contenido previo (vehículos, bloqueos, etc.)
+                    const valorAnterior = calle.arreglo[carril][indice];
+                    if (valorAnterior !== 0) {
+                        calle.arreglo[carril][indice] = 0;
+                    }
+
+                    // Colocar bache (tipo 7 con textura 'bache')
+                    calle.arreglo[carril][indice] = 7;
+
+                    // Registrar en el mapa de celdas bloqueadas
+                    const calleId = calle.id || calle.nombre;
+                    const celdaKey = `${calleId}:${carril}:${indice}`;
+                    estadoEscenarios.celdasBloqueadas.set(celdaKey, {
+                        tipo: 'obstaculo',
+                        texture: 'bache'
+                    });
+
+                    celdasConBaches++;
+                    bachesEnCalle++;
+                }
+            }
+        }
+
+        console.log(`  ✅ "${calle.nombre}": ${bachesEnCalle} baches colocados`);
+    });
+
+    console.log(`🕳️ Total de baches colocados: ${celdasConBaches}`);
+
+    // Crear objeto del escenario
+    const escenario = {
+        version: '1.0',
+        id: 'base_baches_aleatorios',
+        nombre: 'Baches Aleatorios (Base)',
+        descripcion: 'Escenario base que coloca baches aleatoriamente con 5% de probabilidad en todas las calles',
+        fechaCreacion: new Date().toISOString(),
+        esEscenarioBase: true,
+        callesConfig: window.calles.map(c => ({
+            id: c.id || c.nombre,
+            nombre: c.nombre,
+            tamano: c.tamano,
+            carriles: c.carriles
+        })),
+        celdasBloqueadas: [],
+        estadisticas: {
+            totalBloqueos: 0,
+            totalInundaciones: 0,
+            totalObstaculos: celdasConBaches
+        }
+    };
+
+    // Exportar celdas bloqueadas al formato del escenario
+    estadoEscenarios.celdasBloqueadas.forEach((metadata, celdaKey) => {
+        const [calleId, carril, indice] = celdaKey.split(':');
+        const calle = window.calles.find(c => c.id === calleId || c.nombre === calleId);
+
+        if (calle) {
+            escenario.celdasBloqueadas.push({
+                calleNombre: calle.nombre,
+                calleId: calle.id || calle.nombre,
+                carril: parseInt(carril),
+                indice: parseInt(indice),
+                tipo: metadata.tipo,
+                texture: metadata.texture
+            });
+        }
+    });
+
+    console.log('✅ Escenario base "Baches Aleatorios" generado exitosamente');
+    return escenario;
+}
+
+/**
  * Carga un escenario base predeterminado
- * @param {string} tipoEscenario - Tipo de escenario base ('inundacion_masiva', etc.)
+ * @param {string} tipoEscenario - Tipo de escenario base ('inundacion_masiva', 'baches_aleatorios', etc.)
  */
 function cargarEscenarioBase(tipoEscenario) {
     console.log(`🎯 Cargando escenario base: ${tipoEscenario}`);
@@ -724,6 +848,9 @@ function cargarEscenarioBase(tipoEscenario) {
     switch (tipoEscenario) {
         case 'inundacion_masiva':
             escenario = generarEscenarioInundacionMasiva();
+            break;
+        case 'baches_aleatorios':
+            escenario = generarEscenarioBachesAleatorios();
             break;
         default:
             console.error(`❌ Tipo de escenario base desconocido: ${tipoEscenario}`);
@@ -736,7 +863,13 @@ function cargarEscenarioBase(tipoEscenario) {
         const resultado = cargarEscenarioDesdeJSON(escenario);
 
         if (resultado.exito) {
-            alert(`✅ Escenario "${escenario.nombre}" cargado exitosamente!\n\n${escenario.estadisticas.totalInundaciones} celdas inundadas.`);
+            const stats = escenario.estadisticas;
+            const mensaje = `✅ Escenario "${escenario.nombre}" cargado exitosamente!\n\n` +
+                `📊 Estadísticas:\n` +
+                (stats.totalInundaciones > 0 ? `• ${stats.totalInundaciones} celdas inundadas\n` : '') +
+                (stats.totalObstaculos > 0 ? `• ${stats.totalObstaculos} obstáculos colocados\n` : '') +
+                (stats.totalBloqueos > 0 ? `• ${stats.totalBloqueos} bloqueos\n` : '');
+            alert(mensaje);
         } else {
             alert(`❌ Error al cargar el escenario:\n${resultado.mensaje}`);
         }
@@ -753,5 +886,6 @@ window.validarEscenario = validarEscenario;
 window.cargarEscenarioDesdeJSON = cargarEscenarioDesdeJSON;
 window.cargarEscenarioBase = cargarEscenarioBase;
 window.generarEscenarioInundacionMasiva = generarEscenarioInundacionMasiva;
+window.generarEscenarioBachesAleatorios = generarEscenarioBachesAleatorios;
 
 console.log('✅ escenarios.js cargado');

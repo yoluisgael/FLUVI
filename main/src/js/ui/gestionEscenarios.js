@@ -21,6 +21,7 @@ let escenarioActualFecha;
 
 // Botones de escenarios base
 let btnEscenarioInundacionMasiva;
+let btnEscenarioBachesAleatorios;
 
 /**
  * Inicializa el módulo de gestión de escenarios
@@ -42,6 +43,7 @@ function inicializarGestionEscenarios() {
 
     // Botones de escenarios base
     btnEscenarioInundacionMasiva = document.getElementById('btnEscenarioInundacionMasiva');
+    btnEscenarioBachesAleatorios = document.getElementById('btnEscenarioBachesAleatorios');
 
     // Crear instancias de modales Bootstrap
     const modalGuardarElement = document.getElementById('modalGuardarEscenario');
@@ -86,6 +88,12 @@ function inicializarGestionEscenarios() {
         });
     }
 
+    if (btnEscenarioBachesAleatorios) {
+        btnEscenarioBachesAleatorios.addEventListener('click', () => {
+            cargarEscenarioBaseUI('baches_aleatorios');
+        });
+    }
+
     console.log('✅ Gestión de escenarios inicializada');
 }
 
@@ -115,6 +123,12 @@ function cargarEscenarioBaseUI(tipoEscenario) {
                 }
                 escenarioGenerado = window.generarEscenarioInundacionMasiva();
                 break;
+            case 'baches_aleatorios':
+                if (typeof window.generarEscenarioBachesAleatorios !== 'function') {
+                    throw new Error('Generador de baches aleatorios no disponible');
+                }
+                escenarioGenerado = window.generarEscenarioBachesAleatorios();
+                break;
             default:
                 throw new Error(`Tipo de escenario desconocido: ${tipoEscenario}`);
         }
@@ -128,12 +142,14 @@ function cargarEscenarioBaseUI(tipoEscenario) {
                 actualizarInfoEscenarioActual(escenarioGenerado);
 
                 // Mostrar notificación de éxito
+                const stats = escenarioGenerado.estadisticas;
+                let statsText = '📊 Estadísticas:\n';
+                if (stats.totalInundaciones > 0) statsText += `• ${stats.totalInundaciones} celdas inundadas\n`;
+                if (stats.totalBloqueos > 0) statsText += `• ${stats.totalBloqueos} bloqueos\n`;
+                if (stats.totalObstaculos > 0) statsText += `• ${stats.totalObstaculos} obstáculos colocados\n`;
+
                 mostrarNotificacion('success', 'Escenario Base Cargado',
-                    `✅ "${escenarioGenerado.nombre}" cargado exitosamente!\n\n` +
-                    `📊 Estadísticas:\n` +
-                    `• ${escenarioGenerado.estadisticas.totalInundaciones} celdas inundadas\n` +
-                    `• ${escenarioGenerado.estadisticas.totalBloqueos} bloqueos\n` +
-                    `• ${escenarioGenerado.estadisticas.totalObstaculos} obstáculos`
+                    `✅ "${escenarioGenerado.nombre}" cargado exitosamente!\n\n${statsText}`
                 );
             } else {
                 throw new Error(resultado.mensaje);
