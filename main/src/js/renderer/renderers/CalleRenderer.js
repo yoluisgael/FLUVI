@@ -11,6 +11,8 @@ class CalleRenderer {
         this.draggingVertexIndex = -1; // Índice del vértice que se está arrastrando
         this.draggingCalle = null; // Calle del vértice que se está arrastrando
         this.influenceCircle = null; // Círculo de influencia visual para el vértice siendo arrastrado
+        this.lastPaintedCell = null; // Última celda pintada en modo pincel
+        this.paintMode = null; // 'paint' (pintar/bloquear) o 'erase' (borrar/desbloquear)
     }
 
     renderAll(calles) {
@@ -301,66 +303,54 @@ class CalleRenderer {
 
         // PRIORIDAD 1: Si el modo bloqueo está activo, manejar el bloqueo de carriles
         if (window.estadoEscenarios && window.estadoEscenarios.modoBloqueoActivo) {
-            console.log('🚧 Modo bloqueo activo - manejando click en celda');
+            console.log('🚧 Modo bloqueo activo - iniciando modo pincel');
 
-            // Obtener coordenadas del mundo
+            // Determinar el modo de pintura basado en la celda inicial
             const globalPos = event.data.global;
             const worldX = (globalPos.x - window.offsetX) / window.escala;
             const worldY = (globalPos.y - window.offsetY) / window.escala;
 
-            // Buscar la celda clickeada usando la misma función que para agregar vehículos
             if (typeof window.encontrarCeldaMasCercana === 'function') {
-                const celdaObjetivo = window.encontrarCeldaMasCercana(worldX, worldY);
+                const celdaInicial = window.encontrarCeldaMasCercana(worldX, worldY);
 
-                if (celdaObjetivo) {
-                    const { calle: calleObjetivo, carril, indice } = celdaObjetivo;
+                if (celdaInicial) {
+                    const { calle: calleInicial, carril, indice } = celdaInicial;
+                    const valorInicial = calleInicial.arreglo[carril]?.[indice];
 
-                    // Verificar que la celda objetivo sea de la calle clickeada
-                    if (calleObjetivo === calle) {
-                        const valorActual = calleObjetivo.arreglo[carril]?.[indice];
-                        const celdaKey = `${calleObjetivo.id}:${carril}:${indice}`;
-
-                        console.log('📍 Celda encontrada - Carril:', carril, 'Índice:', indice, 'Valor actual:', valorActual);
-
-                        // Toggle bloqueo: si está bloqueada (7), desbloquear (0); si no, bloquear (7)
-                        if (valorActual === 7) {
-                            console.log('🔓 Desbloqueando celda:', celdaKey);
-                            calleObjetivo.arreglo[carril][indice] = 0;
-                            window.estadoEscenarios.celdasBloqueadas.delete(celdaKey);
-                        } else {
-                            const tipoEscenario = window.estadoEscenarios.tipoEscenarioActivo || 'bloqueo';
-                            console.log(`🔒 Bloqueando celda con ${tipoEscenario}:`, celdaKey);
-
-                            calleObjetivo.arreglo[carril][indice] = 7;
-
-                            // Guardar metadata del tipo de escenario
-                            const metadata = { tipo: tipoEscenario };
-                            if (tipoEscenario === 'obstaculo') {
-                                metadata.texture = window.estadoEscenarios.emojiObstaculoSeleccionado || 'bache';
-                            } else if (tipoEscenario === 'inundacion') {
-                                metadata.texture = 'inundacion';
-                            }
-
-                            window.estadoEscenarios.celdasBloqueadas.set(celdaKey, metadata);
-                            console.log('📝 Metadata guardada:', metadata);
-                        }
-
-                        // Forzar actualización del CarroRenderer para renderizar el bloqueo inmediatamente
-                        if (this.scene && this.scene.carroRenderer && window.calles) {
-                            console.log('🔄 Actualizando CarroRenderer para mostrar bloqueo');
-                            this.scene.carroRenderer.updateAll(window.calles);
-
-                            // Si la simulación está pausada, forzar render manual de PixiJS
-                            if (window.isPaused && window.pixiApp && window.pixiApp.app) {
-                                window.pixiApp.app.render();
-                                console.log('🎨 Render manual de PixiJS forzado (simulación pausada)');
-                            }
-                        }
-                    }
+                    // Determinar acción: si está bloqueada (7), borrar; si no, pintar
+                    this.paintMode = (valorInicial === 7) ? 'erase' : 'paint';
+                    console.log(`🎨 Modo de pincel establecido: ${this.paintMode === 'paint' ? 'PINTAR/BLOQUEAR' : 'BORRAR/DESBLOQUEAR'}`);
                 }
-            } else {
-                console.error('❌ Función encontrarCeldaMasCercana no está disponible');
             }
+
+            // Iniciar modo pintura
+            window.estadoEscenarios.isPainting = true;
+
+            // Pintar la celda inicial
+            this.paintCell(calle, event);
+
+            // Función para pintar mientras se arrastra
+            const onPointerMove = (e) => {
+                if (window.estadoEscenarios.isPainting) {
+                    this.paintCell(calle, e);
+                }
+            };
+
+            // Función para terminar de pintar
+            const onPointerUp = () => {
+                window.estadoEscenarios.isPainting = false;
+                this.lastPaintedCell = null; // Resetear última celda pintada
+                this.paintMode = null; // Resetear modo de pincel
+                this.scene.app.stage.off('pointermove', onPointerMove);
+                this.scene.app.stage.off('pointerup', onPointerUp);
+                this.scene.app.stage.off('pointerupoutside', onPointerUp);
+                console.log('🖌️ Modo pincel terminado');
+            };
+
+            // Registrar eventos globales para pintar con drag
+            this.scene.app.stage.on('pointermove', onPointerMove);
+            this.scene.app.stage.on('pointerup', onPointerUp);
+            this.scene.app.stage.on('pointerupoutside', onPointerUp);
 
             // Salir sin ejecutar la lógica normal de clicks
             return;
@@ -583,6 +573,85 @@ class CalleRenderer {
         if (container._tooltipMoveHandler) {
             document.removeEventListener('mousemove', container._tooltipMoveHandler);
             container._tooltipMoveHandler = null;
+        }
+    }
+
+    // ==================== MODO PINCEL PARA ESCENARIOS ====================
+
+    /**
+     * Pinta una celda en el modo de escenarios (bloqueo/inundación/obstáculo)
+     * @param {Object} calle - Calle donde se encuentra la celda
+     * @param {Object} event - Evento de puntero con coordenadas
+     */
+    paintCell(calle, event) {
+        // Obtener coordenadas del mundo
+        const globalPos = event.data.global;
+        const worldX = (globalPos.x - window.offsetX) / window.escala;
+        const worldY = (globalPos.y - window.offsetY) / window.escala;
+
+        // Buscar la celda más cercana
+        if (typeof window.encontrarCeldaMasCercana === 'function') {
+            const celdaObjetivo = window.encontrarCeldaMasCercana(worldX, worldY);
+
+            if (celdaObjetivo) {
+                const { calle: calleObjetivo, carril, indice } = celdaObjetivo;
+
+                const valorActual = calleObjetivo.arreglo[carril]?.[indice];
+                const celdaKey = `${calleObjetivo.id}:${carril}:${indice}`;
+
+                // Evitar repintar la misma celda repetidamente
+                if (this.lastPaintedCell === celdaKey) {
+                    return;
+                }
+
+                this.lastPaintedCell = celdaKey;
+
+                // Aplicar la acción según el modo establecido
+                if (this.paintMode === 'erase') {
+                    // Modo BORRAR: solo desbloquear si está bloqueada
+                    if (valorActual === 7) {
+                        console.log('🔓 Desbloqueando celda:', celdaKey);
+                        calleObjetivo.arreglo[carril][indice] = 0;
+                        window.estadoEscenarios.celdasBloqueadas.delete(celdaKey);
+                    } else {
+                        // No hacer nada si ya está desbloqueada
+                        return;
+                    }
+                } else if (this.paintMode === 'paint') {
+                    // Modo PINTAR: solo bloquear si NO está bloqueada
+                    if (valorActual !== 7) {
+                        const tipoEscenario = window.estadoEscenarios.tipoEscenarioActivo || 'bloqueo';
+                        console.log(`🔒 Bloqueando celda con ${tipoEscenario}:`, celdaKey);
+
+                        calleObjetivo.arreglo[carril][indice] = 7;
+
+                        // Guardar metadata del tipo de escenario
+                        const metadata = { tipo: tipoEscenario };
+                        if (tipoEscenario === 'obstaculo') {
+                            metadata.texture = window.estadoEscenarios.emojiObstaculoSeleccionado || 'bache';
+                        } else if (tipoEscenario === 'inundacion') {
+                            metadata.texture = 'inundacion';
+                        }
+
+                        window.estadoEscenarios.celdasBloqueadas.set(celdaKey, metadata);
+                    } else {
+                        // No hacer nada si ya está bloqueada
+                        return;
+                    }
+                }
+
+                // Forzar actualización del CarroRenderer para renderizar el bloqueo inmediatamente
+                if (this.scene && this.scene.carroRenderer && window.calles) {
+                    this.scene.carroRenderer.updateAll(window.calles);
+
+                    // Si la simulación está pausada, forzar render manual de PixiJS
+                    if (window.isPaused && window.pixiApp && window.pixiApp.app) {
+                        window.pixiApp.app.render();
+                    }
+                }
+            }
+        } else {
+            console.error('❌ Función encontrarCeldaMasCercana no está disponible');
         }
     }
 
