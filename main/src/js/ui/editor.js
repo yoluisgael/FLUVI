@@ -686,15 +686,25 @@ class EditorCalles {
             return;
         }
 
-        if (this.inputPosX) this.inputPosX.value = Math.round(objeto.x);
-        if (this.inputPosY) this.inputPosY.value = Math.round(objeto.y);
+        // Validar que los valores existen y son números válidos antes de actualizar
+        if (this.inputPosX && !isNaN(objeto.x) && objeto.x !== undefined) {
+            this.inputPosX.value = Math.round(objeto.x);
+        }
+        if (this.inputPosY && !isNaN(objeto.y) && objeto.y !== undefined) {
+            this.inputPosY.value = Math.round(objeto.y);
+        }
 
         if (window.calleSeleccionada) {
-            if (this.inputAngulo) this.inputAngulo.value = Math.round(objeto.angulo);
+            if (this.inputAngulo && !isNaN(objeto.angulo) && objeto.angulo !== undefined) {
+                this.inputAngulo.value = Math.round(objeto.angulo);
+            }
             this.mostrarSeccionDimensiones();
             this.actualizarInputsDimensiones();
         } else if (window.edificioSeleccionado) {
-            if (this.inputAngulo) this.inputAngulo.value = Math.round(objeto.angle || 0);
+            const angle = objeto.angle || 0;
+            if (this.inputAngulo && !isNaN(angle)) {
+                this.inputAngulo.value = Math.round(angle);
+            }
             this.ocultarSeccionDimensiones();
         }
     }
