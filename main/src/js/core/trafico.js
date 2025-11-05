@@ -2256,6 +2256,8 @@ function iniciarSimulacion() {
     const RetornoSec2 = crearCalle("retorno SECAD →", 7, TIPOS.CONEXION, 2328, 999, 79, 0.0, 1, 0.01);
     const RetornoBernard = crearCalle("Retorno SECAD ←", 7, TIPOS.CONEXION, 2424, 976, 259, 0.0, 1, 0.01);
     const RetornoBernard2 = crearCalle("retorno SECAD →", 7, TIPOS.CONEXION, 2407, 1013, 79, 0.0, 1, 0.01);
+    const RetornoErro1 = crearCalle("Retorno Erro 1 ←", 4, TIPOS.CONEXION, 2129, 627, 136, 0.0, 2, 0.01);
+    const RetornoErro2 = crearCalle("Retorno Erro 2 ←", 3, TIPOS.CONEXION, 2048, 701, 136, 0.0, 2, 0.01);
     
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
