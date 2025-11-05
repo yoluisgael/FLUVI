@@ -123,11 +123,20 @@ class CarroRenderer {
             : this.obtenerCoordenadasBasicas(calle, carril, indice);
 
         let sprite = this.scene.carroSprites.get(id);
+        const needsRecreate = sprite && sprite.userData && sprite.userData.tipo !== tipo;
+
+        // Si el sprite existe pero cambió de tipo, eliminarlo y recrearlo
+        if (needsRecreate) {
+            this.removeCarroSprite(id);
+            sprite = null;
+        }
 
         if (!sprite) {
             // Para tipo 7 (bloqueo), verificar metadata para determinar textura
             if (tipo === 7) {
-                const celdaKey = `${calle.id}:${carril}:${indice}`;
+                // IMPORTANTE: Usar la misma lógica que en escenarios.js
+                const calleId = calle.id || calle.nombre;
+                const celdaKey = `${calleId}:${carril}:${indice}`;
                 const metadata = window.estadoEscenarios?.celdasBloqueadas.get(celdaKey);
 
                 sprite = this.acquireSprite();
@@ -154,6 +163,7 @@ class CarroRenderer {
 
                 sprite.zIndex = 1;
                 sprite.eventMode = 'none';
+                sprite.userData = { tipo: 7 }; // Guardar tipo para detectar cambios
             } else if (tipo === 8 || tipo === 9) {
                 // Tipos 8 y 9: Conexiones de estacionamiento
                 // YA NO se renderizan como cuadros de colores
@@ -172,6 +182,7 @@ class CarroRenderer {
                 sprite.alpha = 1.0; // Opaco
                 sprite.zIndex = 1;
                 sprite.eventMode = 'none';
+                sprite.userData = { tipo: tipo }; // Guardar tipo para detectar cambios
             }
 
             this.scene.carroSprites.set(id, sprite);

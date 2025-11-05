@@ -518,10 +518,18 @@ function cargarEscenarioDesdeJSON(escenario) {
 
         // Forzar actualización del renderizado visual
         if (window.USE_PIXI && window.pixiApp && window.pixiApp.sceneManager) {
-            console.log('🎨 Actualizando renderizado PixiJS...');
-
-            // Forzar actualización del CarroRenderer para mostrar los obstáculos
+            // IMPORTANTE: Limpiar todos los sprites existentes primero
             if (window.pixiApp.sceneManager.carroRenderer) {
+                // Limpiar el mapa de sprites para forzar recreación
+                window.pixiApp.sceneManager.carroRenderer.scene.carroSprites.forEach((sprite, id) => {
+                    sprite.destroy();
+                });
+                window.pixiApp.sceneManager.carroRenderer.scene.carroSprites.clear();
+
+                // Limpiar el estado de vehículos previo
+                window.pixiApp.sceneManager.carroRenderer.lastVehicleState.clear();
+
+                // Forzar actualización completa
                 window.pixiApp.sceneManager.carroRenderer.updateAll(window.calles);
             }
         }
@@ -570,6 +578,171 @@ function eliminarEscenario(escenarioId) {
     }
 }
 
+// ============================================================
+// ESCENARIOS BASE (PREDETERMINADOS)
+// ============================================================
+
+/**
+ * Genera el escenario base "Inundación Masiva"
+ * Deja solo un carril libre en todas las calles e inunda los demás
+ * @returns {Object} - Objeto del escenario generado
+ */
+function generarEscenarioInundacionMasiva() {
+    console.log('🌊 Generando escenario: Inundación Masiva');
+
+    // Limpiar bloqueos actuales primero
+    if (typeof limpiarTodosLosBloqueos === 'function') {
+        estadoEscenarios.celdasBloqueadas.clear();
+        window.calles.forEach(calle => {
+            for (let carril = 0; carril < calle.carriles; carril++) {
+                for (let i = 0; i < calle.tamano; i++) {
+                    if (calle.arreglo[carril][i] === 7) {
+                        calle.arreglo[carril][i] = 0;
+                    }
+                }
+            }
+        });
+    }
+
+    let celdasInundadas = 0;
+
+    // Iterar sobre todas las calles
+    window.calles.forEach(calle => {
+        if (!calle.arreglo || calle.carriles <= 1) {
+            console.log(`  ⏭️ Calle "${calle.nombre}" tiene solo 1 carril, se omite`);
+            return; // Skip calles con 1 solo carril
+        }
+
+        console.log(`  🛣️ Procesando calle "${calle.nombre}" (${calle.carriles} carriles, ${calle.tamano} celdas)`);
+
+        // Determinar zonas de conexión (primeras y últimas 5 celdas)
+        const zonaInicioConexion = 5;
+        const zonaFinConexion = calle.tamano - 5;
+
+        // Limpiar completamente el primer carril (carril 0) de cualquier vehículo
+        for (let indice = 0; indice < calle.tamano; indice++) {
+            const valorActual = calle.arreglo[0][indice];
+            // Si hay un vehículo (1-6) o bloqueo (7), eliminarlo
+            if (valorActual !== 0) {
+                calle.arreglo[0][indice] = 0;
+            }
+        }
+
+        // Dejar libre el primer carril (carril 0) completamente
+        // Inundar todos los demás carriles (carril 1 en adelante)
+        for (let carril = 1; carril < calle.carriles; carril++) {
+            for (let indice = 0; indice < calle.tamano; indice++) {
+                // Verificar si estamos en zona de conexión
+                const esZonaConexion = (indice < zonaInicioConexion || indice >= zonaFinConexion);
+
+                // En zonas de conexión, inundar solo si hay más de 2 carriles
+                // para dejar al menos 2 carriles libres para flujo
+                if (esZonaConexion && calle.carriles <= 2) {
+                    continue; // No inundar en zonas de conexión si solo hay 2 carriles
+                }
+
+                // Limpiar cualquier contenido previo (vehículos, bloqueos, etc.)
+                const valorAnterior = calle.arreglo[carril][indice];
+                if (valorAnterior !== 0) {
+                    // Si había algo (vehículo o bloqueo), eliminarlo primero
+                    calle.arreglo[carril][indice] = 0;
+                }
+
+                // Inundar la celda (forzar valor 7)
+                calle.arreglo[carril][indice] = 7;
+
+                // Registrar en el mapa de celdas bloqueadas
+                // IMPORTANTE: Usar calle.id o calle.nombre si no hay id
+                const calleId = calle.id || calle.nombre;
+                const celdaKey = `${calleId}:${carril}:${indice}`;
+                estadoEscenarios.celdasBloqueadas.set(celdaKey, {
+                    tipo: 'inundacion',
+                    texture: 'inundacion'
+                });
+
+                celdasInundadas++;
+            }
+        }
+
+        console.log(`  ✅ "${calle.nombre}": ${celdasInundadas} celdas inundadas`);
+    });
+
+    console.log(`🌊 Total de celdas inundadas: ${celdasInundadas}`);
+
+    // Crear objeto del escenario
+    const escenario = {
+        version: '1.0',
+        id: 'base_inundacion_masiva',
+        nombre: 'Inundación Masiva (Base)',
+        descripcion: 'Escenario base que simula una inundación dejando solo un carril libre en cada calle',
+        fechaCreacion: new Date().toISOString(),
+        esEscenarioBase: true, // Marcar como escenario base
+        callesConfig: window.calles.map(c => ({
+            id: c.id || c.nombre,
+            nombre: c.nombre,
+            tamano: c.tamano,
+            carriles: c.carriles
+        })),
+        celdasBloqueadas: [],
+        estadisticas: {
+            totalBloqueos: 0,
+            totalInundaciones: celdasInundadas,
+            totalObstaculos: 0
+        }
+    };
+
+    // Exportar celdas bloqueadas al formato del escenario
+    estadoEscenarios.celdasBloqueadas.forEach((metadata, celdaKey) => {
+        const [calleId, carril, indice] = celdaKey.split(':');
+        const calle = window.calles.find(c => c.id === calleId || c.nombre === calleId);
+
+        if (calle) {
+            escenario.celdasBloqueadas.push({
+                calleNombre: calle.nombre,
+                calleId: calle.id || calle.nombre,
+                carril: parseInt(carril),
+                indice: parseInt(indice),
+                tipo: metadata.tipo,
+                texture: metadata.texture
+            });
+        }
+    });
+
+    console.log('✅ Escenario base "Inundación Masiva" generado exitosamente');
+    return escenario;
+}
+
+/**
+ * Carga un escenario base predeterminado
+ * @param {string} tipoEscenario - Tipo de escenario base ('inundacion_masiva', etc.)
+ */
+function cargarEscenarioBase(tipoEscenario) {
+    console.log(`🎯 Cargando escenario base: ${tipoEscenario}`);
+
+    let escenario = null;
+
+    switch (tipoEscenario) {
+        case 'inundacion_masiva':
+            escenario = generarEscenarioInundacionMasiva();
+            break;
+        default:
+            console.error(`❌ Tipo de escenario base desconocido: ${tipoEscenario}`);
+            alert('Tipo de escenario no reconocido');
+            return;
+    }
+
+    if (escenario) {
+        // Cargar el escenario generado
+        const resultado = cargarEscenarioDesdeJSON(escenario);
+
+        if (resultado.exito) {
+            alert(`✅ Escenario "${escenario.nombre}" cargado exitosamente!\n\n${escenario.estadisticas.totalInundaciones} celdas inundadas.`);
+        } else {
+            alert(`❌ Error al cargar el escenario:\n${resultado.mensaje}`);
+        }
+    }
+}
+
 // Exponer funciones globalmente
 window.inicializarEscenarios = inicializarEscenarios;
 window.exportarBloqueos = exportarBloqueos;
@@ -578,5 +751,7 @@ window.estadoEscenarios = estadoEscenarios;
 window.crearEscenarioJSON = crearEscenarioJSON;
 window.validarEscenario = validarEscenario;
 window.cargarEscenarioDesdeJSON = cargarEscenarioDesdeJSON;
+window.cargarEscenarioBase = cargarEscenarioBase;
+window.generarEscenarioInundacionMasiva = generarEscenarioInundacionMasiva;
 
 console.log('✅ escenarios.js cargado');

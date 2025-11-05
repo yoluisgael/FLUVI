@@ -19,6 +19,9 @@ let escenarioActualInfo;
 let escenarioActualNombre;
 let escenarioActualFecha;
 
+// Botones de escenarios base
+let btnEscenarioInundacionMasiva;
+
 /**
  * Inicializa el módulo de gestión de escenarios
  */
@@ -36,6 +39,9 @@ function inicializarGestionEscenarios() {
     escenarioActualInfo = document.getElementById('escenarioActualInfo');
     escenarioActualNombre = document.getElementById('escenarioActualNombre');
     escenarioActualFecha = document.getElementById('escenarioActualFecha');
+
+    // Botones de escenarios base
+    btnEscenarioInundacionMasiva = document.getElementById('btnEscenarioInundacionMasiva');
 
     // Crear instancias de modales Bootstrap
     const modalGuardarElement = document.getElementById('modalGuardarEscenario');
@@ -73,7 +79,71 @@ function inicializarGestionEscenarios() {
         });
     }
 
+    // Event listeners para escenarios base
+    if (btnEscenarioInundacionMasiva) {
+        btnEscenarioInundacionMasiva.addEventListener('click', () => {
+            cargarEscenarioBaseUI('inundacion_masiva');
+        });
+    }
+
     console.log('✅ Gestión de escenarios inicializada');
+}
+
+/**
+ * Carga un escenario base predeterminado y actualiza la UI
+ * @param {string} tipoEscenario - Tipo de escenario base
+ */
+function cargarEscenarioBaseUI(tipoEscenario) {
+    console.log(`🎯 Cargando escenario base desde UI: ${tipoEscenario}`);
+
+    // Verificar que la función existe
+    if (typeof window.cargarEscenarioBase !== 'function') {
+        console.error('❌ window.cargarEscenarioBase no está definido');
+        mostrarNotificacion('error', 'Error', 'El sistema de escenarios base no está disponible.');
+        return;
+    }
+
+    // Generar y cargar el escenario
+    let escenarioGenerado = null;
+
+    try {
+        // Generar el escenario según el tipo
+        switch (tipoEscenario) {
+            case 'inundacion_masiva':
+                if (typeof window.generarEscenarioInundacionMasiva !== 'function') {
+                    throw new Error('Generador de inundación no disponible');
+                }
+                escenarioGenerado = window.generarEscenarioInundacionMasiva();
+                break;
+            default:
+                throw new Error(`Tipo de escenario desconocido: ${tipoEscenario}`);
+        }
+
+        // Cargar el escenario generado
+        if (escenarioGenerado) {
+            const resultado = window.cargarEscenarioDesdeJSON(escenarioGenerado);
+
+            if (resultado.exito) {
+                // Actualizar info del escenario actual
+                actualizarInfoEscenarioActual(escenarioGenerado);
+
+                // Mostrar notificación de éxito
+                mostrarNotificacion('success', 'Escenario Base Cargado',
+                    `✅ "${escenarioGenerado.nombre}" cargado exitosamente!\n\n` +
+                    `📊 Estadísticas:\n` +
+                    `• ${escenarioGenerado.estadisticas.totalInundaciones} celdas inundadas\n` +
+                    `• ${escenarioGenerado.estadisticas.totalBloqueos} bloqueos\n` +
+                    `• ${escenarioGenerado.estadisticas.totalObstaculos} obstáculos`
+                );
+            } else {
+                throw new Error(resultado.mensaje);
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error al cargar escenario base:', error);
+        mostrarNotificacion('error', 'Error al Cargar Escenario Base',
+            `No se pudo cargar el escenario:\n${error.message}`);
+    }
 }
 
 /**
