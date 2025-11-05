@@ -2273,7 +2273,7 @@ function iniciarSimulacion() {
     
     const retornoErro3 = crearCalle("retrono Erro 3 →", 4, TIPOS.CONEXION, 1904, 1017, 350, 0.0, 1, 0.01);
     const retornoErro4 = crearCalle("retrono Erro 4 ←", 4, TIPOS.CONEXION, 1927, 1031, 169, 0.0, 1, 0.01);
-    
+
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 9, TIPOS.CONEXION, 1745, 386, 28, 0.0, 3, 0.02);
@@ -2308,7 +2308,7 @@ function iniciarSimulacion() {
     const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro →", 179, TIPOS.CONEXION, 1783, 1818, 80, 0.0, 2, 0.01);
     
     const Calle_Luis_Enrique_Erro_4 = crearCalle("Calle Luis Enrique Erro Tramo 2 ←", 69, TIPOS.CONEXION, 2118, 603, 225, 0.0, 2, 0.01);
-    const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo →", 185, TIPOS.CONEXION, 2178, 1921, 80, 0.0, 2, 0.01);
+    const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo →", 185, TIPOS.CONEXION, 2149, 1914, 78, 0.0, 2, 0.01);
     const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu ←", 346, TIPOS.CONEXION, 2605, 2027, 166, 0.0, 2, 0.01);
     //const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 1820, 1825, 155, 0.0, 2, 0.01);
     //const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 160, TIPOS.CONEXION, 1825, 1860, -14, 0.0, 2, 0.01);
@@ -2485,29 +2485,7 @@ function iniciarSimulacion() {
     ];
     Calle_Luis_Enrique_Erro_4.esCurva = true;
 
-    Calle_Miguel_Anda_y_Barredo.vertices = [
-        { indiceCelda: 0, anguloOffset: -3.378695158674237 },  
-    { indiceCelda: 10, anguloOffset: 0 },  
-    { indiceCelda: 20, anguloOffset: 0 },  
-    { indiceCelda: 30, anguloOffset: 0 },  
-    { indiceCelda: 40, anguloOffset: 0 },  
-    { indiceCelda: 50, anguloOffset: 0 },  
-    { indiceCelda: 60, anguloOffset: 0 },  
-    { indiceCelda: 70, anguloOffset: 0 },  
-    { indiceCelda: 80, anguloOffset: 0 },  
-    { indiceCelda: 90, anguloOffset: 0 },  
-    { indiceCelda: 100, anguloOffset: 0 },  
-    { indiceCelda: 110, anguloOffset: 0 },  
-    { indiceCelda: 120, anguloOffset: 0 },  
-    { indiceCelda: 130, anguloOffset: 0 },  
-    { indiceCelda: 140, anguloOffset: 0 },  
-    { indiceCelda: 150, anguloOffset: 0 },  
-    { indiceCelda: 160, anguloOffset: 0 },  
-    { indiceCelda: 170, anguloOffset: 0 },  
-    { indiceCelda: 180, anguloOffset: -2.602787238161812 },  
-    { indiceCelda: 184, anguloOffset: -0.3295098609110247 }  
-    ];
-    Calle_Miguel_Anda_y_Barredo.esCurva = true;
+    
 
     Avenida_Juan_de_Dios_Batiz2.vertices = [
         { indiceCelda: 0, anguloOffset: 25.80263615745194 },
