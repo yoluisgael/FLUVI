@@ -2258,6 +2258,18 @@ function iniciarSimulacion() {
     const RetornoBernard2 = crearCalle("retorno SECAD →", 7, TIPOS.CONEXION, 2407, 1013, 79, 0.0, 1, 0.01);
     const RetornoErro1 = crearCalle("Retorno Erro 1 ←", 4, TIPOS.CONEXION, 2129, 627, 136, 0.0, 2, 0.01);
     const RetornoErro2 = crearCalle("Retorno Erro 2 ←", 3, TIPOS.CONEXION, 2048, 701, 136, 0.0, 2, 0.01);
+    const retornoWilfrido = crearCalle("retrono Wilfrido. ←", 4, TIPOS.CONEXION, 1020, 1475, 258, 0.0, 1, 0.01);
+    const retornoEscalera = crearCalle("retrono Escalera ←", 4, TIPOS.CONEXION, 1130, 1521, 249, 0.0, 1, 0.01);
+    const retornoEscalera2 = crearCalle("retorno Escalera →", 4, TIPOS.CONEXION, 1114, 1535, 69, 0.0, 1, 0.01);
+    const retornoWilfrido1 = crearCalle("retrono Wilfrido1 ←", 4, TIPOS.CONEXION, 1610, 1762, 67, 0.0, 1, 0.01);
+    const retornoWilfrido2 = crearCalle("retorno Wilfrido2 →", 4, TIPOS.CONEXION, 1626, 1748, 249, 0.0, 1, 0.01);
+    const retornoWilfrido3 = crearCalle("retorno Wilfrido3 →", 4, TIPOS.CONEXION, 1703, 1783, 249, 0.0, 1, 0.01);
+    const retornoWilfrido4 = crearCalle("retrono Wilfrido4 ←", 4, TIPOS.CONEXION, 1719, 1810, 67, 0.0, 1, 0.01);
+    const retornoWilfrido5 = crearCalle("retorno Wilfrido5 →", 4, TIPOS.CONEXION, 2134, 1912, 256, 0.0, 1, 0.01);
+    const retornoWilfrido6 = crearCalle("retorno Wilfrido6 →", 4, TIPOS.CONEXION, 2292, 1971, 66, 0.0, 1, 0.01);
+    const retornoWilfrido7 = crearCalle("retorno Wilfrido7 →", 3, TIPOS.CONEXION, 2308, 1958, 249, 0.0, 1, 0.01);
+    const retornoWilfrido8 = crearCalle("retrono Wilfrido8 ←", 4, TIPOS.CONEXION, 2550, 2034, 70, 0.0, 1, 0.01);
+    const retornoWilfrido9 = crearCalle("retrono Wilfrido9 ←", 3, TIPOS.CONEXION, 2565, 2021, 249, 0.0, 1, 0.01);
     
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
