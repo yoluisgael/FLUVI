@@ -40,6 +40,8 @@ class RainEffect {
         this.lightningOverlay = new PIXI.Graphics();
         this.lightningOverlay.zIndex = 36; // Encima de la lluvia
         this.lightningOverlay.alpha = 0; // Invisible por defecto
+        this.lightningOverlay.eventMode = 'none'; // 🔧 FIX: No capturar eventos de click
+        this.lightningOverlay.interactiveChildren = false; // 🔧 FIX: Deshabilitar interactividad
 
         // Agregar al stage
         this.app.stage.addChild(this.container);
@@ -183,6 +185,7 @@ class RainEffect {
             } else {
                 // Terminar flash
                 this.lightningOverlay.alpha = 0;
+                this.lightningOverlay.clear(); // 🔧 FIX: Limpiar el gráfico para que no bloquee clicks
                 this.isLightningFlashing = false;
                 // Resetear timer para próximo relámpago
                 this.lightningInterval = 300 + Math.random() * 400; // 5-13 segundos
