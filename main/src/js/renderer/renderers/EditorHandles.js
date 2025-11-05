@@ -511,17 +511,32 @@ class EditorHandles {
 
             // Para calles curvas, re-renderizar completamente para mejor precisión visual
             if (calle.esCurva && calle.vertices && calle.vertices.length > 0) {
-                // Destruir sprite existente
+                // Destruir solo el sprite de la calle, NO los vértices
                 const container = this.scene.calleSprites.get(calle);
                 if (container) {
                     container.destroy({ children: true });
                     this.scene.calleSprites.delete(calle);
                 }
 
-                // Re-renderizar la calle curva con la nueva posición
+                // Re-renderizar solo la calle curva (sin tocar vértices para evitar conflictos)
                 if (this.scene.calleRenderer) {
                     this.scene.calleRenderer.renderCalleCurva(calle);
-                    this.scene.calleRenderer.renderVertices(calle);
+                    // NO re-renderizar vértices aquí - mantenerlos translúcidos y con el círculo de influencia
+                }
+
+                // Actualizar posiciones de vértices manualmente
+                const verticesContainer = this.scene.verticeSprites.get(calle);
+                if (verticesContainer) {
+                    calle.vertices.forEach((vertice, index) => {
+                        const pos = window.calcularPosicionVertice
+                            ? window.calcularPosicionVertice(calle, vertice)
+                            : null;
+
+                        if (pos && verticesContainer.children[index]) {
+                            verticesContainer.children[index].x = pos.x;
+                            verticesContainer.children[index].y = pos.y;
+                        }
+                    });
                 }
             } else {
                 // Para calles rectas, solo actualizar posición (más rápido)
@@ -559,7 +574,12 @@ class EditorHandles {
 
         // Actualizar inputs de UI en tiempo real durante el drag
         if (window.editorCalles) {
-            window.editorCalles.actualizarInputsPosicion();
+            try {
+                window.editorCalles.actualizarInputsPosicion();
+            } catch (error) {
+                // Ignorar errores de actualización de UI durante el arrastre
+                console.warn('Error actualizando inputs durante arrastre:', error);
+            }
         }
     }
 
@@ -665,7 +685,7 @@ class EditorHandles {
         if (this.objectType === 'calle') {
             const calle = this.currentObject;
 
-            // Destruir sprite existente
+            // Destruir solo el sprite de la calle, NO los vértices
             const container = this.scene.calleSprites.get(calle);
             if (container) {
                 container.destroy({ children: true });
@@ -680,9 +700,23 @@ class EditorHandles {
                     this.scene.calleRenderer.renderCalleRecta(calle);
                 }
 
-                // Re-renderizar vértices si existen
-                if (calle.vertices && calle.vertices.length > 0) {
-                    this.scene.calleRenderer.renderVertices(calle);
+                // NO re-renderizar vértices aquí - mantenerlos translúcidos
+            }
+
+            // Actualizar posiciones de vértices manualmente si existen
+            if (calle.vertices && calle.vertices.length > 0) {
+                const verticesContainer = this.scene.verticeSprites.get(calle);
+                if (verticesContainer) {
+                    calle.vertices.forEach((vertice, index) => {
+                        const pos = window.calcularPosicionVertice
+                            ? window.calcularPosicionVertice(calle, vertice)
+                            : null;
+
+                        if (pos && verticesContainer.children[index]) {
+                            verticesContainer.children[index].x = pos.x;
+                            verticesContainer.children[index].y = pos.y;
+                        }
+                    });
                 }
             }
         } else {
@@ -701,7 +735,12 @@ class EditorHandles {
 
         // Actualizar inputs de UI en tiempo real durante el drag
         if (window.editorCalles) {
-            window.editorCalles.actualizarInputsPosicion();
+            try {
+                window.editorCalles.actualizarInputsPosicion();
+            } catch (error) {
+                // Ignorar errores de actualización de UI durante la rotación
+                console.warn('Error actualizando inputs durante rotación:', error);
+            }
         }
     }
 
