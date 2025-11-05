@@ -2272,17 +2272,25 @@ function iniciarSimulacion() {
     const RetornoWilfrido9 = crearCalle("Retorno Wilfrido9 ←", 3, TIPOS.CONEXION, 2565, 2021, 249, 0.0, 1, 0.01);
     
     const RetornoErro3 = crearCalle("Retorno Erro 3 →", 4, TIPOS.CONEXION, 1904, 1017, 350, 0.0, 1, 0.01);
-    const RetornoErro4 = crearCalle("Retorno Erro 4 ←", 4, TIPOS.CONEXION, 1927, 1031, 169, 0.0, 1, 0.01);
+    const RetornoErro4 = crearCalle("Retorno Erro 3 ←", 4, TIPOS.CONEXION, 1927, 1031, 169, 0.0, 1, 0.01);
 
-    const RetornoErro5 = crearCalle("Retorno Erro 5 →", 4, TIPOS.CONEXION, 1879, 1159, 350, 0.0, 1, 0.01);
-    const RetornoErro6 = crearCalle("Retorno Erro 6 ←", 4, TIPOS.CONEXION, 1901, 1174, 169, 0.0, 1, 0.01);
+    const RetornoErro5 = crearCalle("Retorno Erro 4 →", 4, TIPOS.CONEXION, 1879, 1159, 350, 0.0, 1, 0.01);
+    const RetornoErro6 = crearCalle("Retorno Erro 4 ←", 4, TIPOS.CONEXION, 1901, 1174, 169, 0.0, 1, 0.01);
 
-    const RetornoErro7 = crearCalle("Retorno Erro 7 →", 4, TIPOS.CONEXION, 1816, 1519, 349, 0.0, 1, 0.01);
-    const RetornoErro8 = crearCalle("Retorno Erro 8 ←", 4, TIPOS.CONEXION, 1838, 1533, 169, 0.0, 1, 0.01);
+    const RetornoErro7 = crearCalle("Retorno Erro 5 →", 4, TIPOS.CONEXION, 1816, 1519, 349, 0.0, 1, 0.01);
+    const RetornoErro8 = crearCalle("Retorno Erro 5 ←", 4, TIPOS.CONEXION, 1838, 1533, 169, 0.0, 1, 0.01);
     
 
-    const RetornoBarredo1 = crearCalle("Retorno Barredo →", 5, TIPOS.CONEXION, 2299, 1086, 347, 0.0, 1, 0.01);
-    const RetornoBarredo2 = crearCalle("Retorno Barredo ←", 5, TIPOS.CONEXION, 2327, 1103, 175, 0.0, 1, 0.01);
+    const RetornoBarredo1 = crearCalle("Retorno Barredo →", 5, TIPOS.CONEXION, 2290, 1131, 347, 0.0, 1, 0.01);
+    const RetornoBarredo2 = crearCalle("Retorno Barredo ←", 5, TIPOS.CONEXION, 2317, 1147, 167, 0.0, 1, 0.01);
+    const RetornoBarredo3 = crearCalle("Retorno Barredo 3 →", 5, TIPOS.CONEXION, 2268, 1258, 347, 0.0, 1, 0.01);
+    const RetornoBarredo4 = crearCalle("Retorno Barredo 3 ←", 5, TIPOS.CONEXION, 2288, 1263, 167, 0.0, 1, 0.01);
+    const RetornoBarredo5 = crearCalle("Retorno Barredo 4 →", 5, TIPOS.CONEXION, 2233, 1400, 347, 0.0, 1, 0.01);
+    const RetornoBarredo6 = crearCalle("Retorno Barredo 4 ←", 5, TIPOS.CONEXION, 2288, 1263, 167, 0.0, 1, 0.01);
+    const RetornoBarredo7 = crearCalle("Retorno Barredo 5 →", 5, TIPOS.CONEXION, 2202, 1546, 347, 0.0, 1, 0.01);
+    const RetornoBarredo8 = crearCalle("Retorno Barredo 5 ←", 5, TIPOS.CONEXION, 2288, 1263, 167, 0.0, 1, 0.01);
+    const RetornoBarredo9 = crearCalle("Retorno Barredo 6 →", 5, TIPOS.CONEXION, 2171, 1683, 347, 0.0, 1, 0.01);
+    const RetornoBarredo10 = crearCalle("Retorno Barredo 6 ←", 5, TIPOS.CONEXION, 2288, 1263, 167, 0.0, 1, 0.01);
 
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
