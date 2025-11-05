@@ -2222,10 +2222,12 @@ async function inicializarMotorGrafico() {
 function iniciarSimulacion() {
     const retrono1 = crearCalle("retorno1", 6, TIPOS.CONEXION, 1916, 922, 80, 0.0, 2, 0.01);
     const retrono2 = crearCalle("retorno2", 6, TIPOS.CONEXION, 1941, 926, 80, 0.0, 2, 0.01);
-    const retronotorres = crearCalle("retronotorres →", 7, TIPOS.CONEXION, 1029, 766, 72, 0.0, 1, 0.01);
-    const retronotorres2 = crearCalle("retronotorres ←", 7, TIPOS.CONEXION, 1033, 768, 72, 0.0, 1, 0.01);
-    const retronoESCOM = crearCalle("retornoESCOM ←", 6, TIPOS.CONEXION, 1222, 766, 259, 0.0, 1, 0.01);
-    const retronoESCOM2 = crearCalle("retornoESCOM →", 6, TIPOS.CONEXION, 1206, 798, 79, 0.0, 1, 0.01);
+    const retronotorres = crearCalle("retrono torres →", 7, TIPOS.CONEXION, 1029, 766, 72, 0.0, 1, 0.01);
+    const retronotorres2 = crearCalle("retrono torres ←", 7, TIPOS.CONEXION, 1033, 768, 72, 0.0, 1, 0.01);
+    const retronoESCOM = crearCalle("retorno ESCOM ←", 6, TIPOS.CONEXION, 1222, 766, 259, 0.0, 1, 0.01);
+    const retronoESCOM2 = crearCalle("retorno ESCOM →", 6, TIPOS.CONEXION, 1206, 798, 79, 0.0, 1, 0.01);
+    const retronoEstampa = crearCalle("retrono Estampa ←", 6, TIPOS.CONEXION, 1389, 799, 259, 0.0, 1, 0.01);
+    const retronoEStampa2 = crearCalle("retorno Estampa →", 6, TIPOS.CONEXION, 1375, 823, 79, 0.0, 1, 0.01);
     
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
