@@ -2263,13 +2263,15 @@ function iniciarSimulacion() {
     const RetornoEscalera2 = crearCalle("Retorno Escalera →", 4, TIPOS.CONEXION, 1114, 1537, 67, 0.0, 1, 0.01);
     const RetornoWilfrido1 = crearCalle("Retorno Wilfrido1 ←", 4, TIPOS.CONEXION, 1609, 1764, 67, 0.0, 1, 0.01);
     const RetornoWilfrido2 = crearCalle("Retorno Wilfrido2 →", 4, TIPOS.CONEXION, 1627, 1746, 248, 0.0, 1, 0.01);
-    const RetornoWilfrido3 = crearCalle("Retorno Wilfrido3 →", 4, TIPOS.CONEXION, 1705, 1779, 249, 0.0, 1, 0.01);
-    const RetornoWilfrido4 = crearCalle("Retorno Wilfrido4 ←", 4, TIPOS.CONEXION, 1718, 1814, 70, 0.0, 1, 0.01);
+    const RetornoWilfrido3 = crearCalle("Retorno Wilfrido3 →", 4, TIPOS.CONEXION, 1748, 1806, 249, 0.0, 1, 0.01);
+    const RetornoWilfrido4 = crearCalle("Retorno Wilfrido4 ←", 4, TIPOS.CONEXION, 1742, 1820, 70, 0.0, 1, 0.01);
     const RetornoWilfrido5 = crearCalle("Retorno Wilfrido5 →", 4, TIPOS.CONEXION, 2135, 1910, 259, 0.0, 1, 0.01);
-    const RetornoWilfrido6 = crearCalle("Retorno Wilfrido6 →", 4, TIPOS.CONEXION, 2291, 1973, 66, 0.0, 1, 0.01);
-    const RetornoWilfrido7 = crearCalle("Retorno Wilfrido7 →", 4, TIPOS.CONEXION, 2309, 1953, 250, 0.0, 1, 0.01);
-    const RetornoWilfrido8 = crearCalle("Retorno Wilfrido8 ←", 3, TIPOS.CONEXION, 2548, 2034, 65, 0.0, 1, 0.01);
-    const RetornoWilfrido9 = crearCalle("Retorno Wilfrido9 ←", 3, TIPOS.CONEXION, 2565, 2018, 249, 0.0, 1, 0.01);
+    const RetornoWilfrido6 = crearCalle("Retorno Wilfrido6 →", 4, TIPOS.CONEXION, 2295, 1974, 78, 0.0, 1, 0.01);
+    const RetornoWilfrido7 = crearCalle("Retorno Wilfrido7 ←", 4, TIPOS.CONEXION, 2309, 1952, 257, 0.0, 1, 0.01);
+    const RetornoWilfrido8 = crearCalle("Retorno Wilfrido8 →", 3, TIPOS.CONEXION, 2549, 2033, 80, 0.0, 1, 0.01);
+    const RetornoWilfrido9 = crearCalle("Retorno Wilfrido9 ←", 3, TIPOS.CONEXION, 2562, 2017, 259, 0.0, 1, 0.01);
+    const RetornoWilfrido10 = crearCalle("Retorno Wilfrido10 ←", 4, TIPOS.CONEXION, 1800, 1823, 247, 0.0, 1, 0.01);
+    const RetornoWilfrido11 = crearCalle("Retorno Wilfrido11 →", 4, TIPOS.CONEXION, 1781, 1842, 67, 0.0, 1, 0.01);
     
     const RetornoErro3 = crearCalle("Retorno Erro 3 →", 4, TIPOS.CONEXION, 1904, 1017, 350, 0.0, 1, 0.01);
     const RetornoErro4 = crearCalle("Retorno Erro 3 ←", 4, TIPOS.CONEXION, 1927, 1031, 169, 0.0, 1, 0.01);
