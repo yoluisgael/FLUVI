@@ -2228,6 +2228,10 @@ function iniciarSimulacion() {
     const retronoESCOM2 = crearCalle("retorno ESCOM →", 6, TIPOS.CONEXION, 1206, 798, 79, 0.0, 1, 0.01);
     const retronoEstampa = crearCalle("retrono Estampa ←", 6, TIPOS.CONEXION, 1389, 799, 259, 0.0, 1, 0.01);
     const retronoEStampa2 = crearCalle("retorno Estampa →", 6, TIPOS.CONEXION, 1375, 823, 79, 0.0, 1, 0.01);
+    const retronoJuan = crearCalle("retrono Juan F. ←", 6, TIPOS.CONEXION, 1439, 804, 259, 0.0, 1, 0.01);
+    const retronoJuan2 = crearCalle("retorno Juan F. →", 6, TIPOS.CONEXION, 1423, 836, 79, 0.0, 1, 0.01);
+    const retronoJuanD = crearCalle("retrono Juan F. 2 ←", 6, TIPOS.CONEXION, 1553, 824, 259, 0.0, 1, 0.01);
+    const retronoJuanD2 = crearCalle("retorno Juan F. 2 →", 6, TIPOS.CONEXION, 1536, 856, 79, 0.0, 1, 0.01);
     
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);

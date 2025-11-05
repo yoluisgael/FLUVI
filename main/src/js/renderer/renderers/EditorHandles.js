@@ -505,14 +505,51 @@ class EditorHandles {
         // Actualizar posiciones de handles
         this.updateHandlePositions();
 
-        // Actualizar sprite del objeto (solo posición, muy rápido)
+        // OPTIMIZADO: Actualizar sprite del objeto
         if (this.objectType === 'calle') {
-            const container = this.scene.calleSprites.get(this.currentObject);
-            if (container) {
-                container.x = this.currentObject.x;
-                container.y = this.currentObject.y;
+            const calle = this.currentObject;
+
+            // Para calles curvas, re-renderizar completamente para mejor precisión visual
+            if (calle.esCurva && calle.vertices && calle.vertices.length > 0) {
+                // Destruir sprite existente
+                const container = this.scene.calleSprites.get(calle);
+                if (container) {
+                    container.destroy({ children: true });
+                    this.scene.calleSprites.delete(calle);
+                }
+
+                // Re-renderizar la calle curva con la nueva posición
+                if (this.scene.calleRenderer) {
+                    this.scene.calleRenderer.renderCalleCurva(calle);
+                    this.scene.calleRenderer.renderVertices(calle);
+                }
+            } else {
+                // Para calles rectas, solo actualizar posición (más rápido)
+                const container = this.scene.calleSprites.get(calle);
+                if (container) {
+                    container.x = calle.x;
+                    container.y = calle.y;
+                }
+
+                // Actualizar vértices si existen (calles rectas con vértices preparados para curvas)
+                if (calle.vertices && calle.vertices.length > 0) {
+                    const verticesContainer = this.scene.verticeSprites.get(calle);
+                    if (verticesContainer) {
+                        calle.vertices.forEach((vertice, index) => {
+                            const pos = window.calcularPosicionVertice
+                                ? window.calcularPosicionVertice(calle, vertice)
+                                : null;
+
+                            if (pos && verticesContainer.children[index]) {
+                                verticesContainer.children[index].x = pos.x;
+                                verticesContainer.children[index].y = pos.y;
+                            }
+                        });
+                    }
+                }
             }
         } else {
+            // Para edificios, solo actualizar posición
             const sprite = this.scene.edificioSprites.get(this.currentObject);
             if (sprite) {
                 sprite.x = this.currentObject.x;
@@ -623,13 +660,33 @@ class EditorHandles {
 
         this.rotationStartAngle = currentAngle;
 
-        // Actualizar sprite del objeto (solo rotación, muy rápido)
+        // OPTIMIZADO: Para calles, re-renderizar completamente para actualización instantánea
+        // Durante el modo edición, la simulación está en pausa, así que no importa el rendimiento
         if (this.objectType === 'calle') {
-            const container = this.scene.calleSprites.get(this.currentObject);
+            const calle = this.currentObject;
+
+            // Destruir sprite existente
+            const container = this.scene.calleSprites.get(calle);
             if (container) {
-                container.rotation = CoordinateConverter.degreesToRadians(this.currentObject.angulo);
+                container.destroy({ children: true });
+                this.scene.calleSprites.delete(calle);
+            }
+
+            // Re-renderizar la calle con el nuevo ángulo
+            if (this.scene.calleRenderer) {
+                if (calle.esCurva) {
+                    this.scene.calleRenderer.renderCalleCurva(calle);
+                } else {
+                    this.scene.calleRenderer.renderCalleRecta(calle);
+                }
+
+                // Re-renderizar vértices si existen
+                if (calle.vertices && calle.vertices.length > 0) {
+                    this.scene.calleRenderer.renderVertices(calle);
+                }
             }
         } else {
+            // Para edificios, solo actualizar rotación (más rápido)
             const sprite = this.scene.edificioSprites.get(this.currentObject);
             if (sprite) {
                 sprite.rotation = CoordinateConverter.degreesToRadians(this.currentObject.angle || 0);
