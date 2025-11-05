@@ -2271,6 +2271,9 @@ function iniciarSimulacion() {
     const retornoWilfrido8 = crearCalle("retrono Wilfrido8 ←", 4, TIPOS.CONEXION, 2550, 2034, 70, 0.0, 1, 0.01);
     const retornoWilfrido9 = crearCalle("retrono Wilfrido9 ←", 3, TIPOS.CONEXION, 2565, 2021, 249, 0.0, 1, 0.01);
     
+    const retornoErro3 = crearCalle("retrono Erro 3 →", 4, TIPOS.CONEXION, 1904, 1017, 350, 0.0, 1, 0.01);
+    const retornoErro4 = crearCalle("retrono Erro 4 ←", 4, TIPOS.CONEXION, 1927, 1031, 169, 0.0, 1, 0.01);
+    
     //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
     //const Avenida_Miguel_Othon_de_Mendizabal_4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 9, TIPOS.CONEXION, 1745, 386, 28, 0.0, 3, 0.02);
