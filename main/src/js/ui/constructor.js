@@ -1314,9 +1314,9 @@ function crearConexionLinealSimple(origen, destino, noPush = false) {
     return [];
 }
 
-function crearConexionIncorporacionSimple(origen, destino, carrilDestino, posInicial, noPush = false) {
+function crearConexionIncorporacionSimple(origen, destino, carrilDestino, posInicial, modoCruzado = 0, noPush = false) {
     if (typeof window.crearConexionIncorporacion === 'function') {
-        const conexiones = window.crearConexionIncorporacion(origen, destino, carrilDestino, posInicial);
+        const conexiones = window.crearConexionIncorporacion(origen, destino, carrilDestino, posInicial, modoCruzado);
 
         if (typeof window.registrarConexiones === 'function') {
             window.registrarConexiones(conexiones);

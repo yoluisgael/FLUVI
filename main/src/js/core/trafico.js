@@ -2097,20 +2097,33 @@ function crearConexionLineal(origen, destino, numCarriles = null, probabilidad =
     return conexionesCreadas;
 }
 
-function crearConexionIncorporacion(origen, destino, carrilDestino = 0, posicionInicial = 0, configuracion = null) {
+function crearConexionIncorporacion(origen, destino, carrilDestino = 0, posicionInicial = 0, modoCruzado = 0, configuracion = null) {
     const conexionesCreadas = [];
-    
-    console.log(`🔀 Conexión INCORPORACIÓN: ${origen.nombre} (${origen.carriles} carriles) → ${destino.nombre}[C${carrilDestino + 1}]`);
-    
+
+    const tipoCruce = modoCruzado === 1 ? "CRUZADA" : "NORMAL";
+    console.log(`🔀 Conexión INCORPORACIÓN ${tipoCruce}: ${origen.nombre} (${origen.carriles} carriles) → ${destino.nombre}[C${carrilDestino + 1}]`);
+
     if (configuracion === null) {
         for (let carril = 0; carril < origen.carriles; carril++) {
+            // Calcular posición destino según el modo:
+            // - Modo 0 (Normal): I1→R1, I2→R2, I3→R3... (posicionInicial + carril)
+            // - Modo 1 (Cruzado): I1→R3, I2→R2, I3→R1... (posicionInicial + carriles invertidos)
+            let posDestino;
+            if (modoCruzado === 1) {
+                // Modo cruzado: invertir el orden de los carriles
+                posDestino = posicionInicial + (origen.carriles - 1 - carril);
+            } else {
+                // Modo normal: orden secuencial
+                posDestino = posicionInicial + carril;
+            }
+
             conexionesCreadas.push(new ConexionCA(
                 origen,
                 destino,
                 carril,
                 carrilDestino,
                 -1,
-                posicionInicial + carril,
+                posDestino,
                 1.0,
                 TIPOS_CONEXION.INCORPORACION
             ));
@@ -2129,7 +2142,7 @@ function crearConexionIncorporacion(origen, destino, carrilDestino = 0, posicion
             ));
         });
     }
-    
+
     return conexionesCreadas;
 }
 
@@ -3046,7 +3059,8 @@ function iniciarSimulacion() {
         RetornoErro2,  
         Calle_Luis_Enrique_Erro_4,  
         0,  
-        22  
+        22,
+        1
     ));
     
     // Calle Luis Enrique Erro Tramo 2 → a Retorno Erro 1 ←  
@@ -3054,7 +3068,8 @@ function iniciarSimulacion() {
         Calle_Luis_Enrique_Erro_2,  
         RetornoErro1,  
         0,  
-        0  
+        0,
+        1
     ));
     
     // Retorno Erro 1 ← a Calle Luis Enrique Erro Tramo 2 ←  
@@ -3062,7 +3077,8 @@ function iniciarSimulacion() {
         RetornoErro1,  
         Calle_Luis_Enrique_Erro_4,  
         0,  
-        0 
+        0,
+        1
     ));
         
 
