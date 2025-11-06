@@ -2236,14 +2236,14 @@ async function inicializarMotorGrafico() {
 }
 
 function iniciarSimulacion() {
-    const Retorno1 = crearCalle("Retorno M. →", 6, TIPOS.CONEXION, 1916, 922, 80, 0.0, 2, 0.01);
-    const Retorno2 = crearCalle("Retorno M. ←", 6, TIPOS.CONEXION, 1941, 926, 80, 0.0, 2, 0.01);
+    const Retorno1 = crearCalle("Retorno M. ←", 6, TIPOS.CONEXION, 1916, 922, 80, 0.0, 2, 0.01);
+    const Retorno2 = crearCalle("Retorno M. →", 6, TIPOS.CONEXION, 1941, 926, 80, 0.0, 2, 0.01);
     const Retornotorres = crearCalle("Retorno torres →", 7, TIPOS.CONEXION, 1029, 766, 72, 0.0, 1, 0.01);
-    const Retornotorres2 = crearCalle("Retorno torres ←", 7, TIPOS.CONEXION, 1033, 768, 72, 0.0, 1, 0.01);
+    const Retornotorres2 = crearCalle("Retorno torres ←", 7, TIPOS.CONEXION, 1051, 731, 252, 0.0, 1, 0.01);
     const RetornoESCOM = crearCalle("Retorno ESCOM ←", 6, TIPOS.CONEXION, 1222, 766, 259, 0.0, 1, 0.01);
     const RetornoESCOM2 = crearCalle("Retorno ESCOM →", 6, TIPOS.CONEXION, 1206, 798, 79, 0.0, 1, 0.01);
-    const RetornoEstampa = crearCalle("Retorno Estampa ←", 6, TIPOS.CONEXION, 1389, 799, 259, 0.0, 1, 0.01);
-    const RetornoEStampa2 = crearCalle("Retorno Estampa →", 6, TIPOS.CONEXION, 1375, 823, 79, 0.0, 1, 0.01);
+    const RetornoEstampa = crearCalle("Retorno Estampa ←", 6, TIPOS.CONEXION, 1390, 795, 259, 0.0, 1, 0.01);
+    const RetornoEStampa2 = crearCalle("Retorno Estampa →", 6, TIPOS.CONEXION, 1373, 827, 79, 0.0, 1, 0.01);
     const RetornoJuan = crearCalle("Retorno Juan F. ←", 6, TIPOS.CONEXION, 1439, 804, 259, 0.0, 1, 0.01);
     const RetornoJuan2 = crearCalle("Retorno Juan F. →", 6, TIPOS.CONEXION, 1423, 836, 79, 0.0, 1, 0.01);
     const RetornoJuanD = crearCalle("Retorno Juan F. 2 ←", 6, TIPOS.CONEXION, 1552, 824, 259, 0.0, 1, 0.01);
