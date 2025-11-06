@@ -2276,8 +2276,8 @@ function iniciarSimulacion() {
     const RetornoEscalera2 = crearCalle("Retorno Escalera →", 4, TIPOS.CONEXION, 1114, 1537, 67, 0.0, 1, 0.01);
     const RetornoWilfrido1 = crearCalle("Retorno Wilfrido1 ←", 4, TIPOS.CONEXION, 1609, 1764, 67, 0.0, 1, 0.01);
     const RetornoWilfrido2 = crearCalle("Retorno Wilfrido2 →", 4, TIPOS.CONEXION, 1627, 1746, 248, 0.0, 1, 0.01);
-    const RetornoWilfrido3 = crearCalle("Retorno Wilfrido3 →", 4, TIPOS.CONEXION, 1748, 1806, 249, 0.0, 1, 0.01);
-    const RetornoWilfrido4 = crearCalle("Retorno Wilfrido4 ←", 4, TIPOS.CONEXION, 1742, 1820, 70, 0.0, 1, 0.01);
+    const RetornoWilfrido3 = crearCalle("Retorno Wilfrido3 →", 4, TIPOS.CONEXION, 1737, 1822, 68, 0.0, 1, 0.01);
+    const RetornoWilfrido4 = crearCalle("Retorno Wilfrido4 ←", 4, TIPOS.CONEXION, 1755, 1803, 248, 0.0, 1, 0.01);
     const RetornoWilfrido5 = crearCalle("Retorno Wilfrido5 →", 4, TIPOS.CONEXION, 2135, 1910, 259, 0.0, 1, 0.01);
     const RetornoWilfrido6 = crearCalle("Retorno Wilfrido6 →", 4, TIPOS.CONEXION, 2295, 1974, 78, 0.0, 1, 0.01);
     const RetornoWilfrido7 = crearCalle("Retorno Wilfrido7 ←", 4, TIPOS.CONEXION, 2309, 1952, 257, 0.0, 1, 0.01);
@@ -3146,21 +3146,21 @@ function iniciarSimulacion() {
 
     // Av. Wilfrido Massieu ← a Retorno Wilfrido3 →  
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Wilfrido_Massieu_1,  
+        Avenida_Wilfrido_Massieu_2,  
         0,  
         RetornoWilfrido3,  
         [  
-            { carrilDestino: 0, posOrigen: 176, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 164, posDestino: 0, probabilidad: 1 }  
         ]  
     )); 
 
     // Av. Wilfrido Massieu → a Retorno Wilfrido4 ←  
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Wilfrido_Massieu_2,  
+        Avenida_Wilfrido_Massieu_1,  
         0,  
         RetornoWilfrido4,  
         [  
-            { carrilDestino: 0, posOrigen: 162, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 176, posDestino: 0, probabilidad: 1 }  
         ]  
     ));
     
@@ -3171,16 +3171,6 @@ function iniciarSimulacion() {
         RetornoWilfrido10,  
         [  
             { carrilDestino: 0, posOrigen: 165, posDestino: 0, probabilidad: 1 }  
-        ]  
-    ));
-    
-    // Av. Wilfrido Massieu ← a Retorno Wilfrido4 ←  
-    conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Wilfrido_Massieu_1,  
-        0,  
-        RetornoWilfrido4,  
-        [  
-            { carrilDestino: 0, posOrigen: 96, posDestino: 0, probabilidad: 1 }  
         ]  
     ));
     
@@ -3271,9 +3261,9 @@ function iniciarSimulacion() {
     // Retorno Wilfrido3 → a Av. Wilfrido Massieu →  
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoWilfrido3,  
-        Avenida_Wilfrido_Massieu_2,  
+        Avenida_Wilfrido_Massieu_1,  
         0,  
-        174  
+        177  
     ));
     
     // Retorno Wilfrido11 → a Av. Wilfrido Massieu ←  
@@ -3297,7 +3287,7 @@ function iniciarSimulacion() {
         RetornoWilfrido4,  
         Avenida_Wilfrido_Massieu_2,  
         0,  
-        280  
+        165  
     ));
     
     // Retorno Wilfrido5 → a Av. Wilfrido Massieu ←  
