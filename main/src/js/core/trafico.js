@@ -2947,7 +2947,8 @@ function iniciarSimulacion() {
         Avenida_Miguel_Bernard,  
         Avenida_Juan_de_Dios_Batiz,  
         0,  
-        319  
+        319,
+        1 
     ));
     
     // Retorno torres ← a Av. Juan de Dios Batiz →  
