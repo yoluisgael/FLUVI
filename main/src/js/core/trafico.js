@@ -2640,10 +2640,7 @@ function iniciarSimulacion() {
     
     const conexionesCA = [];
 
-    conexionesCA.push(...crearConexionLineal(
-        Avenida_Miguel_Othon_de_Mendizabal_1, 
-        Avenida_Miguel_Bernard
-    ));
+    
     
     /*
     conexionesCA.push(...crearConexionLineal(
@@ -2713,7 +2710,7 @@ function iniciarSimulacion() {
     // ============================================  
     // CONEXIONES LINEALES  
     // ============================================
-    
+
     // Av. Miguel Othon de Mendizabal → a Av. Miguel Bernard →  
     conexionesCA.push(...crearConexionLineal(  
         Avenida_Miguel_Othon_de_Mendizabal_1,  
@@ -3081,7 +3078,327 @@ function iniciarSimulacion() {
         0,
         1
     ));
-        
+    
+    //nuevas
+    // ============================================  
+    // CONEXIONES PROBABILÍSTICAS  
+    // ============================================
+    
+    // Av. Juan de Dios Batiz ← a Retorno Batiz →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        RetornoJuanD2,  
+        [  
+            { carrilDestino: 0, posOrigen: 126, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu → a Retorno Escalera ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        RetornoEscalera,  
+        [  
+            { carrilDestino: 0, posOrigen: 26, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu ← a Retorno Escalera →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        RetornoEscalera2,  
+        [  
+            { carrilDestino: 0, posOrigen: 312, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu → a Retorno Wilfrido1 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        RetornoWilfrido1,  
+        [  
+            { carrilDestino: 0, posOrigen: 135, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu ← a Retorno Wilfrido2 →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        RetornoWilfrido2,  
+        [  
+            { carrilDestino: 0, posOrigen: 203, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu → a Retorno Wilfrido11 →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        RetornoWilfrido11,  
+        [  
+            { carrilDestino: 0, posOrigen: 173, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+
+    // Av. Wilfrido Massieu ← a Retorno Wilfrido3 →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        RetornoWilfrido3,  
+        [  
+            { carrilDestino: 0, posOrigen: 176, posDestino: 0, probabilidad: 1 }  
+        ]  
+    )); 
+
+    // Av. Wilfrido Massieu → a Retorno Wilfrido4 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        RetornoWilfrido4,  
+        [  
+            { carrilDestino: 0, posOrigen: 162, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu ← a Retorno Wilfrido10 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        RetornoWilfrido10,  
+        [  
+            { carrilDestino: 0, posOrigen: 165, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu ← a Retorno Wilfrido4 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        RetornoWilfrido4,  
+        [  
+            { carrilDestino: 0, posOrigen: 96, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu → a Retorno Wilfrido5 →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        RetornoWilfrido5,  
+        [  
+            { carrilDestino: 0, posOrigen: 279, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu ← a Retorno Wilfrido7 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        RetornoWilfrido7,  
+        [  
+            { carrilDestino: 0, posOrigen: 60, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu → a Retorno Wilfrido8 →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        RetornoWilfrido8,  
+        [  
+            { carrilDestino: 0, posOrigen: 331, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu ← a Retorno Wilfrido9 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        RetornoWilfrido9,  
+        [  
+            { carrilDestino: 0, posOrigen: 8, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // ============================================  
+    // CONEXIONES DE INCORPORACIÓN  
+    // ============================================
+    
+    // Retorno Wilfrido. ← a Av. Wilfrido Massieu →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido,  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        0  
+    ));
+    
+    // Retorno Escalera ← a Av. Wilfrido Massieu ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoEscalera,  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        313  
+    ));
+    
+    // Retorno Escalera → a Av. Wilfrido Massieu →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoEscalera2,  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        27  
+    ));
+    
+    // Retorno Wilfrido1 ← a Av. Wilfrido Massieu ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido1,  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        204  
+    ));
+    
+    // Retorno Wilfrido2 → a Av. Wilfrido Massieu →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido2,  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        136  
+    ));
+    
+    // Retorno Wilfrido3 → a Av. Wilfrido Massieu →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido3,  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        174  
+    ));
+    
+    // Retorno Wilfrido11 → a Av. Wilfrido Massieu ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido11,  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        166  
+    ));
+    
+    // Retorno Wilfrido10 ← a Av. Wilfrido Massieu →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido10,  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        174  
+    ));
+    
+    // Retorno Wilfrido4 ← a Av. Wilfrido Massieu →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido4,  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        280  
+    ));
+    
+    // Retorno Wilfrido5 → a Av. Wilfrido Massieu ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido5,  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        97  
+    ));
+    
+    // Retorno Wilfrido6 → a Av. Wilfrido Massieu ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido6,  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        61  
+    ));
+    
+    // Retorno Wilfrido7 ← a Av. Wilfrido Massieu →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido7,  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        332  
+    ));
+    
+    // Retorno Wilfrido8 → a Av. Wilfrido Massieu ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido8,  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        9  
+    ));
+    
+    // Retorno Wilfrido9 ← a Av. Wilfrido Massieu →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoWilfrido9,  
+        Avenida_Wilfrido_Massieu_2,  
+        0,  
+        332  
+    ));  
+
+    // Calle Luis Enrique Erro ← a Retorno Erro 3 →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Calle_Luis_Enrique_Erro_3,  
+        0,  
+        RetornoErro3,  
+        [  
+            { carrilDestino: 0, posOrigen: 18, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Calle Luis Enrique Erro → a Retorno Erro 3 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Calle_Luis_Enrique_Erro_1,  
+        0,  
+        RetornoErro4,  
+        [  
+            { carrilDestino: 0, posOrigen: 160, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Calle Luis Enrique Erro ← a Retorno Erro 4 →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Calle_Luis_Enrique_Erro_3,  
+        0,  
+        RetornoErro5,  
+        [  
+            { carrilDestino: 0, posOrigen: 47, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Calle Luis Enrique Erro → a Retorno Erro 4 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Calle_Luis_Enrique_Erro_1,  
+        0,  
+        RetornoErro6,  
+        [  
+            { carrilDestino: 0, posOrigen: 131, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Calle Luis Enrique Erro ← a Retorno Erro 5 →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Calle_Luis_Enrique_Erro_3,  
+        0,  
+        RetornoErro7,  
+        [  
+            { carrilDestino: 0, posOrigen: 120, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Calle Luis Enrique Erro → a Retorno Erro 5 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Calle_Luis_Enrique_Erro_1,  
+        0,  
+        RetornoErro8,  
+        [  
+            { carrilDestino: 0, posOrigen: 58, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));  
 
     registrarConexiones(conexionesCA);
     conexiones = conexionesCA;
