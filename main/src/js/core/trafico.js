@@ -2697,27 +2697,374 @@ function iniciarSimulacion() {
         139
     ));*/
 
-    conexionesCA.push(...crearConexionLineal(
-        Generador_1, 
-        Avenida_Cien_Metros2
+    // ============================================  
+    // CONEXIONES LINEALES  
+    // ============================================
+    
+    // Av. Miguel Othon de Mendizabal → a Av. Miguel Bernard →  
+    conexionesCA.push(...crearConexionLineal(  
+        Avenida_Miguel_Othon_de_Mendizabal_1,  
+        Avenida_Miguel_Bernard  
     ));
     
-
-    conexionesCA.push(...crearConexionLineal(
-        Calle_Luis_Enrique_Erro_1,
-        Calle_Luis_Enrique_Erro_2
+    // Entrada a Cien Metros → a Av. Cien Metros ←  
+    conexionesCA.push(...crearConexionLineal(  
+        Generador_1,  
+        Avenida_Cien_Metros2  
     ));
-
-    conexionesCA.push(...crearConexionProbabilistica(
-        Avenida_Cien_Metros2,
-        2,
-        Avenida_Wilfrido_Massieu_2,
-        [
-            { carrilDestino: 0, posOrigen: 35, posDestino: 0, probabilidad: 0.3 },
-            { carrilDestino: 1, posOrigen: 34, posDestino: 0, probabilidad: 0.9 }
-        ]
+    
+    // Calle Luis Enrique Erro → a Calle Luis Enrique Erro Tramo 2 →  
+    conexionesCA.push(...crearConexionLineal(  
+        Calle_Luis_Enrique_Erro_1,  
+        Calle_Luis_Enrique_Erro_2  
     ));
-
+    
+    // ============================================  
+    // CONEXIONES PROBABILÍSTICAS  
+    // ============================================
+    
+    // Av. Cien Metros ← a Av. Wilfrido Massieu →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Cien_Metros2,  
+        2,  
+        Avenida_Wilfrido_Massieu_2,  
+        [  
+            { carrilDestino: 0, posOrigen: 35, posDestino: 0, probabilidad: 0.3 },  
+            { carrilDestino: 1, posOrigen: 34, posDestino: 0, probabilidad: 0.9 }  
+        ]  
+    ));
+    
+    // Av. Miguel Othon de Mendizabal → a Av. Juan de Dios Batiz →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Miguel_Othon_de_Mendizabal_1,  
+        2,  
+        Avenida_Juan_de_Dios_Batiz,  
+        [  
+            { carrilDestino: 0, posOrigen: 41, posDestino: 0, probabilidad: 0.34 },  
+            { carrilDestino: 1, posOrigen: 40, posDestino: 0, probabilidad: 0.33 },  
+            { carrilDestino: 2, posOrigen: 39, posDestino: 0, probabilidad: 0.33 }  
+        ]  
+    ));
+    
+    // Av. Miguel Othon de Mendizabal → a Calle M. Luisa Estampa Ort. ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Miguel_Othon_de_Mendizabal_1,  
+        2,  
+        María_L_Estampa_Ortigoza2,  
+        [  
+            { carrilDestino: 0, posOrigen: 143, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Cien Metros ← a Av. Miguel Othon de Mendizabal →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Cien_Metros2,  
+        2,  
+        Avenida_Miguel_Othon_de_Mendizabal_1,  
+        [  
+            { carrilDestino: 0, posOrigen: 184, posDestino: 0, probabilidad: 0.34 },  
+            { carrilDestino: 1, posOrigen: 183, posDestino: 0, probabilidad: 0.33 },  
+            { carrilDestino: 2, posOrigen: 182, posDestino: 0, probabilidad: 0.33 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz ← a Retorno Batiz →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        RetornoBatiz2,  
+        [  
+            { carrilDestino: 0, posOrigen: 165, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz ← a Retorno torres ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        Retornotorres2,  
+        [  
+            { carrilDestino: 0, posOrigen: 291, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz → a Retorno torres →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        Retornotorres,  
+        [  
+            { carrilDestino: 0, posOrigen: 23, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz → a Retorno ESCOM →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        RetornoESCOM2,  
+        [  
+            { carrilDestino: 0, posOrigen: 59, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz ← a Retorno ESCOM ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        RetornoESCOM,  
+        [  
+            { carrilDestino: 0, posOrigen: 256, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz → a Retorno Estampa →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        RetornoEStampa2,  
+        [  
+            { carrilDestino: 0, posOrigen: 93, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz ← a Retorno Estampa ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        RetornoEstampa,  
+        [  
+            { carrilDestino: 0, posOrigen: 222, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz ← a Calle M. Luisa Estampa Ort. →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz2,  
+        2,  
+        María_L_Estampa_Ortigoza,  
+        [  
+            { carrilDestino: 0, posOrigen: 222, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz → a Retorno Juan F. →  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        RetornoJuan2,  
+        [  
+            { carrilDestino: 0, posOrigen: 103, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz ← a Retorno Juan F. ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        RetornoJuan,  
+        [  
+            { carrilDestino: 0, posOrigen: 212, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz ← a Retorno Juan F. 2 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        RetornoJuanD,  
+        [  
+            { carrilDestino: 0, posOrigen: 189, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Av. Juan de Dios Batiz ← a Retorno Batiz ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        RetornoBatiz,  
+        [  
+            { carrilDestino: 0, posOrigen: 150, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // Calle Luis Enrique Erro Tramo 2 → a Retorno Erro 2 ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Calle_Luis_Enrique_Erro_2,  
+        0,  
+        RetornoErro2,  
+        [  
+            { carrilDestino: 0, posOrigen: 43, posDestino: 0, probabilidad: 0.5 },  
+            { carrilDestino: 1, posOrigen: 44, posDestino: 0, probabilidad: 0.5 }  
+        ]  
+    ));
+    
+    // Av. Wilfrido Massieu ← a Retorno Wilfrido. ←  
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Wilfrido_Massieu_1,  
+        0,  
+        RetornoWilfrido,  
+        [  
+            { carrilDestino: 0, posOrigen: 336, posDestino: 0, probabilidad: 1 }  
+        ]  
+    ));
+    
+    // ============================================  
+    // CONEXIONES DE INCORPORACIÓN  
+    // ============================================
+    
+    // Av. Juan de Dios Batiz ← a Av. Miguel Othon de Mendizabal →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Avenida_Juan_de_Dios_Batiz2,  
+        Avenida_Miguel_Othon_de_Mendizabal_1,  
+        2,  
+        59  
+    ));
+    
+    // Calle M. Luisa Estampa Ort. → a Av. Miguel Othon de Mendizabal →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        María_L_Estampa_Ortigoza,  
+        Avenida_Miguel_Othon_de_Mendizabal_1,  
+        2,  
+        144  
+    ));
+    
+    // Av. Miguel Bernard → a Av. Juan de Dios Batiz →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Avenida_Miguel_Bernard,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        319  
+    ));
+    
+    // Retorno torres ← a Av. Juan de Dios Batiz →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Retornotorres2,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        24  
+    ));
+    
+    // Retorno torres → a Av. Juan de Dios Batiz ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Retornotorres,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        292  
+    ));
+    
+    // Retorno ESCOM → a Av. Juan de Dios Batiz ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoESCOM2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        257  
+    ));
+    
+    // Retorno ESCOM ← a Av. Juan de Dios Batiz →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoESCOM,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        60  
+    ));
+    
+    // Retorno Estampa → a Av. Juan de Dios Batiz ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoEStampa2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        223  
+    ));
+    
+    // Retorno Estampa ← a Av. Juan de Dios Batiz →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoEstampa,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        94  
+    ));
+    
+    // Calle M. Luisa Estampa Ort. ← a Av. Juan de Dios Batiz ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        María_L_Estampa_Ortigoza2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        2,  
+        223  
+    ));
+    
+    // Retorno Juan F. → a Av. Juan de Dios Batiz ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoJuan2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        213  
+    ));
+    
+    // Retorno Juan F. ← a Av. Juan de Dios Batiz →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoJuan,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        104  
+    ));
+    
+    // Retorno Juan F. 2 ← a Av. Juan de Dios Batiz →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoJuanD,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        127  
+    ));
+    
+    // Retorno Juan F. 2 → a Av. Juan de Dios Batiz ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoJuanD2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        190  
+    ));
+    
+    // Retorno Batiz ← a Av. Juan de Dios Batiz →  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBatiz,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        166  
+    ));
+    
+    // Retorno Batiz → a Av. Juan de Dios Batiz ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBatiz2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        151  
+    ));
+    
+    // Retorno Erro 2 ← a Calle Luis Enrique Erro Tramo 2 ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoErro2,  
+        Calle_Luis_Enrique_Erro_4,  
+        0,  
+        22  
+    ));
+    
+    // Calle Luis Enrique Erro Tramo 2 → a Retorno Erro 1 ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Calle_Luis_Enrique_Erro_2,  
+        RetornoErro1,  
+        0,  
+        0  
+    ));
+    
+    // Retorno Erro 1 ← a Calle Luis Enrique Erro Tramo 2 ←  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoErro1,  
+        Calle_Luis_Enrique_Erro_4,  
+        0,  
+        0 
+    ));
+        
 
     registrarConexiones(conexionesCA);
     conexiones = conexionesCA;
