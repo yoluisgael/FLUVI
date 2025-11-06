@@ -540,40 +540,117 @@ class CalleRenderer {
     onCalleHover(calle, container) {
         container.alpha = 0.9;
 
-        // Mostrar tooltip con el nombre de la calle y número de celda
+        // Mostrar tooltip con el nombre de la calle
         const tooltip = document.getElementById('canvasTooltip');
         if (tooltip && calle.nombre) {
+            // MODO 1: Detección de celdas DESACTIVADA (comportamiento original, más rápido)
+            if (!window.cellDetectionEnabled) {
+                tooltip.textContent = calle.nombre;
+                tooltip.style.display = 'block';
+
+                // Usar eventos DOM (método original, más ligero)
+                const updateTooltipPosition = (e) => {
+                    tooltip.style.left = (e.clientX + 15) + 'px';
+                    tooltip.style.top = (e.clientY + 15) + 'px';
+                };
+
+                // Guardar la función y el tipo de listener para poder removerlo después
+                container._tooltipMoveHandler = updateTooltipPosition;
+                container._tooltipListenerType = 'dom'; // Marcar que es evento DOM
+
+                // Agregar listener de movimiento del mouse (DOM)
+                document.addEventListener('mousemove', updateTooltipPosition);
+                return;
+            }
+
+            // MODO 2: Detección de celdas ACTIVADA (con optimizaciones)
             // Guardar referencia al stage para eventos PixiJS
             const stage = this.scene.app.stage;
 
-            // Actualizar posición del tooltip y contenido siguiendo el mouse
-            const updateTooltipPosition = (pixiEvent) => {
+            // Variables para throttling (optimización de rendimiento)
+            let lastUpdateTime = 0;
+            const throttleDelay = 50; // Actualizar celda cada 50ms (20 veces por segundo)
+
+            // Función optimizada para encontrar celda solo en la calle actual
+            const encontrarCeldaEnCalle = (calle, worldX, worldY) => {
+                let celdaMasCercana = null;
+                let distanciaMinima = Infinity;
+                const umbralDistancia = this.celda_tamano;
+
+                // Solo iterar sobre la calle actual (no todas las calles)
+                for (let carril = 0; carril < calle.carriles; carril++) {
+                    for (let indice = 0; indice < calle.tamano; indice++) {
+                        // Usar función correcta según si la calle tiene curvas
+                        let centroCelda;
+                        if (calle.esCurva && calle.vertices && calle.vertices.length > 0) {
+                            if (typeof window.obtenerCoordenadasGlobalesCeldaConCurva === 'function') {
+                                centroCelda = window.obtenerCoordenadasGlobalesCeldaConCurva(calle, carril, indice);
+                            } else {
+                                continue;
+                            }
+                        } else {
+                            if (typeof window.obtenerCoordenadasGlobalesCelda === 'function') {
+                                centroCelda = window.obtenerCoordenadasGlobalesCelda(calle, carril, indice);
+                            } else {
+                                continue;
+                            }
+                        }
+
+                        const dx = worldX - centroCelda.x;
+                        const dy = worldY - centroCelda.y;
+                        const distancia = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distancia < distanciaMinima) {
+                            distanciaMinima = distancia;
+                            celdaMasCercana = { carril, indice };
+                        }
+
+                        // Early exit: si encontramos una celda muy cercana, retornar inmediatamente
+                        if (distancia < umbralDistancia * 0.5) {
+                            return celdaMasCercana;
+                        }
+                    }
+                }
+
+                // Solo retornar si está dentro del umbral
+                if (celdaMasCercana && distanciaMinima < umbralDistancia) {
+                    return celdaMasCercana;
+                }
+                return null;
+            };
+
+            // Actualizar posición del tooltip y contenido siguiendo el mouse (con detección de celda)
+            const updateTooltipPositionWithCell = (pixiEvent) => {
                 // Obtener coordenadas de pantalla para posicionar el tooltip
                 const clientX = pixiEvent.data.global.x;
                 const clientY = pixiEvent.data.global.y;
 
+                // SIEMPRE actualizar posición del tooltip (sin throttle, es muy ligero)
                 tooltip.style.left = (clientX + 15) + 'px';
                 tooltip.style.top = (clientY + 15) + 'px';
 
+                // Throttling: solo actualizar el número de celda cada X ms
+                const currentTime = performance.now();
+                if (currentTime - lastUpdateTime < throttleDelay) {
+                    return; // Salir temprano, no actualizar contenido aún
+                }
+                lastUpdateTime = currentTime;
+
                 // Convertir a coordenadas del mundo para detectar la celda
-                if (typeof window.encontrarCeldaMasCercana === 'function') {
-                    const globalPos = pixiEvent.data.global;
-                    const worldX = (globalPos.x - window.offsetX) / window.escala;
-                    const worldY = (globalPos.y - window.offsetY) / window.escala;
+                const globalPos = pixiEvent.data.global;
+                const worldX = (globalPos.x - window.offsetX) / window.escala;
+                const worldY = (globalPos.y - window.offsetY) / window.escala;
 
-                    const celdaObjetivo = window.encontrarCeldaMasCercana(worldX, worldY);
+                // Usar función optimizada que solo busca en la calle actual
+                const celdaObjetivo = encontrarCeldaEnCalle(calle, worldX, worldY);
 
-                    if (celdaObjetivo && celdaObjetivo.calle === calle) {
-                        const { carril, indice } = celdaObjetivo;
-                        // Calcular el número de celda absoluto: (carril * tamaño) + índice
-                        const numeroCelda = (carril * calle.tamano) + indice;
-                        tooltip.textContent = `${calle.nombre} : ${numeroCelda}`;
-                    } else {
-                        // Si no se encuentra celda, solo mostrar el nombre de la calle
-                        tooltip.textContent = calle.nombre;
-                    }
+                if (celdaObjetivo) {
+                    const { carril, indice } = celdaObjetivo;
+                    // Calcular el número de celda absoluto: (carril * tamaño) + índice
+                    const numeroCelda = (carril * calle.tamano) + indice;
+                    tooltip.textContent = `${calle.nombre} : ${numeroCelda}`;
                 } else {
-                    // Fallback si la función no está disponible
+                    // Si no se encuentra celda, solo mostrar el nombre de la calle
                     tooltip.textContent = calle.nombre;
                 }
             };
@@ -582,11 +659,12 @@ class CalleRenderer {
             tooltip.textContent = calle.nombre;
             tooltip.style.display = 'block';
 
-            // Guardar la función para poder removerla después
-            container._tooltipMoveHandler = updateTooltipPosition;
+            // Guardar la función y el tipo de listener para poder removerlo después
+            container._tooltipMoveHandler = updateTooltipPositionWithCell;
+            container._tooltipListenerType = 'pixi'; // Marcar que es evento PixiJS
 
             // Agregar listener de movimiento del mouse al stage (eventos PixiJS)
-            stage.on('pointermove', updateTooltipPosition);
+            stage.on('pointermove', updateTooltipPositionWithCell);
         }
     }
 
@@ -599,11 +677,19 @@ class CalleRenderer {
             tooltip.style.display = 'none';
         }
 
-        // Remover listener de movimiento del mouse del stage (eventos PixiJS)
+        // Remover listener según el tipo que se usó
         if (container._tooltipMoveHandler) {
-            const stage = this.scene.app.stage;
-            stage.off('pointermove', container._tooltipMoveHandler);
+            if (container._tooltipListenerType === 'dom') {
+                // Remover listener DOM (método original)
+                document.removeEventListener('mousemove', container._tooltipMoveHandler);
+            } else if (container._tooltipListenerType === 'pixi') {
+                // Remover listener PixiJS (método con detección de celdas)
+                const stage = this.scene.app.stage;
+                stage.off('pointermove', container._tooltipMoveHandler);
+            }
+
             container._tooltipMoveHandler = null;
+            container._tooltipListenerType = null;
         }
     }
 

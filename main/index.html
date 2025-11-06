@@ -747,6 +747,21 @@
             <span id="labelConsoleLogs">📝 Logs en Consola</span>
           </label>
         </div>
+
+        <!-- Switch Activador de Celdas -->
+        <div class="form-check form-switch mt-2">
+          <input class="form-check-input" type="checkbox" id="switchCellDetection">
+          <label class="form-check-label" for="switchCellDetection">
+            <span id="labelCellDetection">🔢 Activador de Celdas</span>
+            <span class="ms-1"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  title="Muestra el número de celda en el hover sobre calles. Al activarlo se muestra 'NOMBRE_CALLE : NUMERO_CELDA'. Desactívalo para mejorar el rendimiento (solo mostrará el nombre de la calle)."
+                  style="cursor: help;">
+              ℹ️
+            </span>
+          </label>
+        </div>
       </div>
     </div>
   </div>
@@ -2003,6 +2018,9 @@
 
   <!-- Sistema de Control de Logs de Consola -->
   <script src="src/js/ui/consoleControl.js"></script>
+
+  <!-- Sistema de Control de Detección de Celdas -->
+  <script src="src/js/ui/cellDetectionControl.js"></script>
 
   <!-- Sistema de toggle para sidebar responsive -->
   <script src="src/js/ui/sidebarToggle.js"></script>
