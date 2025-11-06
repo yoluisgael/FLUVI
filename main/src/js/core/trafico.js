@@ -2278,7 +2278,7 @@ function iniciarSimulacion() {
     const RetornoWilfrido2 = crearCalle("Retorno Wilfrido2 →", 4, TIPOS.CONEXION, 1627, 1746, 248, 0.0, 1, 0.01);
     const RetornoWilfrido3 = crearCalle("Retorno Wilfrido3 →", 4, TIPOS.CONEXION, 1737, 1822, 68, 0.0, 1, 0.01);
     const RetornoWilfrido4 = crearCalle("Retorno Wilfrido4 ←", 4, TIPOS.CONEXION, 1755, 1803, 248, 0.0, 1, 0.01);
-    const RetornoWilfrido5 = crearCalle("Retorno Wilfrido5 →", 4, TIPOS.CONEXION, 2135, 1910, 259, 0.0, 1, 0.01);
+    const RetornoWilfrido5 = crearCalle("Retorno Wilfrido5 ←", 4, TIPOS.CONEXION, 2135, 1910, 259, 0.0, 1, 0.01);
     const RetornoWilfrido6 = crearCalle("Retorno Wilfrido6 →", 4, TIPOS.CONEXION, 2295, 1974, 78, 0.0, 1, 0.01);
     const RetornoWilfrido7 = crearCalle("Retorno Wilfrido7 ←", 4, TIPOS.CONEXION, 2309, 1952, 257, 0.0, 1, 0.01);
     const RetornoWilfrido8 = crearCalle("Retorno Wilfrido8 →", 3, TIPOS.CONEXION, 2549, 2033, 80, 0.0, 1, 0.01);
@@ -3293,9 +3293,9 @@ function iniciarSimulacion() {
     // Retorno Wilfrido5 → a Av. Wilfrido Massieu ←  
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoWilfrido5,  
-        Avenida_Wilfrido_Massieu_1,  
+        Avenida_Wilfrido_Massieu_2,  
         0,  
-        97  
+        245  
     ));
     
     // Retorno Wilfrido6 → a Av. Wilfrido Massieu ←  
