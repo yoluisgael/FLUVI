@@ -540,23 +540,53 @@ class CalleRenderer {
     onCalleHover(calle, container) {
         container.alpha = 0.9;
 
-        // Mostrar tooltip con el nombre de la calle
+        // Mostrar tooltip con el nombre de la calle y número de celda
         const tooltip = document.getElementById('canvasTooltip');
         if (tooltip && calle.nombre) {
+            // Guardar referencia al stage para eventos PixiJS
+            const stage = this.scene.app.stage;
+
+            // Actualizar posición del tooltip y contenido siguiendo el mouse
+            const updateTooltipPosition = (pixiEvent) => {
+                // Obtener coordenadas de pantalla para posicionar el tooltip
+                const clientX = pixiEvent.data.global.x;
+                const clientY = pixiEvent.data.global.y;
+
+                tooltip.style.left = (clientX + 15) + 'px';
+                tooltip.style.top = (clientY + 15) + 'px';
+
+                // Convertir a coordenadas del mundo para detectar la celda
+                if (typeof window.encontrarCeldaMasCercana === 'function') {
+                    const globalPos = pixiEvent.data.global;
+                    const worldX = (globalPos.x - window.offsetX) / window.escala;
+                    const worldY = (globalPos.y - window.offsetY) / window.escala;
+
+                    const celdaObjetivo = window.encontrarCeldaMasCercana(worldX, worldY);
+
+                    if (celdaObjetivo && celdaObjetivo.calle === calle) {
+                        const { carril, indice } = celdaObjetivo;
+                        // Calcular el número de celda absoluto: (carril * tamaño) + índice
+                        const numeroCelda = (carril * calle.tamano) + indice;
+                        tooltip.textContent = `${calle.nombre} : ${numeroCelda}`;
+                    } else {
+                        // Si no se encuentra celda, solo mostrar el nombre de la calle
+                        tooltip.textContent = calle.nombre;
+                    }
+                } else {
+                    // Fallback si la función no está disponible
+                    tooltip.textContent = calle.nombre;
+                }
+            };
+
+            // Mostrar tooltip inicial
             tooltip.textContent = calle.nombre;
             tooltip.style.display = 'block';
-
-            // Actualizar posición del tooltip siguiendo el mouse
-            const updateTooltipPosition = (e) => {
-                tooltip.style.left = (e.clientX + 15) + 'px';
-                tooltip.style.top = (e.clientY + 15) + 'px';
-            };
 
             // Guardar la función para poder removerla después
             container._tooltipMoveHandler = updateTooltipPosition;
 
-            // Agregar listener de movimiento del mouse
-            document.addEventListener('mousemove', updateTooltipPosition);
+            // Agregar listener de movimiento del mouse al stage (eventos PixiJS)
+            stage.on('pointermove', updateTooltipPosition);
         }
     }
 
@@ -569,9 +599,10 @@ class CalleRenderer {
             tooltip.style.display = 'none';
         }
 
-        // Remover listener de movimiento del mouse
+        // Remover listener de movimiento del mouse del stage (eventos PixiJS)
         if (container._tooltipMoveHandler) {
-            document.removeEventListener('mousemove', container._tooltipMoveHandler);
+            const stage = this.scene.app.stage;
+            stage.off('pointermove', container._tooltipMoveHandler);
             container._tooltipMoveHandler = null;
         }
     }
