@@ -646,9 +646,9 @@ class CalleRenderer {
 
                 if (celdaObjetivo) {
                     const { carril, indice } = celdaObjetivo;
-                    // Calcular el número de celda absoluto: (carril * tamaño) + índice + 1
-                    // +1 para que sea intuitivo para el usuario (contar desde 1, no desde 0)
-                    const numeroCelda = (carril * calle.tamano) + indice + 1;
+                    // El número de celda es el índice dentro del carril + 1 (para contar desde 1)
+                    // Todos los carriles comparten la misma numeración de posiciones
+                    const numeroCelda = indice + 1;
                     tooltip.textContent = `${calle.nombre} : ${numeroCelda}`;
                 } else {
                     // Si no se encuentra celda, solo mostrar el nombre de la calle
