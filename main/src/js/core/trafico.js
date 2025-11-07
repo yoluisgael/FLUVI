@@ -2285,17 +2285,12 @@ function iniciarSimulacion() {
     const RetornoWilfrido9 = crearCalle("Retorno Wilfrido9 ←", 3, TIPOS.CONEXION, 2562, 2017, 259, 0.0, 1, 0.01);
     const RetornoWilfrido10 = crearCalle("Retorno Wilfrido10 ←", 4, TIPOS.CONEXION, 1800, 1823, 247, 0.0, 1, 0.01);
     const RetornoWilfrido11 = crearCalle("Retorno Wilfrido11 →", 4, TIPOS.CONEXION, 1781, 1842, 67, 0.0, 1, 0.01);
-    
     const RetornoErro3 = crearCalle("Retorno Erro 3 →", 4, TIPOS.CONEXION, 1904, 1017, 350, 0.0, 1, 0.01);
     const RetornoErro4 = crearCalle("Retorno Erro 3 ←", 4, TIPOS.CONEXION, 1927, 1031, 169, 0.0, 1, 0.01);
-
     const RetornoErro5 = crearCalle("Retorno Erro 4 →", 4, TIPOS.CONEXION, 1879, 1159, 350, 0.0, 1, 0.01);
     const RetornoErro6 = crearCalle("Retorno Erro 4 ←", 4, TIPOS.CONEXION, 1901, 1174, 169, 0.0, 1, 0.01);
-
     const RetornoErro7 = crearCalle("Retorno Erro 5 →", 4, TIPOS.CONEXION, 1816, 1519, 349, 0.0, 1, 0.01);
     const RetornoErro8 = crearCalle("Retorno Erro 5 ←", 4, TIPOS.CONEXION, 1838, 1533, 169, 0.0, 1, 0.01);
-    
-
     const RetornoBarredo1 = crearCalle("Retorno Barredo →", 5, TIPOS.CONEXION, 2290, 1131, 347, 0.0, 1, 0.01);
     const RetornoBarredo2 = crearCalle("Retorno Barredo ←", 5, TIPOS.CONEXION, 2317, 1147, 167, 0.0, 1, 0.01);
     const RetornoBarredo3 = crearCalle("Retorno Barredo 3 →", 5, TIPOS.CONEXION, 2264, 1253, 347, 0.0, 1, 0.01);
@@ -2306,52 +2301,25 @@ function iniciarSimulacion() {
     const RetornoBarredo8 = crearCalle("Retorno Barredo 5 ←", 5, TIPOS.CONEXION, 2228, 1562, 167, 0.0, 1, 0.01);
     const RetornoBarredo9 = crearCalle("Retorno Barredo 6 →", 5, TIPOS.CONEXION, 2173, 1684, 347, 0.0, 1, 0.01);
     const RetornoBarredo10 = crearCalle("Retorno Barredo 6 ←", 5, TIPOS.CONEXION, 2199, 1700, 167, 0.0, 1, 0.01);
-
-    //const Avenida_Miguel_Othon_de_Mendizabal_2 = crearCalle("Av. Miguel Othon de Mendizabal 2", 10, TIPOS.CONEXION, 1780, 368, 37, 0.0, 3, 0.02);
-    //const Avenida_Miguel_Othon_de_Mendizabal_3 = crearCalle("Av. Miguel Othon de Mendizabal 3", 10, TIPOS.CONEXION, 1816, 341, 42, 0.0, 3, 0.02);
-    //const Avenida_Miguel_Othon_de_Mendizabal_4 = crearCalle("Av. Miguel Othon de Mendizabal 4", 9, TIPOS.CONEXION, 1745, 386, 28, 0.0, 3, 0.02);
-    
-    //const Avenida_Miguel_Othon_de_Mendizabal_5 = crearCalle("Av. Miguel Othon de Mendizabal ←", 258, TIPOS.CONEXION, 1907, 256, 202, 0.0, 3, 0.02);
-    //const Avenida_Miguel_Othon_de_Mendizabal_6 = crearCalle("Av. Miguel Othon de Mendizabal 6", 10, TIPOS.CONEXION, 1780, 345, 208, 0.0, 3, 0.02);
-    //const Avenida_Miguel_Othon_de_Mendizabal_7 = crearCalle("Av. Miguel Othon de Mendizabal 7", 14, TIPOS.CONEXION, 1836, 309, 212, 0.0, 3, 0.02);
-    //const Avenida_Miguel_Othon_de_Mendizabal_8 = crearCalle("Av. Miguel Othon de Mendizabal 8", 13, TIPOS.CONEXION, 1884, 268, 221, 0.0, 3, 0.02);
-    // Sistema 1: Avenida Wilfrido Massieu
     const María_L_Estampa_Ortigoza = crearCalle("Calle M. Luisa Estampa Ort. →", 50, TIPOS.CONEXION, 1389, 788, 86, 0.0, 1, 0.01);
     const María_L_Estampa_Ortigoza2 = crearCalle("Calle M. Luisa Estampa Ort. ←", 49, TIPOS.CONEXION, 1395, 540, 264, 0.0, 1, 0.01);
     const Avenida_Miguel_Othon_de_Mendizabal_1 = crearCalle("Av. Miguel Othon de Mendizabal →", 248, TIPOS.CONEXION, 729, 805, 22, 0.0, 3, 0.02);
     const Calle_Luis_Enrique_Erro_2 = crearCalle("Calle Luis Enrique Erro Tramo 2 →", 65, TIPOS.CONEXION, 1952, 888, 80, 0.0, 2, 0.01);
     const Avenida_Juan_de_Dios_Batiz2 = crearCalle("Av. Juan de Dios Batiz ←", 301, TIPOS.CONEXION, 2484, 974, 170, 0.0, 3, 0.01);
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 190, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
-    //const Avenida_Miguel_Bernard2 = crearCalle("Av. Miguel Bernard ←", 195, TIPOS.CONEXION, 2550, 979, 134, 0.0, 3, 0.01);
-    //const Avenida_Cien_Metros = crearCalle("Av. Cien Metros →", 230, TIPOS.CONEXION, 596, 577, -70, 0.0, 3, 0.01);
     const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 343, TIPOS.CONEXION, 986, 1502, 345, 0.0, 2, 0.01);
-    
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1034, 1671, 110, 0.9, 3, 0.01);
     const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro ←", 177, TIPOS.CONEXION, 1920, 928, 260, 0.0, 2, 0.01);
     const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo ←", 184, TIPOS.CONEXION, 2322, 1004, 258, 0.0, 2, 0.01);
     const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz →", 377, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
-    
     const Avenida_IPN = crearCalle("Av. IPN ←", 230, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
-    //const Avenida_IPN2 = crearCalle("Av. IPN 2", 230, TIPOS.CONEXION, 2596, 2219, 80, 0.0, 2, 0.01);
-    //const Avenida_Guanajuato = crearCalle("Av. Guanajuato", 100, TIPOS.CONEXION, 1180, 2035, -14, 0.0, 1, 0.01);
-    //const Avenida_Montevideo = crearCalle("Av. Montevideo", 308, TIPOS.CONEXION, 1230, 2160, -12, 0.0, 3, 0.01);
-    //const Avenida_Montevideo_2 = crearCalle("Av. Montevideo 2", 308, TIPOS.CONEXION, 2720, 2460, 168, 0.0, 3, 0.01);
-    //const Avenida_Otavalo = crearCalle("Av. Otavalo", 150, TIPOS.CONEXION, 1765, 2050, -11, 0.0, 1, 0.01);
-    //const Avenida_17_de_mayo = crearCalle("Av. 17 de mayo", 122, TIPOS.CONEXION, 1520, 2395, 72, 0.0, 1, 0.01);
     const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro →", 179, TIPOS.CONEXION, 1783, 1818, 80, 0.0, 2, 0.01);
-    
     const Calle_Luis_Enrique_Erro_4 = crearCalle("Calle Luis Enrique Erro Tramo 2 ←", 69, TIPOS.CONEXION, 2118, 603, 225, 0.0, 2, 0.01);
     const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo →", 185, TIPOS.CONEXION, 2149, 1914, 78, 0.0, 2, 0.01);
     const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu ←", 346, TIPOS.CONEXION, 2605, 2027, 166, 0.0, 2, 0.01);
-    //const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu 2", 190, TIPOS.CONEXION, 1820, 1825, 155, 0.0, 2, 0.01);
-    //const Avenida_Wilfrido_Massieu_4 = crearCalle("Av. Wilfrido Massieu 4", 160, TIPOS.CONEXION, 1825, 1860, -14, 0.0, 2, 0.01);
-    //const Avenida_Sierravista = crearCalle("Av. Sierravista", 50, TIPOS.CONEXION, 2940, 1445, 132, 0.0, 1, 0.01);
-    //const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
-    //const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 2825, 2095, 171, 0.0, 1, 0.01);
-    
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0, 3, 0);
     const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.0);
-    const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.3, 2, 0);
+    const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.2, 2, 0);
     const Devorador_2 = crearCalle("Salida Av. IPN ←", 5, TIPOS.DEVORADOR, 2606, 2078, 260, 0, 2, 0);
     const Generador_3 = crearCalle("Entrada ←", 5, TIPOS.GENERADOR, 1933, 341, 225, 0.1, 2, 0);
     const Devorador_3 = crearCalle("Salida 1 →", 5, TIPOS.DEVORADOR, 1880, 328, 59, 0, 2, 0);
