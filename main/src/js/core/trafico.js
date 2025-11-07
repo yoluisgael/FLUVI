@@ -2703,9 +2703,9 @@ function iniciarSimulacion() {
         2,  
         Avenida_Miguel_Othon_de_Mendizabal_1,  
         [  
-            { carrilDestino: 0, posOrigen: 184, posDestino: 0, probabilidad: 0.34 },  
-            { carrilDestino: 1, posOrigen: 183, posDestino: 0, probabilidad: 0.33 },  
-            { carrilDestino: 2, posOrigen: 182, posDestino: 0, probabilidad: 0.33 }  
+            { carrilDestino: 0, posOrigen: 184, posDestino: 0, probabilidad: 0.28 },  
+            { carrilDestino: 1, posOrigen: 183, posDestino: 0, probabilidad: 0.43 },  
+            { carrilDestino: 2, posOrigen: 182, posDestino: 0, probabilidad: 0.5 }  
         ]  
     ));
     
