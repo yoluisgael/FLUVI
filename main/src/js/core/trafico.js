@@ -3702,9 +3702,9 @@ function iniciarSimulacion() {
         1,  
         Avenida_Juan_de_Dios_Batiz2,  
         [  
-            { carrilDestino: 2, posOrigen: 179, posDestino: 0, probabilidad: 0.35 },
-            { carrilDestino: 1, posOrigen: 180, posDestino: 0, probabilidad: 0.3 }, 
-            { carrilDestino: 0, posOrigen: 181, posDestino: 0, probabilidad: 0.2 }  
+            { carrilDestino: 2, posOrigen: 179, posDestino: 0, probabilidad: 0.15 },
+            { carrilDestino: 1, posOrigen: 180, posDestino: 0, probabilidad: 0.1 }, 
+            { carrilDestino: 0, posOrigen: 181, posDestino: 0, probabilidad: 0.05 }  
         ]  
     ));
     // Calle Luis Enrique Erro ← a Retorno Erro 3 →  
