@@ -2319,7 +2319,7 @@ function iniciarSimulacion() {
     const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu ←", 346, TIPOS.CONEXION, 2605, 2027, 166, 0.0, 2, 0.01);
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0, 3, 0);
     const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.0);
-    const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.2, 2, 0);
+    const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.12, 2, 0);
     const Devorador_2 = crearCalle("Salida Av. IPN ←", 5, TIPOS.DEVORADOR, 2606, 2078, 260, 0, 2, 0);
     const Generador_3 = crearCalle("Entrada ←", 5, TIPOS.GENERADOR, 1933, 341, 225, 0.1, 2, 0);
     const Devorador_3 = crearCalle("Salida 1 →", 5, TIPOS.DEVORADOR, 1880, 328, 59, 0, 2, 0);
@@ -2608,73 +2608,7 @@ function iniciarSimulacion() {
     
     const conexionesCA = [];
 
-    
-    
-    /*
-    conexionesCA.push(...crearConexionLineal(
-        Avenida_Miguel_Othon_de_Mendizabal_1, 
-        Avenida_Miguel_Othon_de_Mendizabal_4
-    ));
-    conexionesCA.push(...crearConexionLineal(
-        Avenida_Miguel_Othon_de_Mendizabal_4, 
-        Avenida_Miguel_Othon_de_Mendizabal_2
-    ));
-    conexionesCA.push(...crearConexionLineal(
-        Avenida_Miguel_Othon_de_Mendizabal_2, 
-        Avenida_Miguel_Othon_de_Mendizabal_3
-    ));
-    
-    conexionesCA.push(...crearConexionIncorporacion(
-        Avenida_Miguel_Othon_de_Mendizabal_3,
-        Avenida_Miguel_Bernard,
-        2,
-        0
-    ));
-    
-    conexionesCA.push(...crearConexionIncorporacion(
-        Avenida_Miguel_Bernard2,
-        Avenida_Miguel_Othon_de_Mendizabal_8,
-        0,
-        0
-    ));
-
-    conexionesCA.push(...crearConexionLineal(
-        Avenida_Miguel_Othon_de_Mendizabal_8, 
-        Avenida_Miguel_Othon_de_Mendizabal_7
-    ));
-    conexionesCA.push(...crearConexionLineal(
-        Avenida_Miguel_Othon_de_Mendizabal_7, 
-        Avenida_Miguel_Othon_de_Mendizabal_6
-    ));
-    conexionesCA.push(...crearConexionLineal(
-        Avenida_Miguel_Othon_de_Mendizabal_6, 
-        Avenida_Miguel_Othon_de_Mendizabal_5
-    ));
-    
-    conexionesCA.push(...crearConexionProbabilistica(
-        Avenida_Cien_Metros2,
-        2,
-        Avenida_Miguel_Othon_de_Mendizabal_1,
-        [
-            { carrilDestino: 0, posOrigen: 134, posDestino: 0, probabilidad: 0.2 },
-            { carrilDestino: 1, posOrigen: 133, posDestino: 0, probabilidad: 0.2 },
-            { carrilDestino: 2, posOrigen: 132, posDestino: 0, probabilidad: 0.5 }
-        ]
-    ));*/
-
-    /*conexionesCA.push(...crearConexionIncorporacion(
-        Avenida_Montevideo2,
-        Avenida_Cien_Metros2,
-        2,
-        49
-    ));
-    conexionesCA.push(...crearConexionIncorporacion(
-        Avenida_Miguel_Othon_de_Mendizabal_5,
-        Avenida_Cien_Metros2,
-        2,
-        139
-    ));*/
-
+    // INICIO DE CONEXIONES
     // ============================================  
     // CONEXIONES LINEALES  
     // ============================================
@@ -2781,7 +2715,7 @@ function iniciarSimulacion() {
         0,  
         RetornoBatiz2,  
         [  
-            { carrilDestino: 0, posOrigen: 165, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 165, posDestino: 0, probabilidad: 0.35 }  
         ]  
     ));
     
@@ -2791,7 +2725,7 @@ function iniciarSimulacion() {
         0,  
         Retornotorres2,  
         [  
-            { carrilDestino: 0, posOrigen: 291, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 291, posDestino: 0, probabilidad: 0.2 }  
         ]  
     ));
     
@@ -2801,7 +2735,7 @@ function iniciarSimulacion() {
         0,  
         Retornotorres,  
         [  
-            { carrilDestino: 0, posOrigen: 23, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 23, posDestino: 0, probabilidad: 0.25 }  
         ]  
     ));
     
@@ -2811,7 +2745,7 @@ function iniciarSimulacion() {
         0,  
         RetornoESCOM2,  
         [  
-            { carrilDestino: 0, posOrigen: 59, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 59, posDestino: 0, probabilidad: 0.2 }  
         ]  
     ));
     
@@ -2821,7 +2755,7 @@ function iniciarSimulacion() {
         0,  
         RetornoESCOM,  
         [  
-            { carrilDestino: 0, posOrigen: 256, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 256, posDestino: 0, probabilidad: 0.2 }  
         ]  
     ));
     
@@ -2831,7 +2765,7 @@ function iniciarSimulacion() {
         0,  
         RetornoEStampa2,  
         [  
-            { carrilDestino: 0, posOrigen: 93, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 93, posDestino: 0, probabilidad: 0.12 }  
         ]  
     ));
     
@@ -2841,7 +2775,7 @@ function iniciarSimulacion() {
         0,  
         RetornoEstampa,  
         [  
-            { carrilDestino: 0, posOrigen: 222, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 222, posDestino: 0, probabilidad: 0.13 }  
         ]  
     ));
     
@@ -2861,7 +2795,7 @@ function iniciarSimulacion() {
         0,  
         RetornoJuan2,  
         [  
-            { carrilDestino: 0, posOrigen: 103, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 103, posDestino: 0, probabilidad: 0.14 }  
         ]  
     ));
     
@@ -2871,7 +2805,7 @@ function iniciarSimulacion() {
         0,  
         RetornoJuan,  
         [  
-            { carrilDestino: 0, posOrigen: 212, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 212, posDestino: 0, probabilidad: 0.2 }  
         ]  
     ));
     
@@ -2881,7 +2815,7 @@ function iniciarSimulacion() {
         0,  
         RetornoJuanD,  
         [  
-            { carrilDestino: 0, posOrigen: 189, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 189, posDestino: 0, probabilidad: 0.11 }  
         ]  
     ));
     
@@ -2891,7 +2825,7 @@ function iniciarSimulacion() {
         0,  
         RetornoBatiz,  
         [  
-            { carrilDestino: 0, posOrigen: 150, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 150, posDestino: 0, probabilidad: 0.31 }  
         ]  
     ));
     
@@ -2901,8 +2835,8 @@ function iniciarSimulacion() {
         0,  
         RetornoErro2,  
         [  
-            { carrilDestino: 0, posOrigen: 43, posDestino: 0, probabilidad: 0.4 },  
-            { carrilDestino: 1, posOrigen: 44, posDestino: 0, probabilidad: 0.4 }  
+            { carrilDestino: 0, posOrigen: 43, posDestino: 0, probabilidad: 0.42 },  
+            { carrilDestino: 1, posOrigen: 44, posDestino: 0, probabilidad: 0.2 }  
         ]  
     ));
 
@@ -3050,8 +2984,8 @@ function iniciarSimulacion() {
         0,  
         Retorno2,  
         [  
-            { carrilDestino: 0, posOrigen: 208, posDestino: 0, probabilidad: 0.5 },
-            { carrilDestino: 1, posOrigen: 209, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 0, posOrigen: 208, posDestino: 0, probabilidad: 0.2 },
+            { carrilDestino: 1, posOrigen: 209, posDestino: 0, probabilidad: 0.1 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
@@ -3059,7 +2993,7 @@ function iniciarSimulacion() {
         0,  
         RetornoBatizD2,  
         [  
-            { carrilDestino: 0, posOrigen: 225, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 0, posOrigen: 225, posDestino: 0, probabilidad: 0.52 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
@@ -3067,7 +3001,7 @@ function iniciarSimulacion() {
         0,  
         RetornoSec2,  
         [  
-            { carrilDestino: 0, posOrigen: 287, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 0, posOrigen: 287, posDestino: 0, probabilidad: 0.25 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
@@ -3075,7 +3009,7 @@ function iniciarSimulacion() {
         0,  
         RetornoBernard2,  
         [  
-            { carrilDestino: 0, posOrigen: 303, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 0, posOrigen: 303, posDestino: 0, probabilidad: 0.09 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
@@ -3083,8 +3017,8 @@ function iniciarSimulacion() {
         0,  
         Retorno1,  
         [  
-            { carrilDestino: 0, posOrigen: 112, posDestino: 0, probabilidad: 0.5 },
-            { carrilDestino: 1, posOrigen: 113, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 0, posOrigen: 112, posDestino: 0, probabilidad: 0.3 },
+            { carrilDestino: 1, posOrigen: 113, posDestino: 0, probabilidad: 0.15 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
@@ -3101,7 +3035,7 @@ function iniciarSimulacion() {
         0,  
         RetornoBatizD,  
         [  
-            { carrilDestino: 0, posOrigen: 90, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 0, posOrigen: 90, posDestino: 0, probabilidad: 0.4 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
@@ -3109,7 +3043,7 @@ function iniciarSimulacion() {
         0,  
         RetornoSec,  
         [  
-            { carrilDestino: 0, posOrigen: 28, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 0, posOrigen: 28, posDestino: 0, probabilidad: 0.2 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
@@ -3117,7 +3051,7 @@ function iniciarSimulacion() {
         0,  
         RetornoBernard,  
         [  
-            { carrilDestino: 0, posOrigen: 12, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 0, posOrigen: 12, posDestino: 0, probabilidad: 0.27 }
         ]  
     ));
     
@@ -3127,7 +3061,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido,  
         [  
-            { carrilDestino: 0, posOrigen: 336, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 336, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3302,7 +3236,7 @@ function iniciarSimulacion() {
         0,  
         RetornoJuanD2,  
         [  
-            { carrilDestino: 0, posOrigen: 126, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 126, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3312,7 +3246,7 @@ function iniciarSimulacion() {
         0,  
         RetornoEscalera,  
         [  
-            { carrilDestino: 0, posOrigen: 313, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 313, posDestino: 0, probabilidad: 0.2 }  
         ]  
     ));
     
@@ -3322,7 +3256,7 @@ function iniciarSimulacion() {
         0,  
         RetornoEscalera2,  
         [  
-            { carrilDestino: 0, posOrigen: 27, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 27, posDestino: 0, probabilidad: 0.14 }  
         ]  
     ));
     
@@ -3332,7 +3266,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido1,  
         [  
-            { carrilDestino: 0, posOrigen: 135, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 135, posDestino: 0, probabilidad: 0.17 }  
         ]  
     ));
     
@@ -3342,7 +3276,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido2,  
         [  
-            { carrilDestino: 0, posOrigen: 203, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 203, posDestino: 0, probabilidad: 0.22 }  
         ]  
     ));
     
@@ -3362,7 +3296,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido3,  
         [  
-            { carrilDestino: 0, posOrigen: 164, posDestino: 0, probabilidad: 0.3 }  
+            { carrilDestino: 0, posOrigen: 164, posDestino: 0, probabilidad: 0.3 }  // 1 SIGNIFICA 100%
         ]  
     )); 
 
