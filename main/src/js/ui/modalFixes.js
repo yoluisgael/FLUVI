@@ -6,13 +6,30 @@ document.addEventListener('DOMContentLoaded', function() {
   modals.forEach(modal => {
     // Antes de que el modal se oculte, remover el foco de cualquier elemento dentro del modal
     modal.addEventListener('hide.bs.modal', function(event) {
-      // Buscar el elemento que tiene el foco dentro del modal
-      const focusedElement = modal.querySelector(':focus');
+      // Buscar el elemento que tiene el foco actualmente en todo el documento
+      const activeElement = document.activeElement;
 
-      if (focusedElement) {
+      // Verificar si el elemento con foco está dentro del modal o es el modal mismo
+      if (activeElement && (modal.contains(activeElement) || activeElement === modal)) {
         // Remover el foco del elemento
-        focusedElement.blur();
+        activeElement.blur();
+
+        // Asegurar que el foco vuelva al body como respaldo
+        setTimeout(() => {
+          if (document.body && typeof document.body.focus === 'function') {
+            document.body.focus();
+          }
+        }, 0);
       }
+
+      // Remover explícitamente el atributo tabindex del modal durante el cierre
+      modal.removeAttribute('tabindex');
+    });
+
+    // Cuando el modal se cierra completamente, restaurar el tabindex
+    modal.addEventListener('hidden.bs.modal', function(event) {
+      // Restaurar el tabindex después de que el modal se haya cerrado completamente
+      modal.setAttribute('tabindex', '-1');
     });
 
     // Opcional: Cuando el modal se muestre, enfocar el botón de cerrar o el primer input
