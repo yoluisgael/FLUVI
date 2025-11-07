@@ -2353,6 +2353,9 @@ function iniciarSimulacion() {
     const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.0);
     const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.3, 2, 0);
     const Devorador_2 = crearCalle("Salida Av. IPN ←", 5, TIPOS.DEVORADOR, 2606, 2078, 260, 0, 2, 0);
+    const Generador_3 = crearCalle("Entrada ←", 5, TIPOS.GENERADOR, 1933, 341, 225, 0.1, 2, 0);
+    const Devorador_3 = crearCalle("Salida 1 →", 5, TIPOS.DEVORADOR, 1897, 341, 46, 0, 2, 0);
+    const Devorador_4 = crearCalle("Salida 2→", 5, TIPOS.DEVORADOR, 1758, 346, 117, 0, 2, 0);
     
     María_L_Estampa_Ortigoza2.vertices = [  
         { indiceCelda: 0, anguloOffset: 33.26229205895698 },  
@@ -2740,7 +2743,25 @@ function iniciarSimulacion() {
     // ============================================  
     // CONEXIONES PROBABILÍSTICAS  
     // ============================================
-    
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Miguel_Othon_de_Mendizabal_1,  
+        0,  
+        Devorador_4,  
+        [  
+            { carrilDestino: 0, posOrigen: 226, posDestino: 0, probabilidad: 0.8 },  
+            { carrilDestino: 1, posOrigen: 227, posDestino: 0, probabilidad: 0.5 }  
+        ]  
+    ));
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Miguel_Bernard,  
+        0,  
+        Devorador_3,  
+        [  
+            { carrilDestino: 0, posOrigen: 7, posDestino: 0, probabilidad: 0.8 },  
+            { carrilDestino: 1, posOrigen: 8, posDestino: 0, probabilidad: 0.5 }  
+        ]  
+    ));
+
     // Av. Cien Metros ← a Av. Wilfrido Massieu →  
     conexionesCA.push(...crearConexionProbabilistica(  
         Avenida_Cien_Metros2,  
@@ -3765,6 +3786,12 @@ function iniciarSimulacion() {
         Calle_Miguel_Anda_y_Barredo,  
         0,  
         158 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Generador_3,  
+        Avenida_Miguel_Bernard,  
+        0,  
+        10 
     ));
 
     // Bernard a Batiz ← 
