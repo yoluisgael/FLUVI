@@ -29,9 +29,84 @@ let multiplicadorCache = {
 // ==================== PERFILES DE TRÁFICO POR DÍA Y HORA ====================
 
 /**
+ * Multiplicadores personalizados por día de la semana y hora
+ * Cada día tiene 24 valores (uno por hora) que pueden ser modificados
+ * Rango recomendado: 0.0 (sin tráfico) a 3.0 (tráfico muy intenso)
+ *
+ * CONFIGURACIÓN POR DEFECTO (editable):
+ * 0 = Domingo, 1 = Lunes, 2 = Martes, 3 = Miércoles, 4 = Jueves, 5 = Viernes, 6 = Sábado
+ */
+let MULTIPLICADORES_POR_DIA_HORA = {
+    // 0 - Domingo (tráfico bajo)
+    0: [
+        0.1, 0.1, 0.1, 0.2, 0.2, 0.2,  // 00-05: Madrugada
+        0.2, 0.2, 0.3, 0.3, 0.4, 0.6,  // 06-11: Mañana tranquila
+        0.6, 0.7, 0.7, 0.7, 0.7, 0.6,  // 12-17: Tarde moderada
+        0.6, 0.5, 0.4, 0.3, 0.3, 0.2   // 18-23: Noche calmada
+    ],
+    // 1 - Lunes (día laboral típico)
+    1: [
+        0.1, 0.1, 0.1, 0.2, 0.2, 0.3,  // 00-05: Madrugada
+        0.5, 1.5, 1.8, 1.3, 0.8, 0.8,  // 06-11: PICO MAÑANA
+        1.0, 1.2, 1.1, 0.9, 0.8, 1.2,  // 12-17: Mediodía y tarde
+        1.7, 1.6, 1.3, 0.7, 0.5, 0.3   // 18-23: PICO TARDE
+    ],
+    // 2 - Martes (día laboral típico)
+    2: [
+        0.1, 0.1, 0.1, 0.2, 0.2, 0.3,
+        0.5, 1.5, 1.8, 1.3, 0.8, 0.8,
+        1.0, 1.2, 1.1, 0.9, 0.8, 1.2,
+        1.7, 1.6, 1.3, 0.7, 0.5, 0.3
+    ],
+    // 3 - Miércoles (día laboral típico)
+    3: [
+        0.1, 0.1, 0.1, 0.2, 0.2, 0.3,
+        0.5, 1.5, 1.8, 1.3, 0.8, 0.8,
+        1.0, 1.2, 1.1, 0.9, 0.8, 1.2,
+        1.7, 1.6, 1.3, 0.7, 0.5, 0.3
+    ],
+    // 4 - Jueves (día laboral típico)
+    4: [
+        0.2, 0.2, 0.2, 0.2, 0.2, 0.3,
+        0.5, 1.5, 1.8, 1.3, 0.8, 0.8,
+        1.0, 1.2, 1.1, 0.9, 0.8, 1.2,
+        1.7, 1.6, 1.3, 0.7, 0.5, 0.3
+    ],
+    // 5 - Viernes (día laboral, más tráfico en tarde)
+    5: [
+        0.2, 0.2, 0.2, 0.2, 0.2, 0.3,
+        0.5, 1.5, 1.8, 1.3, 0.8, 0.8,
+        1.0, 1.2, 1.1, 0.9, 0.8, 1.2,
+        1.8, 1.8, 1.5, 0.9, 0.6, 0.4   // Viernes tarde más tráfico
+    ],
+    // 6 - Sábado (fin de semana)
+    6: [
+        0.3, 0.3, 0.3, 0.3, 0.3, 0.3,  // 00-05
+        0.3, 0.3, 0.4, 0.5, 0.8, 0.9,  // 06-11: Actividad tarde
+        1.0, 1.2, 1.3, 1.3, 1.2, 1.1,  // 12-17: Pico tarde
+        1.0, 0.9, 0.7, 0.6, 0.5, 0.4   // 18-23
+    ]
+};
+
+/**
+ * Copia de seguridad de los multiplicadores por defecto
+ * Se usa para restaurar valores originales si el usuario lo desea
+ */
+const MULTIPLICADORES_POR_DIA_HORA_DEFAULT = {
+    0: [...MULTIPLICADORES_POR_DIA_HORA[0]],
+    1: [...MULTIPLICADORES_POR_DIA_HORA[1]],
+    2: [...MULTIPLICADORES_POR_DIA_HORA[2]],
+    3: [...MULTIPLICADORES_POR_DIA_HORA[3]],
+    4: [...MULTIPLICADORES_POR_DIA_HORA[4]],
+    5: [...MULTIPLICADORES_POR_DIA_HORA[5]],
+    6: [...MULTIPLICADORES_POR_DIA_HORA[6]]
+};
+
+/**
  * Perfiles de tráfico para cada día de la semana
  * Cada perfil contiene 24 valores (uno por hora) con el multiplicador de probabilidad
  * Los valores representan cuánto se multiplica la probabilidad de generación base
+ * NOTA: Estos perfiles ya no se usan cuando hay multiplicadores personalizados activos
  */
 const PERFILES_TRAFICO = {
     // Lunes a Viernes: Días laborales
@@ -124,34 +199,32 @@ function avanzarTiempo() {
 
 /**
  * Obtiene el multiplicador de tráfico actual según día y hora
- * Usa interpolación lineal entre horas para transiciones suaves
- * @returns {number} Multiplicador de probabilidad (0.2 - 2.0)
+ * Cada hora tiene su valor constante (SIN interpolación)
+ * El slider de cada hora controla exclusivamente su rango (ej: 08:00-08:59)
+ * AHORA usa MULTIPLICADORES_POR_DIA_HORA (configurables por día y hora)
+ * @returns {number} Multiplicador de probabilidad (0.0 - 3.0)
  */
 function obtenerMultiplicadorTrafico() {
     if (!configuracionTiempo.usarPerfiles) return 1.0;
 
     const dia = configuracionTiempo.diaActual;
     const hora = Math.floor(configuracionTiempo.horaActual);
-    const minutos = configuracionTiempo.minutoActual;
 
-    // Usar cache si la hora no ha cambiado (optimización)
+    // Usar cache si el día y la hora no han cambiado (optimización)
     if (multiplicadorCache.ultimaDia === dia && multiplicadorCache.ultimaHora === hora) {
         return multiplicadorCache.valor;
     }
 
-    const perfil = PERFILES_TRAFICO[dia];
-    if (!perfil) return 1.0;
+    // Obtener el perfil del día actual
+    const perfilDia = MULTIPLICADORES_POR_DIA_HORA[dia];
+    if (!perfilDia) {
+        console.warn(`⚠️ No se encontró perfil para día ${dia}, usando 1.0`);
+        return 1.0;
+    }
 
-    // Multiplicador base de la hora actual
-    const multActual = perfil[hora];
-
-    // Multiplicador de la siguiente hora (para interpolación)
-    const horaSiguiente = (hora + 1) % 24;
-    const multSiguiente = perfil[horaSiguiente];
-
-    // Interpolación lineal basada en los minutos
-    const factor = minutos / 60;
-    const multiplicador = multActual + (multSiguiente - multActual) * factor;
+    // Usar el multiplicador de la hora actual (SIN interpolación)
+    // Cada hora mantiene su valor constante durante todo su rango (00-59 minutos)
+    const multiplicador = perfilDia[hora];
 
     // Actualizar cache
     multiplicadorCache.valor = multiplicador;
@@ -222,7 +295,7 @@ function obtenerMillisVirtuales() {
 function obtenerProximoCambio() {
     const dia = configuracionTiempo.diaActual;
     const horaActual = Math.floor(configuracionTiempo.horaActual);
-    const perfil = PERFILES_TRAFICO[dia];
+    const perfil = MULTIPLICADORES_POR_DIA_HORA[dia];
 
     if (!perfil) return null;
 
@@ -334,7 +407,124 @@ function togglePerfiles(usar) {
  * @returns {Array<number>} Array de 24 multiplicadores
  */
 function obtenerPerfilDiaActual() {
-    return PERFILES_TRAFICO[configuracionTiempo.diaActual] || Array(24).fill(1.0);
+    const dia = configuracionTiempo.diaActual;
+    return [...(MULTIPLICADORES_POR_DIA_HORA[dia] || Array(24).fill(1.0))];
+}
+
+/**
+ * Obtiene el perfil de un día específico
+ * @param {number} dia - Día de la semana (0-6)
+ * @returns {Array<number>} Array de 24 multiplicadores
+ */
+function obtenerPerfilDia(dia) {
+    if (dia < 0 || dia > 6) {
+        console.error('❌ Error: Día debe estar entre 0 y 6');
+        return Array(24).fill(1.0);
+    }
+    return [...(MULTIPLICADORES_POR_DIA_HORA[dia] || Array(24).fill(1.0))];
+}
+
+/**
+ * Actualiza los multiplicadores por hora para un día específico
+ * @param {number} dia - Día de la semana (0-6)
+ * @param {Array<number>} nuevosMultiplicadores - Array de 24 valores (0.0 - 3.0)
+ */
+function actualizarMultiplicadoresDia(dia, nuevosMultiplicadores) {
+    if (dia < 0 || dia > 6) {
+        console.error('❌ Error: Día debe estar entre 0 y 6');
+        return false;
+    }
+
+    if (!Array.isArray(nuevosMultiplicadores) || nuevosMultiplicadores.length !== 24) {
+        console.error('❌ Error: Se requiere un array de 24 valores');
+        return false;
+    }
+
+    // Validar que todos los valores estén en el rango permitido
+    for (let i = 0; i < 24; i++) {
+        const valor = parseFloat(nuevosMultiplicadores[i]);
+        if (isNaN(valor) || valor < 0 || valor > 3) {
+            console.error(`❌ Error: Valor inválido en hora ${i}: ${nuevosMultiplicadores[i]}`);
+            return false;
+        }
+    }
+
+    // Actualizar el perfil del día
+    MULTIPLICADORES_POR_DIA_HORA[dia] = nuevosMultiplicadores;
+
+    // Invalidar cache para forzar recalculo
+    multiplicadorCache.ultimaHora = -1;
+    multiplicadorCache.ultimaDia = -1;
+
+    console.log(`✅ Multiplicadores para ${NOMBRES_DIAS[dia]} actualizados correctamente`);
+    return true;
+}
+
+/**
+ * Actualiza los multiplicadores de TODOS los días con los mismos valores
+ * @param {Array<number>} nuevosMultiplicadores - Array de 24 valores (0.0 - 3.0)
+ */
+function actualizarMultiplicadoresTodosDias(nuevosMultiplicadores) {
+    if (!Array.isArray(nuevosMultiplicadores) || nuevosMultiplicadores.length !== 24) {
+        console.error('❌ Error: Se requiere un array de 24 valores');
+        return false;
+    }
+
+    for (let dia = 0; dia <= 6; dia++) {
+        if (!actualizarMultiplicadoresDia(dia, [...nuevosMultiplicadores])) {
+            return false;
+        }
+    }
+
+    console.log('✅ Multiplicadores actualizados para todos los días');
+    return true;
+}
+
+/**
+ * Obtiene los multiplicadores actuales por hora (del día actual)
+ * @returns {Array<number>} Array de 24 multiplicadores
+ */
+function obtenerMultiplicadoresPorHora() {
+    return obtenerPerfilDiaActual();
+}
+
+/**
+ * Restaura los multiplicadores por hora a los valores por defecto
+ * @param {number|null} dia - Día específico a restaurar, o null para todos
+ */
+function restaurarMultiplicadoresDefault(dia = null) {
+    if (dia !== null) {
+        // Restaurar solo un día específico
+        if (dia >= 0 && dia <= 6) {
+            MULTIPLICADORES_POR_DIA_HORA[dia] = [...MULTIPLICADORES_POR_DIA_HORA_DEFAULT[dia]];
+            console.log(`✅ Multiplicadores de ${NOMBRES_DIAS[dia]} restaurados a valores por defecto`);
+        }
+    } else {
+        // Restaurar todos los días
+        for (let d = 0; d <= 6; d++) {
+            MULTIPLICADORES_POR_DIA_HORA[d] = [...MULTIPLICADORES_POR_DIA_HORA_DEFAULT[d]];
+        }
+        console.log('✅ Multiplicadores de todos los días restaurados a valores por defecto');
+    }
+
+    multiplicadorCache.ultimaHora = -1;
+    multiplicadorCache.ultimaDia = -1;
+}
+
+/**
+ * Obtiene todos los multiplicadores (7 días x 24 horas)
+ * @returns {Object} Objeto con los multiplicadores de cada día
+ */
+function obtenerTodosMultiplicadores() {
+    return {
+        0: [...MULTIPLICADORES_POR_DIA_HORA[0]],
+        1: [...MULTIPLICADORES_POR_DIA_HORA[1]],
+        2: [...MULTIPLICADORES_POR_DIA_HORA[2]],
+        3: [...MULTIPLICADORES_POR_DIA_HORA[3]],
+        4: [...MULTIPLICADORES_POR_DIA_HORA[4]],
+        5: [...MULTIPLICADORES_POR_DIA_HORA[5]],
+        6: [...MULTIPLICADORES_POR_DIA_HORA[6]]
+    };
 }
 
 // ==================== SERIALIZACIÓN JSON ====================
@@ -351,7 +541,8 @@ function tiempoToJSON() {
         minutoActual: Math.floor(configuracionTiempo.minutoActual),
         segundoActual: Math.floor(configuracionTiempo.segundoActual),
         usarPerfiles: configuracionTiempo.usarPerfiles,
-        segundosPorPaso: SEGUNDOS_POR_PASO // Guardar la constante para referencia
+        segundosPorPaso: SEGUNDOS_POR_PASO, // Guardar la constante para referencia
+        multiplicadoresPorDiaHora: obtenerTodosMultiplicadores() // Guardar multiplicadores de todos los días
     };
 }
 
@@ -371,6 +562,22 @@ function tiempoFromJSON(data) {
     configuracionTiempo.minutoActual = data.minutoActual || 0;
     configuracionTiempo.segundoActual = data.segundoActual || 0;
     configuracionTiempo.usarPerfiles = data.usarPerfiles !== undefined ? data.usarPerfiles : true;
+
+    // Cargar multiplicadores personalizados por día y hora si existen
+    if (data.multiplicadoresPorDiaHora && typeof data.multiplicadoresPorDiaHora === 'object') {
+        for (let dia = 0; dia <= 6; dia++) {
+            if (Array.isArray(data.multiplicadoresPorDiaHora[dia]) && data.multiplicadoresPorDiaHora[dia].length === 24) {
+                actualizarMultiplicadoresDia(dia, data.multiplicadoresPorDiaHora[dia]);
+            }
+        }
+        console.log('⏰ Multiplicadores personalizados por día cargados');
+    }
+    // Compatibilidad con versión anterior (un solo array de 24 horas)
+    else if (data.multiplicadoresPorHora && Array.isArray(data.multiplicadoresPorHora) && data.multiplicadoresPorHora.length === 24) {
+        // Aplicar a todos los días
+        actualizarMultiplicadoresTodosDias(data.multiplicadoresPorHora);
+        console.log('⏰ Multiplicadores personalizados cargados (aplicados a todos los días)');
+    }
 
     // Invalidar cache
     multiplicadorCache.ultimaDia = -1;
@@ -399,6 +606,14 @@ window.obtenerPerfilDiaActual = obtenerPerfilDiaActual;
 window.tiempoToJSON = tiempoToJSON;
 window.tiempoFromJSON = tiempoFromJSON;
 window.SEGUNDOS_POR_PASO = SEGUNDOS_POR_PASO;
+window.NOMBRES_DIAS = NOMBRES_DIAS;
+// Nuevas funciones para configurar multiplicadores por día
+window.obtenerPerfilDia = obtenerPerfilDia;
+window.actualizarMultiplicadoresDia = actualizarMultiplicadoresDia;
+window.actualizarMultiplicadoresTodosDias = actualizarMultiplicadoresTodosDias;
+window.obtenerMultiplicadoresPorHora = obtenerMultiplicadoresPorHora;
+window.restaurarMultiplicadoresDefault = restaurarMultiplicadoresDefault;
+window.obtenerTodosMultiplicadores = obtenerTodosMultiplicadores;
 
 console.log('✅ Módulo de tiempo virtual cargado correctamente');
 console.log(`⏰ Configuración: ${SEGUNDOS_POR_PASO} segundo(s) simulado(s) por paso`);

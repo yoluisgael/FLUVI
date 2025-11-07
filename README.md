@@ -165,6 +165,7 @@ FLUVI/
 │       │       ├── sidebarToggle.js       # Toggle del sidebar (Ctrl+B)
 │       │       ├── infoBar.js             # Barra de información en tiempo real
 │       │       ├── timeControl.js         # Control de fecha y hora del simulador
+│       │       ├── multiplicadoresUI.js   # Configuración de multiplicadores por día/hora
 │       │       ├── editor.js              # Editor visual de calles
 │       │       ├── constructor.js         # Constructor de mapas
 │       │       ├── edificioUI.js          # Interfaz de configuración de estacionamientos
@@ -189,6 +190,7 @@ FLUVI/
 - **Conexiones**: Tres tipos de conexiones (lineal, incorporación, probabilística) entre calles
 - **Sistema de Tiempo Virtual**: Simulación de días de la semana y horarios con avance dinámico
 - **Multiplicador de Tráfico Dinámico**: Generación de vehículos que varía según día y hora (horas pico, valle, etc.)
+- **Configuración de Multiplicadores**: Sistema completo para configurar multiplicadores por día de la semana (7 días) y hora (24 horas), con presets rápidos y valores independientes por rango horario
 - **Control Manual de Fecha/Hora**: Capacidad de modificar el tiempo simulado en cualquier momento
 - **Estacionamientos Inteligentes**: Sistema de entrada/salida de vehículos con probabilidades configurables por hora
 - **Gestión de Escenarios**: Guarda y carga configuraciones completas de simulación
@@ -304,7 +306,7 @@ La barra de información en tiempo real muestra métricas clave de la simulació
 
 El sistema permite modificar manualmente la fecha y hora del simulador mediante una interfaz modal intuitiva:
 
-**Ubicación**: Configuración de Escenarios → Control de Fecha y Hora
+**Ubicación**: Configuración de Escenarios → ⏰ Cambiar Fecha y Hora
 
 **Características**:
 - Selector de día de la semana (Domingo a Sábado)
@@ -316,11 +318,53 @@ El sistema permite modificar manualmente la fecha y hora del simulador mediante 
 - Invalidación del cache de multiplicador al cambiar fecha/hora
 
 **Uso**:
-1. Click en "Abrir Configurador de Tiempo"
+1. Click en "⏰ Cambiar Fecha y Hora"
 2. Selecciona día, hora y minutos deseados
 3. Verifica la vista previa
 4. Click en "✅ Confirmar y Aplicar"
 5. El simulador ajusta inmediatamente el tiempo virtual
+
+### Configuración de Multiplicadores de Generación
+
+El sistema permite configurar multiplicadores personalizados de generación de vehículos por día de la semana y hora del día, permitiendo simular patrones de tráfico realistas.
+
+**Ubicación**: Configuración de Escenarios → 📊 Configurar Multiplicador de Gen.
+
+**Características**:
+- **Configuración por día**: Ajusta multiplicadores independientes para cada día de la semana (Domingo a Sábado)
+- **Configuración por hora**: 24 sliders (uno por cada hora del día: 00:00 a 23:00)
+- **Rango de valores**: 0.0 (sin tráfico) a 3.0 (tráfico muy intenso)
+- **Independencia de rangos**: Cada slider controla exclusivamente su rango horario (ej: 08:00 controla de 08:00 a 08:59)
+- **Presets rápidos**:
+  - 🏢 **Día Laboral**: Picos en horas de entrada/salida (7-9 AM, 6-8 PM)
+  - 🎉 **Fin de Semana**: Patrón relajado con pico en tarde
+  - 📊 **Constante**: Tráfico uniforme (1.0) todo el día
+  - 🌙 **Nocturno**: Patrón invertido (alto en noche, bajo en día)
+- **Funciones adicionales**:
+  - 📋 **Copiar a Todos los Días**: Replica la configuración actual a los 7 días
+  - 🔄 **Restaurar Default**: Vuelve a valores predefinidos (un día específico o todos)
+
+**Configuración por Defecto** (editable en código):
+- **Lunes-Jueves**: Días laborales típicos con picos matutinos y vespertinos
+- **Viernes**: Laboral con mayor tráfico en tarde
+- **Sábado**: Fin de semana activo con pico en tarde
+- **Domingo**: Tráfico bajo y relajado todo el día
+
+**Ubicación en código**: `main/src/js/core/tiempo.js` (líneas 39-89) - Variable `MULTIPLICADORES_POR_DIA_HORA`
+
+**Uso**:
+1. Click en "📊 Configurar Multiplicador de Gen."
+2. Selecciona el día de la semana a configurar
+3. Ajusta los 24 sliders según el patrón deseado
+4. (Opcional) Aplica un preset rápido
+5. (Opcional) Copia a todos los días si deseas el mismo patrón
+6. Click en "✅ Actualizar Multiplicadores"
+7. Los cambios se aplican inmediatamente y se guardan con el escenario
+
+**Persistencia**:
+- Los multiplicadores configurados se guardan automáticamente al exportar un escenario
+- Se cargan automáticamente al importar un escenario
+- Mantiene compatibilidad con versiones anteriores del simulador
 
 ## Métricas del Sistema
 
@@ -489,6 +533,7 @@ El proyecto utiliza una arquitectura modular con scripts separados por responsab
 **Módulos UI (`src/js/ui/`)**:
 - `infoBar.js`: Sistema de información en tiempo real que actualiza la barra superior con generación, población, hora simulada, tiempo/frame y multiplicador
 - `timeControl.js`: Control modal para modificar fecha y hora del simulador con sincronización perfecta
+- `multiplicadoresUI.js`: Interfaz de configuración de multiplicadores de generación por día y hora (24 sliders, presets, copiar a todos los días)
 - `darkMode.js`: Toggle de modo oscuro con persistencia en localStorage
 - `loadingSystem.js`: Pantalla de carga con barra de progreso durante inicialización
 - `tooltips.js`: Inicialización de tooltips de Bootstrap 5 en elementos UI

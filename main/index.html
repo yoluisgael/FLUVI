@@ -376,9 +376,18 @@
               </div>
 
               <!-- Botón para abrir modal de configuración -->
-              <button type="button" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalTiempoSimulador">
-                ⏰ Cambiar Fecha y Hora
-              </button>
+              <div data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Establece el día de la semana y hora inicial de la simulación">
+                <button type="button" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalTiempoSimulador">
+                  ⏰ Cambiar Fecha y Hora
+                </button>
+              </div>
+
+              <!-- Botón para configurar multiplicadores -->
+              <div class="mt-2" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Configura los multiplicadores de generación de vehículos para cada hora del día y día de la semana">
+                <button type="button" class="btn btn-success btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalMultiplicadores">
+                  📊 Configurar Multiplicador de Gen.
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -854,7 +863,34 @@
                     <li><strong>Paso a Paso:</strong> Avanzar frame por frame</li>
                     <li><strong>Velocidad:</strong> Ajustar frames por segundo</li>
                     <li><strong>Generación:</strong> % de aparición de vehículos</li>
-                    <li><strong>Hora/Fecha:</strong> Control de tiempo simulado</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="card border-success">
+                <div class="card-body">
+                  <h5 class="card-title text-success">⏰ Tiempo Virtual</h5>
+                  <ul class="list-unstyled">
+                    <li><strong>Cambiar Fecha y Hora:</strong> Establece día de la semana (Lun-Dom) y hora inicial (0-23)</li>
+                    <li><strong>Tiempo avanza automáticamente:</strong> 2 segundos virtuales por paso de simulación</li>
+                    <li><strong>Perfiles dinámicos:</strong> El tráfico varía según día y hora</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+              <div class="card border-success">
+                <div class="card-body">
+                  <h5 class="card-title text-success">📊 Multiplicadores de Generación</h5>
+                  <ul class="list-unstyled">
+                    <li><strong>Configuración por día:</strong> Ajusta multiplicadores para cada día de la semana</li>
+                    <li><strong>Configuración por hora:</strong> 24 valores (uno por cada hora del día)</li>
+                    <li><strong>Rango:</strong> 0.0 (sin tráfico) a 3.0 (tráfico muy intenso)</li>
+                    <li><strong>Presets:</strong> Día Laboral, Fin de Semana, Constante, Nocturno</li>
+                    <li><strong>Cada hora es independiente:</strong> 08:00 controla de 08:00 a 08:59</li>
                   </ul>
                 </div>
               </div>
@@ -1765,6 +1801,98 @@
     </div>
   </div>
 
+  <!-- Modal de Configuración de Multiplicadores por Hora -->
+  <div class="modal fade" id="modalMultiplicadores" tabindex="-1" aria-labelledby="modalMultiplicadoresLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="modalMultiplicadoresLabel">📊 Configurar Multiplicadores de Generación por Hora</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-3">
+            Ajusta los multiplicadores de generación de vehículos para cada hora del día (0-23).
+            Cada slider controla <strong>exclusivamente su rango de hora</strong> (ej: 08:00 controla de 08:00 a 08:59).
+            Estos valores se aplican cuando <strong>"Perfiles"</strong> está activado.
+          </p>
+
+          <!-- Selector de día de la semana -->
+          <div class="mb-3">
+            <label for="selectDiaSemanaMultiplicador" class="form-label fw-bold">📅 Día de la Semana:</label>
+            <select class="form-select" id="selectDiaSemanaMultiplicador" onchange="cambiarDiaMultiplicador(this.value)">
+              <option value="0">🔵 Domingo</option>
+              <option value="1" selected>🔴 Lunes</option>
+              <option value="2">🟠 Martes</option>
+              <option value="3">🟡 Miércoles</option>
+              <option value="4">🟢 Jueves</option>
+              <option value="5">🟣 Viernes</option>
+              <option value="6">🟤 Sábado</option>
+            </select>
+            <small class="text-muted">Los cambios se aplicarán solo al día seleccionado</small>
+          </div>
+
+          <div class="alert alert-info small mb-3">
+            <strong>💡 Rango de valores:</strong>
+            <ul class="mb-0 mt-1">
+              <li><strong>0.0 - 0.5:</strong> Tráfico muy bajo (madrugada)</li>
+              <li><strong>0.5 - 1.0:</strong> Tráfico bajo a normal</li>
+              <li><strong>1.0 - 1.5:</strong> Tráfico normal a alto</li>
+              <li><strong>1.5 - 2.5:</strong> Hora pico (mañana/tarde)</li>
+              <li><strong>2.5 - 3.0:</strong> Tráfico muy intenso</li>
+            </ul>
+          </div>
+
+          <!-- Contenedor de los sliders (dividido en dos columnas) -->
+          <div class="row" id="contenedorSliders">
+            <!-- Columna 1: Horas 0-11 -->
+            <div class="col-md-6">
+              <h6 class="text-muted mb-3">🌙 Madrugada y Mañana (00:00 - 11:00)</h6>
+              <div id="slidersColumna1"></div>
+            </div>
+            <!-- Columna 2: Horas 12-23 -->
+            <div class="col-md-6">
+              <h6 class="text-muted mb-3">☀️ Tarde y Noche (12:00 - 23:00)</h6>
+              <div id="slidersColumna2"></div>
+            </div>
+          </div>
+
+          <!-- Botones de presets -->
+          <div class="mt-4 border-top pt-3">
+            <h6 class="text-muted mb-2">⚡ Presets Rápidos:</h6>
+            <div class="d-flex gap-2 flex-wrap mb-2">
+              <button type="button" class="btn btn-outline-primary btn-sm" onclick="aplicarPresetMultiplicadores('laboral')">
+                🏢 Día Laboral
+              </button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" onclick="aplicarPresetMultiplicadores('finSemana')">
+                🎉 Fin de Semana
+              </button>
+              <button type="button" class="btn btn-outline-info btn-sm" onclick="aplicarPresetMultiplicadores('constante')">
+                📊 Constante (1.0)
+              </button>
+              <button type="button" class="btn btn-outline-warning btn-sm" onclick="aplicarPresetMultiplicadores('nocturno')">
+                🌙 Nocturno
+              </button>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+              <button type="button" class="btn btn-outline-success btn-sm" onclick="copiarATodosDias()">
+                📋 Copiar a Todos los Días
+              </button>
+              <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmarRestaurarDefault()">
+                🔄 Restaurar Default
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" id="btnActualizarMultiplicadores">
+            ✅ Actualizar Multiplicadores
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal de Mapa de Calor -->
   <div class="modal fade" id="modalMapaCalor" tabindex="-1" aria-labelledby="modalMapaCalorLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-fullscreen">
@@ -2028,6 +2156,9 @@
 
   <!-- Fix para warning de aria-hidden en modales -->
   <script src="src/js/ui/modalFixes.js"></script>
+
+  <!-- Sistema de Configuración de Multiplicadores por Hora -->
+  <script src="src/js/ui/multiplicadoresUI.js"></script>
 
   <!-- Sistema de Control de Logs de Consola -->
   <script src="src/js/ui/consoleControl.js"></script>

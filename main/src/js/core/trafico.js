@@ -2318,7 +2318,7 @@ function iniciarSimulacion() {
     const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo →", 185, TIPOS.CONEXION, 2149, 1914, 78, 0.0, 2, 0.01);
     const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu ←", 346, TIPOS.CONEXION, 2605, 2027, 166, 0.0, 2, 0.01);
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0, 3, 0);
-    const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.0);
+    const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 1, 3, 0.0);
     const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.12, 2, 0);
     const Devorador_2 = crearCalle("Salida Av. IPN ←", 5, TIPOS.DEVORADOR, 2606, 2078, 260, 0, 2, 0);
     const Generador_3 = crearCalle("Entrada ←", 5, TIPOS.GENERADOR, 1933, 341, 225, 0.1, 2, 0);
