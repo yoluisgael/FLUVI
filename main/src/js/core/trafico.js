@@ -2349,8 +2349,10 @@ function iniciarSimulacion() {
     //const Avenida_Lindavista = crearCalle("Av. Lindavista", 36, TIPOS.CONEXION, 2845, 1710, 134, 0.0, 1, 0.01);
     //const Avenida_Buenavista = crearCalle("Av. Buenavista", 40, TIPOS.CONEXION, 2825, 2095, 171, 0.0, 1, 0.01);
     
-    const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0.5, 3, 0.01);
-    const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.01);
+    const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0, 3, 0);
+    const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 0.3, 3, 0.0);
+    const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.3, 2, 0);
+    const Devorador_2 = crearCalle("Salida Av. IPN ←", 5, TIPOS.DEVORADOR, 2606, 2078, 260, 0, 2, 0);
     
     María_L_Estampa_Ortigoza2.vertices = [  
         { indiceCelda: 0, anguloOffset: 33.26229205895698 },  
@@ -2403,9 +2405,6 @@ function iniciarSimulacion() {
     ];
     Avenida_Miguel_Othon_de_Mendizabal_1.esCurva = true;
 
-    
-
-    
     Avenida_Miguel_Bernard.vertices = [
         { indiceCelda: 0, anguloOffset: 29.183651591046115 },
         { indiceCelda: 10, anguloOffset: -1.0407776280136602 },
@@ -2517,8 +2516,6 @@ function iniciarSimulacion() {
         { indiceCelda: 68, anguloOffset: 35.69353556473338 }
     ];
     Calle_Luis_Enrique_Erro_4.esCurva = true;
-
-    
 
     Avenida_Juan_de_Dios_Batiz2.vertices = [
         { indiceCelda: 0, anguloOffset: 25.80263615745194 },
@@ -2725,8 +2722,19 @@ function iniciarSimulacion() {
     
     // Calle Luis Enrique Erro → a Calle Luis Enrique Erro Tramo 2 →  
     conexionesCA.push(...crearConexionLineal(  
-        Calle_Luis_Enrique_Erro_1,  
-        Calle_Luis_Enrique_Erro_2  
+        Avenida_Cien_Metros2,  
+        Devorador  
+    ));
+    
+    // Calle Luis Enrique Erro → a Calle Luis Enrique Erro Tramo 2 →  
+    conexionesCA.push(...crearConexionLineal(  
+        Generador_2,  
+        Avenida_IPN  
+    ));
+    // Calle Luis Enrique Erro → a Calle Luis Enrique Erro Tramo 2 →  
+    conexionesCA.push(...crearConexionLineal(  
+        Avenida_IPN,  
+        Devorador_2 
     ));
     
     // ============================================  
@@ -3569,7 +3577,207 @@ function iniciarSimulacion() {
         0,  
         332  
     ));  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Calle_Miguel_Anda_y_Barredo2,  
+        Avenida_Wilfrido_Massieu_1,  
+        1,  
+        98  
+    ));  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Calle_Miguel_Anda_y_Barredo,  
+        Avenida_Juan_de_Dios_Batiz,  
+        2,  
+        290  
+    ));  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Calle_Luis_Enrique_Erro_3,  
+        Avenida_Wilfrido_Massieu_1,  
+        1,  
+        177  
+    ));  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoErro8,  
+        Calle_Luis_Enrique_Erro_3,  
+        0,  
+        121  
+    ));  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoErro7,  
+        Calle_Luis_Enrique_Erro_1,  
+        0,  
+        59  
+    ));  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoErro6,  
+        Calle_Luis_Enrique_Erro_3,  
+        0,  
+        48  
+    ));  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoErro5,  
+        Calle_Luis_Enrique_Erro_1,  
+        0,  
+        132  
+    ));  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoErro4,  
+        Calle_Luis_Enrique_Erro_3,  
+        0,  
+        19  
+    ));  
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoErro3,  
+        Calle_Luis_Enrique_Erro_1,  
+        0,  
+        161  
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Calle_Luis_Enrique_Erro_1,  
+        Avenida_Juan_de_Dios_Batiz,  
+        2,  
+        208  
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Retorno1,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        203,
+        1 
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Retorno2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        107,
+        1  
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Retorno2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        107,
+        1  
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Calle_Luis_Enrique_Erro_4,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        2,  
+        112 
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBatizD2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        91 
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBatizD,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        226 
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoSec2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        29 
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoSec,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        288 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBernard2,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        0,  
+        13 
+    )); 
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBernard,  
+        Avenida_Juan_de_Dios_Batiz,  
+        0,  
+        304 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_IPN,  
+        1,  
+        25 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo10,  
+        Calle_Miguel_Anda_y_Barredo2,  
+        0,  
+        140 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo9,  
+        Calle_Miguel_Anda_y_Barredo,  
+        0,  
+        45 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo8,  
+        Calle_Miguel_Anda_y_Barredo2,  
+        0,  
+        112 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo7,  
+        Calle_Miguel_Anda_y_Barredo,  
+        0,  
+        73 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo6,  
+        Calle_Miguel_Anda_y_Barredo2,  
+        0,  
+        82 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo5,  
+        Calle_Miguel_Anda_y_Barredo,  
+        0,  
+        103 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo4,  
+        Calle_Miguel_Anda_y_Barredo2,  
+        0,  
+        52 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo3,  
+        Calle_Miguel_Anda_y_Barredo,  
+        0,  
+        133 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo2,  
+        Calle_Miguel_Anda_y_Barredo2,  
+        0,  
+        27 
+    ));
+    conexionesCA.push(...crearConexionIncorporacion(  
+        RetornoBarredo1,  
+        Calle_Miguel_Anda_y_Barredo,  
+        0,  
+        158 
+    ));
 
+    // Bernard a Batiz ← 
+    conexionesCA.push(...crearConexionProbabilistica(  
+        Avenida_Miguel_Bernard,  
+        1,  
+        Avenida_Juan_de_Dios_Batiz2,  
+        [  
+            { carrilDestino: 2, posOrigen: 179, posDestino: 0, probabilidad: 0.35 },
+            { carrilDestino: 1, posOrigen: 180, posDestino: 0, probabilidad: 0.3 }, 
+            { carrilDestino: 0, posOrigen: 181, posDestino: 0, probabilidad: 0.2 }  
+        ]  
+    ));
     // Calle Luis Enrique Erro ← a Retorno Erro 3 →  
     conexionesCA.push(...crearConexionProbabilistica(  
         Calle_Luis_Enrique_Erro_3,  
