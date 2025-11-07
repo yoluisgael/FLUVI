@@ -2354,8 +2354,8 @@ function iniciarSimulacion() {
     const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.3, 2, 0);
     const Devorador_2 = crearCalle("Salida Av. IPN ←", 5, TIPOS.DEVORADOR, 2606, 2078, 260, 0, 2, 0);
     const Generador_3 = crearCalle("Entrada ←", 5, TIPOS.GENERADOR, 1933, 341, 225, 0.1, 2, 0);
-    const Devorador_3 = crearCalle("Salida 1 →", 5, TIPOS.DEVORADOR, 1897, 341, 46, 0, 2, 0);
-    const Devorador_4 = crearCalle("Salida 2→", 5, TIPOS.DEVORADOR, 1758, 346, 117, 0, 2, 0);
+    const Devorador_3 = crearCalle("Salida 1 →", 5, TIPOS.DEVORADOR, 1880, 328, 59, 0, 2, 0);
+    const Devorador_4 = crearCalle("Salida 2 →", 5, TIPOS.DEVORADOR, 1758, 346, 117, 0, 2, 0);
     
     María_L_Estampa_Ortigoza2.vertices = [  
         { indiceCelda: 0, anguloOffset: 33.26229205895698 },  
@@ -2757,8 +2757,8 @@ function iniciarSimulacion() {
         0,  
         Devorador_3,  
         [  
-            { carrilDestino: 0, posOrigen: 7, posDestino: 0, probabilidad: 0.8 },  
-            { carrilDestino: 1, posOrigen: 8, posDestino: 0, probabilidad: 0.5 }  
+            { carrilDestino: 0, posOrigen: 3, posDestino: 0, probabilidad: 0.8 },  
+            { carrilDestino: 1, posOrigen: 4, posDestino: 0, probabilidad: 0.5 }  
         ]  
     ));
 
