@@ -403,49 +403,56 @@ El sistema permite configurar multiplicadores personalizados de generación de v
 
 ### Entropía de Shannon (bits)
 
-Métrica que mide la **diversidad de reglas/transiciones** aplicadas en el autómata celular en cada paso de tiempo.
+Métrica que mide la **diversidad de las 8 transiciones** del autómata celular basadas en el vecindario de 3 celdas (izquierda-centro-derecha).
 
 #### Fórmula
 ```
 H = -Σ(p_i × log₂(p_i))
 ```
 
-Donde `p_i` es la probabilidad empírica (frecuencia relativa) de cada regla:
+Donde `p_i` es la probabilidad empírica (frecuencia relativa) de cada transición:
 
 ```
-p_i = (cantidad de veces que se usó la regla i) / (total de celdas)
+p_i = (cantidad de veces que ocurrió la transición i) / (total de celdas)
 ```
 
-#### Reglas/Transiciones Medidas
+#### 8 Transiciones Medidas (Vecindario L-C-R)
 
-| ID | Regla | Transición | Descripción |
-|----|-------|-----------|-------------|
-| 0 | **STAY_EMPTY** | 0→0 | Celda permanece vacía |
-| 1 | **ADVANCE** | 0→V | Vehículo avanza desde celda anterior |
-| 2 | **STOPPED** | V→V | Vehículo se detiene/permanece en su posición |
-| 3 | **MOVE_OUT** | V→0 | Vehículo sale de la celda |
-| 4 | **SPAWN** | 0→V | Vehículo generado (aparece sin venir de celda anterior) |
+El cálculo se basa en el estado **binario** del vecindario de 3 celdas en el paso anterior:
+- **0** = celda vacía
+- **1** = celda con carro (cualquier tipo 1-6)
 
-**Nota**: V = vehículo (tipos 1-6), 0 = celda vacía
+| Índice | Configuración (L-C-R) | Valor Binario | Descripción del Vecindario |
+|--------|-----------------------|---------------|----------------------------|
+| 0 | `000` | 0 | Vacío - Vacío - Vacío |
+| 1 | `001` | 1 | Vacío - Vacío - Carro |
+| 2 | `010` | 2 | Vacío - Carro - Vacío |
+| 3 | `011` | 3 | Vacío - Carro - Carro |
+| 4 | `100` | 4 | Carro - Vacío - Vacío |
+| 5 | `101` | 5 | Carro - Vacío - Carro |
+| 6 | `110` | 6 | Carro - Carro - Vacío |
+| 7 | `111` | 7 | Carro - Carro - Carro |
+
+**Nota**: La configuración se evalúa en el estado anterior del autómata (paso t-1) para cada celda.
 
 #### Interpretación de Valores
 
-- **0 bits**: Sistema estático (una sola regla activa)
-  - Ejemplo: Todas las celdas vacías o todos los vehículos detenidos
-- **~1 bit**: Baja diversidad (predomina una o dos reglas)
-  - Ejemplo: Mayormente vehículos detenidos con pocos avances
-- **1.5-2 bits**: Diversidad moderada (mezcla balanceada de reglas)
-  - Ejemplo: Sistema con flujo variado: algunos avanzan, otros se detienen
-- **2.322 bits**: Máximo teórico (distribución uniforme de las 5 reglas)
-  - Ejemplo: Todas las reglas se aplican con igual frecuencia
+- **0 bits**: Sistema estático (una sola configuración de vecindario)
+  - Ejemplo: Todas las celdas vacías (000 en todas las posiciones)
+- **~1 bit**: Baja diversidad (predominan 1-2 configuraciones)
+  - Ejemplo: Patrón muy repetitivo con poca variación
+- **1.5-2.5 bits**: Diversidad moderada (mezcla de varias configuraciones)
+  - Ejemplo: Sistema con patrones variados de tráfico
+- **3.000 bits**: Máximo teórico (distribución uniforme de las 8 configuraciones)
+  - Ejemplo: Todas las configuraciones ocurren con igual frecuencia (log₂(8) = 3)
 
 #### Rangos de Clasificación
 
 - `<0.5` - Homogéneo (sistema muy simple)
 - `0.5-1.0` - Baja diversidad
-- `1.0-1.5` - Diversidad moderada-baja
-- `1.5-2.0` - Diversidad moderada-alta
-- `≥2.0` - Alta diversidad (sistema muy dinámico)
+- `1.0-1.8` - Diversidad moderada-baja
+- `1.8-2.5` - Diversidad moderada-alta
+- `≥2.5` - Alta diversidad (sistema muy dinámico)
 
 ### Estados del Sistema
 

@@ -93,6 +93,12 @@
           inicializarGestionEscenarios();
         }
 
+        // Inicializar calles excluidas por defecto en métricas
+        if (typeof window.inicializarCallesExcluidasPorDefecto !== 'undefined') {
+          updateLoadingStatus('Configurando métricas...');
+          window.inicializarCallesExcluidasPorDefecto();
+        }
+
         hideLoadingScreen();
       } else {
         // Esperar un poco más si no está listo

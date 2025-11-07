@@ -34,6 +34,45 @@ let lastFlowValue = 0; // Almacena el último flujo calculado para evitar parpad
 // Estado anterior de las calles para calcular transiciones del autómata celular
 let previousStreetStates = new Map();
 
+// Configuración de calles incluidas en las métricas
+// Por defecto, todas las calles están incluidas (null = incluir todas)
+// Si es un Set, solo se incluyen las calles cuyos índices estén en el Set
+let callesIncluidasEnMetricas = null; // null = todas incluidas
+
+// Lista de calles excluidas por defecto de las métricas
+const CALLES_EXCLUIDAS_POR_DEFECTO = [
+    'Retorno Wilfrido. ←',
+    'Retorno Escalera ←',
+    'Retorno Escalera →',
+    'Retorno Wilfrido1 ←',
+    'Retorno Wilfrido2 →',
+    'Retorno Wilfrido3 →',
+    'Retorno Wilfrido4 ←',
+    'Retorno Wilfrido5 ←',
+    'Retorno Wilfrido6 →',
+    'Retorno Wilfrido7 ←',
+    'Retorno Wilfrido8 →',
+    'Retorno Wilfrido9 ←',
+    'Retorno Wilfrido10 ←',
+    'Retorno Wilfrido11 →',
+    'Entrada a Cien Metros →',
+    'Entrada a Av. IPN ←',
+    'Salida Av. IPN ←',
+    'Entrada ←',
+    'Salida 1 →',
+    'Salida 2 →',
+    'Av. Wilfrido Massieu ←',
+    'Av. IPN ←',
+    'Av. Miguel Bernard →',
+    'Av. Wilfrido Massieu →',
+    'Av. Cien Metros ←',
+    'Av. Miguel Othon de Mendizabal →',
+    'Salida Cien Metros ←'
+];
+
+// Modo de selección de calles desde el mapa
+let modoSeleccionCallesActivo = false;
+
 // Instancias de Chart.js para cada gráfica
 let densityChartInstance = null;
 let throughputChartInstance = null;
@@ -271,14 +310,18 @@ function calculateMetrics() {
     let totalCells = 0;
     let carsInMotion = 0;
 
-    // Contador de transiciones/reglas del autómata celular para entropía de Shannon
-    // Tipos de transiciones:
-    // 0: STAY_EMPTY (0→0) - celda permanece vacía
-    // 1: ADVANCE (0→V desde V anterior) - vehículo avanza
-    // 2: STOPPED (V→V sin V anterior) - vehículo se detiene
-    // 3: MOVE_OUT (V→0) - vehículo sale de celda
-    // 4: SPAWN (0→V sin V anterior) - vehículo aparece (generación)
-    const transitionCount = new Array(5).fill(0);
+    // Contador de las 8 transiciones de la regla del autómata celular para entropía de Shannon
+    // Transiciones basadas en vecindario de 3 celdas (izquierda, centro, derecha)
+    // Estado binario: 0 = sin carro, 1 = con carro (cualquier tipo 1-6)
+    // Índice 0: 000 → resultado
+    // Índice 1: 001 → resultado
+    // Índice 2: 010 → resultado
+    // Índice 3: 011 → resultado
+    // Índice 4: 100 → resultado
+    // Índice 5: 101 → resultado
+    // Índice 6: 110 → resultado
+    // Índice 7: 111 → resultado
+    const transitionCount = new Array(8).fill(0);
 
     // Acceder a la variable global 'calles' definida en trafico.js
     if (!window.calles) {
@@ -296,6 +339,12 @@ function calculateMetrics() {
     const currentStates = new Map();
 
     window.calles.forEach((calle, calleIdx) => {
+        // Filtrar calles según configuración (si callesIncluidasEnMetricas es null, incluir todas)
+        if (callesIncluidasEnMetricas !== null && !callesIncluidasEnMetricas.has(calleIdx)) {
+            // Esta calle está excluida de las métricas, omitir
+            return;
+        }
+
         for (let c = 0; c < calle.carriles; c++) {
             totalCells += calle.tamano;
 
@@ -315,30 +364,25 @@ function calculateMetrics() {
                     }
                 }
 
-                // Calcular transiciones comparando con estado anterior
-                const prevValue = previousStreetStates.get(cellKey) ?? 0;
-                const prevCellKey = `${calleIdx}-${c}-${Math.max(0, i - 1)}`;
-                const prevLeftValue = i > 0 ? (previousStreetStates.get(prevCellKey) ?? 0) : 0;
+                // Calcular transiciones basadas en vecindario de 3 celdas (izquierda, centro, derecha)
+                // Solo si hay estado anterior disponible
+                if (previousStreetStates.size > 0) {
+                    // Obtener estado anterior de las 3 celdas del vecindario (en binario: 0 o 1)
+                    const leftKey = `${calleIdx}-${c}-${i === 0 ? calle.tamano - 1 : i - 1}`;
+                    const centerKey = `${calleIdx}-${c}-${i}`;
+                    const rightKey = `${calleIdx}-${c}-${(i + 1) % calle.tamano}`;
 
-                // Clasificar la transición
-                if (prevValue === 0 && cellValue === 0) {
-                    // STAY_EMPTY: celda permanece vacía
-                    transitionCount[0]++;
-                } else if (prevValue === 0 && cellValue > 0) {
-                    // Vehículo aparece en celda
-                    if (prevLeftValue > 0) {
-                        // ADVANCE: vehículo avanzó desde celda anterior
-                        transitionCount[1]++;
-                    } else {
-                        // SPAWN: vehículo generado (apareció de la nada)
-                        transitionCount[4]++;
-                    }
-                } else if (prevValue > 0 && cellValue > 0) {
-                    // STOPPED: vehículo permanece en la misma celda
-                    transitionCount[2]++;
-                } else if (prevValue > 0 && cellValue === 0) {
-                    // MOVE_OUT: vehículo salió de la celda
-                    transitionCount[3]++;
+                    // Convertir a estado binario: 0 = sin carro, 1 = con carro
+                    const leftState = (previousStreetStates.get(leftKey) ?? 0) > 0 ? 1 : 0;
+                    const centerState = (previousStreetStates.get(centerKey) ?? 0) > 0 ? 1 : 0;
+                    const rightState = (previousStreetStates.get(rightKey) ?? 0) > 0 ? 1 : 0;
+
+                    // Calcular índice de la regla (0-7) basado en configuración LCR (Left-Center-Right)
+                    // Fórmula: índice = izquierda*4 + centro*2 + derecha
+                    const ruleIndex = (leftState << 2) | (centerState << 1) | rightState;
+
+                    // Incrementar contador de esta transición
+                    transitionCount[ruleIndex]++;
                 }
             }
         }
@@ -813,19 +857,19 @@ function initializeCharts() {
                                 return [
                                     `${value.toFixed(3)} bits`,
                                     '',
-                                    'Mide la diversidad de REGLAS',
-                                    'aplicadas en el autómata celular',
+                                    'Mide la diversidad de las',
+                                    '8 TRANSICIONES del autómata',
+                                    'basadas en vecindario (L-C-R)',
                                     '',
-                                    'Reglas medidas:',
-                                    '• Celda vacía (permanece)',
-                                    '• Vehículo avanza',
-                                    '• Vehículo se detiene',
-                                    '• Vehículo sale',
-                                    '• Vehículo generado',
+                                    'Transiciones medidas:',
+                                    '• 000, 001, 010, 011',
+                                    '• 100, 101, 110, 111',
                                     '',
-                                    'Máximo: 2.322 bits (5 reglas)',
-                                    '0 bits = Una sola regla activa',
-                                    'Alto = Reglas variadas'
+                                    'Estado binario: 0=vacío, 1=carro',
+                                    '',
+                                    'Máximo: 3.000 bits (8 reglas)',
+                                    '0 bits = Una sola transición',
+                                    'Alto = Transiciones variadas'
                                 ];
                             }
                         }
@@ -836,7 +880,7 @@ function initializeCharts() {
                     y: {
                         ...commonOptions.scales.y,
                         min: 0,
-                        max: 2.5,
+                        max: 3.0,
                         ticks: {
                             ...commonOptions.scales.y.ticks,
                             callback: function(value) {
@@ -1065,7 +1109,7 @@ function descargarMetricasJSON() {
             throughput: 'Flujo vehicular real (Q = Densidad × Velocidad) en veh/s',
             netGeneration: 'Tasa de cambio neta de población vehicular en veh/s',
             speed: 'Porcentaje de vehículos en movimiento',
-            entropy: 'Entropía de Shannon del autómata celular en bits (mide diversidad de reglas/transiciones aplicadas: vacío, avanzar, detenerse, salir, generar)'
+            entropy: 'Entropía de Shannon del autómata celular en bits (mide diversidad de las 8 transiciones basadas en vecindario de 3 celdas: 000, 001, 010, 011, 100, 101, 110, 111 con estado binario 0=vacío, 1=carro)'
         }
     };
 
@@ -1208,7 +1252,357 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('🌡️ Abriendo modal de mapa de calor');
         });
     }
+
+    // Botón para abrir modal de configuración de calles en métricas
+    const btnConfigCallesMetricas = document.getElementById('btnConfigCallesMetricas');
+    if (btnConfigCallesMetricas) {
+        btnConfigCallesMetricas.addEventListener('click', abrirModalConfiguracionCalles);
+    }
+
+    // Botón para seleccionar todas las calles
+    const btnSeleccionarTodasCalles = document.getElementById('btnSeleccionarTodasCalles');
+    if (btnSeleccionarTodasCalles) {
+        btnSeleccionarTodasCalles.addEventListener('click', () => {
+            incluirTodasLasCalles();
+            actualizarListaCallesEnModal();
+
+            // Actualizar overlays si el modo está activo
+            if (modoSeleccionCallesActivo && window.pixiApp?.sceneManager && window.pixiApp?.sceneManager.calleRenderer) {
+                if (typeof window.pixiApp?.sceneManager.calleRenderer.updateAllMetricsOverlays === 'function') {
+                    window.pixiApp?.sceneManager.calleRenderer.updateAllMetricsOverlays();
+                }
+            }
+        });
+    }
+
+    // Botón para deseleccionar todas las calles
+    const btnDeseleccionarTodasCalles = document.getElementById('btnDeseleccionarTodasCalles');
+    if (btnDeseleccionarTodasCalles) {
+        btnDeseleccionarTodasCalles.addEventListener('click', () => {
+            excluirTodasLasCalles();
+            actualizarListaCallesEnModal();
+
+            // Actualizar overlays si el modo está activo
+            if (modoSeleccionCallesActivo && window.pixiApp?.sceneManager && window.pixiApp?.sceneManager.calleRenderer) {
+                if (typeof window.pixiApp?.sceneManager.calleRenderer.updateAllMetricsOverlays === 'function') {
+                    window.pixiApp?.sceneManager.calleRenderer.updateAllMetricsOverlays();
+                }
+            }
+        });
+    }
+
+    // Botón para activar/desactivar modo de selección de calles desde el mapa
+    const btnModoSeleccionCalles = document.getElementById('btnModoSeleccionCalles');
+    if (btnModoSeleccionCalles) {
+        btnModoSeleccionCalles.addEventListener('click', () => {
+            const nuevoEstado = !modoSeleccionCallesActivo;
+            activarModoSeleccionCalles(nuevoEstado);
+        });
+    }
 });
+
+// ==================== FUNCIONES DE GESTIÓN DE CALLES EN MÉTRICAS ====================
+
+/**
+ * Inicializa la configuración de calles excluidas por defecto
+ * Debe llamarse después de que window.calles esté disponible
+ */
+function inicializarCallesExcluidasPorDefecto() {
+    if (!window.calles || window.calles.length === 0) {
+        console.warn('⚠️ No se pueden inicializar calles excluidas: window.calles no disponible');
+        return;
+    }
+
+    let callesExcluidas = 0;
+
+    // Recorrer todas las calles y excluir las que están en la lista
+    window.calles.forEach((calle, idx) => {
+        if (CALLES_EXCLUIDAS_POR_DEFECTO.includes(calle.nombre)) {
+            excluirCalle(idx);
+            callesExcluidas++;
+        }
+    });
+
+    console.log(`🚫 Inicialización: ${callesExcluidas} calles excluidas por defecto de las métricas`);
+}
+
+/**
+ * Incluye todas las calles en el cálculo de métricas
+ */
+function incluirTodasLasCalles() {
+    callesIncluidasEnMetricas = null;
+    console.log('✅ Todas las calles incluidas en métricas');
+}
+
+/**
+ * Excluye todas las calles del cálculo de métricas
+ */
+function excluirTodasLasCalles() {
+    callesIncluidasEnMetricas = new Set();
+    console.log('⚠️ Todas las calles excluidas de métricas');
+}
+
+/**
+ * Incluye una calle específica en el cálculo de métricas
+ * @param {number} calleIdx - Índice de la calle a incluir
+ */
+function incluirCalle(calleIdx) {
+    // Si es null, crear un Set con todas las calles
+    if (callesIncluidasEnMetricas === null) {
+        callesIncluidasEnMetricas = new Set();
+        if (window.calles) {
+            for (let i = 0; i < window.calles.length; i++) {
+                callesIncluidasEnMetricas.add(i);
+            }
+        }
+    }
+    callesIncluidasEnMetricas.add(calleIdx);
+}
+
+/**
+ * Excluye una calle específica del cálculo de métricas
+ * @param {number} calleIdx - Índice de la calle a excluir
+ */
+function excluirCalle(calleIdx) {
+    // Si es null, crear un Set con todas las calles excepto esta
+    if (callesIncluidasEnMetricas === null) {
+        callesIncluidasEnMetricas = new Set();
+        if (window.calles) {
+            for (let i = 0; i < window.calles.length; i++) {
+                if (i !== calleIdx) {
+                    callesIncluidasEnMetricas.add(i);
+                }
+            }
+        }
+    } else {
+        callesIncluidasEnMetricas.delete(calleIdx);
+    }
+}
+
+/**
+ * Verifica si una calle está incluida en las métricas
+ * @param {number} calleIdx - Índice de la calle
+ * @returns {boolean} true si está incluida, false si no
+ */
+function calleEstaIncluidaEnMetricas(calleIdx) {
+    if (callesIncluidasEnMetricas === null) {
+        return true; // Todas incluidas por defecto
+    }
+    return callesIncluidasEnMetricas.has(calleIdx);
+}
+
+/**
+ * Obtiene un arreglo con los índices de las calles incluidas
+ * @returns {number[]} Arreglo de índices de calles incluidas
+ */
+function obtenerCallesIncluidasEnMetricas() {
+    if (callesIncluidasEnMetricas === null) {
+        // Todas incluidas
+        if (!window.calles) return [];
+        return Array.from({ length: window.calles.length }, (_, i) => i);
+    }
+    return Array.from(callesIncluidasEnMetricas);
+}
+
+/**
+ * Obtiene la cantidad de calles incluidas
+ * @returns {number} Número de calles incluidas
+ */
+function obtenerCantidadCallesIncluidas() {
+    if (callesIncluidasEnMetricas === null) {
+        return window.calles ? window.calles.length : 0;
+    }
+    return callesIncluidasEnMetricas.size;
+}
+
+/**
+ * Abre el modal de configuración de calles en métricas
+ */
+function abrirModalConfiguracionCalles() {
+    const modal = document.getElementById('modalConfigCallesMetricas');
+    if (!modal) {
+        console.error('Modal de configuración de calles no encontrado');
+        return;
+    }
+
+    // Actualizar la lista de calles
+    actualizarListaCallesEnModal();
+
+    // Abrir el modal usando Bootstrap
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
+
+/**
+ * Actualiza la lista de calles en el modal de configuración
+ */
+function actualizarListaCallesEnModal() {
+    const container = document.getElementById('listaCallesMetricas');
+    if (!container || !window.calles) return;
+
+    // Limpiar contenido actual
+    container.innerHTML = '';
+
+    // Crear checkboxes para cada calle
+    window.calles.forEach((calle, idx) => {
+        const isIncluded = calleEstaIncluidaEnMetricas(idx);
+
+        const div = document.createElement('div');
+        div.className = 'form-check';
+        div.innerHTML = `
+            <input class="form-check-input" type="checkbox" id="calleMetrica${idx}"
+                   data-calle-idx="${idx}" ${isIncluded ? 'checked' : ''}>
+            <label class="form-check-label" for="calleMetrica${idx}">
+                ${calle.nombre || `Calle ${idx + 1}`}
+                <span class="text-muted" style="font-size: 0.85em;">
+                    (${calle.carriles} carril${calle.carriles > 1 ? 'es' : ''}, ${calle.tamano} celdas)
+                </span>
+            </label>
+        `;
+
+        // Agregar event listener al checkbox
+        const checkbox = div.querySelector('input');
+        checkbox.addEventListener('change', (e) => {
+            const calleIdx = parseInt(e.target.dataset.calleIdx);
+            if (e.target.checked) {
+                incluirCalle(calleIdx);
+            } else {
+                excluirCalle(calleIdx);
+            }
+            actualizarContadorCallesIncluidas();
+
+            // Actualizar overlay si el modo está activo
+            if (modoSeleccionCallesActivo && window.pixiApp?.sceneManager && window.pixiApp?.sceneManager.calleRenderer && window.calles) {
+                const calle = window.calles[calleIdx];
+                if (calle) {
+                    if (calle.esCurva) {
+                        window.pixiApp?.sceneManager.calleRenderer.removeCalleSprite(calle);
+                        window.pixiApp?.sceneManager.calleRenderer.renderCalleCurva(calle);
+                    } else {
+                        if (typeof window.pixiApp?.sceneManager.calleRenderer.updateMetricsOverlay === 'function') {
+                            window.pixiApp?.sceneManager.calleRenderer.updateMetricsOverlay(calle);
+                        }
+                    }
+                }
+            }
+        });
+
+        container.appendChild(div);
+    });
+
+    actualizarContadorCallesIncluidas();
+}
+
+/**
+ * Actualiza el contador de calles incluidas en el modal
+ */
+function actualizarContadorCallesIncluidas() {
+    const contador = document.getElementById('contadorCallesIncluidas');
+    if (contador) {
+        const incluidas = obtenerCantidadCallesIncluidas();
+        const total = window.calles ? window.calles.length : 0;
+        contador.textContent = `${incluidas} de ${total} calles incluidas`;
+    }
+}
+
+/**
+ * Activa o desactiva el modo de selección de calles desde el mapa
+ * @param {boolean} activar - true para activar, false para desactivar
+ */
+function activarModoSeleccionCalles(activar) {
+    modoSeleccionCallesActivo = activar;
+
+    console.log(`🎯 ${activar ? 'ACTIVANDO' : 'DESACTIVANDO'} modo de selección de calles...`);
+
+    // Actualizar botón en la UI
+    const btn = document.getElementById('btnModoSeleccionCalles');
+    if (btn) {
+        if (activar) {
+            btn.classList.add('active');
+            btn.classList.remove('btn-outline-primary');
+            btn.classList.add('btn-primary');
+            btn.innerHTML = '🎯 Modo Selección: ON';
+            console.log('✅ Modo de selección de calles ACTIVADO - Click en las calles para incluir/excluir');
+        } else {
+            btn.classList.remove('active');
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline-primary');
+            btn.innerHTML = '🎯 Seleccionar desde Mapa';
+            console.log('⏹️ Modo de selección de calles DESACTIVADO');
+        }
+    }
+
+    // Actualizar overlays de todas las calles
+    const sceneManager = window.pixiApp?.sceneManager;
+    if (sceneManager && sceneManager.calleRenderer) {
+        console.log(`📊 Actualizando overlays para ${window.calles ? window.calles.length : 0} calles...`);
+        if (typeof sceneManager.calleRenderer.updateAllMetricsOverlays === 'function') {
+            sceneManager.calleRenderer.updateAllMetricsOverlays();
+            console.log('✅ Overlays actualizados');
+        } else {
+            console.error('❌ Función updateAllMetricsOverlays no encontrada');
+        }
+    } else {
+        console.error('❌ pixiApp, sceneManager o calleRenderer no encontrados');
+        console.log('Debug - window.pixiApp:', window.pixiApp);
+        console.log('Debug - sceneManager:', sceneManager);
+    }
+}
+
+/**
+ * Verifica si el modo de selección de calles está activo
+ * @returns {boolean} true si está activo
+ */
+function esModoSeleccionCallesActivo() {
+    return modoSeleccionCallesActivo;
+}
+
+/**
+ * Maneja el click en una calle para incluir/excluir de métricas
+ * Esta función debe ser llamada desde el click handler de las calles
+ * @param {number} calleIdx - Índice de la calle clickeada
+ */
+function toggleCalleEnMetricas(calleIdx) {
+    if (!modoSeleccionCallesActivo) {
+        return; // Solo funciona si el modo está activo
+    }
+
+    const estaIncluida = calleEstaIncluidaEnMetricas(calleIdx);
+
+    if (estaIncluida) {
+        excluirCalle(calleIdx);
+        console.log(`❌ Calle ${calleIdx} excluida de métricas`);
+    } else {
+        incluirCalle(calleIdx);
+        console.log(`✅ Calle ${calleIdx} incluida en métricas`);
+    }
+
+    // Actualizar contador si el modal está abierto
+    actualizarContadorCallesIncluidas();
+
+    // Actualizar checkboxes si el modal está abierto
+    const checkbox = document.getElementById(`calleMetrica${calleIdx}`);
+    if (checkbox) {
+        checkbox.checked = !estaIncluida;
+    }
+
+    // Actualizar overlay de la calle específica
+    if (window.pixiApp?.sceneManager && window.pixiApp?.sceneManager.calleRenderer && window.calles) {
+        const calle = window.calles[calleIdx];
+        if (calle) {
+            if (calle.esCurva) {
+                // Para calles curvas, reconstruir
+                window.pixiApp?.sceneManager.calleRenderer.removeCalleSprite(calle);
+                window.pixiApp?.sceneManager.calleRenderer.renderCalleCurva(calle);
+            } else {
+                // Para calles rectas, solo actualizar overlay
+                if (typeof window.pixiApp?.sceneManager.calleRenderer.updateMetricsOverlay === 'function') {
+                    window.pixiApp?.sceneManager.calleRenderer.updateMetricsOverlay(calle);
+                }
+            }
+        }
+    }
+}
 
 // ==================== EXPONER FUNCIONES AL SCOPE GLOBAL ====================
 
@@ -1220,3 +1614,17 @@ window.updateCharts = updateCharts;
 window.descargarMetricasCSV = descargarMetricasCSV;
 window.descargarMetricasJSON = descargarMetricasJSON;
 window.limpiarMetricas = limpiarMetricas;
+
+// Exponer funciones de gestión de calles en métricas
+window.inicializarCallesExcluidasPorDefecto = inicializarCallesExcluidasPorDefecto;
+window.incluirTodasLasCalles = incluirTodasLasCalles;
+window.excluirTodasLasCalles = excluirTodasLasCalles;
+window.incluirCalle = incluirCalle;
+window.excluirCalle = excluirCalle;
+window.calleEstaIncluidaEnMetricas = calleEstaIncluidaEnMetricas;
+window.obtenerCallesIncluidasEnMetricas = obtenerCallesIncluidasEnMetricas;
+window.obtenerCantidadCallesIncluidas = obtenerCantidadCallesIncluidas;
+window.abrirModalConfiguracionCalles = abrirModalConfiguracionCalles;
+window.activarModoSeleccionCalles = activarModoSeleccionCalles;
+window.esModoSeleccionCallesActivo = esModoSeleccionCallesActivo;
+window.toggleCalleEnMetricas = toggleCalleEnMetricas;

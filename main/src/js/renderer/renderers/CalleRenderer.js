@@ -143,6 +143,56 @@ class CalleRenderer {
             }
         }
 
+        // Agregar overlay de contorno si modo selección está activo
+        if (window.esModoSeleccionCallesActivo && window.esModoSeleccionCallesActivo()) {
+            const calleIdx = window.calles ? window.calles.indexOf(calle) : -1;
+            const estaIncluida = window.calleEstaIncluidaEnMetricas ? window.calleEstaIncluidaEnMetricas(calleIdx) : true;
+
+            const overlay = new PIXI.Graphics();
+            overlay.name = 'metricsOverlay';
+
+            // IMPORTANTE: Desactivar interactividad para que no bloquee clicks
+            overlay.eventMode = 'none';
+
+            // Configurar estilo según si está incluida o no
+            if (estaIncluida) {
+                overlay.lineStyle(3, 0x00ff00, 1.0); // Borde verde sólido
+                overlay.beginFill(0x00ff00, 0.15); // Relleno verde muy transparente
+            } else {
+                overlay.lineStyle(3, 0xff0000, 1.0); // Borde rojo sólido
+                overlay.beginFill(0xff0000, 0.25); // Relleno rojo semi-transparente
+            }
+
+            // Dibujar contorno siguiendo la forma de la calle curva
+            if (window.obtenerCoordenadasGlobalesCeldaConCurva) {
+                // Borde superior (primer carril)
+                for (let i = 0; i < calle.tamano; i++) {
+                    const coords = window.obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, i);
+
+                    if (i === 0) {
+                        overlay.moveTo(coords.x, coords.y);
+                    } else {
+                        overlay.lineTo(coords.x, coords.y);
+                    }
+                }
+
+                // Borde inferior (último carril) - ir en reversa
+                for (let i = calle.tamano - 1; i >= 0; i--) {
+                    const coords = window.obtenerCoordenadasGlobalesCeldaConCurva(calle, calle.carriles - 1, i);
+                    overlay.lineTo(coords.x, coords.y);
+                }
+
+                // Cerrar el contorno
+                const firstCoords = window.obtenerCoordenadasGlobalesCeldaConCurva(calle, 0, 0);
+                overlay.lineTo(firstCoords.x, firstCoords.y);
+            }
+
+            overlay.endFill();
+            container.addChild(overlay);
+
+            console.log(`🎨 Overlay de contorno ${estaIncluida ? 'VERDE' : 'ROJO'} agregado a calle curva:`, calle.nombre);
+        }
+
         // Agregar borde si está seleccionada
         if (window.calleSeleccionada === calle) {
             this.addSelectionBorderCurva(container, calle);
@@ -261,6 +311,89 @@ class CalleRenderer {
         }
     }
 
+    /**
+     * Actualiza el overlay de métricas para una calle recta
+     */
+    updateMetricsOverlay(calle) {
+        const container = this.scene.calleSprites.get(calle);
+        if (!container) {
+            console.warn('⚠️ updateMetricsOverlay: Container no encontrado para calle', calle.nombre);
+            return;
+        }
+
+        // Remover overlay anterior si existe
+        const children = [...container.children]; // Crear copia para iterar seguramente
+        for (const child of children) {
+            if (child.name === 'metricsOverlay') {
+                container.removeChild(child);
+                child.destroy();
+            }
+        }
+
+        // Agregar nuevo overlay si modo selección está activo
+        if (window.esModoSeleccionCallesActivo && window.esModoSeleccionCallesActivo()) {
+            const calleIdx = window.calles ? window.calles.indexOf(calle) : -1;
+            const estaIncluida = window.calleEstaIncluidaEnMetricas ? window.calleEstaIncluidaEnMetricas(calleIdx) : true;
+
+            const overlay = new PIXI.Graphics();
+            overlay.name = 'metricsOverlay';
+
+            // IMPORTANTE: Desactivar interactividad para que no bloquee clicks
+            overlay.eventMode = 'none';
+
+            // Hacer el overlay mucho más visible
+            if (estaIncluida) {
+                // Calle incluida: overlay verde con borde grueso
+                overlay.lineStyle(3, 0x00ff00, 1.0); // Borde verde sólido
+                overlay.beginFill(0x00ff00, 0.15); // Relleno verde muy transparente
+            } else {
+                // Calle excluida: overlay rojo con borde grueso
+                overlay.lineStyle(3, 0xff0000, 1.0); // Borde rojo sólido
+                overlay.beginFill(0xff0000, 0.25); // Relleno rojo semi-transparente
+            }
+
+            overlay.drawRect(0, 0, calle.tamano * this.celda_tamano, calle.carriles * this.celda_tamano);
+            overlay.endFill();
+
+            // Agregar como último hijo para que esté encima de todo
+            container.addChild(overlay);
+
+            console.log(`🎨 Overlay ${estaIncluida ? 'VERDE' : 'ROJO'} agregado a calle:`, calle.nombre);
+        }
+    }
+
+    /**
+     * Actualiza todos los overlays de métricas
+     */
+    updateAllMetricsOverlays() {
+        if (!window.calles) {
+            console.warn('⚠️ updateAllMetricsOverlays: No hay calles definidas');
+            return;
+        }
+
+        console.log(`🔄 Actualizando overlays de ${window.calles.length} calles...`);
+
+        let rectasActualizadas = 0;
+        let curvasActualizadas = 0;
+
+        window.calles.forEach((calle, idx) => {
+            if (calle.esCurva) {
+                // Para calles curvas, reconstruir completamente
+                console.log(`  Reconstruyendo calle curva [${idx}]:`, calle.nombre);
+                this.removeCalleSprite(calle);
+                this.renderCalleCurva(calle);
+                curvasActualizadas++;
+            } else {
+                // Para calles rectas, solo actualizar overlay
+                console.log(`  Actualizando overlay de calle recta [${idx}]:`, calle.nombre);
+                this.updateMetricsOverlay(calle);
+                rectasActualizadas++;
+            }
+        });
+
+        console.log(`✅ Overlays actualizados: ${rectasActualizadas} rectas, ${curvasActualizadas} curvas`);
+    }
+
     removeCalleSprite(calle) {
         const container = this.scene.calleSprites.get(calle);
         if (container) {
@@ -300,6 +433,23 @@ class CalleRenderer {
 
         // Detener propagación para evitar conflictos
         event.stopPropagation();
+
+        // PRIORIDAD 0: Si el modo de selección de calles para métricas está activo
+        if (window.esModoSeleccionCallesActivo && window.esModoSeleccionCallesActivo()) {
+            console.log('🎯 Modo selección de calles activo - toggling calle en métricas');
+
+            // Obtener el índice de la calle
+            const calleIdx = window.calles ? window.calles.indexOf(calle) : -1;
+
+            if (calleIdx !== -1 && window.toggleCalleEnMetricas) {
+                window.toggleCalleEnMetricas(calleIdx);
+            } else {
+                console.warn('⚠️ No se pudo encontrar el índice de la calle o la función toggleCalleEnMetricas');
+            }
+
+            // Salir sin ejecutar la lógica normal de clicks
+            return;
+        }
 
         // PRIORIDAD 1: Si el modo bloqueo está activo, manejar el bloqueo de carriles
         if (window.estadoEscenarios && window.estadoEscenarios.modoBloqueoActivo) {

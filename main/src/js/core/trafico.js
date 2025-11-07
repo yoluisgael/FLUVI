@@ -722,7 +722,7 @@ class ConexionCA {
                 const seTransfiere = Math.random() < this.probabilidadTransferencia;
 
                 if (!seTransfiere) {
-                    console.log(`🎲 CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] NO se transfiere (probabilidad ${this.probabilidadTransferencia})`);
+                    // console.log(`🎲 CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] NO se transfiere (probabilidad ${this.probabilidadTransferencia})`);
                     return false;
                 }
             }
@@ -731,17 +731,17 @@ class ConexionCA {
             if (this.destino.arreglo[this.carrilDestino][this.posDestino] > 0) {
                 this.bloqueada = true;
                 this.origen.celulasEsperando[this.carrilOrigen][posOrig] = true;
-                console.log(`🔴 CONEXIÓN BLOQUEADA: [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}] - Destino ocupado`);
+                // console.log(`🔴 CONEXIÓN BLOQUEADA: [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}] - Destino ocupado`);
                 return false;
             } else {
                 if (!this.origen.celulasEsperando[this.carrilOrigen][posOrig]) {
                     // Transferir el tipo de vehículo
                     this.destino.arreglo[this.carrilDestino][this.posDestino] = vehiculoOrigen;
                     this.origen.arreglo[this.carrilOrigen][posOrig] = 0;
-                    console.log(`✅ CONEXIÓN EXITOSA: Vehículo tipo ${vehiculoOrigen} de [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}]`);
+                    // console.log(`✅ CONEXIÓN EXITOSA: Vehículo tipo ${vehiculoOrigen} de [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] → [${this.destino.nombre}][Carril ${this.carrilDestino}, Pos ${this.posDestino}]`);
                     return true;
                 } else {
-                    console.log(`⏸️ CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] está esperando`);
+                    // console.log(`⏸️ CONEXIÓN: Vehículo tipo ${vehiculoOrigen} en [${this.origen.nombre}][Carril ${this.carrilOrigen}, Pos ${posOrig}] está esperando`);
                     return false;
                 }
             }
@@ -945,7 +945,7 @@ function generarCelulas(calle) {
                 // Generar tipo aleatorio de vehículo (1-6)
                 const tipoVehiculo = Math.floor(Math.random() * 6) + 1;
                 calle.arreglo[carril][0] = tipoVehiculo;
-                console.log(`🏭 Generador "${calle.nombre}": Vehículo tipo ${tipoVehiculo} en carril ${carril + 1}, posición 0`);
+                // console.log(`🏭 Generador "${calle.nombre}": Vehículo tipo ${tipoVehiculo} en carril ${carril + 1}, posición 0`);
             }
         }
     }
@@ -967,7 +967,7 @@ function actualizarCalle(calle, calleIndex) {
             if (calle.celulasEsperando[c][i]) {
                 nuevaCalle[c][i] = calle.arreglo[c][i];
                 if (calle.arreglo[c][i] > 0) {
-                    console.log(`⏸️ CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} está esperando (celda bloqueada)`);
+                    // console.log(`⏸️ CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} está esperando (celda bloqueada)`);
                 }
                 continue;
             }
@@ -988,34 +988,34 @@ function actualizarCalle(calle, calleIndex) {
 
                         // Procesar vehículo en la celda de entrada
                         if (vehiculoEnCelda >= 1 && vehiculoEnCelda <= 6) {
-                            console.log(`🔍 ENTRADA DETECTADA: Vehículo tipo ${vehiculoEnCelda} en celda de entrada [${c},${i}] de "${edificio.label}"`);
+                            // console.log(`🔍 ENTRADA DETECTADA: Vehículo tipo ${vehiculoEnCelda} en celda de entrada [${c},${i}] de "${edificio.label}"`);
 
                             // Obtener hora actual del simulador
                             const horaActual = window.configuracionTiempo?.horaActual || 0;
 
                             // Intentar absorber el vehículo con probabilidad
                             const absorbido = window.procesarEntradaVehiculo?.(edificio, vehiculoEnCelda, horaActual);
-                            console.log(`🎲 PROBABILIDAD ENTRADA: ${absorbido ? 'ACEPTADO' : 'RECHAZADO'} para "${edificio.label}"`);
+                            // console.log(`🎲 PROBABILIDAD ENTRADA: ${absorbido ? 'ACEPTADO' : 'RECHAZADO'} para "${edificio.label}"`);
 
                             if (absorbido) {
                                 // Vehículo absorbido - eliminar de la celda actual
                                 nuevaCalle[c][i] = 0;
-                                console.log(`✅ ENTRADA EXITOSA: Vehículo tipo ${vehiculoEnCelda} absorbido por "${edificio.label}" en [${c},${i}] - Celda eliminada`);
+                                // console.log(`✅ ENTRADA EXITOSA: Vehículo tipo ${vehiculoEnCelda} absorbido por "${edificio.label}" en [${c},${i}] - Celda eliminada`);
                                 continue;
                             } else {
-                                console.log(`❌ ENTRADA RECHAZADA: Vehículo tipo ${vehiculoEnCelda} NO fue absorbido por "${edificio.label}" - sigue su camino`);
+                                // console.log(`❌ ENTRADA RECHAZADA: Vehículo tipo ${vehiculoEnCelda} NO fue absorbido por "${edificio.label}" - sigue su camino`);
                             }
                         }
                         // Procesar vehículo que está LLEGANDO a la entrada (en celda anterior)
                         else if (vehiculoEnCeldaAnterior >= 1 && vehiculoEnCeldaAnterior <= 6 && vehiculoEnCelda === 0) {
-                            console.log(`🔍 ENTRADA ANTICIPADA: Vehículo tipo ${vehiculoEnCeldaAnterior} en celda anterior [${c},${i-1}] acercándose a entrada de "${edificio.label}"`);
+                            // console.log(`🔍 ENTRADA ANTICIPADA: Vehículo tipo ${vehiculoEnCeldaAnterior} en celda anterior [${c},${i-1}] acercándose a entrada de "${edificio.label}"`);
 
                             // Obtener hora actual del simulador
                             const horaActual = window.configuracionTiempo?.horaActual || 0;
 
                             // Intentar absorber el vehículo con probabilidad
                             const absorbido = window.procesarEntradaVehiculo?.(edificio, vehiculoEnCeldaAnterior, horaActual);
-                            console.log(`🎲 PROBABILIDAD ENTRADA ANTICIPADA: ${absorbido ? 'ACEPTADO' : 'RECHAZADO'} para "${edificio.label}"`);
+                            // console.log(`🎲 PROBABILIDAD ENTRADA ANTICIPADA: ${absorbido ? 'ACEPTADO' : 'RECHAZADO'} para "${edificio.label}"`);
 
                             if (absorbido) {
                                 // Vehículo absorbido - eliminar de la celda ANTERIOR y marcar entrada como vacía
@@ -1023,7 +1023,7 @@ function actualizarCalle(calle, calleIndex) {
                                     nuevaCalle[c][i - 1] = 0;
                                 }
                                 nuevaCalle[c][i] = 0;
-                                console.log(`✅ ENTRADA ANTICIPADA EXITOSA: Vehículo tipo ${vehiculoEnCeldaAnterior} absorbido desde [${c},${i-1}] por "${edificio.label}"`);
+                                // console.log(`✅ ENTRADA ANTICIPADA EXITOSA: Vehículo tipo ${vehiculoEnCeldaAnterior} absorbido desde [${c},${i-1}] por "${edificio.label}"`);
                                 continue;
                             }
                         }
@@ -1043,11 +1043,11 @@ function actualizarCalle(calle, calleIndex) {
                             if (tipoVehiculo !== null) {
                                 // Vehículo generado - colocarlo en esta celda
                                 nuevaCalle[c][i] = tipoVehiculo;
-                                console.log(`✅ SALIDA EXITOSA: Vehículo tipo ${tipoVehiculo} generado desde "${edificio.label}" en [${c},${i}]`);
+                                // console.log(`✅ SALIDA EXITOSA: Vehículo tipo ${tipoVehiculo} generado desde "${edificio.label}" en [${c},${i}]`);
                                 continue;
                             }
                         } else if (!celdaAnteriorVacia) {
-                            console.log(`⏸️ SALIDA BLOQUEADA: No se puede generar salida en "${edificio.label}" [${c},${i}] - celda anterior [${i-1}] ocupada`);
+                            // console.log(`⏸️ SALIDA BLOQUEADA: No se puede generar salida en "${edificio.label}" [${c},${i}] - celda anterior [${i-1}] ocupada`);
                         }
                     }
                 }
@@ -1057,7 +1057,7 @@ function actualizarCalle(calle, calleIndex) {
             // Si tiene conexión de salida, no mover
             if (tieneConexionSalida(calle, c, i) && calle.arreglo[c][i] > 0) {
                 nuevaCalle[c][i] = calle.arreglo[c][i];
-                console.log(`🔗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} esperando en conexión de salida`);
+                // console.log(`🔗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Vehículo tipo ${calle.arreglo[c][i]} esperando en conexión de salida`);
                 continue;
             }
 
@@ -1087,7 +1087,7 @@ function actualizarCalle(calle, calleIndex) {
 
                     // Log solo si el vehículo se movió (cambió de posición)
                     if (izq > 0 && resultadoRegla > 0) {
-                        console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} avanza desde pos ${i-1}`);
+                        // console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} avanza desde pos ${i-1}`);
                     }
                 } else {
                     nuevaCalle[c][i] = resultadoRegla;
@@ -1095,9 +1095,9 @@ function actualizarCalle(calle, calleIndex) {
                     // Log cuando una celda cambia de estado
                     if (centro !== resultadoRegla) {
                         if (resultadoRegla === 0 && centro > 0) {
-                            console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} sale de la celda`);
+                            // console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo tipo ${centro} sale de la celda`);
                         } else if (resultadoRegla > 0 && centro === 0) {
-                            console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo llega a celda vacía`);
+                            // console.log(`🚗 CA: [${calle.nombre}][Carril ${c}, Pos ${i}] Patrón[${patron}] → Vehículo llega a celda vacía`);
                         }
                     }
                 }
@@ -1118,7 +1118,7 @@ function actualizarCalle(calle, calleIndex) {
         for (let c = 0; c < calle.carriles; c++) {
             const vehiculoEliminado = calle.arreglo[c][calle.tamano - 1];
             if (vehiculoEliminado > 0) {
-                console.log(`🗑️ CA: [${calle.nombre}][Carril ${c}, Pos ${calle.tamano - 1}] DEVORADOR elimina vehículo tipo ${vehiculoEliminado}`);
+                // console.log(`🗑️ CA: [${calle.nombre}][Carril ${c}, Pos ${calle.tamano - 1}] DEVORADOR elimina vehículo tipo ${vehiculoEliminado}`);
             }
             calle.arreglo[c][calle.tamano - 1] = 0;
         }
@@ -1269,7 +1269,7 @@ function cambioCarril(calle) {
 
             if (mismaColumnaOrigen && mismaColumnaDestino && carrilesAdyacentesOrigen && carrilesAdyacentesDestino && seCruzan) {
                 // Cruce en X detectado
-                console.log(`🚫 Cruce en X detectado: [${cambioA.desde.carril},${cambioA.desde.posicion}]→[${cambioA.hacia.carril},${cambioA.hacia.posicion}] vs [${cambioB.desde.carril},${cambioB.desde.posicion}]→[${cambioB.hacia.carril},${cambioB.hacia.posicion}]`);
+                // console.log(`🚫 Cruce en X detectado: [${cambioA.desde.carril},${cambioA.desde.posicion}]→[${cambioA.hacia.carril},${cambioA.hacia.posicion}] vs [${cambioB.desde.carril},${cambioB.desde.posicion}]→[${cambioB.hacia.carril},${cambioB.hacia.posicion}]`);
                 cambiosEliminados.add(i);
                 cambiosEliminados.add(j);
                 esCruzado = true;
@@ -1369,7 +1369,7 @@ function cambioCarril(calle) {
             calle.celulasEsperando[cambio.desde.carril][cambio.desde.posicion + 1] = true;
         }
 
-        console.log(`🔄 CAMBIO DE CARRIL: [${calle.nombre}] Vehículo tipo ${cambio.tipoVehiculo} de [Carril ${cambio.desde.carril}, Pos ${cambio.desde.posicion}] → [Carril ${cambio.hacia.carril}, Pos ${cambio.hacia.posicion}]`);
+        // console.log(`🔄 CAMBIO DE CARRIL: [${calle.nombre}] Vehículo tipo ${cambio.tipoVehiculo} de [Carril ${cambio.desde.carril}, Pos ${cambio.desde.posicion}] → [Carril ${cambio.hacia.carril}, Pos ${cambio.hacia.posicion}]`);
     }
 
     // ✅ FASE 5: Validación post-cambio
@@ -1382,7 +1382,7 @@ function cambioCarril(calle) {
         }
     }
 
-    console.log(`📊 Cambios de carril completados: ${cambios.length} movimientos, ${vehiculosFinales} vehículos totales`);
+    // console.log(`📊 Cambios de carril completados: ${cambios.length} movimientos, ${vehiculosFinales} vehículos totales`);
 }
 
 // ========== EXPONER VARIABLES GLOBALES PARA EL EDITOR ==========

@@ -133,19 +133,19 @@ class ClickActionManager {
         }
 
         const currentValue = calle.arreglo[carril][indice];
-        console.log(`🔄 ClickActionManager.toggleVehicle - Valor actual: ${currentValue} (tipo: ${typeof currentValue})`);
+        // console.log(`🔄 ClickActionManager.toggleVehicle - Valor actual: ${currentValue} (tipo: ${typeof currentValue})`);
 
         if (currentValue === 0 || currentValue === undefined) {
             // Celda vacía -> Agregar vehículo
             // Generar tipo aleatorio (1-6 para diferentes texturas)
             const nuevoValor = Math.floor(Math.random() * 6) + 1;
             calle.arreglo[carril][indice] = nuevoValor;
-            console.log(`➕ Vehículo agregado: ${nuevoValor}`);
+            // console.log(`➕ Vehículo agregado: ${nuevoValor}`);
             return true;
         } else {
             // Celda ocupada -> Quitar vehículo
             calle.arreglo[carril][indice] = 0;
-            console.log(`➖ Vehículo quitado (era: ${currentValue})`);
+            // console.log(`➖ Vehículo quitado (era: ${currentValue})`);
             return true;
         }
     }

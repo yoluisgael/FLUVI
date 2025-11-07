@@ -22,7 +22,7 @@ class CarroRenderer {
     renderAll(calles) {
         if (!calles || calles.length === 0) return;
 
-        console.log(`🚗 CarroRenderer: Renderizando vehículos de ${calles.length} calles`);
+        // console.log(`🚗 CarroRenderer: Renderizando vehículos de ${calles.length} calles`);
 
         calles.forEach(calle => {
             this.renderCalleVehiculos(calle);
