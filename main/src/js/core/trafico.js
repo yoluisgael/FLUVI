@@ -2759,7 +2759,7 @@ function iniciarSimulacion() {
         2,  
         María_L_Estampa_Ortigoza2,  
         [  
-            { carrilDestino: 0, posOrigen: 143, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 143, posDestino: 0, probabilidad: 0.35 }  
         ]  
     ));
     
@@ -2851,7 +2851,7 @@ function iniciarSimulacion() {
         2,  
         María_L_Estampa_Ortigoza,  
         [  
-            { carrilDestino: 0, posOrigen: 222, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 222, posDestino: 0, probabilidad: 0.4 }  
         ]  
     ));
     
@@ -2901,8 +2901,8 @@ function iniciarSimulacion() {
         0,  
         RetornoErro2,  
         [  
-            { carrilDestino: 0, posOrigen: 43, posDestino: 0, probabilidad: 0.5 },  
-            { carrilDestino: 1, posOrigen: 44, posDestino: 0, probabilidad: 0.5 }  
+            { carrilDestino: 0, posOrigen: 43, posDestino: 0, probabilidad: 0.4 },  
+            { carrilDestino: 1, posOrigen: 44, posDestino: 0, probabilidad: 0.4 }  
         ]  
     ));
 
@@ -3362,7 +3362,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido3,  
         [  
-            { carrilDestino: 0, posOrigen: 164, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 164, posDestino: 0, probabilidad: 0.3 }  
         ]  
     )); 
 
@@ -3372,7 +3372,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido4,  
         [  
-            { carrilDestino: 0, posOrigen: 176, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 176, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3382,7 +3382,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido10,  
         [  
-            { carrilDestino: 0, posOrigen: 165, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 165, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3392,7 +3392,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido5,  
         [  
-            { carrilDestino: 0, posOrigen: 97, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 97, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     // Av. Wilfrido Massieu → a Retorno Wilfrido6 →  
@@ -3401,7 +3401,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido6,  
         [  
-            { carrilDestino: 0, posOrigen: 280, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 280, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3411,7 +3411,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido7,  
         [  
-            { carrilDestino: 0, posOrigen: 61, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 61, posDestino: 0, probabilidad: 0.4 }  
         ]  
     ));
     
@@ -3421,7 +3421,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido8,  
         [  
-            { carrilDestino: 0, posOrigen: 331, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 331, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3431,7 +3431,7 @@ function iniciarSimulacion() {
         0,  
         RetornoWilfrido9,  
         [  
-            { carrilDestino: 0, posOrigen: 8, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 8, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3779,7 +3779,7 @@ function iniciarSimulacion() {
         0,  
         RetornoErro3,  
         [  
-            { carrilDestino: 0, posOrigen: 18, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 18, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3789,7 +3789,7 @@ function iniciarSimulacion() {
         0,  
         RetornoErro4,  
         [  
-            { carrilDestino: 0, posOrigen: 160, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 160, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3799,7 +3799,7 @@ function iniciarSimulacion() {
         0,  
         RetornoErro5,  
         [  
-            { carrilDestino: 0, posOrigen: 47, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 47, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3809,7 +3809,7 @@ function iniciarSimulacion() {
         0,  
         RetornoErro6,  
         [  
-            { carrilDestino: 0, posOrigen: 131, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 131, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3819,7 +3819,7 @@ function iniciarSimulacion() {
         0,  
         RetornoErro7,  
         [  
-            { carrilDestino: 0, posOrigen: 120, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 120, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3829,7 +3829,7 @@ function iniciarSimulacion() {
         0,  
         RetornoErro8,  
         [  
-            { carrilDestino: 0, posOrigen: 58, posDestino: 0, probabilidad: 1 }  
+            { carrilDestino: 0, posOrigen: 58, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));  
 
