@@ -371,32 +371,32 @@ const edificios = [
     { x: 1239, y: 701, width: 250, height: 120, color: "#29293aff", angle: 334, label: "PLAZA TORRES LINDAVISTA" },
 
     // ESCOM
-    { x: 1065, y: 894, width: 95, height: 160, color: "#0047a3ff", angle: 350, label: "ESCOM" },
+    { x: 1030, y: 887, width: 95, height: 160, color: "#0047a3ff", angle: 350, label: "ESCOM" },
     
     // ESTACIONAMIENTO ESCOM
-    { x: 1171, y: 902, width: 180, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO ESCOM", imagen: "estacionamiento" },
+    { x: 1149, y: 893, width: 180, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO ESCOM", imagen: "estacionamiento" },
     
     // CIC
-    { x: 1033, y: 1030, width: 90, height: 90, color: "#0047a3ff", angle: 350, label: "CIC" },
+    { x: 1002, y: 1020, width: 90, height: 90, color: "#0047a3ff", angle: 350, label: "CIC" },
 
     // ESTACIONAMIENTO CIC
     { x: 916, y: 997, width: 200, height: 90, color: "#29293aff", angle: 260, label: "ESTACIONAMIENTO CIC", imagen: "estacionamiento" },
 
     // CIDETEC (Centro de Investigación y Desarrollo Tecnológico) - Abajo del CIC
-    { x: 1156, y: 1136, width: 90, height: 80, color: "#0047a3ff", angle: 350, label: "CIDETEC", imagen: "cidetec" },
+    { x: 1096, y: 1049, width: 90, height: 80, color: "#0047a3ff", angle: 350, label: "CIDETEC", imagen: "cidetec" },
 
     // CENDI (Centro de Desarrollo Infantil) - Abajo del CIC
-    { x: 1015, y: 1119, width: 80, height: 80, color: "#0047a3ff", angle: 350, label: "CENDI", imagen: "cic" },
+    { x: 978, y: 1118, width: 80, height: 80, color: "#0047a3ff", angle: 350, label: "CENDI", imagen: "cic" },
 
 
-    { x: 1489, y: 893, width: 100, height: 60, color: "#0047a3ff", angle: 170, label: "ESTABLO DE BURROS" },
+    { x: 1343, y: 866, width: 80, height: 50, color: "#0047a3ff", angle: 170, label: "ESTABLO DE BURROS" },
     
-     { x: 1256, y: 926, width: 180, height: 90, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
+     { x: 1239, y: 908, width: 180, height: 90, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
 
     { x: 1756, y: 1065, width: 154, height: 270, color: "#164916ff", angle: 170, label: "CAMPO BURROS BLANCOS" }, //9:16
 
     // Campo de Tiro con Arco
-    { x: 1550, y: 1100, width: 100, height: 80, color: "#164916ff", angle: 350, label: "CAMPO TIRO CON ARCO", imagen: "campo tiro con arco" },
+    { x: 1573, y: 1114, width: 100, height: 80, color: "#164916ff", angle: 73, label: "CAMPO TIRO CON ARCO", imagen: "campo tiro con arco" },
 
     // Campo de Beisbol
     { x: 1974, y: 1273, width: 160, height: 70, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
@@ -2317,6 +2317,10 @@ function iniciarSimulacion() {
     const Calle_Luis_Enrique_Erro_4 = crearCalle("Calle Luis Enrique Erro Tramo 2 ←", 69, TIPOS.CONEXION, 2118, 603, 225, 0.0, 2, 0.01);
     const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo →", 185, TIPOS.CONEXION, 2149, 1914, 78, 0.0, 2, 0.01);
     const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu ←", 346, TIPOS.CONEXION, 2605, 2027, 166, 0.0, 2, 0.01);
+    
+    const Calle_Circuito_Interior_1 = crearCalle("Calle Circuito Interior →", 178, TIPOS.CONEXION, 1424, 843, 257, 0.0, 1, 0.01);
+    const Calle_Circuito_Interior_2 = crearCalle("Calle Circuito Interior ←", 179, TIPOS.CONEXION, 1818, 1492, 144, 0.0, 1, 0.01);
+    
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0, 3, 0);
     const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 1, 3, 0.0);
     const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.12, 2, 0);
@@ -2325,6 +2329,52 @@ function iniciarSimulacion() {
     const Devorador_3 = crearCalle("Salida 1 →", 5, TIPOS.DEVORADOR, 1880, 328, 59, 0, 2, 0);
     const Devorador_4 = crearCalle("Salida 2 →", 5, TIPOS.DEVORADOR, 1758, 346, 117, 0, 2, 0);
     
+    Calle_Circuito_Interior_2.vertices = [  
+        { indiceCelda: 0, anguloOffset: 28.89548024446025 },  
+        { indiceCelda: 10, anguloOffset: 3.1801712339538493 },  
+        { indiceCelda: 20, anguloOffset: 3.0036838582135665 },  
+        { indiceCelda: 30, anguloOffset: 0 },  
+        { indiceCelda: 40, anguloOffset: -2.4022139207477573 },  
+        { indiceCelda: 50, anguloOffset: 0 },  
+        { indiceCelda: 60, anguloOffset: 0 },  
+        { indiceCelda: 70, anguloOffset: 0 },  
+        { indiceCelda: 80, anguloOffset: 1.829304467757733 },  
+        { indiceCelda: 90, anguloOffset: 1.4478610439537427 },  
+        { indiceCelda: 100, anguloOffset: -2.030172569923173 },  
+        { indiceCelda: 110, anguloOffset: -4.502270183637761 },  
+        { indiceCelda: 120, anguloOffset: -63.5577432808695 },  
+        { indiceCelda: 130, anguloOffset: -63.10004328316384 },  
+        { indiceCelda: 140, anguloOffset: -69.64461272283906 },  
+        { indiceCelda: 150, anguloOffset: -66.5642001682065 },  
+        { indiceCelda: 160, anguloOffset: -68.06577670248109 },  
+        { indiceCelda: 170, anguloOffset: -66.85664257102005 },  
+        { indiceCelda: 178, anguloOffset: -67.1927676606841 }
+    ];  
+    Calle_Circuito_Interior_2.esCurva = true;  
+
+    Calle_Circuito_Interior_1.vertices = [  
+        { indiceCelda: 0, anguloOffset: 0 },  
+        { indiceCelda: 10, anguloOffset: 0 },  
+        { indiceCelda: 20, anguloOffset: 0 },  
+        { indiceCelda: 30, anguloOffset: 0 },  
+        { indiceCelda: 40, anguloOffset: 0 },  
+        { indiceCelda: 50, anguloOffset: 0 },  
+        { indiceCelda: 60, anguloOffset: 0 },  
+        { indiceCelda: 70, anguloOffset: 62.251548429966434 },  
+        { indiceCelda: 80, anguloOffset: 64.86502331910667 },  
+        { indiceCelda: 90, anguloOffset: 67.76822255642779 },  
+        { indiceCelda: 100, anguloOffset: 67.63279626937843 },  
+        { indiceCelda: 110, anguloOffset: 68.28819931797415 },  
+        { indiceCelda: 120, anguloOffset: 67.4142388009761 },  
+        { indiceCelda: 130, anguloOffset: 66.173107308759 },  
+        { indiceCelda: 140, anguloOffset: 66.2690469423283 },  
+        { indiceCelda: 150, anguloOffset: 67.04561677420118 },  
+        { indiceCelda: 160, anguloOffset: 71.78368971854515 },  
+        { indiceCelda: 170, anguloOffset: 66.87425162471017 },  
+        { indiceCelda: 177, anguloOffset: 90 }  
+    ];  
+    Calle_Circuito_Interior_1.esCurva = true;    
+
     María_L_Estampa_Ortigoza2.vertices = [  
         { indiceCelda: 0, anguloOffset: 33.26229205895698 },  
         { indiceCelda: 10, anguloOffset: 5.788936485168125 },  
