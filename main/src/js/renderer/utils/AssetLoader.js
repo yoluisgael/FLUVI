@@ -64,6 +64,7 @@ class AssetLoader {
             { name: 'beisbol', url: 'assets/images/buildings/campo beisbol.png' },
             { name: 'campo escom', url: 'assets/images/buildings/campo escom.png' },
             { name: 'campo tiro con arco', url: 'assets/images/buildings/campo tiro con arco.png' },
+            { name: 'ciclovía', url: 'assets/images/buildings/ciclovia.png' },
 
             // Instalaciones deportivas y culturales
             { name: 'gimnasio', url: 'assets/images/buildings/GIMNASIO.png' },

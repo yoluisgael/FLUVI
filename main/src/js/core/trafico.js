@@ -296,6 +296,10 @@ campoBeisbolImg.src = "assets/images/buildings/campo beisbol.png";
 const campoEscomImg = new Image();
 campoEscomImg.src = "assets/images/buildings/campo escom.png";
 
+// Cargar la imagen de Ciclovía
+const cicloviaImg = new Image();
+cicloviaImg.src = "assets/images/buildings/ciclovia.png";
+
 // Mapeo de labels a imágenes (definido globalmente para eficiencia)
 const buildingImageMap = {
     "CONO": conoImg,
@@ -330,7 +334,8 @@ const buildingImageMap = {
     "SECADEMICA-IPN": cicImg,
     // Campos deportivos
     "BEISBOL": campoBeisbolImg,
-    "CAMPO ESCOM": campoEscomImg
+    "CAMPO ESCOM": campoEscomImg,
+    "ciclovía": cicloviaImg
 };
 
 // ========== ÁREAS DE FONDO (RENDERIZADAS CON PIXI.GRAPHICS) ==========
@@ -367,6 +372,9 @@ const edificios = [
 
     // ========== ZONA SUPERIOR IZQUIERDA (cerca de Av. Miguel Othon de Mendizabal) ==========
 
+     // Ciclovía
+    { x: 1642, y: 1126, width: 500, height: 600, angle: 6, color: "#8B4513", label: "ciclovía" },
+
     // Torres
     { x: 1239, y: 701, width: 250, height: 120, color: "#29293aff", angle: 334, label: "PLAZA TORRES LINDAVISTA" },
 
@@ -393,10 +401,10 @@ const edificios = [
     
      { x: 1239, y: 908, width: 180, height: 90, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
 
-    { x: 1756, y: 1065, width: 154, height: 270, color: "#164916ff", angle: 170, label: "CAMPO BURROS BLANCOS" }, //9:16
+    { x: 1995.393855899274, y: 1096.8181821738842, width: 154, height: 270, color: "#164916ff", angle: 168.0117148460054, label: "CAMPO BURROS BLANCOS" }, //9:16
 
     // Campo de Tiro con Arco
-    { x: 1573, y: 1114, width: 100, height: 80, color: "#164916ff", angle: 73, label: "CAMPO TIRO CON ARCO", imagen: "campo tiro con arco" },
+    { x: 1573, y: 1114, width: 100, height: 80, color: "#164916ff", angle: 78.13398190908356, label: "CAMPO TIRO CON ARCO", imagen: "campo tiro con arco" },
 
     // Campo de Beisbol
     { x: 1974, y: 1273, width: 160, height: 70, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
@@ -410,7 +418,7 @@ const edificios = [
     { x: 1392, y: 1529, width: 100, height: 80, color: "#0047a3ff", angle: 350, label: "ENCB", imagen: "cic" },
 
     // UPIEM (Unidad Profesional Interdisciplinaria en Ingeniería y Tecnologías Avanzadas)
-    { x: 1522, y: 1591, width: 100, height: 80, color: "#0047a3ff", angle: 350, label: "UPIEM", imagen: "cic" },
+    { x: 1597.7574987652351, y: 1560.6969323672001, width: 100, height: 80, color: "#0047a3ff", angle: 73.49923484301729, label: "UPIEM", imagen: "cic" },
 
     // CONO
     { x: 1937, y: 905, width: 45, height: 45, color: "#0d0e10ff", angle: 352, label: "CONO" },
@@ -418,14 +426,16 @@ const edificios = [
 
     // ========== ZONA CENTRAL (entre Luis Enrique Erro y Miguel Anda y Barredo) ==========
     // Estadio Americano
-    { x: 2018, y: 1107, width: 250, height: 180, color: "#164916ff", angle: 260, label: "ESTADIO AMERICANO" },
+    { x: 1750, y: 1060, width: 240, height: 170, color: "#164916ff", angle: 260, label: "ESTADIO AMERICANO" },
     
     // Alberca
      { x: 2136, y: 1497, width: 110, height: 110, color: "#4169E1", angle: 259, label: "Alberca" },
     
     // Gimnasio
     { x: 1918, y: 1648, width: 90, height: 90, color: "#8b4513", angle: 350, label: "GIMNASIO", imagen: "gimnasio" },
-    
+
+   
+
     // PLANETARIO
     { x: 1876, y: 1740, width: 100, height: 100, color: "#4b0000ff", angle: 350, label: "PLANETARIO" },
     
