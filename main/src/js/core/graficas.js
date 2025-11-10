@@ -67,7 +67,9 @@ const CALLES_EXCLUIDAS_POR_DEFECTO = [
     'Av. Wilfrido Massieu →',
     'Av. Cien Metros ←',
     'Av. Miguel Othon de Mendizabal →',
-    'Salida Cien Metros ←'
+    'Salida Cien Metros ←',
+    'Calle M. Luisa Estampa Ort. →',
+    'Calle M. Luisa Estampa Ort. ←'
 ];
 
 // Modo de selección de calles desde el mapa
