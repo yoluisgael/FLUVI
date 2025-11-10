@@ -2321,7 +2321,11 @@ function iniciarSimulacion() {
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1034, 1671, 110, 0.9, 3, 0.01);
     const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro ←", 177, TIPOS.CONEXION, 1920, 928, 260, 0.0, 2, 0.01);
     const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo ←", 184, TIPOS.CONEXION, 2322, 1004, 258, 0.0, 2, 0.01);
-    const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz →", 377, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
+    //const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz →", 377, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
+    const Avenida_Juan_de_Dios_Batiz3 = crearCalle("Juan de Dios Batiz →", 95, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
+    const Avenida_Juan_de_Dios_Batiz4 = crearCalle("Av. Juan de Dios Batiz 4 →", 204, TIPOS.CONEXION, 1397, 836, -10, 0.0, 3, 0.01);
+    const Avenida_Juan_de_Dios_Batiz5 = crearCalle("Av. Juan de Dios Batiz 4 →", 76, TIPOS.CONEXION, 2399, 1006, -10, 0.0, 3, 0.01);
+    
     const Avenida_IPN = crearCalle("Av. IPN ←", 230, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
     const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro →", 179, TIPOS.CONEXION, 1783, 1818, 80, 0.0, 2, 0.01);
     const Calle_Luis_Enrique_Erro_4 = crearCalle("Calle Luis Enrique Erro Tramo 2 ←", 69, TIPOS.CONEXION, 2118, 603, 225, 0.0, 2, 0.01);
@@ -2332,7 +2336,7 @@ function iniciarSimulacion() {
     const Calle_Circuito_Interior_2 = crearCalle("Calle Circuito Interior ←", 179, TIPOS.CONEXION, 1818, 1492, 144, 0.0, 1, 0.01);
     
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0, 3, 0);
-    const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1034, 1671, 110, 1, 3, 0.0);
+    const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1039, 1685, 110, 1, 3, 0.0);
     const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.12, 2, 0);
     const Devorador_2 = crearCalle("Salida Av. IPN ←", 5, TIPOS.DEVORADOR, 2606, 2078, 260, 0, 2, 0);
     const Generador_3 = crearCalle("Entrada ←", 5, TIPOS.GENERADOR, 1933, 341, 225, 0.1, 2, 0);
@@ -2547,7 +2551,7 @@ function iniciarSimulacion() {
         { indiceCelda: 68, anguloOffset: 35.69353556473338 }
     ];
     Calle_Luis_Enrique_Erro_4.esCurva = true;
-
+    
     Avenida_Juan_de_Dios_Batiz2.vertices = [
         { indiceCelda: 0, anguloOffset: 25.80263615745194 },
         { indiceCelda: 10, anguloOffset: 0 },
@@ -2583,7 +2587,32 @@ function iniciarSimulacion() {
     ];
     Avenida_Juan_de_Dios_Batiz2.esCurva = true;
 
-    Avenida_Juan_de_Dios_Batiz.vertices = [
+    Avenida_Juan_de_Dios_Batiz4.vertices = [
+        { indiceCelda: 0, anguloOffset: 0 },
+        { indiceCelda: 10, anguloOffset: 0 },
+        { indiceCelda: 20, anguloOffset: 0 },
+        { indiceCelda: 30, anguloOffset: 0 },
+        { indiceCelda: 40, anguloOffset: 0 },
+        { indiceCelda: 50, anguloOffset: 0 },
+        { indiceCelda: 60, anguloOffset: 0 },
+        { indiceCelda: 70, anguloOffset: 0 },
+        { indiceCelda: 80, anguloOffset: 0 },
+        { indiceCelda: 90, anguloOffset: 2.341840612539078 },
+        { indiceCelda: 100, anguloOffset: 0.6446246298432945 },
+        { indiceCelda: 110, anguloOffset: -0.24721573725166493 },
+        { indiceCelda: 120, anguloOffset: -2.0856148088049578 },
+        { indiceCelda: 130, anguloOffset: -1.9931206794537515 },
+        { indiceCelda: 140, anguloOffset: 0 },
+        { indiceCelda: 150, anguloOffset: 0 },
+        { indiceCelda: 160, anguloOffset: 0 },
+        { indiceCelda: 170, anguloOffset: 0 },
+        { indiceCelda: 180, anguloOffset: 0 },
+        { indiceCelda: 190, anguloOffset: 0 },
+        { indiceCelda: 203, anguloOffset: 0 }
+    ];
+    Avenida_Juan_de_Dios_Batiz4.esCurva = true;
+
+    Avenida_Juan_de_Dios_Batiz3.vertices = [
         { indiceCelda: 0, anguloOffset: -40 },
         { indiceCelda: 10, anguloOffset: 0 },
         { indiceCelda: 20, anguloOffset: 0 },
@@ -2594,37 +2623,9 @@ function iniciarSimulacion() {
         { indiceCelda: 70, anguloOffset: 0 },
         { indiceCelda: 80, anguloOffset: 0 },
         { indiceCelda: 90, anguloOffset: 0 },
-        { indiceCelda: 100, anguloOffset: 0 },
-        { indiceCelda: 110, anguloOffset: 0 },
-        { indiceCelda: 120, anguloOffset: 0 },
-        { indiceCelda: 130, anguloOffset: 0 },
-        { indiceCelda: 140, anguloOffset: 0 },
-        { indiceCelda: 150, anguloOffset: 0 },
-        { indiceCelda: 160, anguloOffset: 0 },
-        { indiceCelda: 170, anguloOffset: 0 },
-        { indiceCelda: 180, anguloOffset: 0 },
-        { indiceCelda: 190, anguloOffset: 2.341840612539078 },
-        { indiceCelda: 200, anguloOffset: 0.6446246298432945 },
-        { indiceCelda: 210, anguloOffset: -0.24721573725166493 },
-        { indiceCelda: 220, anguloOffset: -2.0856148088049578 },
-        { indiceCelda: 230, anguloOffset: -1.9931206794537515 },
-        { indiceCelda: 240, anguloOffset: 0 },
-        { indiceCelda: 250, anguloOffset: 0 },
-        { indiceCelda: 260, anguloOffset: 0 },
-        { indiceCelda: 270, anguloOffset: 0 },
-        { indiceCelda: 280, anguloOffset: 0 },
-        { indiceCelda: 290, anguloOffset: 0 },
-        { indiceCelda: 300, anguloOffset: 0 },
-        { indiceCelda: 310, anguloOffset: 0 },
-        { indiceCelda: 320, anguloOffset: 0 },
-        { indiceCelda: 330, anguloOffset: 0 },
-        { indiceCelda: 340, anguloOffset: 0 },
-        { indiceCelda: 350, anguloOffset: 0 },
-        { indiceCelda: 360, anguloOffset: 0 },
-        { indiceCelda: 370, anguloOffset: 0 },
-        { indiceCelda: 376, anguloOffset: 0 }
+        { indiceCelda: 94, anguloOffset: 0 }
     ];
-    Avenida_Juan_de_Dios_Batiz.esCurva = true;
+    Avenida_Juan_de_Dios_Batiz3.esCurva = true;
 
     Avenida_Wilfrido_Massieu_2.vertices = [  
         { indiceCelda: 0, anguloOffset: 34.01911280594667 },  
@@ -2739,7 +2740,7 @@ function iniciarSimulacion() {
     conexionesCA.push(...crearConexionProbabilistica(  
         Avenida_Miguel_Othon_de_Mendizabal_1,  
         2,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz3,  
         [  
             { carrilDestino: 0, posOrigen: 41, posDestino: 0, probabilidad: 0.34 },  
             { carrilDestino: 1, posOrigen: 40, posDestino: 0, probabilidad: 0.33 },  
@@ -2771,11 +2772,11 @@ function iniciarSimulacion() {
     
     // Av. Juan de Dios Batiz ← a Retorno Batiz →  
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
         RetornoBatiz2,  
         [  
-            { carrilDestino: 0, posOrigen: 165, posDestino: 0, probabilidad: 0.35 }  
+            { carrilDestino: 0, posOrigen: 70, posDestino: 0, probabilidad: 0.35 }  
         ]  
     ));
     
@@ -2791,7 +2792,7 @@ function iniciarSimulacion() {
     
     // Av. Juan de Dios Batiz → a Retorno torres →  
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz3,  
         0,  
         Retornotorres,  
         [  
@@ -2801,7 +2802,7 @@ function iniciarSimulacion() {
     
     // Av. Juan de Dios Batiz → a Retorno ESCOM →  
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz3,  
         0,  
         RetornoESCOM2,  
         [  
@@ -2821,7 +2822,7 @@ function iniciarSimulacion() {
     
     // Av. Juan de Dios Batiz → a Retorno Estampa →  
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz3,  
         0,  
         RetornoEStampa2,  
         [  
@@ -2851,11 +2852,11 @@ function iniciarSimulacion() {
     
     // Av. Juan de Dios Batiz → a Retorno Juan F. →  
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
         RetornoJuan2,  
         [  
-            { carrilDestino: 0, posOrigen: 103, posDestino: 0, probabilidad: 0.14 }  
+            { carrilDestino: 0, posOrigen: 8, posDestino: 0, probabilidad: 0.14 }  
         ]  
     ));
     
@@ -2912,12 +2913,12 @@ function iniciarSimulacion() {
     ));
     // juan dios batiz 1 A CALLE ANDA BARREDO
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         2,  
         Calle_Miguel_Anda_y_Barredo2,  
         [  
-            { carrilDestino: 1, posOrigen: 284, posDestino: 0, probabilidad: 0.5 },  
-            { carrilDestino: 0, posOrigen: 285, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 1, posOrigen: 189, posDestino: 0, probabilidad: 0.5 },  
+            { carrilDestino: 0, posOrigen: 190, posDestino: 0, probabilidad: 0.5 }
         ]  
     ));
     // ANDA BARREDO A RETORNO BARREDO
@@ -3031,39 +3032,40 @@ function iniciarSimulacion() {
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         2,  
         Calle_Luis_Enrique_Erro_3,  
         [  
-            { carrilDestino: 1, posOrigen: 203, posDestino: 0, probabilidad: 0.5 },
-            { carrilDestino: 0, posOrigen: 204, posDestino: 0, probabilidad: 0.5 }
+            { carrilDestino: 1, posOrigen: 108, posDestino: 0, probabilidad: 0.5 },
+            { carrilDestino: 0, posOrigen: 109, posDestino: 0, probabilidad: 0.5 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
         Retorno2,  
         [  
-            { carrilDestino: 0, posOrigen: 208, posDestino: 0, probabilidad: 0.2 },
-            { carrilDestino: 1, posOrigen: 209, posDestino: 0, probabilidad: 0.1 }
+            { carrilDestino: 0, posOrigen: 113, posDestino: 0, probabilidad: 0.2 },
+            { carrilDestino: 1, posOrigen: 114, posDestino: 0, probabilidad: 0.1 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
         RetornoBatizD2,  
         [  
-            { carrilDestino: 0, posOrigen: 225, posDestino: 0, probabilidad: 0.52 }
+            { carrilDestino: 0, posOrigen: 130, posDestino: 0, probabilidad: 0.52 }
         ]  
     ));
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
         RetornoSec2,  
         [  
-            { carrilDestino: 0, posOrigen: 287, posDestino: 0, probabilidad: 0.25 }
+            { carrilDestino: 0, posOrigen: 192, posDestino: 0, probabilidad: 0.25 }
         ]  
     ));
+    /*
     conexionesCA.push(...crearConexionProbabilistica(  
         Avenida_Juan_de_Dios_Batiz,  
         0,  
@@ -3071,7 +3073,7 @@ function iniciarSimulacion() {
         [  
             { carrilDestino: 0, posOrigen: 303, posDestino: 0, probabilidad: 0.09 }
         ]  
-    ));
+    ));*/
     conexionesCA.push(...crearConexionProbabilistica(  
         Avenida_Juan_de_Dios_Batiz2,  
         0,  
@@ -3146,18 +3148,18 @@ function iniciarSimulacion() {
     ));
     
     // Av. Miguel Bernard → a Av. Juan de Dios Batiz →  
-    conexionesCA.push(...crearConexionIncorporacion(  
+    /*conexionesCA.push(...crearConexionIncorporacion(  
         Avenida_Miguel_Bernard,  
         Avenida_Juan_de_Dios_Batiz,  
         0,  
         319,
         1 
-    ));
+    ));*/
     
     // Retorno torres ← a Av. Juan de Dios Batiz →  
     conexionesCA.push(...crearConexionIncorporacion(  
         Retornotorres2,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz3,  
         0,  
         24  
     ));
@@ -3181,7 +3183,7 @@ function iniciarSimulacion() {
     // Retorno ESCOM ← a Av. Juan de Dios Batiz →  
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoESCOM,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz3,  
         0,  
         60  
     ));
@@ -3197,7 +3199,7 @@ function iniciarSimulacion() {
     // Retorno Estampa ← a Av. Juan de Dios Batiz →  
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoEstampa,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz3,  
         0,  
         94  
     ));
@@ -3221,17 +3223,17 @@ function iniciarSimulacion() {
     // Retorno Juan F. ← a Av. Juan de Dios Batiz →  
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoJuan,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
-        104  
+        9  
     ));
     
     // Retorno Juan F. 2 ← a Av. Juan de Dios Batiz →  
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoJuanD,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
-        127  
+        32  
     ));
     
     // Retorno Juan F. 2 → a Av. Juan de Dios Batiz ←  
@@ -3245,9 +3247,9 @@ function iniciarSimulacion() {
     // Retorno Batiz ← a Av. Juan de Dios Batiz →  
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoBatiz,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
-        166  
+        71  
     ));
     
     // Retorno Batiz → a Av. Juan de Dios Batiz ←  
@@ -3292,11 +3294,11 @@ function iniciarSimulacion() {
     
     // Av. Juan de Dios Batiz ← a Retorno Batiz →  
     conexionesCA.push(...crearConexionProbabilistica(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
         RetornoJuanD2,  
         [  
-            { carrilDestino: 0, posOrigen: 126, posDestino: 0, probabilidad: 0.3 }  
+            { carrilDestino: 0, posOrigen: 31, posDestino: 0, probabilidad: 0.3 }  
         ]  
     ));
     
@@ -3568,9 +3570,9 @@ function iniciarSimulacion() {
     ));  
     conexionesCA.push(...crearConexionIncorporacion(  
         Calle_Miguel_Anda_y_Barredo,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         2,  
-        290  
+        195  
     ));  
     conexionesCA.push(...crearConexionIncorporacion(  
         Calle_Luis_Enrique_Erro_3,  
@@ -3616,15 +3618,15 @@ function iniciarSimulacion() {
     )); 
     conexionesCA.push(...crearConexionIncorporacion(  
         Calle_Luis_Enrique_Erro_1,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         2,  
-        208  
+        113  
     )); 
     conexionesCA.push(...crearConexionIncorporacion(  
         Retorno1,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
-        203,
+        108,
         1 
     )); 
     conexionesCA.push(...crearConexionIncorporacion(  
@@ -3655,9 +3657,9 @@ function iniciarSimulacion() {
     )); 
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoBatizD,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
-        226 
+        131 
     )); 
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoSec2,  
@@ -3667,9 +3669,9 @@ function iniciarSimulacion() {
     )); 
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoSec,  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz4,  
         0,  
-        288 
+        193 
     ));
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoBernard2,  
@@ -3677,14 +3679,15 @@ function iniciarSimulacion() {
         0,  
         13 
     )); 
+    /*
     conexionesCA.push(...crearConexionIncorporacion(  
         RetornoBernard,  
         Avenida_Juan_de_Dios_Batiz,  
         0,  
         304 
-    ));
+    ));*/
     conexionesCA.push(...crearConexionIncorporacion(  
-        Avenida_Juan_de_Dios_Batiz,  
+        Avenida_Juan_de_Dios_Batiz3,  
         Avenida_IPN,  
         1,  
         25 

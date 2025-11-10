@@ -26,10 +26,10 @@ class SceneManager {
         // Crear capas en orden de renderizado
         this.layers = {
             background: this.createLayer(0),    // Fondo
-            streets: this.createLayer(10),      // Calles
-            connections: this.createLayer(15),  // Conexiones
-            vehicles: this.createLayer(20),     // Vehículos
-            buildings: this.createLayer(25),    // Edificios
+            buildings: this.createLayer(10),    // Edificios (detrás de calles)
+            streets: this.createLayer(15),      // Calles (encima de edificios)
+            connections: this.createLayer(20),  // Conexiones
+            vehicles: this.createLayer(25),     // Vehículos
             ui: this.createLayer(30),           // UI (etiquetas, handles)
             debug: this.createLayer(40)         // Debug (intersecciones, vértices)
         };
