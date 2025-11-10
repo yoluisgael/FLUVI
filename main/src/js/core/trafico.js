@@ -2322,22 +2322,19 @@ function iniciarSimulacion() {
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 190, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
     const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 343, TIPOS.CONEXION, 986, 1502, 345, 0.0, 2, 0.01);
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1034, 1671, 110, 0.9, 3, 0.01);
+    const Calle_Circuito_Interior_1 = crearCalle("Calle Circuito Interior ←", 180, TIPOS.CONEXION, 1413, 843, 257, 0.0, 1, 0.01);
+    const Calle_Circuito_Interior_2 = crearCalle("Calle Circuito Interior →", 179, TIPOS.CONEXION, 1821, 1487, 144, 0.0, 1, 0.01);
     const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro ←", 177, TIPOS.CONEXION, 1920, 928, 260, 0.0, 2, 0.01);
     const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo ←", 184, TIPOS.CONEXION, 2322, 1004, 258, 0.0, 2, 0.01);
     //const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz →", 377, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz3 = crearCalle("Entrada Juan de Dios Batiz →", 95, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz4 = crearCalle("Av. Juan de Dios Batiz →", 204, TIPOS.CONEXION, 1397, 836, -10, 0.0, 3, 0.01);
     const Avenida_Juan_de_Dios_Batiz5 = crearCalle("Salida de Juan de Dios Batiz →", 76, TIPOS.CONEXION, 2399, 1006, -10, 0.0, 3, 0.01);
-    
     const Avenida_IPN = crearCalle("Av. IPN ←", 230, TIPOS.CONEXION, 2805, 950, -100, 0.0, 2, 0.01);
     const Calle_Luis_Enrique_Erro_1 = crearCalle("Calle Luis Enrique Erro →", 179, TIPOS.CONEXION, 1783, 1818, 80, 0.0, 2, 0.01);
     const Calle_Luis_Enrique_Erro_4 = crearCalle("Calle Luis Enrique Erro Tramo 2 ←", 69, TIPOS.CONEXION, 2118, 603, 225, 0.0, 2, 0.01);
     const Calle_Miguel_Anda_y_Barredo = crearCalle("Calle Miguel Anda y Barredo →", 185, TIPOS.CONEXION, 2149, 1914, 78, 0.0, 2, 0.01);
     const Avenida_Wilfrido_Massieu_1 = crearCalle("Av. Wilfrido Massieu ←", 346, TIPOS.CONEXION, 2605, 2027, 166, 0.0, 2, 0.01);
-    
-    const Calle_Circuito_Interior_1 = crearCalle("Calle Circuito Interior ←", 180, TIPOS.CONEXION, 1413, 843, 257, 0.0, 1, 0.01);
-    const Calle_Circuito_Interior_2 = crearCalle("Calle Circuito Interior →", 179, TIPOS.CONEXION, 1821, 1487, 144, 0.0, 1, 0.01);
-    
     const Devorador = crearCalle("Salida Cien Metros ←", 4, TIPOS.DEVORADOR, 642, 595, 110, 0, 3, 0);
     const Generador_1 = crearCalle("Entrada a Cien Metros →", 4, TIPOS.GENERADOR, 1039, 1685, 110, 1, 3, 0.0);
     const Generador_2 = crearCalle("Entrada a Av. IPN ←", 5, TIPOS.GENERADOR, 2808, 930, 260, 0.12, 2, 0);
@@ -2345,8 +2342,8 @@ function iniciarSimulacion() {
     const Generador_3 = crearCalle("Entrada ←", 5, TIPOS.GENERADOR, 1933, 341, 225, 0.1, 2, 0);
     const Devorador_3 = crearCalle("Salida 1 →", 5, TIPOS.DEVORADOR, 1880, 328, 59, 0, 2, 0);
     const Devorador_4 = crearCalle("Salida 2 →", 5, TIPOS.DEVORADOR, 1758, 346, 117, 0, 2, 0);
-    const Generador_4 = crearCalle("E ←", 4, TIPOS.GENERADOR, 2399, 977, 170, 0.2, 3, 0.0);
-    const Generador_5 = crearCalle("E 2→", 4, TIPOS.GENERADOR, 1383, 826, -10, 0.2, 3, 0.0);
+    const Generador_4 = crearCalle("E ←", 4, TIPOS.GENERADOR, 2399, 977, 170, 0.01, 3, 0.0);
+    const Generador_5 = crearCalle("E 2→", 4, TIPOS.GENERADOR, 1383, 826, -10, 0.01, 3, 0.0);
 
     Calle_Circuito_Interior_2.vertices = [  
         { indiceCelda: 0, anguloOffset: 28.89548024446025 },  
@@ -2465,7 +2462,7 @@ function iniciarSimulacion() {
         { indiceCelda: 160, anguloOffset: 7.115972469568073 },
         { indiceCelda: 170, anguloOffset: -0.30063084350775476 },
         { indiceCelda: 180, anguloOffset: -28.235936808677508 },
-        { indiceCelda: 190, anguloOffset: -40 }
+        { indiceCelda: 190, anguloOffset: -49.296816694482835 }
     ];
     Avenida_Miguel_Bernard.esCurva = true;
     
@@ -2637,8 +2634,8 @@ function iniciarSimulacion() {
         { indiceCelda: 60, anguloOffset: 0 },
         { indiceCelda: 70, anguloOffset: 0 },
         { indiceCelda: 80, anguloOffset: 0 },
-        { indiceCelda: 90, anguloOffset: 0 },
-        { indiceCelda: 94, anguloOffset: 0 }
+        { indiceCelda: 90, anguloOffset: -0.8179858385372861 },
+        { indiceCelda: 94, anguloOffset: -0.8876108187661783 }
     ];
     Avenida_Juan_de_Dios_Batiz3.esCurva = true;
 
@@ -3205,7 +3202,7 @@ function iniciarSimulacion() {
         Avenida_Miguel_Bernard,  
         Avenida_Juan_de_Dios_Batiz5,  
         0,  
-        18,
+        17,
         1 
     ));
     
