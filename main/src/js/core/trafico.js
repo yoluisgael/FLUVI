@@ -2322,8 +2322,8 @@ function iniciarSimulacion() {
     const Avenida_Miguel_Bernard = crearCalle("Av. Miguel Bernard →", 190, TIPOS.CONEXION, 1862, 329, -46, 0.0, 3, 0.01);
     const Avenida_Wilfrido_Massieu_2 = crearCalle("Av. Wilfrido Massieu →", 343, TIPOS.CONEXION, 986, 1502, 345, 0.0, 2, 0.01);
     const Avenida_Cien_Metros2 = crearCalle("Av. Cien Metros ←", 230, TIPOS.CONEXION, 1034, 1671, 110, 0.9, 3, 0.01);
-    const Calle_Circuito_Interior_1 = crearCalle("Calle Circuito Interior ←", 180, TIPOS.CONEXION, 1413, 843, 257, 0.0, 1, 0.01);
-    const Calle_Circuito_Interior_2 = crearCalle("Calle Circuito Interior →", 179, TIPOS.CONEXION, 1821, 1487, 144, 0.0, 1, 0.01);
+    const Calle_Circuito_Interior_1 = crearCalle("Calle Interior IPN ←", 180, TIPOS.CONEXION, 1413, 843, 257, 0.0, 1, 0.01);
+    const Calle_Circuito_Interior_2 = crearCalle("Calle Interior IPN →", 179, TIPOS.CONEXION, 1821, 1487, 144, 0.0, 1, 0.01);
     const Calle_Luis_Enrique_Erro_3 = crearCalle("Calle Luis Enrique Erro ←", 177, TIPOS.CONEXION, 1920, 928, 260, 0.0, 2, 0.01);
     const Calle_Miguel_Anda_y_Barredo2 = crearCalle("Calle Miguel Anda y Barredo ←", 184, TIPOS.CONEXION, 2322, 1004, 258, 0.0, 2, 0.01);
     //const Avenida_Juan_de_Dios_Batiz = crearCalle("Av. Juan de Dios Batiz →", 377, TIPOS.CONEXION, 921, 736, -10, 0.0, 3, 0.01);

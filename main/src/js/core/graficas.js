@@ -83,7 +83,7 @@ const CALLES_EXCLUIDAS_POR_DEFECTO = [
     'Retorno Bernard →',
     'Retorno Bernard ←',
     'Entrada a Av. Juan de Dios Batiz ←',
-    'Entrada Juan de Dios Batiz →',
+    'Entrada Juan de Dios Batiz →'
 
     
 
