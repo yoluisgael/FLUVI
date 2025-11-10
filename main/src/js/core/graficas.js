@@ -68,7 +68,7 @@ const CALLES_EXCLUIDAS_POR_DEFECTO = [
     'Av. Cien Metros ←',
     'Av. Miguel Othon de Mendizabal →',
     'Salida Cien Metros ←',
-    'Calle M. Luisa Estampa Ort. →',
+    'Calle M. Luisa Estampa Ort. →', //nuevas
     'Calle M. Luisa Estampa Ort. ←'
 ];
 
