@@ -399,7 +399,7 @@ const edificios = [
 
     { x: 1343, y: 866, width: 80, height: 50, color: "#0047a3ff", angle: 170, label: "ESTABLO DE BURROS" },
     
-     { x: 1239, y: 908, width: 180, height: 90, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
+     { x: 1239, y: 908, width: 180, height: 100, color: "#164916ff", angle: 260, label: "CAMPO ESCOM" },
 
     { x: 1995.393855899274, y: 1096.8181821738842, width: 154, height: 270, color: "#164916ff", angle: 168.0117148460054, label: "CAMPO BURROS BLANCOS" }, //9:16
 
@@ -407,9 +407,9 @@ const edificios = [
     { x: 1573, y: 1114, width: 100, height: 80, color: "#164916ff", angle: 78.13398190908356, label: "CAMPO TIRO CON ARCO", imagen: "campo tiro con arco" },
 
     // Campo de Beisbol
-    { x: 1974, y: 1273, width: 160, height: 70, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
+    { x: 1974, y: 1273, width: 160, height: 80, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
     { x: 1963, y: 1413, width: 150, height: 200, color: "#164916ff", angle: 350, label: "BEISBOL" },
-    { x: 1923, y: 1548, width: 160, height: 70, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
+    { x: 1923, y: 1548, width: 160, height: 80, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" },
  
     
     { x: 1688, y: 1662, width: 140, height: 140, color: "#0047a3ff", angle: 350, label: "C.F.I.E" },
@@ -432,7 +432,7 @@ const edificios = [
      { x: 2136, y: 1497, width: 110, height: 110, color: "#4169E1", angle: 259, label: "Alberca" },
     
     // Gimnasio
-    { x: 1918, y: 1648, width: 90, height: 90, color: "#8b4513", angle: 350, label: "GIMNASIO", imagen: "gimnasio" },
+    { x: 1918, y: 1648, width: 90, height: 90, color: "#8b4513", angle: 33, label: "GIMNASIO", imagen: "gimnasio" },
 
    
 
@@ -464,7 +464,7 @@ const edificios = [
     { x: 2319, y: 1562, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME Edificio 2" },
     { x: 2306, y: 1632, width: 70, height: 70, color: "#4b0000ff", angle: 350, label: "ESIME" },
     { x: 2584, y: 1370, width: 90, height: 90, color: "#57126fff", angle: 296, label: "EST", imagen: "est" },
-    { x: 2551, y: 1537, width: 45, height: 140, color: "#29293aff", angle: 350, label: "ESTACIONAMIENTO", imagen: "estacionamiento" }, 
+    { x: 2551, y: 1537, width: 140, height: 70, color: "#29293aff", angle: 75, label: "ESTACIONAMIENTO", imagen: "estacionamiento" }, 
     
     // Edificio Z (vertical largo)
     { x: 2216, y: 897, width: 100, height: 100, color: "#4b0000ff", angle: 350, label: "ESIA" },
