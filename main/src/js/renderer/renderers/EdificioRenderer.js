@@ -7,6 +7,7 @@ class EdificioRenderer {
     constructor(sceneManager, assetLoader) {
         this.scene = sceneManager;
         this.assets = assetLoader;
+        this.etiquetasEdificios = new Map(); // Map<edificio, Container> - etiquetas de edificios
     }
 
     // Función auxiliar para detectar si un color es oscuro
@@ -131,9 +132,8 @@ class EdificioRenderer {
             sprite.rotation = CoordinateConverter.degreesToRadians(edificio.angle);
         }
 
-        // Agregar nombre del edificio si tiene label y no es una imagen
-        if (edificio.label && !sprite.texture) {
-            // Solo agregar texto si es un graphics (no imagen)
+        // Agregar nombre del edificio si tiene label
+        if (edificio.label && edificio.label !== "CONO") {
             this.addBuildingLabel(sprite, edificio);
         }
 
@@ -180,40 +180,78 @@ class EdificioRenderer {
             sprite.rotation = CoordinateConverter.degreesToRadians(edificio.angle);
         }
 
+        // Actualizar posición de la etiqueta (si existe)
+        const etiqueta = this.etiquetasEdificios.get(edificio);
+        if (etiqueta) {
+            etiqueta.x = edificio.x;
+            etiqueta.y = edificio.y;
+        }
+
         // Actualizar borde de selección
         this.updateSelectionBorder(sprite, edificio);
     }
 
     addBuildingLabel(sprite, edificio) {
+        // Limpiar etiqueta anterior si existe
+        const etiquetaAnterior = this.etiquetasEdificios.get(edificio);
+        if (etiquetaAnterior) {
+            etiquetaAnterior.destroy({ children: true });
+            this.etiquetasEdificios.delete(edificio);
+        }
+
+        // Crear container para la etiqueta (en capa UI, no como hijo del sprite)
+        const container = new PIXI.Container();
+
+        // Posicionar en el centro del edificio (coordenadas globales)
+        container.x = edificio.x;
+        container.y = edificio.y;
+
+        // NO aplicar rotación - mantener siempre horizontal
+        container.rotation = 0;
+
         // Determinar color del texto basándose en el color de fondo del edificio
         const backgroundColor = edificio.color || 0x808080;
         const esOscuro = this.esColorOscuro(backgroundColor);
         const colorTexto = esOscuro ? 0xFFFFFF : 0x000000; // Blanco para fondos oscuros, negro para claros
 
-        // Crear texto del label
+        // Crear texto del label con tamaño más grande
         const text = new PIXI.Text(edificio.label, {
             fontFamily: 'Arial',
-            fontSize: 12,
+            fontSize: 14,
             fill: colorTexto,
             align: 'center',
             fontWeight: 'bold'
         });
 
         text.anchor.set(0.5);
-        text.resolution = 2; // Alta resolución para evitar pixelación
+        text.resolution = 1; // Resolución normal para mantener rendimiento
 
-        // Posicionar en el centro del edificio
-        const width = edificio.width || 100;
-        const height = edificio.height || 100;
-        text.x = width / 2;
-        text.y = height / 2;
+        // Crear fondo gris semi-transparente (como las etiquetas de calles)
+        const padding = 4;
+        const colorFondo = 0x808080; // Gris
+        const bg = new PIXI.Graphics();
+        bg.beginFill(colorFondo, 0.8); // 0.8 de opacidad
+        bg.drawRoundedRect(
+            -text.width / 2 - padding,
+            -text.height / 2 - padding / 2,
+            text.width + padding * 2,
+            text.height + padding,
+            3 // radio de esquinas redondeadas
+        );
+        bg.endFill();
 
-        text.name = 'buildingLabel';
+        // Agregar fondo y texto al container
+        container.addChild(bg);
+        container.addChild(text);
 
-        // Agregar al sprite (que es un Graphics)
-        if (sprite instanceof PIXI.Graphics || sprite instanceof PIXI.Container) {
-            sprite.addChild(text);
-        }
+        // Controlar visibilidad según configuración global
+        container.visible = window.mostrarEtiquetas !== false;
+
+        // Agregar a la capa UI (no al sprite del edificio)
+        this.scene.getLayer('ui').addChild(container);
+
+        // Guardar referencia para poder actualizarla/eliminarla después
+        this.etiquetasEdificios.set(edificio, container);
     }
 
     addSelectionBorder(sprite, edificio) {
@@ -267,6 +305,20 @@ class EdificioRenderer {
             sprite.destroy({ children: true });
             this.scene.edificioSprites.delete(edificio);
         }
+
+        // También eliminar la etiqueta si existe
+        const etiqueta = this.etiquetasEdificios.get(edificio);
+        if (etiqueta) {
+            etiqueta.destroy({ children: true });
+            this.etiquetasEdificios.delete(edificio);
+        }
+    }
+
+    // Actualizar visibilidad de etiquetas de todos los edificios
+    updateLabelsVisibility(visible) {
+        this.etiquetasEdificios.forEach((container) => {
+            container.visible = visible;
+        });
     }
 
     // Event handlers

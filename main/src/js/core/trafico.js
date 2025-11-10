@@ -4107,6 +4107,24 @@ function iniciarSimulacion() {
             window.mostrarEtiquetas = mostrarEtiquetas; // Sincronizar con window
             // Cambiar entre etiqueta visible y etiqueta tachada
             btnEtiquetas.textContent = mostrarEtiquetas ? '🏷️' : '🚫';
+
+            // Actualizar etiquetas en PixiJS
+            if (window.pixiApp && window.pixiApp.sceneManager) {
+                // Actualizar etiquetas de edificios
+                if (window.pixiApp.sceneManager.edificioRenderer) {
+                    window.pixiApp.sceneManager.edificioRenderer.updateLabelsVisibility(mostrarEtiquetas);
+                }
+
+                // Actualizar etiquetas de calles
+                if (window.pixiApp.sceneManager.uiRenderer) {
+                    if (mostrarEtiquetas) {
+                        window.pixiApp.sceneManager.uiRenderer.updateEtiquetas(calles);
+                    } else {
+                        window.pixiApp.sceneManager.uiRenderer.clearEtiquetas();
+                    }
+                }
+            }
+
             renderizarCanvas();
         });
     }
