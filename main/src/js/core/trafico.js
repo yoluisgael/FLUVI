@@ -2344,6 +2344,8 @@ function iniciarSimulacion() {
     const Devorador_4 = crearCalle("Salida 2 →", 5, TIPOS.DEVORADOR, 1758, 346, 117, 0, 2, 0);
     const Generador_4 = crearCalle("E ←", 4, TIPOS.GENERADOR, 2399, 977, 170, 0.01, 3, 0.0);
     const Generador_5 = crearCalle("E 2→", 4, TIPOS.GENERADOR, 1383, 826, -10, 0.01, 3, 0.0);
+    const Generador_6 = crearCalle("Er→", 2, TIPOS.GENERADOR, 1783, 1818, 80, 0.01, 2, 0.0);
+    const Generador_7 = crearCalle("B →", 2, TIPOS.GENERADOR, 2149, 1913, 78, 0.01, 2, 0.0);
 
     Calle_Circuito_Interior_2.vertices = [  
         { indiceCelda: 0, anguloOffset: 28.89548024446025 },  
