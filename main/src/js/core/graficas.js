@@ -69,7 +69,24 @@ const CALLES_EXCLUIDAS_POR_DEFECTO = [
     'Av. Miguel Othon de Mendizabal →',
     'Salida Cien Metros ←',
     'Calle M. Luisa Estampa Ort. →', //nuevas
-    'Calle M. Luisa Estampa Ort. ←'
+    'Calle M. Luisa Estampa Ort. ←',
+    'Salida Juan de Dios Batiz ←',
+    'Salida Juan de Dios Batiz →',
+    'Retorno torres →',
+    'Retorno torres ←',
+    'Retorno ESCOM →',
+    'Retorno ESCOM ←',
+    'Retorno Estampa →',
+    'Retorno Estampa ←',
+    'Salida de Juan de Dios Batiz ←',
+    'Salida de Juan de Dios Batiz →',
+    'Retorno Bernard →',
+    'Retorno Bernard ←',
+    'Entrada a Av. Juan de Dios Batiz ←',
+    'Entrada Juan de Dios Batiz →',
+
+    
+
 ];
 
 // Modo de selección de calles desde el mapa
