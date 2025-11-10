@@ -2717,6 +2717,18 @@ function iniciarSimulacion() {
         Avenida_IPN,  
         Devorador_2 
     ));
+
+    // Calle Luis Enrique Erro → a Calle Luis Enrique Erro Tramo 2 →  
+    conexionesCA.push(...crearConexionLineal(  
+        Generador_4,  
+        Avenida_Juan_de_Dios_Batiz2
+    ));
+
+        // Calle Luis Enrique Erro → a Calle Luis Enrique Erro Tramo 2 →  
+    conexionesCA.push(...crearConexionLineal(  
+        Generador_5,  
+        Avenida_Juan_de_Dios_Batiz4
+    ));
     
     // ============================================  
     // CONEXIONES PROBABILÍSTICAS  
