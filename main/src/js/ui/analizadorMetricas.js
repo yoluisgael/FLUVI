@@ -1,0 +1,330 @@
+/**
+ * analizadorMetricas.js
+ * Módulo para integrar el analizador de métricas Python con la interfaz web usando Pyodide
+ */
+
+let pyodideInstance = null;
+let pyodideInitialized = false;
+let currentCSVContent = null;
+let currentImagenes = null;
+
+/**
+ * Inicializa Pyodide (Python en el navegador)
+ */
+async function inicializarPyodide() {
+  if (pyodideInitialized) {
+    return pyodideInstance;
+  }
+
+  try {
+    // Mostrar estado de carga
+    document.getElementById('estadoCargaPython').style.display = 'block';
+    document.getElementById('mensajeEstadoPython').textContent = 'Cargando Pyodide...';
+    document.getElementById('progressBarPython').style.width = '10%';
+
+    // Cargar Pyodide desde CDN (versión más reciente)
+    pyodideInstance = await loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"
+    });
+
+    document.getElementById('progressBarPython').style.width = '30%';
+    document.getElementById('mensajeEstadoPython').textContent = 'Instalando paquetes Python básicos...';
+
+    // Instalar paquetes esenciales
+    await pyodideInstance.loadPackage(['numpy', 'pandas', 'matplotlib', 'scipy', 'scikit-learn']);
+
+    document.getElementById('progressBarPython').style.width = '60%';
+    document.getElementById('mensajeEstadoPython').textContent = 'Configurando paquetes adicionales...';
+
+    // Intentar instalar seaborn, pero continuar si falla
+    try {
+      await pyodideInstance.loadPackage('seaborn');
+      console.log('✅ Seaborn instalado correctamente');
+    } catch (error) {
+      console.warn('⚠️ Seaborn no disponible, continuando sin él:', error);
+      // No es crítico, el script funcionará sin seaborn
+    }
+
+    document.getElementById('progressBarPython').style.width = '80%';
+    document.getElementById('mensajeEstadoPython').textContent = 'Cargando script de análisis...';
+
+    // Cargar el script del analizador
+    const response = await fetch('src/python/analizador.py');
+    const analizadorScript = await response.text();
+
+    // Ejecutar el script en Pyodide
+    await pyodideInstance.runPythonAsync(analizadorScript);
+
+    document.getElementById('progressBarPython').style.width = '100%';
+    document.getElementById('mensajeEstadoPython').textContent = '¡Python listo! ✓';
+
+    pyodideInitialized = true;
+
+    // Ocultar barra de progreso después de 1 segundo
+    setTimeout(() => {
+      document.getElementById('estadoCargaPython').style.display = 'none';
+    }, 1000);
+
+    console.log('✅ Pyodide inicializado correctamente');
+    return pyodideInstance;
+
+  } catch (error) {
+    console.error('❌ Error al inicializar Pyodide:', error);
+    document.getElementById('mensajeEstadoPython').textContent = '❌ Error al cargar Python: ' + error.message;
+    document.getElementById('estadoCargaPython').classList.remove('alert-info');
+    document.getElementById('estadoCargaPython').classList.add('alert-danger');
+    throw error;
+  }
+}
+
+/**
+ * Carga un archivo CSV para análisis
+ */
+async function cargarCSVParaAnalisis(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Actualizar nombre del archivo
+  document.getElementById('nombreArchivoCSV').textContent = `📄 ${file.name}`;
+
+  try {
+    // Leer el contenido del archivo
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      currentCSVContent = e.target.result;
+
+      // Ejecutar análisis automáticamente
+      await ejecutarAnalisisCSV();
+    };
+    reader.readAsText(file);
+
+  } catch (error) {
+    console.error('❌ Error al cargar CSV:', error);
+    alert('Error al cargar el archivo CSV: ' + error.message);
+  }
+}
+
+/**
+ * Ejecuta el análisis del CSV usando Python
+ */
+async function ejecutarAnalisisCSV() {
+  if (!currentCSVContent) {
+    alert('Por favor, carga un archivo CSV primero.');
+    return;
+  }
+
+  try {
+    // Mostrar estado de carga
+    document.getElementById('estadoCargaPython').style.display = 'block';
+    document.getElementById('estadoCargaPython').classList.remove('alert-danger');
+    document.getElementById('estadoCargaPython').classList.add('alert-info');
+    document.getElementById('mensajeEstadoPython').textContent = 'Procesando datos...';
+    document.getElementById('progressBarPython').style.width = '20%';
+
+    // Inicializar Pyodide si no está inicializado
+    if (!pyodideInitialized) {
+      await inicializarPyodide();
+    }
+
+    document.getElementById('progressBarPython').style.width = '40%';
+    document.getElementById('mensajeEstadoPython').textContent = 'Analizando métricas...';
+
+    // Crear archivo CSV en el sistema de archivos virtual de Pyodide
+    pyodideInstance.FS.writeFile('/tmp_metricas.csv', currentCSVContent);
+
+    document.getElementById('progressBarPython').style.width = '60%';
+    document.getElementById('mensajeEstadoPython').textContent = 'Generando visualizaciones...';
+
+    // Ejecutar el análisis
+    const resultado = await pyodideInstance.runPythonAsync(`
+import io
+
+# Leer el CSV desde el contenido
+contenido_csv = """${currentCSVContent.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"""
+
+archivo = io.StringIO(contenido_csv)
+analizador = AnalizadorTraficoFLUVI(archivo)
+resultados = analizador.ejecutar_analisis_completo()
+resultados['imagenes']
+    `);
+
+    document.getElementById('progressBarPython').style.width = '90%';
+    document.getElementById('mensajeEstadoPython').textContent = 'Renderizando imágenes...';
+
+    // Convertir el resultado de Python a JavaScript
+    currentImagenes = resultado.toJs();
+
+    // Mostrar las imágenes
+    mostrarImagenes(currentImagenes);
+
+    document.getElementById('progressBarPython').style.width = '100%';
+    document.getElementById('mensajeEstadoPython').textContent = '¡Análisis completado! ✓';
+
+    // Ocultar barra de progreso y mostrar resultados
+    setTimeout(() => {
+      document.getElementById('estadoCargaPython').style.display = 'none';
+      document.getElementById('resultadosAnalisis').style.display = 'block';
+    }, 1000);
+
+    console.log('✅ Análisis completado exitosamente');
+
+  } catch (error) {
+    console.error('❌ Error durante el análisis:', error);
+    document.getElementById('mensajeEstadoPython').textContent = '❌ Error durante el análisis: ' + error.message;
+    document.getElementById('estadoCargaPython').classList.remove('alert-info');
+    document.getElementById('estadoCargaPython').classList.add('alert-danger');
+  }
+}
+
+/**
+ * Muestra las imágenes generadas en el modal
+ */
+function mostrarImagenes(imagenes) {
+  // Convertir el Map de Python a objeto JavaScript
+  const imagenesObj = {};
+  for (let [key, value] of imagenes.entries()) {
+    imagenesObj[key] = value;
+  }
+
+  // Asignar las imágenes a los elementos img
+  document.getElementById('imgAnalisisTemporal').src = imagenesObj.temporal || '';
+  document.getElementById('imgDiagramaFundamental').src = imagenesObj.fundamentales || '';
+  document.getElementById('imgDistribuciones').src = imagenesObj.distribuciones || '';
+
+  console.log('📊 Imágenes cargadas en el modal');
+}
+
+/**
+ * Descarga la imagen actualmente visible
+ */
+function descargarImagenActual() {
+  // Determinar qué tab está activo
+  const tabTemporal = document.getElementById('tab-temporal');
+  const tabFundamental = document.getElementById('tab-fundamental');
+  const tabDistribuciones = document.getElementById('tab-distribuciones');
+
+  let imgSrc = '';
+  let nombreArchivo = '';
+
+  if (tabTemporal.classList.contains('active')) {
+    imgSrc = document.getElementById('imgAnalisisTemporal').src;
+    nombreArchivo = 'analisis_temporal.png';
+  } else if (tabFundamental.classList.contains('active')) {
+    imgSrc = document.getElementById('imgDiagramaFundamental').src;
+    nombreArchivo = 'diagrama_fundamental.png';
+  } else if (tabDistribuciones.classList.contains('active')) {
+    imgSrc = document.getElementById('imgDistribuciones').src;
+    nombreArchivo = 'distribuciones_correlaciones.png';
+  }
+
+  if (imgSrc) {
+    descargarImagenBase64(imgSrc, nombreArchivo);
+  }
+}
+
+/**
+ * Descarga todas las imágenes en un ZIP
+ */
+async function descargarTodasImagenes() {
+  if (!currentImagenes) {
+    alert('No hay imágenes para descargar');
+    return;
+  }
+
+  // Usar JSZip para crear el archivo ZIP
+  // Nota: Necesitarás incluir la librería JSZip en tu HTML
+  if (typeof JSZip === 'undefined') {
+    // Si no está disponible JSZip, descargar una por una
+    alert('Descargando imágenes individualmente...');
+    descargarImagenBase64(document.getElementById('imgAnalisisTemporal').src, 'analisis_temporal.png');
+    setTimeout(() => {
+      descargarImagenBase64(document.getElementById('imgDiagramaFundamental').src, 'diagrama_fundamental.png');
+    }, 500);
+    setTimeout(() => {
+      descargarImagenBase64(document.getElementById('imgDistribuciones').src, 'distribuciones_correlaciones.png');
+    }, 1000);
+    return;
+  }
+
+  try {
+    const zip = new JSZip();
+    const folder = zip.folder("analisis_metricas");
+
+    // Convertir las imágenes base64 a blobs
+    const imagenesObj = {};
+    for (let [key, value] of currentImagenes.entries()) {
+      imagenesObj[key] = value;
+    }
+
+    // Agregar cada imagen al ZIP
+    const imgTemporal = await fetch(imagenesObj.temporal).then(r => r.blob());
+    folder.file('analisis_temporal.png', imgTemporal);
+
+    const imgFundamental = await fetch(imagenesObj.fundamentales).then(r => r.blob());
+    folder.file('diagrama_fundamental.png', imgFundamental);
+
+    const imgDistribuciones = await fetch(imagenesObj.distribuciones).then(r => r.blob());
+    folder.file('distribuciones_correlaciones.png', imgDistribuciones);
+
+    // Generar y descargar el ZIP
+    const content = await zip.generateAsync({type: "blob"});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(content);
+    link.download = 'analisis_metricas.zip';
+    link.click();
+
+    console.log('✅ ZIP descargado exitosamente');
+  } catch (error) {
+    console.error('❌ Error al crear ZIP:', error);
+    alert('Error al crear el archivo ZIP. Descargando imágenes individualmente...');
+    descargarTodasImagenesSeparadas();
+  }
+}
+
+/**
+ * Descarga todas las imágenes por separado (fallback)
+ */
+function descargarTodasImagenesSeparadas() {
+  descargarImagenBase64(document.getElementById('imgAnalisisTemporal').src, 'analisis_temporal.png');
+  setTimeout(() => {
+    descargarImagenBase64(document.getElementById('imgDiagramaFundamental').src, 'diagrama_fundamental.png');
+  }, 500);
+  setTimeout(() => {
+    descargarImagenBase64(document.getElementById('imgDistribuciones').src, 'distribuciones_correlaciones.png');
+  }, 1000);
+}
+
+/**
+ * Descarga una imagen en base64
+ */
+function descargarImagenBase64(base64Data, nombreArchivo) {
+  const link = document.createElement('a');
+  link.href = base64Data;
+  link.download = nombreArchivo;
+  link.click();
+  console.log(`✅ Descargada: ${nombreArchivo}`);
+}
+
+/**
+ * Inicializa los event listeners
+ */
+function inicializarAnalizadorMetricas() {
+  // Botón para abrir el modal
+  document.getElementById('btnAnalizarMetricas').addEventListener('click', () => {
+    const modal = new bootstrap.Modal(document.getElementById('modalAnalizadorMetricas'));
+    modal.show();
+  });
+
+  // Botones de descarga
+  document.getElementById('btnDescargarImagenActual').addEventListener('click', descargarImagenActual);
+  document.getElementById('btnDescargarTodasImagenes').addEventListener('click', descargarTodasImagenes);
+
+  console.log('✅ Analizador de Métricas inicializado');
+}
+
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', inicializarAnalizadorMetricas);
+} else {
+  inicializarAnalizadorMetricas();
+}

@@ -13,6 +13,13 @@
   <link href="./src/bootstrap-5.0.2-dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Chart.js local -->
   <script src="./src/libs/chart.js/chart.umd.min.js"></script>
+
+  <!-- Pyodide (Python en el navegador) -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+
+  <!-- JSZip para crear archivos ZIP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
   <link rel="stylesheet" href="src/css/estilos.css">
   <link rel="stylesheet" href="src/css/minimapa.css">
 
@@ -708,6 +715,9 @@
               </button>
               <button id="btnLimpiarMetricas" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-title="Borrar todos los datos de métricas recolectados y reiniciar gráficas">
                 Limpiar Métricas
+              </button>
+              <button id="btnAnalizarMetricas" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-title="Analizar métricas desde archivo CSV con Python">
+                Analizar Métricas
               </button>
             </div>
           </div>
@@ -2187,6 +2197,9 @@
   <!-- Control de Fecha y Hora del Simulador -->
   <script src="src/js/ui/timeControl.js"></script>
 
+  <!-- Analizador de Métricas con Python -->
+  <script src="src/js/ui/analizadorMetricas.js"></script>
+
   <!-- Tooltip global para objetos del canvas (calles y edificios) -->
   <div id="canvasTooltip" style="
     position: fixed;
@@ -2345,6 +2358,99 @@
             <strong>⚠️ No hay escenarios guardados</strong><br>
             <small>Guarda un escenario primero usando el botón "Guardar" o sube un archivo JSON</small>
           </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Analizador de Métricas -->
+  <div class="modal fade" id="modalAnalizadorMetricas" tabindex="-1" aria-labelledby="modalAnalizadorMetricasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="modalAnalizadorMetricasLabel">📊 Analizador de Métricas (Python)</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-3">Carga un archivo CSV de métricas exportado previamente para generar visualizaciones avanzadas usando Python.</p>
+
+          <!-- Sección de carga de archivo -->
+          <div class="mb-4">
+            <label for="inputCSVAnalizador" class="btn btn-outline-success w-100">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-up me-2" viewBox="0 0 16 16">
+                <path d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707z"/>
+                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+              </svg>
+              📤 Cargar archivo CSV
+            </label>
+            <input type="file" id="inputCSVAnalizador" class="d-none" accept=".csv" onchange="cargarCSVParaAnalisis(event)">
+            <small class="form-text text-muted d-block mt-1" id="nombreArchivoCSV">
+              Ningún archivo seleccionado
+            </small>
+          </div>
+
+          <!-- Área de estado de carga -->
+          <div id="estadoCargaPython" class="alert alert-info" style="display: none;">
+            <div class="d-flex align-items-center">
+              <div class="spinner-border spinner-border-sm me-2" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </div>
+              <span id="mensajeEstadoPython">Inicializando Python (Pyodide)...</span>
+            </div>
+            <div class="progress mt-2" style="height: 5px;">
+              <div id="progressBarPython" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Área de resultados -->
+          <div id="resultadosAnalisis" style="display: none;">
+            <h6 class="mb-3">📈 Resultados del Análisis</h6>
+
+            <!-- Tabs para las 3 imágenes -->
+            <ul class="nav nav-tabs" id="tabsImagenes" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-temporal" data-bs-toggle="tab" data-bs-target="#img-temporal" type="button" role="tab">
+                  Análisis Temporal
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-fundamental" data-bs-toggle="tab" data-bs-target="#img-fundamental" type="button" role="tab">
+                  Diagrama Fundamental
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-distribuciones" data-bs-toggle="tab" data-bs-target="#img-distribuciones" type="button" role="tab">
+                  Distribuciones
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content mt-3" id="tabsImagenesContent">
+              <div class="tab-pane fade show active" id="img-temporal" role="tabpanel">
+                <img id="imgAnalisisTemporal" src="" alt="Análisis Temporal" class="img-fluid rounded shadow">
+              </div>
+              <div class="tab-pane fade" id="img-fundamental" role="tabpanel">
+                <img id="imgDiagramaFundamental" src="" alt="Diagrama Fundamental" class="img-fluid rounded shadow">
+              </div>
+              <div class="tab-pane fade" id="img-distribuciones" role="tabpanel">
+                <img id="imgDistribuciones" src="" alt="Distribuciones" class="img-fluid rounded shadow">
+              </div>
+            </div>
+
+            <!-- Botones de descarga -->
+            <div class="d-grid gap-2 mt-3">
+              <button id="btnDescargarImagenActual" class="btn btn-success btn-sm">
+                💾 Descargar Imagen Actual
+              </button>
+              <button id="btnDescargarTodasImagenes" class="btn btn-info btn-sm">
+                📦 Descargar Todas las Imágenes (ZIP)
+              </button>
+            </div>
+          </div>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

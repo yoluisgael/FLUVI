@@ -1,0 +1,172 @@
+PRUEBAS ADICIONALES PARA PROYECTO FLUVI (31-60)
+==================================================
+
+CATEGORÍA: PRUEBAS DE FUNCIONALIDAD (PF)
+-----------------------------------------
+
+PF-07 - Tipos de Vehículos Diferenciados
+Descripción: Verificar que el sistema genera y muestra correctamente los 6 tipos diferentes de vehículos (carro1 a carro6) con sus respectivas texturas. Los vehículos deben aparecer aleatoriamente en las calles generadoras y moverse según las reglas del autómata celular.
+
+PF-08 - Calles Tipo Generador
+Descripción: Comprobar que las calles configuradas como GENERADOR crean nuevos vehículos en la primera celda de cada carril según la probabilidad configurada. Se debe observar la generación continua cuando la probabilidad es mayor a 0%.
+
+PF-09 - Calles Tipo Devorador
+Descripción: Verificar que las calles tipo DEVORADOR absorben correctamente los vehículos que llegan al final, eliminándolos del sistema. Los vehículos deben desaparecer al alcanzar la última celda de estas calles.
+
+PF-10 - Reglas del Autómata Celular
+Descripción: Validar que el autómata celular aplica correctamente las reglas de movimiento. Los vehículos avanzan cuando hay espacio libre adelante y se detienen cuando encuentran otro vehículo u obstáculo.
+
+
+CATEGORÍA: PRUEBAS DE INTERFAZ DE USUARIO (PUI)
+------------------------------------------------
+
+PUI-06 - Modo Oscuro/Claro
+Descripción: Verificar el toggle entre modo oscuro y modo claro. La interfaz completa debe cambiar de tema, incluyendo paneles, gráficas, modales y colores de fondo. El cambio debe ser inmediato y persistir al recargar.
+
+PUI-07 - Sidebar Colapsable
+Descripción: Comprobar que el panel lateral se puede ocultar/mostrar usando el botón correspondiente o el atajo Ctrl+B (Cmd+B en Mac). Al ocultar, debe aparecer un botón flotante y el canvas debe redimensionarse automáticamente.
+
+PUI-08 - Toggle de Conexiones
+Descripción: Verificar que el botón de mostrar/ocultar conexiones funciona correctamente. Las líneas de conexión entre calles (azul, verde, naranja) deben aparecer o desaparecer según el estado del toggle.
+
+PUI-09 - Toggle de Vértices
+Descripción: Comprobar que los puntos de control de vértices de curvas se pueden mostrar u ocultar. Los círculos indicadores en las calles curvas deben ser visibles solo cuando el toggle está activado.
+
+PUI-10 - Toggle de Etiquetas
+Descripción: Verificar que las etiquetas con nombres de calles se pueden mostrar u ocultar mediante el control correspondiente. Los textos con fondo semi-transparente deben aparecer sobre cada calle cuando está activo.
+
+PUI-11 - Toggle de Minimapa
+Descripción: Comprobar que el minimapa se puede activar/desactivar. El minimapa debe mostrar una vista general del mapa completo con un rectángulo rojo indicando la vista actual.
+
+PUI-12 - Reloj Virtual
+Descripción: Verificar que el reloj virtual muestra correctamente el día de la semana, hora, minutos y segundos. El tiempo debe avanzar continuamente (2 segundos simulados por paso) y mostrarse en formato legible.
+
+PUI-13 - Botón Reiniciar Simulación
+Descripción: Comprobar que el botón de reiniciar limpia todos los vehículos del mapa y reinicia el sistema al estado inicial. Los contadores de métricas deben reiniciarse a cero.
+
+
+CATEGORÍA: PRUEBAS DE MÉTRICAS (PM)
+------------------------------------
+
+PM-06 - Exportación CSV de Métricas
+Descripción: Verificar que el botón de exportar a CSV genera un archivo con todas las mediciones históricas, incluyendo metadata (tiempo virtual, fecha real) y estadísticas (promedio, mínimo, máximo). El archivo debe descargarse con timestamp en el nombre.
+
+PM-07 - Exportación JSON de Métricas
+Descripción: Comprobar que la exportación a JSON contiene los últimos 50 puntos de datos con estructura completa: densidad, flujo, velocidad, entropía, tasa de cambio, metadata y estadísticas calculadas.
+
+PM-08 - Limpiar Métricas
+Descripción: Verificar que el botón de limpiar métricas solicita confirmación y, al aceptar, elimina todos los datos históricos de las gráficas, reiniciando los contadores a cero.
+
+PM-09 - Entropía de Shannon
+Descripción: Comprobar que la métrica de entropía de Shannon se calcula correctamente basándose en las 8 transiciones posibles del autómata celular. El valor debe estar entre 0 y 3.000 bits y mostrarse en la gráfica correspondiente.
+
+PM-10 - Configuración de Calles en Métricas
+Descripción: Verificar que el modal de configuración permite incluir/excluir calles específicas del cálculo de métricas. Los checkboxes deben reflejar el estado actual y los cambios deben aplicarse inmediatamente a las métricas.
+
+PM-11 - Selección Visual de Calles para Métricas
+Descripción: Comprobar el modo de selección desde el mapa, donde hacer clic en una calle la incluye/excluye del cálculo de métricas. Debe aparecer un overlay visual indicando el estado de cada calle.
+
+
+CATEGORÍA: PRUEBAS DE ESCENARIOS (PES)
+---------------------------------------
+
+PES-05 - Modo Pintura de Bloqueos
+Descripción: Verificar que el modo pintura permite aplicar bloqueos arrastrando el mouse sobre las celdas. Los bloqueos deben pintarse continuamente mientras se mantiene presionado el botón del mouse.
+
+PES-06 - Limpieza de Todos los Bloqueos
+Descripción: Comprobar que el botón de limpiar bloqueos elimina todos los obstáculos, inundaciones y bloqueos del mapa, dejando las calles completamente libres.
+
+PES-07 - Escenario Inundación Masiva
+Descripción: Verificar que el escenario predeterminado "Inundación Masiva" inunda todos los carriles excepto uno en cada calle. Debe activarse el efecto de lluvia con partículas animadas y relámpagos.
+
+PES-08 - Escenario Baches Aleatorios
+Descripción: Comprobar que el escenario "Baches Aleatorios" coloca obstáculos tipo bache con aproximadamente 5% de probabilidad en celdas aleatorias del mapa.
+
+PES-09 - Exportación de Escenarios
+Descripción: Verificar que al guardar un escenario se genera un archivo JSON con nombre, descripción, estadísticas actuales y configuración completa de bloqueos. El escenario debe aparecer en la lista de escenarios guardados.
+
+PES-10 - Validación de Compatibilidad de Escenarios
+Descripción: Comprobar que al cargar un escenario en un mapa diferente, el sistema valida la compatibilidad y muestra advertencias si las calles no coinciden.
+
+
+CATEGORÍA: PRUEBAS DE LÓGICA DINÁMICA (PLD)
+--------------------------------------------
+
+PLD-02a - Multiplicadores Hora Pico Mañana
+Descripción: Verificar que durante las horas pico de la mañana (7-9 AM) en días laborales, el multiplicador de tráfico aumenta a 1.5-1.8x. La generación de vehículos debe incrementarse visiblemente.
+
+PLD-02b - Multiplicadores Hora Valle Nocturna
+Descripción: Comprobar que durante las horas nocturnas (0-5 AM), el multiplicador de tráfico disminuye a 0.1-0.3x. La generación de vehículos debe ser mínima o nula.
+
+PLD-02c - Multiplicadores Fin de Semana
+Descripción: Verificar que los multiplicadores de fin de semana (sábado-domingo) tienen un patrón diferente a los días laborales, con tráfico más uniforme y sin picos tan marcados.
+
+PLD-03 - Presets de Multiplicadores
+Descripción: Comprobar que los botones de presets (Día Laboral, Fin de Semana, Constante, Nocturno) configuran correctamente los 24 sliders con valores apropiados. Los cambios deben reflejarse inmediatamente.
+
+PLD-04 - Configuración Manual de Tiempo
+Descripción: Verificar que el modal de configuración de tiempo permite establecer manualmente el día de la semana, hora y minutos. Al aplicar, el reloj virtual debe saltar al tiempo especificado.
+
+PLD-05 - Próximo Cambio Significativo
+Descripción: Comprobar que el sistema muestra correctamente información sobre el próximo cambio significativo en el multiplicador de tráfico, incluyendo la hora y cuántos minutos faltan.
+
+
+CATEGORÍA: PRUEBAS DE CONSTRUCTOR Y MAPAS (PCM)
+------------------------------------------------
+
+PCM-02 - Crear Nueva Calle
+Descripción: Verificar que el constructor permite crear una nueva calle especificando nombre, tamaño, número de carriles, posición (X, Y), ángulo y tipo (GENERADOR, CONEXION, DEVORADOR). La calle debe aparecer en el mapa al guardar.
+
+PCM-03 - Editar Posición y Ángulo
+Descripción: Comprobar que el editor visual permite modificar la posición (X, Y) y el ángulo de una calle mediante inputs numéricos o arrastrando los handles interactivos (círculo azul para mover, verde para rotar).
+
+PCM-04 - Editar Vértices de Curvas
+Descripción: Verificar que al activar el modo vértices (tecla Z), aparecen puntos de control que se pueden arrastrar para modificar la curvatura de la calle. Los cambios deben aplicarse en tiempo real.
+
+PCM-05 - Agregar Edificios
+Descripción: Comprobar que el constructor permite agregar edificios especificando nombre, posición (X, Y), tamaño y ángulo. El edificio debe aparecer con su textura correspondiente en el mapa.
+
+PCM-06 - Eliminar Objetos
+Descripción: Verificar que el botón de eliminar remueve correctamente la calle o edificio seleccionado del mapa. El objeto debe desaparecer inmediatamente y no aparecer al guardar/cargar.
+
+PCM-07 - Guardar Simulación Completa
+Descripción: Comprobar que el botón de guardar genera un archivo JSON con la configuración completa del mapa: calles, edificios, conexiones, multiplicadores de tráfico, configuración de estacionamientos y tiempo virtual.
+
+PCM-08 - Cargar Simulación Guardada
+Descripción: Verificar que al cargar un archivo JSON de simulación, el sistema reconstruye completamente el mapa con todos sus elementos, configuraciones y estados tal como fueron guardados.
+
+
+CATEGORÍA: PRUEBAS DE ESTACIONAMIENTOS (PE)
+--------------------------------------------
+
+PE-01 - Configurar Edificio como Estacionamiento
+Descripción: Verificar que al activar un edificio como estacionamiento, se habilitan los controles de capacidad máxima, probabilidades horarias y pares de conexiones entrada/salida.
+
+PE-02 - Entrada de Vehículos a Estacionamiento
+Descripción: Comprobar que los vehículos que pasan por una celda configurada como entrada son absorbidos según la probabilidad horaria configurada. El contador de vehículos en el estacionamiento debe incrementarse.
+
+PE-03 - Salida de Vehículos de Estacionamiento
+Descripción: Verificar que el estacionamiento genera vehículos en las celdas de salida según la probabilidad horaria de salida y solo si hay vehículos disponibles. El contador debe decrementarse.
+
+PE-04 - Perfiles Horarios de Estacionamiento
+Descripción: Comprobar que los perfiles predefinidos (Oficina, Centro Comercial) configuran correctamente los 24 sliders de entrada/salida con patrones realistas de ocupación.
+
+PE-05 - Capacidad Máxima de Estacionamiento
+Descripción: Verificar que cuando el estacionamiento alcanza su capacidad máxima, deja de absorber vehículos aunque la probabilidad de entrada sea alta. Los vehículos deben continuar circulando.
+
+
+CATEGORÍA: PRUEBAS DE VISUALIZACIÓN (PV)
+-----------------------------------------
+
+PV-01 - Ciclo Día/Noche
+Descripción: Comprobar que el color de fondo del mapa cambia suavemente según la hora del día simulado. Debe mostrar tonos oscuros en la noche (12 AM - 5 AM), azul cielo durante el día (8 AM - 5 PM) y tonos cálidos al atardecer (6 PM - 7 PM).
+
+PV-02 - Efecto de Lluvia
+Descripción: Verificar que al activar el modo inundación, aparece un efecto de lluvia con aproximadamente 150 partículas animadas cayendo y relámpagos flash blancos sutiles a intervalos aleatorios.
+
+PV-03 - Rotación de Vehículos en Curvas
+Descripción: Comprobar que los vehículos ajustan su rotación automáticamente al circular por calles curvas, siguiendo la interpolación de ángulos de los vértices para dar una apariencia realista del movimiento.
+
+==================================================
+TOTAL: 31 PRUEBAS ADICIONALES (PF-07 a PV-03)
+==================================================
