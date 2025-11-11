@@ -357,18 +357,57 @@ class AnalizadorTraficoFLUVI:
         plt.tight_layout()
         imagenes['temporal'] = self.fig_to_base64(fig1)
 
-        # IMAGEN 2: diagramas_fundamentales.png
-        fig2 = plt.figure(figsize=(10, 8))
-        plt.suptitle('Diagrama Fundamental del Tráfico', fontsize=16, fontweight='bold')
+        # IMAGEN 2: diagramas_fundamentales.png (CON MAPA DE CALOR)
+        fig2, axes = plt.subplots(1, 2, figsize=(16, 6))
+        fig2.suptitle('Diagrama Fundamental del Tráfico', fontsize=16, fontweight='bold')
 
-        scatter = plt.scatter(self.df['Densidad'], self.df['Entropia'],
+        # Subplot 1: Entropía vs Densidad
+        scatter = axes[0].scatter(self.df['Densidad'], self.df['Entropia'],
                              c=self.df['Flujo'], cmap='plasma',
                              s=5, alpha=0.6)
-        plt.xlabel('Densidad (%)', fontsize=12)
-        plt.ylabel('Entropía (bits)', fontsize=12)
-        plt.title('Entropía vs Densidad (color=Flujo)', fontsize=14)
-        plt.colorbar(scatter, label='Flujo (veh/s)')
-        plt.grid(True, alpha=0.3)
+        axes[0].set_xlabel('Densidad (%)', fontsize=12)
+        axes[0].set_ylabel('Entropía (bits)', fontsize=12)
+        axes[0].set_title('Entropía vs Densidad (color=Flujo)', fontsize=13, fontweight='bold')
+        plt.colorbar(scatter, ax=axes[0], label='Flujo (veh/s)')
+        axes[0].grid(True, alpha=0.3)
+
+        # Subplot 2: Mapa de Calor - Densidad Promedio por Día y Hora
+        # Redondear hora del día a enteros
+        self.df['Hora_Redondeada'] = self.df['Hora_Dia'].round().astype(int)
+
+        # Crear tabla pivote para el heatmap
+        orden_dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+        heatmap_data = self.df.pivot_table(
+            values='Densidad',
+            index='Dia_Semana',
+            columns='Hora_Redondeada',
+            aggfunc='mean'
+        )
+
+        # Reordenar filas según el orden de días de la semana
+        heatmap_data = heatmap_data.reindex([dia for dia in orden_dias if dia in heatmap_data.index])
+
+        # Crear el heatmap (con o sin seaborn)
+        if SEABORN_AVAILABLE:
+            sns.heatmap(heatmap_data,
+                       cmap='YlOrRd',
+                       cbar_kws={'label': 'Densidad (%)'},
+                       ax=axes[1],
+                       linewidths=0.5,
+                       linecolor='white')
+        else:
+            # Alternativa sin seaborn usando matplotlib puro
+            im = axes[1].imshow(heatmap_data, cmap='YlOrRd', aspect='auto')
+            axes[1].set_xticks(range(len(heatmap_data.columns)))
+            axes[1].set_xticklabels(heatmap_data.columns)
+            axes[1].set_yticks(range(len(heatmap_data.index)))
+            axes[1].set_yticklabels(heatmap_data.index)
+            plt.colorbar(im, ax=axes[1], label='Densidad (%)')
+
+        axes[1].set_title('Densidad Promedio por Día y Hora', fontsize=13, fontweight='bold')
+        axes[1].set_xlabel('Hora del Día', fontsize=12)
+        axes[1].set_ylabel('Día de la Semana', fontsize=12)
+        axes[1].set_yticklabels(axes[1].get_yticklabels(), rotation=0)
 
         plt.tight_layout()
         imagenes['fundamentales'] = self.fig_to_base64(fig2)

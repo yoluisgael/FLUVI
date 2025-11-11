@@ -1024,6 +1024,90 @@
                 </div>
               </div>
             </div>
+
+            <div class="col-12 mt-3">
+              <div class="card border-primary bg-light">
+                <div class="card-body">
+                  <h5 class="card-title text-primary">📊 Analizador de Métricas Avanzado</h5>
+                  <p class="mb-3">Analiza tus métricas exportadas con visualizaciones profesionales directamente en el navegador.</p>
+
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h6 class="text-primary">📊 Visualizaciones Generadas</h6>
+                      <ul class="list-unstyled mb-3">
+                        <li><strong>1. Análisis Temporal (4 gráficas):</strong>
+                          <ul class="small">
+                            <li>• Densidad vs Tiempo</li>
+                            <li>• Flujo vs Tiempo</li>
+                            <li>• Velocidad vs Tiempo</li>
+                            <li>• Estados de Tráfico clasificados por colores</li>
+                          </ul>
+                        </li>
+                        <li><strong>2. Diagrama Fundamental:</strong>
+                          <ul class="small">
+                            <li>• Entropía vs Densidad (coloreado por Flujo)</li>
+                            <li>• Mapa de Calor por Día y Hora</li>
+                          </ul>
+                        </li>
+                        <li><strong>3. Distribuciones Estadísticas:</strong>
+                          <ul class="small">
+                            <li>• Histogramas de Densidad y Flujo</li>
+                            <li>• Boxplots comparativos</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div class="col-md-6">
+                      <h6 class="text-success">🚀 Cómo Usar</h6>
+                      <ol class="small mb-3">
+                        <li>Ejecuta una simulación en FLUVI</li>
+                        <li>Exporta las métricas usando <strong>"Descargar CSV"</strong></li>
+                        <li>Haz clic en el botón <strong>"Analizar Métricas"</strong> (azul)</li>
+                        <li>Carga el archivo CSV en el modal</li>
+                        <li>Espera mientras se procesan los datos (~30-60 seg primera vez)</li>
+                        <li>Navega entre las 3 pestañas para ver cada gráfica</li>
+                        <li>Descarga las imágenes (individual o todas en ZIP)</li>
+                      </ol>
+
+                      <h6 class="text-warning mt-3">📈 Métricas Avanzadas Calculadas</h6>
+                      <ul class="small mb-2">
+                        <li>• Clasificación de estados (Colapso, Congestionado, Moderado, Óptimo, Sub-utilizado)</li>
+                        <li>• Estadísticas por día de la semana</li>
+                        <li>• Capacidad crítica del sistema</li>
+                        <li>• Correlaciones entre variables</li>
+                        <li>• Detección de eventos anómalos</li>
+                        <li>• Análisis temporal con tendencias</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="row mt-2">
+                    <div class="col-12">
+                      <h6 class="text-info">🔥 Mapa de Calor</h6>
+                      <p class="small mb-2">
+                        El nuevo <strong>Mapa de Calor</strong> en el Diagrama Fundamental muestra la densidad promedio
+                        organizada por día de la semana (eje Y) y hora del día (eje X). Los colores van de
+                        <span class="badge" style="background-color: #fff3cd; color: #856404;">amarillo (baja)</span> a
+                        <span class="badge bg-danger">rojo (alta)</span>, permitiendo identificar visualmente:
+                      </p>
+                      <ul class="small">
+                        <li>🕐 <strong>Horas pico</strong> de cada día (columnas rojas)</li>
+                        <li>📅 <strong>Patrones semanales</strong> (diferencias entre días)</li>
+                        <li>🔄 <strong>Comparativa laboral/fin de semana</strong></li>
+                        <li>🌙 <strong>Períodos de baja actividad</strong> (madrugada)</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="alert alert-info mb-0 mt-2">
+                    <small>
+                      <strong>⏱️ Tiempo de procesamiento:</strong> Primera vez ~60-90 segundos (inicialización),
+                      cargas posteriores ~5-12 segundos (datos en caché).
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">

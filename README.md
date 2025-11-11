@@ -169,7 +169,10 @@ FLUVI/
 │       │       ├── editor.js              # Editor visual de calles
 │       │       ├── constructor.js         # Constructor de mapas
 │       │       ├── edificioUI.js          # Interfaz de configuración de estacionamientos
+│       │       ├── analizadorMetricas.js  # Analizador de métricas avanzado
 │       │       └── etiquetas.js           # Sistema de etiquetas
+│       ├── python/                        # Scripts Python para análisis
+│       │   └── analizador.py              # Analizador de métricas con visualizaciones
 │       └── css/                           # Hojas de estilo
 │           ├── estilos.css                # Estilos principales
 │           └── minimapa.css               # Estilos del minimapa
@@ -672,6 +675,50 @@ El sistema usa eventos nativos de PixiJS:
 **Institución:**
 Instituto Politécnico Nacional (IPN)
 Escuela Superior de Cómputo (ESCOM)
+
+## Analizador de Métricas con Python
+
+FLUVI incluye un **Analizador de Métricas Avanzado** que permite analizar archivos CSV exportados usando Python directamente en el navegador mediante **Pyodide** (Python compilado a WebAssembly).
+
+### 📊 Visualizaciones Generadas
+
+**1. Análisis Temporal (4 gráficas)**
+- Densidad vs Tiempo
+- Flujo vs Tiempo
+- Velocidad vs Tiempo
+- Estados de Tráfico clasificados por colores
+
+**2. Diagrama Fundamental (2 gráficas)**
+- Entropía vs Densidad (coloreado por Flujo)
+- **Mapa de Calor por Día y Hora** 🔥
+
+**3. Distribuciones Estadísticas**
+- Histogramas de Densidad y Flujo
+- Boxplots comparativos
+
+### 🔥 Mapa de Calor
+
+Visualiza patrones de tráfico organizados por:
+- **Eje Y**: Días de la semana (Lunes - Domingo)
+- **Eje X**: Horas del día (0 - 23)
+- **Color**: 🟡 amarillo (baja densidad) → 🔴 rojo (alta densidad)
+
+### 🚀 Cómo Usar
+
+1. Ejecuta una simulación en FLUVI
+2. Exporta métricas usando "Descargar CSV"
+3. Clic en "Analizar Métricas" (botón azul)
+4. Carga el archivo CSV
+5. Espera el procesamiento (~60 seg primera vez, ~5 seg después)
+6. Navega entre las 3 pestañas
+7. Descarga imágenes (individual o ZIP)
+
+### ✅ Características
+
+- **100% en el navegador**: Sin instalación de Python
+- **Privacidad total**: Datos locales, no se envían a servidores
+- **Visualizaciones profesionales**: matplotlib, pandas, scipy
+- **Métricas avanzadas**: Clasificación de estados, capacidad crítica, correlaciones, detección de anomalías
 
 ## Versión
 
