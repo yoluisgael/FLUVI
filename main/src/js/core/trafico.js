@@ -360,7 +360,7 @@ const backgroundAreas = [
             //{ x: 1847, y: 364 },  // Vértice 7 (izquierda abajo)
             { x: 981, y: 1455 }    // Vértice 8 (izquierda arriba)
         ],
-        color: "#FFE4B5",  // Beige claro (color de referencia visual del IPN)
+        color: "#ffffffff",  // Beige claro (color de referencia visual del IPN)
         alpha: 0.25,       // 25% de opacidad (semi-transparente)
         showBorder: true,  // Mostrar borde para delimitar el área
         showLabel: false   // No mostrar label (solo es referencia visual)
