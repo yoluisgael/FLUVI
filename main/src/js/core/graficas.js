@@ -1198,32 +1198,44 @@ function descargarMetricasJSON() {
  */
 function limpiarMetricas() {
     if (completeMetricsHistory.timestamps.length === 0) {
-        alert('No hay métricas para limpiar.');
+        mostrarAdvertencia('Sin métricas', 'No hay métricas para limpiar.');
         return;
     }
 
-    if (confirm('¿Estás seguro de que deseas limpiar todas las métricas? Esta acción no se puede deshacer.')) {
-        // Limpiar historial de gráficas
-        metricsHistory.timestamps = [];
-        metricsHistory.density = [];
-        metricsHistory.throughput = [];
-        metricsHistory.netGeneration = [];
-        metricsHistory.speed = [];
-        metricsHistory.entropy = [];
+    // Usar modal de confirmación de Bootstrap en lugar de confirm() nativo
+    mostrarConfirmacion(
+        '🗑️ Limpiar Métricas',
+        '¿Estás seguro de que deseas limpiar todas las métricas?<br><br><strong>Esta acción no se puede deshacer.</strong>',
+        () => {
+            // Callback si el usuario confirma
+            // Limpiar historial de gráficas
+            metricsHistory.timestamps = [];
+            metricsHistory.density = [];
+            metricsHistory.throughput = [];
+            metricsHistory.netGeneration = [];
+            metricsHistory.speed = [];
+            metricsHistory.entropy = [];
 
-        // Limpiar historial COMPLETO
-        completeMetricsHistory.timestamps = [];
-        completeMetricsHistory.density = [];
-        completeMetricsHistory.throughput = [];
-        completeMetricsHistory.netGeneration = [];
-        completeMetricsHistory.speed = [];
-        completeMetricsHistory.entropy = [];
+            // Limpiar historial COMPLETO
+            completeMetricsHistory.timestamps = [];
+            completeMetricsHistory.density = [];
+            completeMetricsHistory.throughput = [];
+            completeMetricsHistory.netGeneration = [];
+            completeMetricsHistory.speed = [];
+            completeMetricsHistory.entropy = [];
 
-        updateCharts();
+            updateCharts();
 
-        console.log('✅ Métricas limpiadas exitosamente (historial completo y gráficas)');
-        alert('Métricas limpiadas exitosamente');
-    }
+            console.log('✅ Métricas limpiadas exitosamente (historial completo y gráficas)');
+            mostrarExito('✅ Métricas limpiadas', 'Todas las métricas han sido eliminadas exitosamente.');
+        },
+        null, // No hay callback para cancelar
+        {
+            btnConfirmText: '🗑️ Limpiar Todo',
+            btnConfirmClass: 'btn-danger',
+            btnCancelText: 'Cancelar'
+        }
+    );
 }
 
 // ==================== INICIALIZACIÓN AL CARGAR LA PÁGINA ====================

@@ -41,8 +41,8 @@ Descripción: Comprobar que el minimapa se puede activar/desactivar. El minimapa
 PUI-12 - Reloj Virtual
 Descripción: Verificar que el reloj virtual muestra correctamente el día de la semana, hora, minutos y segundos. El tiempo debe avanzar continuamente (2 segundos simulados por paso) y mostrarse en formato legible.
 
-PUI-13 - Botón Reiniciar Simulación
-Descripción: Comprobar que el botón de reiniciar limpia todos los vehículos del mapa y reinicia el sistema al estado inicial. Los contadores de métricas deben reiniciarse a cero.
+PUI-13 - Switch Activador de Celdas
+Descripción: Verificar que el switch "Activador de Celdas" controla la información mostrada en el tooltip al hacer hover sobre las calles. Cuando está desactivado, solo muestra el nombre de la calle. Cuando está activado, muestra formato "NOMBRE_CALLE : NUMERO_CELDA", permitiendo identificar celdas específicas para configuración de conexiones y estacionamientos. El label debe actualizarse mostrando "🔢 Activador de Celdas (Activado/Desactivado)" según el estado. Incluye un ícono de ayuda con tooltip explicativo sobre el impacto en el rendimiento.
 
 
 CATEGORÍA: PRUEBAS DE MÉTRICAS (PM)

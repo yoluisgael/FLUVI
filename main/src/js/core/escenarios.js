@@ -167,6 +167,34 @@ function inicializarEscenarios() {
         });
     }
 
+    // Event listener para botón de limpiar todos los bloqueos
+    const btnLimpiarTodosBloqueos = document.getElementById('btnLimpiarTodosBloqueos');
+    if (btnLimpiarTodosBloqueos) {
+        btnLimpiarTodosBloqueos.addEventListener('click', () => {
+            if (estadoEscenarios.celdasBloqueadas.size === 0) {
+                mostrarAdvertencia('Sin bloqueos', 'No hay obstáculos, inundaciones o bloqueos para limpiar.');
+                return;
+            }
+
+            // Mostrar modal de confirmación
+            mostrarConfirmacion(
+                '🗑️ Limpiar Todos los Bloqueos',
+                `¿Estás seguro de que deseas eliminar <strong>${estadoEscenarios.celdasBloqueadas.size} bloqueo(s)</strong>?<br><br>Se eliminarán todos los obstáculos, inundaciones y bloqueos del mapa.<br><br><strong>Los vehículos no serán afectados.</strong>`,
+                () => {
+                    // Callback si confirma - usar versión silenciosa sin confirmación adicional
+                    limpiarTodosLosBloqueosSilencioso();
+                    mostrarExito('✅ Bloqueos eliminados', 'Todos los obstáculos, inundaciones y bloqueos han sido eliminados exitosamente.');
+                },
+                null, // No hay callback para cancelar
+                {
+                    btnConfirmText: '🗑️ Eliminar Todo',
+                    btnConfirmClass: 'btn-danger',
+                    btnCancelText: 'Cancelar'
+                }
+            );
+        });
+    }
+
     console.log('✅ Módulo de escenarios inicializado');
     console.log('ℹ️ Los clicks en el canvas son manejados por CalleRenderer con prioridad al modo bloqueo');
 }

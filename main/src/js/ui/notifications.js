@@ -140,11 +140,128 @@ window.alert = function(mensaje) {
     mostrarNotificacion(tipo, titulo, mensajeLimpio, 5000);
 };
 
+/**
+ * Muestra un modal de confirmación con Bootstrap
+ * @param {string} titulo - Título del modal
+ * @param {string} mensaje - Mensaje de confirmación
+ * @param {Function} onConfirm - Callback a ejecutar si el usuario confirma
+ * @param {Function} onCancel - Callback opcional a ejecutar si el usuario cancela
+ * @param {Object} opciones - Opciones adicionales { btnConfirmText, btnConfirmClass, btnCancelText }
+ */
+function mostrarConfirmacion(titulo, mensaje, onConfirm, onCancel = null, opciones = {}) {
+    // Opciones por defecto
+    const config = {
+        btnConfirmText: opciones.btnConfirmText || 'Confirmar',
+        btnConfirmClass: opciones.btnConfirmClass || 'btn-danger',
+        btnCancelText: opciones.btnCancelText || 'Cancelar',
+        btnCancelClass: opciones.btnCancelClass || 'btn-secondary'
+    };
+
+    // Crear ID único para el modal
+    const modalId = `modal-confirm-${Date.now()}`;
+
+    // Crear el HTML del modal
+    const modalHTML = `
+        <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="${modalId}Label">${titulo}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${mensaje}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn ${config.btnCancelClass}" data-bs-dismiss="modal">
+                            ${config.btnCancelText}
+                        </button>
+                        <button type="button" class="btn ${config.btnConfirmClass}" id="${modalId}-confirm">
+                            ${config.btnConfirmText}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Insertar el modal en el body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Obtener el elemento del modal
+    const modalElement = document.getElementById(modalId);
+    const btnConfirm = document.getElementById(`${modalId}-confirm`);
+    const btnCancel = modalElement.querySelector('[data-bs-dismiss="modal"]');
+
+    // Inicializar el modal de Bootstrap
+    const modal = new bootstrap.Modal(modalElement, {
+        backdrop: 'static', // No cerrar al hacer clic fuera
+        keyboard: true // Permitir cerrar con ESC
+    });
+
+    // Event listener para el botón de cancelar (quitar foco antes de cerrar)
+    if (btnCancel) {
+        btnCancel.addEventListener('click', () => {
+            btnCancel.blur();
+        });
+    }
+
+    // Variable para rastrear si se confirmó
+    let wasConfirmed = false;
+
+    // Event listener para el botón de confirmar
+    btnConfirm.addEventListener('click', () => {
+        wasConfirmed = true;
+        btnConfirm.disabled = true; // Deshabilitar para evitar múltiples clics
+
+        // Quitar el foco del botón antes de cerrar
+        btnConfirm.blur();
+
+        modal.hide();
+
+        // Ejecutar callback después de un pequeño delay para evitar problemas de enfoque
+        setTimeout(() => {
+            if (onConfirm && typeof onConfirm === 'function') {
+                onConfirm();
+            }
+        }, 150);
+    });
+
+    // Event listener para cuando se oculte el modal
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        // Si se cerró sin confirmar, ejecutar callback de cancelar
+        if (!wasConfirmed && onCancel && typeof onCancel === 'function') {
+            onCancel();
+        }
+
+        // Eliminar el modal del DOM después de que Bootstrap termine el proceso
+        setTimeout(() => {
+            // Destruir la instancia del modal
+            modal.dispose();
+            // Eliminar el elemento del DOM
+            modalElement.remove();
+            // Limpiar el backdrop si quedó alguno
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+            // Restaurar scroll del body
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }, 200);
+    });
+
+    // Mostrar el modal
+    modal.show();
+}
+
 // Exponer funciones globalmente
 window.mostrarNotificacion = mostrarNotificacion;
 window.mostrarExito = mostrarExito;
 window.mostrarError = mostrarError;
 window.mostrarAdvertencia = mostrarAdvertencia;
 window.mostrarInfo = mostrarInfo;
+window.mostrarConfirmacion = mostrarConfirmacion;
 
 console.log('✅ Sistema de notificaciones cargado (alert() sobrescrito con toasts Bootstrap)');
