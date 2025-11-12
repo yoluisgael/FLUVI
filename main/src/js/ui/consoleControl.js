@@ -13,6 +13,23 @@ const originalConsole = {
   groupCollapsed: console.groupCollapsed
 };
 
+// Filtrar mensajes de Tracking Prevention del navegador
+const filterTrackingPrevention = (method) => {
+  return function(...args) {
+    const message = args[0]?.toString() || '';
+    // Silenciar advertencias de Tracking Prevention (Edge/Safari)
+    if (message.includes('Tracking Prevention blocked access to storage')) {
+      return; // No mostrar estos mensajes
+    }
+    // Ejecutar el método original para otros mensajes
+    originalConsole[method].apply(console, args);
+  };
+};
+
+// Aplicar filtro siempre (independiente del switch de console)
+console.error = filterTrackingPrevention('error');
+console.warn = filterTrackingPrevention('warn');
+
 // Función para deshabilitar logs de consola
 function disableConsoleLogs() {
   console.log = function() {};

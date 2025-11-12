@@ -260,19 +260,23 @@ function confirmarActualizacionMultiplicadores() {
   const exito = window.actualizarMultiplicadoresDia(diaSeleccionado, valores);
 
   if (exito) {
-    // Cerrar el modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('modalMultiplicadores'));
-    if (modal) {
-      modal.hide();
-    }
-
     // Notificar al usuario
     console.log(`✅ Multiplicadores de ${window.NOMBRES_DIAS[diaSeleccionado]} actualizados exitosamente`);
+    console.log('📊 Valores guardados:', valores);
 
     // Invalidar caché para aplicar cambios inmediatamente
     if (window.multiplicadorCache) {
       window.multiplicadorCache.ultimaHora = -1;
-      window.multiplicadorCache.ultimaDia = -1;
+      window.multiplicadorCache.ultimoDia = -1;
+    }
+
+    // Log para debugging
+    console.log('🔍 Verificando valores guardados:', window.obtenerPerfilDia(diaSeleccionado));
+
+    // Cerrar el modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalMultiplicadores'));
+    if (modal) {
+      modal.hide();
     }
 
     // Mostrar mensaje de éxito

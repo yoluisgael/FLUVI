@@ -284,9 +284,9 @@ esimeImg.src = "assets/images/buildings/ESIME ESIQIE ESFM ETC.png";
 const estadioAmericanoImg = new Image();
 estadioAmericanoImg.src = "assets/images/buildings/ESTADIO AMERICANO.png";
 
-// Cargar la imagen de Estadio Americano Minis
+// Cargar la imagen de Estadio Americano Minis (usar la misma imagen que Estadio Americano)
 const estadioMinisImg = new Image();
-estadioMinisImg.src = "assets/images/buildings/ESTADIO AMERICANO MINIS.png";
+estadioMinisImg.src = "assets/images/buildings/ESTADIO AMERICANO.png";
 
 // Cargar la imagen de Campo Beisbol
 const campoBeisbolImg = new Image();

@@ -256,7 +256,47 @@ function toggleModoBloqueo(activar, tipo = 'bloqueo') {
 // para evitar conflictos con otros manejadores de eventos
 
 /**
- * Limpia todos los bloqueos
+ * Limpiar todos los bloqueos silenciosamente (sin confirmación, para uso interno al cargar escenarios)
+ */
+function limpiarTodosLosBloqueosSilencioso() {
+    if (estadoEscenarios.celdasBloqueadas.size === 0) {
+        console.log('ℹ️ No hay bloqueos para limpiar');
+        return;
+    }
+
+    const totalBloqueados = estadoEscenarios.celdasBloqueadas.size;
+    let celdasLimpiadas = 0;
+
+    // Recorrer todas las celdas bloqueadas y desbloquearlas
+    estadoEscenarios.celdasBloqueadas.forEach((metadata, celdaKey) => {
+        const partes = celdaKey.split(':');
+        // El calleId puede contener ':' así que tomamos los últimos dos como carril e índice
+        const indice = parseInt(partes.pop());
+        const carril = parseInt(partes.pop());
+        const calleId = partes.join(':'); // Reunir el resto como ID
+
+        // Buscar la calle por ID o nombre (soportar ambos formatos)
+        const calle = window.calles?.find(c => c.id === calleId || c.nombre === calleId);
+
+        if (calle && calle.arreglo && calle.arreglo[carril]) {
+            calle.arreglo[carril][indice] = 0;
+            celdasLimpiadas++;
+        }
+    });
+
+    // Limpiar el Map
+    estadoEscenarios.celdasBloqueadas.clear();
+
+    console.log(`🗑️ ${celdasLimpiadas}/${totalBloqueados} celdas bloqueadas limpiadas silenciosamente`);
+
+    // Forzar actualización del renderer
+    if (window.pixiApp && window.pixiApp.sceneManager && window.pixiApp.sceneManager.carroRenderer) {
+        window.pixiApp.sceneManager.carroRenderer.updateAll(window.calles);
+    }
+}
+
+/**
+ * Limpia todos los bloqueos (con confirmación del usuario)
  */
 function limpiarTodosLosBloqueos() {
     if (estadoEscenarios.celdasBloqueadas.size === 0) {
@@ -268,27 +308,10 @@ function limpiarTodosLosBloqueos() {
 
     if (!confirmacion) return;
 
-    // Recorrer todas las celdas bloqueadas y desbloquearlas
-    estadoEscenarios.celdasBloqueadas.forEach((metadata, celdaKey) => {
-        const [calleId, carril, indice] = celdaKey.split(':').map(Number);
+    // Usar la función silenciosa
+    limpiarTodosLosBloqueosSilencioso();
 
-        // Buscar la calle por ID
-        const calle = window.calles?.find(c => c.id === calleId);
-
-        if (calle && calle.arreglo[carril]) {
-            calle.arreglo[carril][indice] = 0;
-        }
-    });
-
-    // Limpiar el Map
-    estadoEscenarios.celdasBloqueadas.clear();
-
-    console.log('🗑️ Todos los bloqueos han sido eliminados');
-
-    // Forzar actualización del renderer
-    if (window.pixiApp && window.pixiApp.sceneManager && window.pixiApp.sceneManager.carroRenderer) {
-        window.pixiApp.sceneManager.carroRenderer.updateAll(window.calles);
-    }
+    console.log('✅ Bloqueos eliminados por el usuario');
 }
 
 // NOTA: Las funciones de conversión de coordenadas y detección de celdas
@@ -478,8 +501,8 @@ function cargarEscenarioDesdeJSON(escenario) {
             return { exito: false, mensaje: mensajeError };
         }
 
-        // Limpiar todos los bloqueos actuales
-        limpiarTodosLosBloqueos();
+        // Limpiar todos los bloqueos actuales (silenciosamente, sin confirmación)
+        limpiarTodosLosBloqueosSilencioso();
 
         // Cargar celdas bloqueadas
         let celdasCargadas = 0;
@@ -893,5 +916,7 @@ window.cargarEscenarioDesdeJSON = cargarEscenarioDesdeJSON;
 window.cargarEscenarioBase = cargarEscenarioBase;
 window.generarEscenarioInundacionMasiva = generarEscenarioInundacionMasiva;
 window.generarEscenarioBachesAleatorios = generarEscenarioBachesAleatorios;
+window.limpiarTodosLosBloqueos = limpiarTodosLosBloqueos;
+window.limpiarTodosLosBloqueosSilencioso = limpiarTodosLosBloqueosSilencioso;
 
 console.log('✅ escenarios.js cargado');
