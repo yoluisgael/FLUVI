@@ -4936,10 +4936,13 @@ const labelModoOscuro = document.getElementById('labelModoOscuro');
 // Función para aplicar el modo oscuro
 function aplicarModoOscuro(activar) {
     if (activar) {
+        // Agregar clase a HTML y body para evitar bordes blancos en iOS
+        document.documentElement.classList.add('dark-mode');
         document.body.classList.add('dark-mode');
         labelModoOscuro.textContent = '☀️ Modo Claro';
         localStorage.setItem('modoOscuro', 'true');
     } else {
+        document.documentElement.classList.remove('dark-mode');
         document.body.classList.remove('dark-mode');
         labelModoOscuro.textContent = '🌙 Modo Oscuro';
         localStorage.setItem('modoOscuro', 'false');
