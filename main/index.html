@@ -785,16 +785,24 @@
           </label>
         </div>
 
-        <!-- Switch Logs de Consola -->
-        <div class="form-check form-switch">
+        <!-- Switch Logs de Consola (oculto en móviles) -->
+        <div class="form-check form-switch d-none d-md-block">
           <input class="form-check-input" type="checkbox" id="switchConsoleLogs">
           <label class="form-check-label" for="switchConsoleLogs">
             <span id="labelConsoleLogs">📝 Logs en Consola</span>
           </label>
         </div>
 
-        <!-- Switch Activador de Celdas -->
-        <div class="form-check form-switch mt-2">
+        <!-- Switch Debug Visual (solo móvil) -->
+        <div class="form-check form-switch d-md-none">
+          <input class="form-check-input" type="checkbox" id="switchDebugMovil">
+          <label class="form-check-label" for="switchDebugMovil">
+            <span id="labelDebugMovil">🐛 Debug Visual</span>
+          </label>
+        </div>
+
+        <!-- Switch Activador de Celdas (oculto en móviles) -->
+        <div class="form-check form-switch mt-2 d-none d-md-block">
           <input class="form-check-input" type="checkbox" id="switchCellDetection">
           <label class="form-check-label" for="switchCellDetection">
             <span id="labelCellDetection">🔢 Activador de Celdas</span>

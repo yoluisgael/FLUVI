@@ -129,16 +129,38 @@ body {
 
 /* Contenido colapsable */
 .config-content {
-  max-height: 200px;
-  overflow: hidden;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 5px 15px 15px 15px;
   transition: max-height 0.3s ease, padding 0.3s ease;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Scroll styling para el contenido de configuración */
+.config-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.config-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.config-content::-webkit-scrollbar-thumb {
+  background: #0d6efd;
+  border-radius: 3px;
+}
+
+.config-content::-webkit-scrollbar-thumb:hover {
+  background: #0b5ed7;
 }
 
 .sidebar-footer-config.collapsed .config-content {
-  max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
+  max-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  overflow: hidden !important;
 }
 
 /* ========== MAIN CONTENT ========== */
@@ -186,6 +208,34 @@ body {
     padding: 8px 12px;
     max-width: 98%;
     border-radius: 25px;
+  }
+
+  /* Panel de configuración optimizado para móviles */
+  .sidebar-footer-config:not(.collapsed) .config-content {
+    max-height: 350px;
+  }
+
+  .sidebar-footer-config {
+    margin-bottom: 0;
+  }
+
+  /* Reducir espaciado en switches de configuración para móviles */
+  .config-content .form-check {
+    margin-bottom: 0.75rem;
+  }
+
+  .config-content .form-check.mt-2 {
+    margin-top: 0.5rem;
+  }
+
+  .config-content .mb-3 {
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Asegurar que el contenido de configuración sea completamente scrollable */
+  .config-content {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -350,6 +400,23 @@ body {
     padding: 0.2rem 0.4rem;
     font-size: 0.75rem;
   }
+
+  /* Panel de configuración más compacto en pantallas muy pequeñas */
+  .sidebar-footer-config:not(.collapsed) .config-content {
+    max-height: 250px;
+  }
+
+  .config-content {
+    padding: 5px 12px 12px 12px;
+  }
+
+  .config-content .form-check {
+    margin-bottom: 0.5rem;
+  }
+
+  .config-content .form-check-label {
+    font-size: 0.85rem;
+  }
 }
 
 /* ========== CANVAS Y WRAPPER ========== */
@@ -357,6 +424,8 @@ body {
   flex: 1;
   position: relative;
   overflow: hidden;
+  pointer-events: auto;
+  touch-action: none;
 }
 
 .canvas-container {
@@ -365,6 +434,8 @@ body {
   border: 1px solid black;
   position: relative;
   overflow: hidden;
+  pointer-events: auto;
+  touch-action: none;
 }
 
 #simuladorCanvas {
@@ -374,6 +445,8 @@ body {
   width: 100%;
   height: 100%;
   touch-action: none;
+  pointer-events: auto;
+  z-index: 1;
 }
 
 #minimapa {
@@ -384,6 +457,9 @@ body {
   border: 2px solid #0d6efd;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
 }
 
 /* ========== BARRA DE CONTROL DEL CANVAS ========== */
@@ -2755,6 +2831,12 @@ body {
 
 /* Sidebar smooth scrolling en iOS */
 .sidebar-scrollable-content {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Panel de configuración smooth scrolling en iOS */
+.config-content {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }

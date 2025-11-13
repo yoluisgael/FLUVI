@@ -7,15 +7,27 @@ const ctx = canvas.getContext("2d");
 let pixiInitialized = false;
 let pixiFirstRender = false; // Flag para renderizar la escena inicial
 
-// Flag para habilitar/deshabilitar PixiJS (útil para debugging)
-// Cambia a false si quieres usar Canvas 2D tradicional
-window.USE_PIXI = localStorage.getItem('usePixi') !== 'false'; // Por defecto true
+// Detectar si es un dispositivo móvil
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
-console.log(`ℹ️ USE_PIXI = ${window.USE_PIXI}`);
+// Flag para habilitar/deshabilitar PixiJS (útil para debugging)
+// En móviles, usar Canvas 2D por defecto (más confiable y compatible)
+// En desktop, usar PixiJS por defecto (mejor rendimiento)
+const pixiUserPreference = localStorage.getItem('usePixi');
+if (isMobile && pixiUserPreference === null) {
+    // Primera vez en móvil: deshabilitar PixiJS automáticamente
+    window.USE_PIXI = false;
+    console.log(`📱 Móvil detectado: Usando Canvas 2D por defecto`);
+} else {
+    // Desktop o usuario tiene preferencia guardada
+    window.USE_PIXI = pixiUserPreference !== 'false';
+}
+
+console.log(`ℹ️ USE_PIXI = ${window.USE_PIXI} (isMobile: ${isMobile})`);
 
 let mostrarConexiones = false; // Variable para controlar visualización de conexiones
 let mostrarVertices = false; // Variable para controlar visualización de vértices
-let mostrarEtiquetas = true; // Variable para controlar visualización de etiquetas de nombres
+let mostrarEtiquetas = false; // Variable para controlar visualización de etiquetas de nombres
 let mostrarContadores = false; // Variable para controlar visualización de contadores de estacionamientos
 let colorFondoCanvas = "#c6cbcd"; // Color de fondo del canvas (almacenado para detección automática)
 
@@ -28,12 +40,20 @@ window.mostrarContadores = mostrarContadores;
 // Ajustar tamaño inicial del canvas
 function resizeCanvas() {
     const sidebar = document.querySelector('.sidebar');
-    const header = document.querySelector('.header');
-    const sidebarWidth = window.innerWidth > 768 ? 380 : 0;
-    const headerHeight = header ? header.offsetHeight : 0;
+    const infoBar = document.querySelector('.info-bar');
+    const canvasControlBar = document.querySelector('#canvasControlBar');
 
+    // En móviles (<= 768px), el sidebar está oculto por defecto
+    const sidebarWidth = window.innerWidth > 1024 ? 390 : 0;
+
+    // Altura del info-bar (si existe)
+    const infoBarHeight = infoBar ? infoBar.offsetHeight : 0;
+
+    // Calcular altura del canvas considerando info-bar y control bar
     canvas.width = window.innerWidth - sidebarWidth;
-    canvas.height = window.innerHeight - headerHeight;
+    canvas.height = window.innerHeight - infoBarHeight;
+
+    console.log(`Canvas resized: ${canvas.width}x${canvas.height} (screen: ${window.innerWidth}x${window.innerHeight}, infoBar: ${infoBarHeight})`);
 }
 
 resizeCanvas();
@@ -181,6 +201,10 @@ let hasDragged = false;
 const DRAG_THRESHOLD = 5; // Píxeles mínimos de movimiento para considerar un drag real
 let dragStartMouseX = 0, dragStartMouseY = 0; // Posición inicial del mouse para medir distancia
 let lastTouchX, lastTouchY;
+// Variables para zoom con pinch (pellizco)
+let initialPinchDistance = 0;
+let lastPinchDistance = 0;
+let isPinching = false;
 let calleSeleccionada = null; // Variable para almacenar la calle seleccionada
 
 // Variables para arrastre de calles con SHIFT
@@ -1902,6 +1926,43 @@ function calcularLimitesMapa() {
     };
 }
 
+// Función para centrar la vista en el mapa (útil para móviles)
+function centrarVistaEnMapa() {
+    if (calles.length === 0) {
+        console.warn("⚠️ No hay calles para centrar la vista");
+        return;
+    }
+
+    // Calcular el centro del mapa
+    let minX = Infinity, minY = Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+
+    calles.forEach(calle => {
+        minX = Math.min(minX, calle.x);
+        minY = Math.min(minY, calle.y);
+        maxX = Math.max(maxX, calle.x);
+        maxY = Math.max(maxY, calle.y);
+    });
+
+    const centroMapaX = (minX + maxX) / 2;
+    const centroMapaY = (minY + maxY) / 2;
+
+    // Calcular el centro del canvas
+    const centroPantallaX = canvas.width / 2;
+    const centroPantallaY = canvas.height / 2;
+
+    // Ajustar offset para centrar el mapa en la pantalla
+    offsetX = centroPantallaX - centroMapaX * escala;
+    offsetY = centroPantallaY - centroMapaY * escala;
+
+    console.log(`📍 Vista centrada en mapa: centro(${centroMapaX.toFixed(0)}, ${centroMapaY.toFixed(0)}), offset(${offsetX.toFixed(0)}, ${offsetY.toFixed(0)})`);
+
+    // Si usamos PixiJS, actualizar el CameraController
+    if (window.USE_PIXI && window.pixiApp && window.pixiApp.cameraController) {
+        window.pixiApp.cameraController.setPosition(offsetX, offsetY);
+    }
+}
+
 // Función para aplicar límites al offset
 function aplicarLimitesOffset() {
     const limites = calcularLimitesMapa();
@@ -1926,9 +1987,19 @@ function aplicarLimitesOffset() {
     const minOffsetY = -(limites.maxY * currentEscala - canvasHeight);
     const maxOffsetY = -limites.minY * currentEscala;
 
+    // Guardar valores antes de aplicar límites (para debug)
+    const offsetXAntes = currentOffsetX;
+    const offsetYAntes = currentOffsetY;
+
     // Actualizar tanto las variables locales como las globales
     offsetX = Math.max(minOffsetX, Math.min(maxOffsetX, currentOffsetX));
     offsetY = Math.max(minOffsetY, Math.min(maxOffsetY, currentOffsetY));
+
+    // Debug: verificar si los límites están bloqueando el movimiento
+    if (isMobile && (offsetX !== offsetXAntes || offsetY !== offsetYAntes)) {
+        console.log(`⚠️ Límites aplicados: offset cambió de (${offsetXAntes.toFixed(0)}, ${offsetYAntes.toFixed(0)}) a (${offsetX.toFixed(0)}, ${offsetY.toFixed(0)})`);
+        console.log(`   Límites: X[${minOffsetX.toFixed(0)} a ${maxOffsetX.toFixed(0)}], Y[${minOffsetY.toFixed(0)} a ${maxOffsetY.toFixed(0)}]`);
+    }
 
     // Sincronizar con variables globales
     window.offsetX = offsetX;
@@ -4295,6 +4366,14 @@ function iniciarSimulacion() {
             console.log(`🎚️ Probabilidad de generación global: ${valorSlider}% aplicada a todos los generadores`);
         });
     }
+
+    // Centrar la vista en el mapa (especialmente útil en móviles)
+    console.log("📍 Centrando vista en el mapa...");
+    centrarVistaEnMapa();
+
+    // Renderizar canvas inicial para asegurar que se vea en móviles
+    console.log("🎨 Renderizado inicial del canvas después de inicialización");
+    renderizarCanvas();
 }
 
 // Zoom y Desplazamiento
@@ -4664,22 +4743,248 @@ canvas.addEventListener("mouseleave", () => {
     renderizarCanvas();
 });
 
+// Debug visual PERSISTENTE para móvil (sin consola)
+function mostrarDebugMovil(mensaje) {
+    // Verificar si el debug está habilitado (solo en móviles)
+    const switchDebug = document.getElementById('switchDebugMovil');
+    if (switchDebug && !switchDebug.checked) {
+        // Debug desactivado, ocultar si existe
+        const debugDiv = document.getElementById('debugMovil');
+        if (debugDiv) {
+            debugDiv.style.display = 'none';
+        }
+        return;
+    }
+
+    let debugDiv = document.getElementById('debugMovil');
+    if (!debugDiv) {
+        debugDiv = document.createElement('div');
+        debugDiv.id = 'debugMovil';
+        debugDiv.style.cssText = `
+            position: fixed;
+            bottom: 80px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            color: #0f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 11px;
+            z-index: 99999;
+            max-width: 250px;
+            pointer-events: none;
+            white-space: pre-line;
+            border: 1px solid #0f0;
+            line-height: 1.3;
+        `;
+        document.body.appendChild(debugDiv);
+    }
+    debugDiv.textContent = mensaje;
+    debugDiv.style.display = 'block';
+
+    // NO auto-ocultar - permanece visible
+}
+
+// Event listener para el switch de debug móvil
+document.addEventListener('DOMContentLoaded', () => {
+    const switchDebugMovil = document.getElementById('switchDebugMovil');
+    if (switchDebugMovil) {
+        switchDebugMovil.addEventListener('change', (event) => {
+            const debugDiv = document.getElementById('debugMovil');
+            if (debugDiv) {
+                debugDiv.style.display = event.target.checked ? 'block' : 'none';
+            }
+            console.log(`🐛 Debug visual: ${event.target.checked ? 'ACTIVADO' : 'DESACTIVADO'}`);
+        });
+    }
+});
+
+// Función auxiliar: calcular distancia entre dos puntos
+function calcularDistancia(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
+
 canvas.addEventListener("touchstart", event => {
+    console.log("👆 TOUCHSTART detectado en canvas, toques:", event.touches.length);
+
+    // Detectar pinch zoom (2 dedos)
+    if (event.touches.length === 2) {
+        isPinching = true;
+        isDragging = false; // Deshabilitar arrastre cuando hay pinch
+
+        const touch1 = event.touches[0];
+        const touch2 = event.touches[1];
+
+        initialPinchDistance = calcularDistancia(
+            touch1.clientX, touch1.clientY,
+            touch2.clientX, touch2.clientY
+        );
+        lastPinchDistance = initialPinchDistance;
+
+        console.log(`🤏 PINCH INICIADO - Distancia inicial: ${initialPinchDistance.toFixed(0)}px`);
+        mostrarDebugMovil(`PINCH ZOOM\nDistancia: ${initialPinchDistance.toFixed(0)}px\nEscala: ${escala.toFixed(2)}x`);
+        return;
+    }
+
+    // Un solo dedo: arrastre normal
+    mostrarDebugMovil(`TOUCHSTART detectado\nPos: (${event.touches[0].clientX}, ${event.touches[0].clientY})`);
+
+    // Guardar posición inicial del touch
     lastTouchX = event.touches[0].clientX;
     lastTouchY = event.touches[0].clientY;
-});
+
+    // Iniciar arrastre
+    isDragging = true;
+    isPinching = false;
+    hasDragged = false;
+
+    console.log(`   Posición inicial: (${lastTouchX}, ${lastTouchY}), isDragging=${isDragging}`);
+}, { passive: false });
 
 canvas.addEventListener("touchmove", event => {
     event.preventDefault();
-    offsetX += (event.touches[0].clientX - lastTouchX);
-    offsetY += (event.touches[0].clientY - lastTouchY);
+
+    // Manejar pinch zoom (2 dedos)
+    if (event.touches.length === 2 && isPinching) {
+        const touch1 = event.touches[0];
+        const touch2 = event.touches[1];
+
+        const currentDistance = calcularDistancia(
+            touch1.clientX, touch1.clientY,
+            touch2.clientX, touch2.clientY
+        );
+
+        // Calcular el factor de zoom basado en el cambio de distancia
+        const zoomFactor = currentDistance / lastPinchDistance;
+
+        // Calcular el centro del pinch (punto medio entre los dos dedos)
+        const centerX = (touch1.clientX + touch2.clientX) / 2;
+        const centerY = (touch1.clientY + touch2.clientY) / 2;
+
+        const rect = canvas.getBoundingClientRect();
+        const canvasCenterX = centerX - rect.left;
+        const canvasCenterY = centerY - rect.top;
+
+        // Calcular coordenadas del mundo antes del zoom
+        const worldX_before = (canvasCenterX - offsetX) / escala;
+        const worldY_before = (canvasCenterY - offsetY) / escala;
+
+        // Aplicar zoom
+        const escalaAnterior = escala;
+        escala *= zoomFactor;
+
+        // Límites de zoom
+        const minEscala = 0.1;
+        const maxEscala = 5.0;
+        escala = Math.max(minEscala, Math.min(maxEscala, escala));
+
+        // Ajustar offset para mantener el punto del pinch en la misma posición visual
+        if (escala !== escalaAnterior) {
+            offsetX = canvasCenterX - worldX_before * escala;
+            offsetY = canvasCenterY - worldY_before * escala;
+
+            // Sincronizar con window
+            window.offsetX = offsetX;
+            window.offsetY = offsetY;
+            window.escala = escala;
+
+            aplicarLimitesOffset();
+
+            // Re-sincronizar después de aplicar límites
+            offsetX = window.offsetX;
+            offsetY = window.offsetY;
+        }
+
+        lastPinchDistance = currentDistance;
+
+        console.log(`🤏 PINCH - Distancia: ${currentDistance.toFixed(0)}, Factor: ${zoomFactor.toFixed(3)}, Escala: ${escala.toFixed(2)}`);
+        mostrarDebugMovil(`PINCH ZOOM\nDistancia: ${currentDistance.toFixed(0)}px\nEscala: ${escala.toFixed(2)}x\nFactor: ${zoomFactor.toFixed(3)}`);
+
+        renderizarCanvas();
+        return;
+    }
+
+    console.log("👆 TOUCHMOVE detectado", isDragging ? "(arrastrando)" : "(NO arrastrando)");
+
+    if (!isDragging) {
+        console.warn("   ⚠️ TOUCHMOVE ignorado porque isDragging=false");
+        mostrarDebugMovil(`TOUCHMOVE\nisDragging=FALSE\n⚠️ BLOQUEADO`);
+        return;
+    }
+
+    // Marcar que hubo movimiento
+    hasDragged = true;
+
+    // Calcular delta del movimiento
+    const deltaX = event.touches[0].clientX - lastTouchX;
+    const deltaY = event.touches[0].clientY - lastTouchY;
+
+    console.log(`   Delta: (${deltaX}, ${deltaY})`);
+
+    // Actualizar offset (tanto local como global)
+    offsetX += deltaX;
+    offsetY += deltaY;
+
+    // IMPORTANTE: Sincronizar con window ANTES de aplicar límites
+    window.offsetX = offsetX;
+    window.offsetY = offsetY;
+    window.escala = escala;
+
+    console.log(`   Nuevo offset: (${offsetX.toFixed(0)}, ${offsetY.toFixed(0)})`);
+
+    // Mostrar debug actualizado
+    mostrarDebugMovil(`TOUCHMOVE OK\nDelta: (${deltaX.toFixed(1)}, ${deltaY.toFixed(1)})\nOffset: (${offsetX.toFixed(0)}, ${offsetY.toFixed(0)})\nisDragging: ${isDragging}`);
+
+    // Actualizar posición del touch
     lastTouchX = event.touches[0].clientX;
     lastTouchY = event.touches[0].clientY;
 
-    aplicarLimitesOffset();
+    // Si usamos PixiJS, actualizar el CameraController
+    if (window.USE_PIXI && window.pixiApp && window.pixiApp.cameraController) {
+        window.pixiApp.cameraController.setPosition(offsetX, offsetY);
+    } else {
+        // Aplicar límites (que volverá a actualizar window.offsetX/Y si es necesario)
+        aplicarLimitesOffset();
+        // Re-sincronizar después de aplicar límites
+        offsetX = window.offsetX;
+        offsetY = window.offsetY;
+    }
 
     renderizarCanvas();
-});
+}, { passive: false });
+
+canvas.addEventListener("touchend", event => {
+    // Si se levanta un dedo durante pinch, terminar pinch
+    if (event.touches.length < 2) {
+        isPinching = false;
+        initialPinchDistance = 0;
+        lastPinchDistance = 0;
+    }
+
+    // Si no quedan dedos, resetear todo
+    if (event.touches.length === 0) {
+        isDragging = false;
+        isPinching = false;
+
+        // Si no hubo movimiento significativo, podría ser un tap
+        if (!hasDragged) {
+            console.log("Tap detectado en canvas");
+            mostrarDebugMovil(`TOUCHEND\nTap detectado\n(sin movimiento)`);
+        } else {
+            mostrarDebugMovil(`TOUCHEND\nMovimiento completado`);
+        }
+
+        hasDragged = false;
+    }
+}, { passive: false });
+
+canvas.addEventListener("touchcancel", event => {
+    isDragging = false;
+    hasDragged = false;
+    isPinching = false;
+    initialPinchDistance = 0;
+    lastPinchDistance = 0;
+}, { passive: false });
 
 // Event listeners para cambiar el cursor cuando se presiona/suelta Ctrl/Cmd
 document.addEventListener("keydown", (event) => {
@@ -4805,6 +5110,94 @@ minimapaCanvas.addEventListener("mouseup", () => {
         document.body.style.cursor = 'default'; // Restaurar cursor de la página
     }
 });
+
+// ========== EVENTOS TÁCTILES PARA EL MINIMAPA (MÓVILES) ==========
+minimapaCanvas.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    const touch = event.touches[0];
+    const rect = minimapaCanvas.getBoundingClientRect();
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
+
+    console.log(`📍 MINIMAPA TOUCHSTART: (${touchX.toFixed(0)}, ${touchY.toFixed(0)})`);
+
+    if (estaEnRectanguloMinimapa(touchX, touchY)) {
+        arrastandoMinimapa = true;
+        minimapaInicialMouseX = touchX;
+        minimapaInicialMouseY = touchY;
+        minimapaInicialOffsetX = window.offsetX !== undefined ? window.offsetX : offsetX;
+        minimapaInicialOffsetY = window.offsetY !== undefined ? window.offsetY : offsetY;
+        console.log(`   ✅ Iniciando arrastre minimapa`);
+        mostrarDebugMovil(`MINIMAPA TOUCH\nIniciando arrastre\nPos: (${touchX.toFixed(0)}, ${touchY.toFixed(0)})`);
+    } else {
+        console.log(`   ❌ Toque fuera del rectángulo`);
+        mostrarDebugMovil(`MINIMAPA TOUCH\nFuera del área\nPos: (${touchX.toFixed(0)}, ${touchY.toFixed(0)})`);
+    }
+}, { passive: false });
+
+minimapaCanvas.addEventListener("touchmove", (event) => {
+    event.preventDefault();
+    if (!arrastandoMinimapa) return;
+
+    const touch = event.touches[0];
+    const rect = minimapaCanvas.getBoundingClientRect();
+    let touchX = touch.clientX - rect.left;
+    let touchY = touch.clientY - rect.top;
+
+    // Restringir las coordenadas del touch dentro del minimapa
+    touchX = Math.max(0, Math.min(touchX, rect.width));
+    touchY = Math.max(0, Math.min(touchY, rect.height));
+
+    // Obtener la escala actual del minimapa (dinámica)
+    const params = calcularParametrosMinimapa();
+    const minimapaEscala = params.minimapaEscala;
+
+    const deltaX = touchX - minimapaInicialMouseX;
+    const deltaY = touchY - minimapaInicialMouseY;
+
+    // Convertir el delta del minimapa a coordenadas del mundo
+    const worldDeltaX = deltaX / minimapaEscala;
+    const worldDeltaY = deltaY / minimapaEscala;
+
+    const currentEscala = window.escala || escala;
+
+    // Actualizar el offset
+    offsetX = minimapaInicialOffsetX - worldDeltaX * currentEscala;
+    offsetY = minimapaInicialOffsetY - worldDeltaY * currentEscala;
+
+    // Sincronizar con window ANTES de aplicar límites
+    window.offsetX = offsetX;
+    window.offsetY = offsetY;
+
+    // Si usamos PixiJS, actualizar el CameraController
+    if (window.USE_PIXI && window.pixiApp && window.pixiApp.cameraController) {
+        window.pixiApp.cameraController.setPosition(offsetX, offsetY);
+    } else {
+        aplicarLimitesOffset();
+        // Re-sincronizar después de aplicar límites
+        offsetX = window.offsetX;
+        offsetY = window.offsetY;
+    }
+
+    mostrarDebugMovil(`MINIMAPA ARRASTRE\nDelta: (${deltaX.toFixed(0)}, ${deltaY.toFixed(0)})\nOffset: (${offsetX.toFixed(0)}, ${offsetY.toFixed(0)})`);
+
+    renderizarCanvas();
+}, { passive: false });
+
+minimapaCanvas.addEventListener("touchend", () => {
+    if (arrastandoMinimapa) {
+        arrastandoMinimapa = false;
+        console.log(`📍 MINIMAPA TOUCHEND`);
+        mostrarDebugMovil(`MINIMAPA\nArrastre completado`);
+    }
+}, { passive: false });
+
+minimapaCanvas.addEventListener("touchcancel", () => {
+    if (arrastandoMinimapa) {
+        arrastandoMinimapa = false;
+        console.log(`📍 MINIMAPA TOUCHCANCEL`);
+    }
+}, { passive: false });
 
 // Eventos globales para capturar el arrastre cuando el mouse sale del minimapa
 document.addEventListener("mousemove", (event) => {
