@@ -25,10 +25,11 @@ if (isMobile && pixiUserPreference === null) {
 
 console.log(`ℹ️ USE_PIXI = ${window.USE_PIXI} (isMobile: ${isMobile})`);
 
+// 📱 OPTIMIZACIÓN MÓVIL: Desactivar funciones avanzadas por defecto
 let mostrarConexiones = false; // Variable para controlar visualización de conexiones
 let mostrarVertices = false; // Variable para controlar visualización de vértices
-let mostrarEtiquetas = false; // Variable para controlar visualización de etiquetas de nombres
-let mostrarContadores = false; // Variable para controlar visualización de contadores de estacionamientos
+let mostrarEtiquetas = isMobile ? false : false; // Desactivado en móviles por defecto
+let mostrarContadores = isMobile ? false : false; // Desactivado en móviles por defecto
 let colorFondoCanvas = "#c6cbcd"; // Color de fondo del canvas (almacenado para detección automática)
 
 // Exponer variables globales para PixiJS
@@ -36,6 +37,15 @@ window.mostrarConexiones = mostrarConexiones;
 window.mostrarVertices = mostrarVertices;
 window.mostrarEtiquetas = mostrarEtiquetas;
 window.mostrarContadores = mostrarContadores;
+
+// 📱 Mensaje informativo en móviles
+if (isMobile) {
+    console.log('📱 MODO MÓVIL ACTIVADO:');
+    console.log('  • FPS limitado a 30 (ahorro de batería)');
+    console.log('  • Resolución optimizada (1x)');
+    console.log('  • Antialiasing desactivado');
+    console.log('  • Funciones visuales avanzadas desactivadas por defecto');
+}
 
 // Ajustar tamaño inicial del canvas
 function resizeCanvas() {
@@ -4976,7 +4986,7 @@ canvas.addEventListener("touchend", event => {
 
         hasDragged = false;
     }
-}, { passive: false });
+}, { passive: true }); // 📱 OPTIMIZACIÓN: passive=true mejora scroll performance
 
 canvas.addEventListener("touchcancel", event => {
     isDragging = false;
@@ -4984,7 +4994,7 @@ canvas.addEventListener("touchcancel", event => {
     isPinching = false;
     initialPinchDistance = 0;
     lastPinchDistance = 0;
-}, { passive: false });
+}, { passive: true }); // 📱 OPTIMIZACIÓN: passive=true mejora scroll performance
 
 // Event listeners para cambiar el cursor cuando se presiona/suelta Ctrl/Cmd
 document.addEventListener("keydown", (event) => {

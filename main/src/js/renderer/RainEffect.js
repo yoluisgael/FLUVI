@@ -12,17 +12,24 @@ class RainEffect {
         this.container = null;
         this.particles = [];
         this.isActive = false;
-        this.maxParticles = 150; // Número reducido para mejor rendimiento
+
+        // 📱 OPTIMIZACIÓN MÓVIL: Detectar dispositivo y ajustar parámetros
+        this.isMobile = window.pixiApp && window.pixiApp.isMobile;
+        this.isEnabled = !this.isMobile; // Desactivado por defecto en móviles
+
+        // Ajustar cantidad de partículas según dispositivo
+        this.maxParticles = this.isMobile ? 30 : 150; // 80% menos en móviles
         this.particlePool = []; // Pool de partículas reutilizables
 
-        // Sistema de relámpagos
+        // Sistema de relámpagos (desactivado en móviles)
         this.lightningOverlay = null;
         this.lightningTimer = 0;
         this.lightningInterval = 300 + Math.random() * 400; // 5-13 segundos entre relámpagos
         this.isLightningFlashing = false;
         this.lightningFlashDuration = 0;
+        this.lightningEnabled = !this.isMobile; // Sin relámpagos en móviles
 
-        console.log('🌧️ RainEffect inicializado');
+        console.log(`🌧️ RainEffect inicializado (${this.isMobile ? '📱 MÓVIL - desactivado por defecto' : '🖥️ DESKTOP'})`);
     }
 
     /**
@@ -88,7 +95,8 @@ class RainEffect {
      * Dispara un relámpago sutil
      */
     triggerLightning() {
-        if (!this.lightningOverlay || this.isLightningFlashing) return;
+        // 📱 OPTIMIZACIÓN MÓVIL: Sin relámpagos en móviles
+        if (!this.lightningEnabled || !this.lightningOverlay || this.isLightningFlashing) return;
 
         this.isLightningFlashing = true;
         this.lightningFlashDuration = 0;
@@ -105,6 +113,12 @@ class RainEffect {
      */
     start() {
         if (this.isActive) return;
+
+        // 📱 OPTIMIZACIÓN MÓVIL: Verificar si está habilitado
+        if (!this.isEnabled) {
+            console.log('🌧️ Lluvia desactivada en móviles por defecto (puedes activarla manualmente si quieres)');
+            return;
+        }
 
         this.initialize();
         this.isActive = true;

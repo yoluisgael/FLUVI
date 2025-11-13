@@ -89,34 +89,43 @@ class SceneManager {
     }
 
     update(delta) {
+        // 📱 OPTIMIZACIÓN MÓVIL: Obtener estado del dispositivo
+        const isMobile = window.pixiApp && window.pixiApp.isMobile;
+
         // Actualizar color de fondo según ciclo día/noche usando tiempo virtual
-        if (this.dayNightCycle) {
-            let simulatedDate;
+        // En móviles, actualizar solo cada 3 frames para ahorrar CPU
+        if (!isMobile || (this.frameCount % 3 === 0)) {
+            if (this.dayNightCycle) {
+                let simulatedDate;
 
-            // Usar tiempo virtual si está disponible
-            if (window.configuracionTiempo) {
-                // Crear un Date a partir del tiempo virtual
-                simulatedDate = new Date();
-                simulatedDate.setHours(Math.floor(window.configuracionTiempo.horaActual));
-                simulatedDate.setMinutes(Math.floor(window.configuracionTiempo.minutoActual));
-                simulatedDate.setSeconds(Math.floor(window.configuracionTiempo.segundoActual));
-            } else if (window.simulatedCurrentDate) {
-                // Fallback al sistema anterior
-                simulatedDate = window.simulatedCurrentDate;
-            }
+                // Usar tiempo virtual si está disponible
+                if (window.configuracionTiempo) {
+                    // Crear un Date a partir del tiempo virtual
+                    simulatedDate = new Date();
+                    simulatedDate.setHours(Math.floor(window.configuracionTiempo.horaActual));
+                    simulatedDate.setMinutes(Math.floor(window.configuracionTiempo.minutoActual));
+                    simulatedDate.setSeconds(Math.floor(window.configuracionTiempo.segundoActual));
+                } else if (window.simulatedCurrentDate) {
+                    // Fallback al sistema anterior
+                    simulatedDate = window.simulatedCurrentDate;
+                }
 
-            if (simulatedDate) {
-                const backgroundColor = this.dayNightCycle.getBackgroundColor(simulatedDate);
-                if (backgroundColor !== this.app.renderer.background.color) {
-                    this.app.renderer.background.color = backgroundColor;
+                if (simulatedDate) {
+                    const backgroundColor = this.dayNightCycle.getBackgroundColor(simulatedDate);
+                    if (backgroundColor !== this.app.renderer.background.color) {
+                        this.app.renderer.background.color = backgroundColor;
+                    }
                 }
             }
         }
 
-        // Actualizar sprites de vehículos (cambios cada frame)
+        // Actualizar sprites de vehículos (cambios cada frame, crítico para la simulación)
         if (this.carroRenderer && window.calles) {
             this.carroRenderer.updateAll(window.calles);
         }
+
+        // Incrementar contador de frames (para throttling en móviles)
+        this.frameCount = (this.frameCount || 0) + 1;
 
         // Actualizar etiquetas solo cuando cambie el estado
         if (window.mostrarEtiquetas !== this.lastMostrarEtiquetas) {

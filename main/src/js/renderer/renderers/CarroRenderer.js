@@ -17,6 +17,11 @@ class CarroRenderer {
         this.lastVehicleState = new Map(); // Map<id, tipo>
         this.updateCounter = 0;
         this.fullUpdateInterval = 60; // Full update cada 60 frames (~1 segundo a 60 FPS)
+
+        // 📱 OPTIMIZACIÓN MÓVIL: Viewport culling (desactivar sprites fuera de pantalla)
+        this.isMobile = window.pixiApp && window.pixiApp.isMobile;
+        this.viewportCullingEnabled = this.isMobile; // Solo en móviles
+        this.viewportPadding = 200; // Píxeles extra alrededor del viewport
     }
 
     renderAll(calles) {
@@ -193,7 +198,13 @@ class CarroRenderer {
         sprite.x = coords.x;
         sprite.y = coords.y;
         sprite.rotation = CoordinateConverter.degreesToRadians(coords.angulo || calle.angulo);
-        sprite.visible = true;
+
+        // 📱 OPTIMIZACIÓN MÓVIL: Viewport culling
+        if (this.viewportCullingEnabled) {
+            sprite.visible = this.isInViewport(coords.x, coords.y);
+        } else {
+            sprite.visible = true;
+        }
     }
 
     obtenerCoordenadasBasicas(calle, carril, indice) {
@@ -273,6 +284,31 @@ class CarroRenderer {
         } else {
             sprite.destroy();
         }
+    }
+
+    // 📱 OPTIMIZACIÓN MÓVIL: Viewport culling helpers
+    getViewportBounds() {
+        // Obtener dimensiones del canvas y transformaciones actuales
+        const canvas = this.scene.app.view;
+        const escala = window.escala || 1;
+        const offsetX = window.offsetX || 0;
+        const offsetY = window.offsetY || 0;
+
+        // Convertir de coordenadas de pantalla a coordenadas del mundo
+        const left = (-offsetX / escala) - this.viewportPadding;
+        const top = (-offsetY / escala) - this.viewportPadding;
+        const right = (canvas.width - offsetX) / escala + this.viewportPadding;
+        const bottom = (canvas.height - offsetY) / escala + this.viewportPadding;
+
+        return { left, top, right, bottom };
+    }
+
+    isInViewport(worldX, worldY) {
+        const bounds = this.getViewportBounds();
+        return worldX >= bounds.left &&
+               worldX <= bounds.right &&
+               worldY >= bounds.top &&
+               worldY <= bounds.bottom;
     }
 
     clearAll() {

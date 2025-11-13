@@ -8,6 +8,11 @@ class EdificioRenderer {
         this.scene = sceneManager;
         this.assets = assetLoader;
         this.etiquetasEdificios = new Map(); // Map<edificio, Container> - etiquetas de edificios
+
+        // 📱 OPTIMIZACIÓN MÓVIL: Lazy loading de edificios distantes
+        this.isMobile = window.pixiApp && window.pixiApp.isMobile;
+        this.viewportCullingEnabled = this.isMobile; // Solo en móviles
+        this.viewportPadding = 500; // Píxeles extra para edificios (más grande que vehículos)
     }
 
     // Función auxiliar para detectar si un color es oscuro
@@ -132,6 +137,13 @@ class EdificioRenderer {
             sprite.rotation = CoordinateConverter.degreesToRadians(edificio.angle);
         }
 
+        // 📱 OPTIMIZACIÓN MÓVIL: Lazy loading (culling de viewport)
+        if (this.viewportCullingEnabled) {
+            sprite.visible = this.isInViewport(edificio.x, edificio.y, edificio.width || 100, edificio.height || 100);
+        } else {
+            sprite.visible = true;
+        }
+
         // Agregar nombre del edificio si tiene label
         if (edificio.label && edificio.label !== "CONO") {
             this.addBuildingLabel(sprite, edificio);
@@ -178,6 +190,13 @@ class EdificioRenderer {
 
         if (edificio.angle !== undefined) {
             sprite.rotation = CoordinateConverter.degreesToRadians(edificio.angle);
+        }
+
+        // 📱 OPTIMIZACIÓN MÓVIL: Lazy loading (culling de viewport)
+        if (this.viewportCullingEnabled) {
+            sprite.visible = this.isInViewport(edificio.x, edificio.y, edificio.width || 100, edificio.height || 100);
+        } else {
+            sprite.visible = true;
         }
 
         // Actualizar posición de la etiqueta (si existe)
@@ -460,6 +479,42 @@ class EdificioRenderer {
             document.removeEventListener('mousemove', sprite._tooltipMoveHandler);
             sprite._tooltipMoveHandler = null;
         }
+    }
+
+    // 📱 OPTIMIZACIÓN MÓVIL: Viewport culling helpers
+    getViewportBounds() {
+        // Obtener dimensiones del canvas y transformaciones actuales
+        const canvas = this.scene.app.view;
+        const escala = window.escala || 1;
+        const offsetX = window.offsetX || 0;
+        const offsetY = window.offsetY || 0;
+
+        // Convertir de coordenadas de pantalla a coordenadas del mundo
+        const left = (-offsetX / escala) - this.viewportPadding;
+        const top = (-offsetY / escala) - this.viewportPadding;
+        const right = (canvas.width - offsetX) / escala + this.viewportPadding;
+        const bottom = (canvas.height - offsetY) / escala + this.viewportPadding;
+
+        return { left, top, right, bottom };
+    }
+
+    isInViewport(worldX, worldY, width = 0, height = 0) {
+        const bounds = this.getViewportBounds();
+
+        // Calcular los límites del edificio (considerando su tamaño)
+        const halfWidth = width / 2;
+        const halfHeight = height / 2;
+
+        const edificioLeft = worldX - halfWidth;
+        const edificioRight = worldX + halfWidth;
+        const edificioTop = worldY - halfHeight;
+        const edificioBottom = worldY + halfHeight;
+
+        // Verificar si el edificio intersecta con el viewport
+        return edificioRight >= bounds.left &&
+               edificioLeft <= bounds.right &&
+               edificioBottom >= bounds.top &&
+               edificioTop <= bounds.bottom;
     }
 }
 

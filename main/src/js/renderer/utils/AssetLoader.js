@@ -7,6 +7,11 @@ class AssetLoader {
     constructor() {
         this.textures = new Map();
         this.isLoaded = false;
+
+        // 📱 OPTIMIZACIÓN MÓVIL: Detectar dispositivo para ajustar calidad de texturas
+        this.isMobile = window.pixiApp && window.pixiApp.isMobile;
+        this.textureScale = this.isMobile ? 0.5 : 1.0; // 50% resolución en móviles
+        console.log(`🎨 Calidad de texturas: ${this.isMobile ? '📱 MÓVIL (50%)' : '🖥️ DESKTOP (100%)'}`);
     }
 
     async loadAssets() {
@@ -88,12 +93,19 @@ class AssetLoader {
         try {
             for (const asset of assets) {
                 const texture = await PIXI.Assets.load(asset.url);
+
+                // 📱 OPTIMIZACIÓN MÓVIL: Reducir resolución de texturas en móviles
+                if (this.isMobile && texture.baseTexture) {
+                    // Ajustar la resolución de la baseTexture
+                    texture.baseTexture.setResolution(this.textureScale);
+                }
+
                 this.textures.set(asset.name, texture);
-                console.log(`  ✓ ${asset.name}`);
+                console.log(`  ✓ ${asset.name}${this.isMobile ? ' (50%)' : ''}`);
             }
 
             this.isLoaded = true;
-            console.log('✅ Todos los assets del motor gráfico cargados');
+            console.log(`✅ Todos los assets del motor gráfico cargados${this.isMobile ? ' (optimizado para móvil)' : ''}`);
         } catch (error) {
             console.error('❌ Error cargando assets:', error);
             throw error;

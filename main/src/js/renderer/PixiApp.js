@@ -29,16 +29,40 @@ class PixiApp {
         const width = oldCanvas.width;
         const height = oldCanvas.height;
 
+        // 📱 OPTIMIZACIÓN MÓVIL: Detectar dispositivo
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSmallScreen = window.innerWidth <= 768;
+        const isMobile = isMobileDevice || isSmallScreen;
+
+        // Configuración adaptativa según dispositivo
+        const mobileConfig = {
+            resolution: 1, // Resolución fija en móviles (no usar devicePixelRatio)
+            antialias: false, // Sin antialiasing en móviles
+            powerPreference: 'low-power', // Priorizar batería
+            maxFPS: 30 // 30 FPS en móviles (suficiente para la simulación)
+        };
+
+        const desktopConfig = {
+            resolution: Math.min(window.devicePixelRatio || 1, 2), // Máximo 2x
+            antialias: true,
+            powerPreference: 'high-performance',
+            maxFPS: 60
+        };
+
+        const config = isMobile ? mobileConfig : desktopConfig;
+
+        console.log(`🔧 Configuración: ${isMobile ? '📱 MÓVIL' : '🖥️ DESKTOP'} (FPS: ${config.maxFPS}, Resolution: ${config.resolution}x, Antialias: ${config.antialias})`);
+
         // Crear aplicación PixiJS con fallback a Canvas 2D si WebGL no está disponible
         try {
             this.app = new PIXI.Application({
                 width: width,
                 height: height,
                 backgroundColor: 0xc6cbcd, // Color actual del fondo
-                resolution: window.devicePixelRatio || 1,
+                resolution: config.resolution,
                 autoDensity: true,
-                antialias: true,
-                powerPreference: 'high-performance',
+                antialias: config.antialias,
+                powerPreference: config.powerPreference,
                 forceCanvas: false, // Intentar WebGL primero
 
                 // OPTIMIZACIÓN: Configurar renderer para mejor rendimiento
@@ -46,15 +70,15 @@ class PixiApp {
                 clearBeforeRender: true,
                 preserveDrawingBuffer: false,
 
-                // OPTIMIZACIÓN: FPS target (limitar a 60 FPS máximo)
+                // OPTIMIZACIÓN: FPS target
                 sharedTicker: true,
                 sharedLoader: true
             });
 
-            // OPTIMIZACIÓN: Configurar target FPS
-            this.app.ticker.maxFPS = 60;
+            // OPTIMIZACIÓN: Configurar target FPS según dispositivo
+            this.app.ticker.maxFPS = config.maxFPS;
 
-            console.log('✅ WebGL disponible, usando aceleración GPU (target: 60 FPS)');
+            console.log(`✅ WebGL disponible (target: ${config.maxFPS} FPS)`);
         } catch (webglError) {
             console.warn('⚠️ WebGL no disponible, usando Canvas 2D renderer como fallback...');
             console.warn('   Razón:', webglError.message);
@@ -62,18 +86,21 @@ class PixiApp {
                 width: width,
                 height: height,
                 backgroundColor: 0xc6cbcd,
-                resolution: window.devicePixelRatio || 1,
+                resolution: config.resolution,
                 autoDensity: true,
-                antialias: false, // Desactivar antialiasing en Canvas 2D para mejor performance
-                powerPreference: 'high-performance',
+                antialias: false, // Siempre desactivado en Canvas 2D
+                powerPreference: config.powerPreference,
                 forceCanvas: true, // Forzar Canvas 2D
                 backgroundAlpha: 1,
                 clearBeforeRender: true,
                 preserveDrawingBuffer: false
             });
-            this.app.ticker.maxFPS = 60;
-            console.log('✅ Canvas 2D renderer activado (sin aceleración GPU, target: 60 FPS)');
+            this.app.ticker.maxFPS = config.maxFPS;
+            console.log(`✅ Canvas 2D renderer activado (target: ${config.maxFPS} FPS)`);
         }
+
+        // Guardar información del dispositivo
+        this.isMobile = isMobile;
 
         // Reemplazar canvas viejo con el de PixiJS
         oldCanvas.remove();
