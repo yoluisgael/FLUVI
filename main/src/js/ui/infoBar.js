@@ -86,6 +86,16 @@
   // Cada frame representa el avance de 1 celda (5 metros) en el mundo simulado
   const REAL_TIME_PER_CELL_SECONDS = 0.9; // Tiempo real que tarda un vehículo en avanzar 1 celda (5m)
 
+  // ⚡ OPTIMIZACIÓN: Throttling adaptativo para actualizaciones de info bar
+  // Desktop (60 FPS): actualizar cada 10 frames (~6 veces/seg)
+  // Mobile (30 FPS): actualizar cada 15 frames (~2 veces/seg)
+  const isMobile = window.pixiApp && window.pixiApp.isMobile;
+  const INFO_BAR_UPDATE_INTERVAL = isMobile ? 15 : 10;
+  let infoBarUpdateCounter = 0;
+  let cachedPopulation = 0; // Cache de población
+
+  console.log(`⚡ Info bar actualizándose cada ${INFO_BAR_UPDATE_INTERVAL} frames (${isMobile ? '📱 MÓVIL' : '🖥️ DESKTOP'})`);
+
   // Función para actualizar la información
   function updateInfo() {
     // Inicializar referencias si aún no están
@@ -93,48 +103,56 @@
       initDOMReferences();
     }
 
-    // Incrementar y actualizar generación
+    // Incrementar y actualizar generación (siempre, es muy ligero)
     generationCount++;
     if (infoGeneration) {
       infoGeneration.textContent = generationCount.toLocaleString();
     }
 
-    // Mostrar tiempo simulado por frame
-    // Calcula cuánto tiempo (en segundos) tarda un vehículo en avanzar 1 celda (5 metros)
-    // basado en velocidad de 60 km/h y escalado según el slider de velocidad
-    if (infoTimePerFrame) {
-      const frameTime = calcularTiempoPorFrame();
-      infoTimePerFrame.textContent = frameTime.toFixed(3) + 's';
-    }
+    // ⚡ OPTIMIZACIÓN: Actualizar información costosa solo cada N frames
+    infoBarUpdateCounter++;
+    const shouldUpdateExpensiveInfo = infoBarUpdateCounter >= INFO_BAR_UPDATE_INTERVAL;
 
-    // Actualizar población
-    if (infoPopulation) {
-      const population = calculatePopulation();
-      infoPopulation.textContent = population.toLocaleString();
-    }
+    if (shouldUpdateExpensiveInfo) {
+      infoBarUpdateCounter = 0; // Reset counter
 
-    // Actualizar multiplicador de tráfico
-    if (window.obtenerMultiplicadorTrafico && infoTrafficMultiplier) {
-      const multiplicador = window.obtenerMultiplicadorTrafico();
-      infoTrafficMultiplier.textContent = multiplicador.toFixed(1) + '×';
-    }
-
-    // Actualizar tiempo simulado usando el sistema de tiempo virtual
-    // El tiempo virtual se actualiza en trafico.js con avanzarTiempo()
-    if (infoSimulatedDateTime) {
-      if (window.obtenerTimestampVirtual) {
-        infoSimulatedDateTime.textContent = window.obtenerTimestampVirtual();
-      } else {
-        // Fallback al sistema anterior si el tiempo virtual no está disponible
-        const simulatedTimeIncrement = REAL_TIME_PER_CELL_SECONDS * 1000;
-        simulatedCurrentDate = new Date(simulatedCurrentDate.getTime() + simulatedTimeIncrement);
-        infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+      // Mostrar tiempo simulado por frame
+      // Calcula cuánto tiempo (en segundos) tarda un vehículo en avanzar 1 celda (5 metros)
+      // basado en velocidad de 60 km/h y escalado según el slider de velocidad
+      if (infoTimePerFrame) {
+        const frameTime = calcularTiempoPorFrame();
+        infoTimePerFrame.textContent = frameTime.toFixed(3) + 's';
       }
-    }
 
-    // Sincronizar el display de tiempo en el sidebar (timeControl.js)
-    if (window.actualizarDisplayTiempoSimulador) {
-      window.actualizarDisplayTiempoSimulador();
+      // Actualizar población (COSTOSO: itera todas las calles y celdas)
+      if (infoPopulation) {
+        cachedPopulation = calculatePopulation();
+        infoPopulation.textContent = cachedPopulation.toLocaleString();
+      }
+
+      // Actualizar multiplicador de tráfico
+      if (window.obtenerMultiplicadorTrafico && infoTrafficMultiplier) {
+        const multiplicador = window.obtenerMultiplicadorTrafico();
+        infoTrafficMultiplier.textContent = multiplicador.toFixed(1) + '×';
+      }
+
+      // Actualizar tiempo simulado usando el sistema de tiempo virtual
+      // El tiempo virtual se actualiza en trafico.js con avanzarTiempo()
+      if (infoSimulatedDateTime) {
+        if (window.obtenerTimestampVirtual) {
+          infoSimulatedDateTime.textContent = window.obtenerTimestampVirtual();
+        } else {
+          // Fallback al sistema anterior si el tiempo virtual no está disponible
+          const simulatedTimeIncrement = REAL_TIME_PER_CELL_SECONDS * 1000;
+          simulatedCurrentDate = new Date(simulatedCurrentDate.getTime() + simulatedTimeIncrement);
+          infoSimulatedDateTime.textContent = formatDateTime(simulatedCurrentDate);
+        }
+      }
+
+      // Sincronizar el display de tiempo en el sidebar (timeControl.js)
+      if (window.actualizarDisplayTiempoSimulador) {
+        window.actualizarDisplayTiempoSimulador();
+      }
     }
   }
 

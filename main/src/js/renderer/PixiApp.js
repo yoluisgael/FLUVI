@@ -183,7 +183,9 @@ class PixiApp {
     }
 
     setupResize() {
-        window.addEventListener('resize', () => {
+        // ⚡ OPTIMIZACIÓN: Debouncing de resize events (reduce llamadas de ~100/seg a ~5/seg)
+        let resizeTimeout;
+        const resizeHandler = () => {
             const sidebar = document.querySelector('.sidebar');
             const header = document.querySelector('header');
 
@@ -198,7 +200,14 @@ class PixiApp {
             );
 
             console.log(`📐 Resize: ${window.innerWidth - sidebarWidth}x${window.innerHeight - headerHeight} (sidebar: ${sidebarVisible ? 'visible' : 'hidden'})`);
+        };
+
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeHandler, 200); // 200ms debounce
         });
+
+        console.log('⚡ Resize debouncing activado (200ms)');
     }
 
     // API pública para compatibilidad

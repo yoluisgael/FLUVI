@@ -99,8 +99,14 @@ let netGenerationChartInstance = null;
 let speedChartInstance = null;
 let entropyChartInstance = null;
 
-// Contador para actualizar métricas cada 5 frames
+// ⚡ OPTIMIZACIÓN: Throttling adaptativo de métricas según dispositivo
+const METRICS_UPDATE_INTERVAL = (window.pixiApp && window.pixiApp.isMobile) ? 15 : 10; // Móvil: cada 15 frames, Desktop: cada 10 frames
+const ENTROPY_UPDATE_INTERVAL = 60; // Calcular entropía cada 60 frames (~1 vez/seg) - es muy costosa
 let metricsUpdateCounter = 0;
+let lastEntropyValue = 0; // Cachear último valor de entropía
+
+console.log(`⚡ Métricas actualizándose cada ${METRICS_UPDATE_INTERVAL} frames (${(60/METRICS_UPDATE_INTERVAL).toFixed(1)} veces/seg @ 60 FPS)`);
+console.log(`⚡ Entropía actualizándose cada ${ENTROPY_UPDATE_INTERVAL} frames (${(60/ENTROPY_UPDATE_INTERVAL).toFixed(1)} veces/seg @ 60 FPS) - optimización de CPU`);
 
 // ==================== FUNCIONES DE INTERPRETACIÓN DE MÉTRICAS ====================
 
@@ -329,6 +335,9 @@ function calculateMetrics() {
     let totalCells = 0;
     let carsInMotion = 0;
 
+    // ⚡ OPTIMIZACIÓN: Calcular entropía solo cada 60 frames (muy costosa)
+    const shouldCalculateEntropy = metricsUpdateCounter % ENTROPY_UPDATE_INTERVAL === 0;
+
     // Contador de las 8 transiciones de la regla del autómata celular para entropía de Shannon
     // Transiciones basadas en vecindario de 3 celdas (izquierda, centro, derecha)
     // Estado binario: 0 = sin carro, 1 = con carro (cualquier tipo 1-6)
@@ -340,7 +349,7 @@ function calculateMetrics() {
     // Índice 5: 101 → resultado
     // Índice 6: 110 → resultado
     // Índice 7: 111 → resultado
-    const transitionCount = new Array(8).fill(0);
+    const transitionCount = shouldCalculateEntropy ? new Array(8).fill(0) : null;
 
     // Acceder a la variable global 'calles' definida en trafico.js
     if (!window.calles) {
@@ -383,9 +392,10 @@ function calculateMetrics() {
                     }
                 }
 
+                // ⚡ OPTIMIZACIÓN: Calcular transiciones solo si shouldCalculateEntropy es true
                 // Calcular transiciones basadas en vecindario de 3 celdas (izquierda, centro, derecha)
                 // Solo si hay estado anterior disponible
-                if (previousStreetStates.size > 0) {
+                if (shouldCalculateEntropy && previousStreetStates.size > 0) {
                     // Obtener estado anterior de las 3 celdas del vecindario (en binario: 0 o 1)
                     const leftKey = `${calleIdx}-${c}-${i === 0 ? calle.tamano - 1 : i - 1}`;
                     const centerKey = `${calleIdx}-${c}-${i}`;
@@ -407,16 +417,20 @@ function calculateMetrics() {
         }
     });
 
-    // Actualizar estado anterior para el siguiente paso
-    previousStreetStates = currentStates;
+    // ⚡ OPTIMIZACIÓN: Solo actualizar estado anterior si estamos calculando entropía
+    if (shouldCalculateEntropy) {
+        previousStreetStates = currentStates;
+    }
 
     // Calcular densidad como porcentaje de ocupación
     const density = totalCells > 0 ? (totalCars / totalCells) * 100 : 0;
 
-    // Calcular Entropía de Shannon basada en transiciones del autómata celular
+    // ⚡ OPTIMIZACIÓN: Calcular Entropía de Shannon solo cada 60 frames
     // H = -Σ(p_i * log2(p_i)) donde p_i es la proporción de cada tipo de transición
-    let entropy = 0;
-    if (totalCells > 0) {
+    let entropy = lastEntropyValue; // Usar valor cacheado por defecto
+
+    if (shouldCalculateEntropy && totalCells > 0 && transitionCount) {
+        entropy = 0; // Reiniciar para nuevo cálculo
         for (let i = 0; i < transitionCount.length; i++) {
             if (transitionCount[i] > 0) {
                 const p_i = transitionCount[i] / totalCells;
@@ -424,6 +438,7 @@ function calculateMetrics() {
                 entropy -= p_i * (Math.log(p_i) / Math.log(2));
             }
         }
+        lastEntropyValue = entropy; // Cachear el nuevo valor
     }
 
     // Calcular tasa de cambio neta de población (antes llamado "flujo")
@@ -512,13 +527,15 @@ function updateMetricsHistory(metrics) {
 }
 
 /**
- * Actualiza las métricas cada 5 frames para optimizar rendimiento
+ * ⚡ OPTIMIZACIÓN: Actualiza las métricas con throttling adaptativo
+ * Móvil: cada 15 frames (~2 veces/seg @ 30 FPS)
+ * Desktop: cada 10 frames (~6 veces/seg @ 60 FPS)
  * Esta función debe ser llamada desde el loop de simulación
  */
 function updateMetrics() {
     metricsUpdateCounter++;
 
-    if (metricsUpdateCounter % 5 === 0) {
+    if (metricsUpdateCounter % METRICS_UPDATE_INTERVAL === 0) {
         const metrics = calculateMetrics();
         updateMetricsHistory(metrics);
         updateCharts();
