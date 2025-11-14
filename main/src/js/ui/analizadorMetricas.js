@@ -5,7 +5,8 @@
 
 let pyodideInstance = null;
 let pyodideInitialized = false;
-let currentCSVContent = null;
+let currentFileContent = null;
+let currentFileType = 'csv'; // 'csv' o 'json'
 let currentImagenes = null;
 
 /**
@@ -78,38 +79,55 @@ async function inicializarPyodide() {
 }
 
 /**
- * Carga un archivo CSV para análisis
+ * Carga un archivo CSV o JSON para análisis
  */
-async function cargarCSVParaAnalisis(event) {
+async function cargarArchivoParaAnalisis(event) {
   const file = event.target.files[0];
   if (!file) return;
 
+  // Determinar tipo de archivo por extensión
+  const extension = file.name.split('.').pop().toLowerCase();
+  if (extension === 'csv') {
+    currentFileType = 'csv';
+  } else if (extension === 'json') {
+    currentFileType = 'json';
+  } else {
+    alert('⚠️ Formato de archivo no soportado. Use .csv o .json');
+    return;
+  }
+
   // Actualizar nombre del archivo
-  document.getElementById('nombreArchivoCSV').textContent = `📄 ${file.name}`;
+  const iconoArchivo = currentFileType === 'json' ? '📋' : '📄';
+  document.getElementById('nombreArchivoCSV').textContent = `${iconoArchivo} ${file.name}`;
 
   try {
     // Leer el contenido del archivo
     const reader = new FileReader();
     reader.onload = async function(e) {
-      currentCSVContent = e.target.result;
+      currentFileContent = e.target.result;
 
       // Ejecutar análisis automáticamente
-      await ejecutarAnalisisCSV();
+      await ejecutarAnalisis();
     };
     reader.readAsText(file);
 
   } catch (error) {
-    console.error('❌ Error al cargar CSV:', error);
-    alert('Error al cargar el archivo CSV: ' + error.message);
+    console.error('❌ Error al cargar archivo:', error);
+    alert(`Error al cargar el archivo ${currentFileType.toUpperCase()}: ` + error.message);
   }
 }
 
+// Mantener compatibilidad con código anterior
+async function cargarCSVParaAnalisis(event) {
+  return cargarArchivoParaAnalisis(event);
+}
+
 /**
- * Ejecuta el análisis del CSV usando Python
+ * Ejecuta el análisis del archivo (CSV o JSON) usando Python
  */
-async function ejecutarAnalisisCSV() {
-  if (!currentCSVContent) {
-    alert('Por favor, carga un archivo CSV primero.');
+async function ejecutarAnalisis() {
+  if (!currentFileContent) {
+    alert('Por favor, carga un archivo primero.');
     return;
   }
 
@@ -118,7 +136,7 @@ async function ejecutarAnalisisCSV() {
     document.getElementById('estadoCargaPython').style.display = 'block';
     document.getElementById('estadoCargaPython').classList.remove('alert-danger');
     document.getElementById('estadoCargaPython').classList.add('alert-info');
-    document.getElementById('mensajeEstadoPython').textContent = 'Procesando datos...';
+    document.getElementById('mensajeEstadoPython').textContent = `Procesando ${currentFileType.toUpperCase()}...`;
     document.getElementById('progressBarPython').style.width = '20%';
 
     // Inicializar Pyodide si no está inicializado
@@ -129,24 +147,42 @@ async function ejecutarAnalisisCSV() {
     document.getElementById('progressBarPython').style.width = '40%';
     document.getElementById('mensajeEstadoPython').textContent = 'Analizando métricas...';
 
-    // Crear archivo CSV en el sistema de archivos virtual de Pyodide
-    pyodideInstance.FS.writeFile('/tmp_metricas.csv', currentCSVContent);
-
     document.getElementById('progressBarPython').style.width = '60%';
     document.getElementById('mensajeEstadoPython').textContent = 'Generando visualizaciones...';
 
-    // Ejecutar el análisis
-    const resultado = await pyodideInstance.runPythonAsync(`
+    // Escapar el contenido para Python
+    const contenidoEscapado = currentFileContent
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '');
+
+    // Ejecutar el análisis según el tipo de archivo
+    let pythonCode;
+    if (currentFileType === 'json') {
+      pythonCode = `
+import json
+
+# Parsear el contenido JSON
+contenido_json = """${contenidoEscapado}"""
+analizador = AnalizadorTraficoFLUVI(contenido_json, tipo='json')
+resultados = analizador.ejecutar_analisis_completo()
+resultados['imagenes']
+      `;
+    } else {
+      pythonCode = `
 import io
 
 # Leer el CSV desde el contenido
-contenido_csv = """${currentCSVContent.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"""
-
+contenido_csv = """${contenidoEscapado}"""
 archivo = io.StringIO(contenido_csv)
-analizador = AnalizadorTraficoFLUVI(archivo)
+analizador = AnalizadorTraficoFLUVI(archivo, tipo='csv')
 resultados = analizador.ejecutar_analisis_completo()
 resultados['imagenes']
-    `);
+      `;
+    }
+
+    const resultado = await pyodideInstance.runPythonAsync(pythonCode);
 
     document.getElementById('progressBarPython').style.width = '90%';
     document.getElementById('mensajeEstadoPython').textContent = 'Renderizando imágenes...';
@@ -166,7 +202,7 @@ resultados['imagenes']
       document.getElementById('resultadosAnalisis').style.display = 'block';
     }, 1000);
 
-    console.log('✅ Análisis completado exitosamente');
+    console.log(`✅ Análisis de ${currentFileType.toUpperCase()} completado exitosamente`);
 
   } catch (error) {
     console.error('❌ Error durante el análisis:', error);
@@ -174,6 +210,11 @@ resultados['imagenes']
     document.getElementById('estadoCargaPython').classList.remove('alert-info');
     document.getElementById('estadoCargaPython').classList.add('alert-danger');
   }
+}
+
+// Mantener compatibilidad con código anterior
+async function ejecutarAnalisisCSV() {
+  return ejecutarAnalisis();
 }
 
 /**

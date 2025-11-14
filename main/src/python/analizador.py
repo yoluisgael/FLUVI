@@ -7,6 +7,7 @@ import warnings
 warnings.filterwarnings('ignore')
 import io
 import base64
+import json
 
 # Importar seaborn solo si está disponible
 try:
@@ -25,13 +26,130 @@ except ImportError:
     print("⚠️ Scikit-learn no disponible")
 
 class AnalizadorTraficoFLUVI:
-    def __init__(self, archivo_csv):
-        """Inicializa el analizador y carga los datos"""
-        self.df = self.cargar_datos(archivo_csv)
+    def __init__(self, archivo, tipo='csv'):
+        """Inicializa el analizador y carga los datos
+
+        Args:
+            archivo: Archivo o contenido a procesar (CSV o JSON)
+            tipo: 'csv' o 'json' - tipo de archivo a procesar
+        """
+        self.df = self.cargar_datos(archivo, tipo)
         self.resultados = {}
 
-    def cargar_datos(self, archivo):
-        """Carga y limpia el CSV"""
+    def cargar_datos(self, archivo, tipo='csv'):
+        """Carga y limpia los datos desde CSV o JSON
+
+        Args:
+            archivo: Archivo o contenido a procesar
+            tipo: 'csv' o 'json' - tipo de archivo
+
+        Returns:
+            DataFrame de pandas con los datos procesados
+        """
+        if tipo == 'json':
+            return self._cargar_desde_json(archivo)
+        else:
+            return self._cargar_desde_csv(archivo)
+
+    def _cargar_desde_json(self, archivo):
+        """Carga datos desde un archivo JSON de métricas exportado
+
+        Args:
+            archivo: Archivo JSON o contenido JSON como string
+
+        Returns:
+            DataFrame de pandas
+        """
+        # Si es un string, parsearlo como JSON
+        if isinstance(archivo, str):
+            datos = json.loads(archivo)
+        # Si es un archivo, leerlo
+        elif hasattr(archivo, 'read'):
+            contenido = archivo.read()
+            if isinstance(contenido, bytes):
+                contenido = contenido.decode('utf-8')
+            datos = json.loads(contenido)
+        else:
+            datos = archivo
+
+        # Validar estructura del JSON
+        if 'metrics' not in datos:
+            raise ValueError("El archivo JSON debe contener una clave 'metrics' con los datos")
+
+        metricas = datos['metrics']
+
+        # El JSON exportado tiene el formato:
+        # {
+        #   "timestamps": [...],
+        #   "density": [...],
+        #   "throughput": [...],
+        #   "netGeneration": [...],
+        #   "speed": [...],
+        #   "entropy": [...]
+        # }
+        # Necesitamos transponer esto a formato de filas
+
+        # Validar que todas las claves necesarias existen
+        claves_requeridas = ['timestamps', 'density', 'throughput', 'netGeneration', 'speed', 'entropy']
+        for clave in claves_requeridas:
+            if clave not in metricas:
+                raise ValueError(f"Clave requerida '{clave}' no encontrada en metrics")
+
+        # Crear DataFrame desde las listas
+        df = pd.DataFrame({
+            'Marca_Tiempo': metricas['timestamps'],
+            'Densidad': metricas['density'],
+            'Flujo': metricas['throughput'],
+            'Generacion': metricas['netGeneration'],
+            'Velocidad': metricas['speed'],
+            'Entropia': metricas['entropy']
+        })
+
+        # Filtrar filas que no son datos válidos
+        df = df[df['Marca_Tiempo'].notna()]
+
+        # Convertir columnas numéricas
+        df['Densidad'] = pd.to_numeric(df['Densidad'], errors='coerce')
+        df['Flujo'] = pd.to_numeric(df['Flujo'], errors='coerce')
+        df['Generacion'] = pd.to_numeric(df['Generacion'], errors='coerce')
+        df['Velocidad'] = pd.to_numeric(df['Velocidad'], errors='coerce')
+        df['Entropia'] = pd.to_numeric(df['Entropia'], errors='coerce')
+
+        # Eliminar filas con NaN después de conversión
+        df = df.dropna()
+
+        # Resetear índice
+        df = df.reset_index(drop=True)
+
+        # Convertir tiempo a segundos desde inicio
+        try:
+            df['Tiempo_seg'] = pd.to_timedelta(df['Marca_Tiempo']).dt.total_seconds()
+        except:
+            def tiempo_a_segundos(tiempo_str):
+                partes = str(tiempo_str).split(':')
+                if len(partes) == 3:
+                    return int(partes[0]) * 3600 + int(partes[1]) * 60 + int(partes[2])
+                return 0
+
+            df['Tiempo_seg'] = df['Marca_Tiempo'].apply(tiempo_a_segundos)
+
+        # Calcular día de la semana correctamente
+        df = self._calcular_dias_semana(df)
+
+        # Calcular tiempo en minutos
+        df['Minuto'] = df['Tiempo_Acumulado_seg'] / 60
+
+        return df
+
+    def _cargar_desde_csv(self, archivo):
+        """Carga datos desde un archivo CSV
+
+        Args:
+            archivo: Archivo CSV
+
+        Returns:
+            DataFrame de pandas
+        """
         # Leer saltando las filas de metadata
         df = pd.read_csv(archivo, skiprows=6)
 
@@ -357,8 +475,8 @@ class AnalizadorTraficoFLUVI:
         plt.tight_layout()
         imagenes['temporal'] = self.fig_to_base64(fig1)
 
-        # IMAGEN 2: diagramas_fundamentales.png (CON MAPA DE CALOR)
-        fig2, axes = plt.subplots(1, 2, figsize=(16, 6))
+        # IMAGEN 2: diagramas_fundamentales.png (CON MAPAS DE CALOR)
+        fig2, axes = plt.subplots(1, 3, figsize=(24, 6))
         fig2.suptitle('Diagrama Fundamental del Tráfico', fontsize=16, fontweight='bold')
 
         # Subplot 1: Entropía vs Densidad
@@ -371,7 +489,7 @@ class AnalizadorTraficoFLUVI:
         plt.colorbar(scatter, ax=axes[0], label='Flujo (veh/s)')
         axes[0].grid(True, alpha=0.3)
 
-        # Subplot 2: Mapa de Calor - Densidad Promedio por Día y Hora
+        # Preparar datos para los mapas de calor
         # Redondear hora del día a enteros
         self.df['Hora_Redondeada'] = self.df['Hora_Dia'].round().astype(int)
 
@@ -387,7 +505,7 @@ class AnalizadorTraficoFLUVI:
         # Reordenar filas según el orden de días de la semana
         heatmap_data = heatmap_data.reindex([dia for dia in orden_dias if dia in heatmap_data.index])
 
-        # Crear el heatmap (con o sin seaborn)
+        # Subplot 2: Mapa de Calor - Densidad con escala fija (0-100%)
         if SEABORN_AVAILABLE:
             sns.heatmap(heatmap_data,
                        cmap='YlOrRd',
@@ -406,10 +524,37 @@ class AnalizadorTraficoFLUVI:
             axes[1].set_yticklabels(heatmap_data.index)
             plt.colorbar(im, ax=axes[1], label='Densidad (%)')
 
-        axes[1].set_title('Densidad Promedio por Día y Hora', fontsize=13, fontweight='bold')
+        axes[1].set_title('Densidad Promedio por Día y Hora\n(Escala Fija: 0-100%)', fontsize=13, fontweight='bold')
         axes[1].set_xlabel('Hora del Día', fontsize=12)
         axes[1].set_ylabel('Día de la Semana', fontsize=12)
         axes[1].set_yticklabels(axes[1].get_yticklabels(), rotation=0)
+
+        # Subplot 3: Mapa de Calor - Densidad con escala dinámica (0-máximo)
+        # Calcular el máximo valor de densidad en los datos
+        max_densidad = heatmap_data.max().max()
+
+        if SEABORN_AVAILABLE:
+            sns.heatmap(heatmap_data,
+                       cmap='YlOrRd',
+                       cbar_kws={'label': 'Densidad (%)'},
+                       ax=axes[2],
+                       linewidths=0.5,
+                       linecolor='white',
+                       vmin=0,
+                       vmax=max_densidad)
+        else:
+            # Alternativa sin seaborn usando matplotlib puro
+            im2 = axes[2].imshow(heatmap_data, cmap='YlOrRd', aspect='auto', vmin=0, vmax=max_densidad)
+            axes[2].set_xticks(range(len(heatmap_data.columns)))
+            axes[2].set_xticklabels(heatmap_data.columns)
+            axes[2].set_yticks(range(len(heatmap_data.index)))
+            axes[2].set_yticklabels(heatmap_data.index)
+            plt.colorbar(im2, ax=axes[2], label='Densidad (%)')
+
+        axes[2].set_title(f'Densidad Promedio por Día y Hora\n(Escala Dinámica: 0-{max_densidad:.1f}%)', fontsize=13, fontweight='bold')
+        axes[2].set_xlabel('Hora del Día', fontsize=12)
+        axes[2].set_ylabel('Día de la Semana', fontsize=12)
+        axes[2].set_yticklabels(axes[2].get_yticklabels(), rotation=0)
 
         plt.tight_layout()
         imagenes['fundamentales'] = self.fig_to_base64(fig2)
@@ -463,11 +608,32 @@ class AnalizadorTraficoFLUVI:
         return self.resultados
 
 
-# Función para usar desde JavaScript con Pyodide
+# Funciones para usar desde JavaScript con Pyodide
 def analizar_csv_web(contenido_csv):
-    """Función wrapper para llamar desde JavaScript"""
+    """Función wrapper para llamar desde JavaScript con CSV"""
     import io
     archivo = io.StringIO(contenido_csv)
-    analizador = AnalizadorTraficoFLUVI(archivo)
+    analizador = AnalizadorTraficoFLUVI(archivo, tipo='csv')
     resultados = analizador.ejecutar_analisis_completo()
     return resultados['imagenes']
+
+def analizar_json_web(contenido_json):
+    """Función wrapper para llamar desde JavaScript con JSON"""
+    analizador = AnalizadorTraficoFLUVI(contenido_json, tipo='json')
+    resultados = analizador.ejecutar_analisis_completo()
+    return resultados['imagenes']
+
+def analizar_archivo_web(contenido, tipo='csv'):
+    """Función wrapper genérica para llamar desde JavaScript
+
+    Args:
+        contenido: Contenido del archivo (CSV como string o JSON como string)
+        tipo: 'csv' o 'json'
+
+    Returns:
+        Diccionario con las imágenes generadas en base64
+    """
+    if tipo == 'json':
+        return analizar_json_web(contenido)
+    else:
+        return analizar_csv_web(contenido)
