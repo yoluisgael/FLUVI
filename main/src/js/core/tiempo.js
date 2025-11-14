@@ -39,38 +39,38 @@ let multiplicadorCache = {
 let MULTIPLICADORES_POR_DIA_HORA = {
     // 0 - Domingo (tráfico bajo)
     0: [
-        0.1, 0.1, 0.1, 0.2, 0.2, 0.2,  // 00-05: Madrugada
+        0.0, 0.1, 0.1, 0.2, 0.2, 0.2,  // 00-05: Madrugada
         0.2, 0.2, 0.3, 0.3, 0.4, 0.6,  // 06-11: Mañana tranquila
         0.6, 0.7, 0.7, 0.7, 0.7, 0.6,  // 12-17: Tarde moderada
-        0.6, 0.5, 0.4, 0.3, 0.3, 0.2   // 18-23: Noche calmada
+        0.6, 0.5, 0.4, 0.3, 0.3, 0.0   // 18-23: Noche calmada
     ],
     // 1 - Lunes (día laboral típico)
     1: [
-        0.1, 0.1, 0.1, 0.2, 0.2, 0.3,  // 00-05: Madrugada
-        0.5, 1.5, 1.8, 1.3, 0.8, 0.8,  // 06-11: PICO MAÑANA
-        1.0, 1.2, 1.1, 0.9, 0.8, 1.2,  // 12-17: Mediodía y tarde
-        1.7, 1.6, 1.3, 0.7, 0.5, 0.3   // 18-23: PICO TARDE
+        0.0, 0.1, 0.1, 0.2, 0.2, 0.3,  // 00-05: Madrugada
+        0.4, 1.2, 1.4, 1.0, 0.6, 0.7,  // 06-11: Pico mañana moderado
+        0.9, 1.0, 0.9, 0.8, 0.8, 1.1,  // 12-17: Mediodía y tarde
+        1.4, 1.3, 1.1, 0.7, 0.4, 0.0   // 18-23: Pico tarde moderado
     ],
     // 2 - Martes (día laboral típico)
     2: [
-        0.0, 0.12, 0.13, 0.14, 0.15, 0.2,
-        0.1, 0.2, 1.3, 1, 0.5, 0.6,
-        0.6, 0.9, 0.88, 0.7, 0.9, 1.1,
-        1.2, 1.0, 0.8, 0.5, 0.2, 0.0
+        0.0, 0.1, 0.1, 0.1, 0.2, 0.3,  // 00-05: Madrugada
+        0.4, 1.2, 1.4, 1.0, 0.7, 0.7,  // 06-11: Pico mañana moderado
+        0.9, 1.0, 0.9, 0.8, 0.8, 1.1,  // 12-17: Mediodía y tarde
+        1.5, 1.3, 1.1, 0.7, 0.4, 0.0   // 18-23: Pico tarde moderado
     ],
-    // 3 - Miércoles (día laboral típico)
+    // 3 - Miércoles (día laboral típico, mitad de semana)
     3: [
-        0.0, 0.12, 0.13, 0.14, 0.15, 0.2,
-        0.1, 0.2, 1.3, 1, 0.5, 0.6,
-        0.6, 0.9, 0.88, 0.7, 0.9, 1.1,
-        1.2, 1.0, 0.8, 0.5, 0.2, 0.0
+        0.0, 0.1, 0.1, 0.1, 0.2, 0.1,  // 00-05: Madrugada
+        0.4, 1.3, 1.5, 1.0, 0.5, 0.7,  // 06-11: Pico mañana moderado-alto
+        0.9, 1.1, 1.0, 0.8, 0.9, 1.2,  // 12-17: Mediodía y tarde
+        1.5, 1.4, 1.2, 0.7, 0.4, 0.0   // 18-23: Pico tarde moderado-alto
     ],
-    // 4 - Jueves (día laboral típico)
+    // 4 - Jueves (día laboral típico, casi fin de semana)
     4: [
-        0.0, 0.12, 0.13, 0.14, 0.15, 0.2,
-        0.1, 0.2, 1.3, 1, 0.5, 0.6,
-        0.6, 0.9, 0.88, 0.7, 0.9, 1.1,
-        1.2, 1.0, 0.8, 0.5, 0.2, 0.0
+        0.0, 0.1, 0.1, 0.1, 0.2, 0.2,  // 00-05: Madrugada
+        0.4, 1.3, 1.5, 1.0, 0.7, 0.7,  // 06-11: Pico mañana moderado-alto
+        0.9, 1.1, 1.0, 0.8, 1.0, 1.3,  // 12-17: Mediodía y tarde aumentando
+        1.6, 1.5, 1.2, 0.7, 0.4, 0.0   // 18-23: Pico tarde alto
     ],
     // 5 - Viernes (día laboral, más tráfico en tarde)
     5: [
@@ -84,7 +84,7 @@ let MULTIPLICADORES_POR_DIA_HORA = {
         0.0, 0.1, 0.2, 0.3, 0.3, 0.3,  // 00-05
         0.3, 0.3, 0.4, 0.5, 0.8, 0.9,  // 06-11: Actividad tarde
         1.0, 1.2, 1.3, 1.3, 1.2, 1.1,  // 12-17: Pico tarde
-        1.0, 0.9, 0.7, 0.5, 0.3, 0.0   // 18-23
+        1.0, 0.9, 0.7, 0.5, 0.2, 0.0   // 18-23
     ]
 };
 

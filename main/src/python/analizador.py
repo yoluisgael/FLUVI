@@ -394,10 +394,12 @@ class AnalizadorTraficoFLUVI:
                        cbar_kws={'label': 'Densidad (%)'},
                        ax=axes[1],
                        linewidths=0.5,
-                       linecolor='white')
+                       linecolor='white',
+                       vmin=0,
+                       vmax=100)
         else:
             # Alternativa sin seaborn usando matplotlib puro
-            im = axes[1].imshow(heatmap_data, cmap='YlOrRd', aspect='auto')
+            im = axes[1].imshow(heatmap_data, cmap='YlOrRd', aspect='auto', vmin=0, vmax=100)
             axes[1].set_xticks(range(len(heatmap_data.columns)))
             axes[1].set_xticklabels(heatmap_data.columns)
             axes[1].set_yticks(range(len(heatmap_data.index)))
