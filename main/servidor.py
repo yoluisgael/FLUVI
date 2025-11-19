@@ -42,7 +42,7 @@ def main():
     local_ip = get_local_ip()
 
     print("=" * 60)
-    print("SERVIDOR WEB PARA FLUVI - SIMULADOR DE TRAFICO")
+    print("SERVIDOR WEB DE PRUEBAS PARA FLUVI - SIMULADOR DE TRAFICO")
     print("=" * 60)
     print(f"\nSirviendo archivos desde: {os.path.abspath(DIRECTORY)}")
     print(f"Puerto: {PORT}")
@@ -53,7 +53,7 @@ def main():
     print(f"      http://127.0.0.1:{PORT}")
 
     if local_ip != "No disponible":
-        print(f"\n   📱 Desde tu celular/tablet (misma red WiFi):")
+        print(f"\n   📱 Desde tu PC/celular/tablet (misma red WiFi):")
         print(f"      http://{local_ip}:{PORT}")
         print(f"\n   ⚠️  Si no funciona desde el celular:")
         print(f"      1. Verifica que estén en la misma red WiFi")
