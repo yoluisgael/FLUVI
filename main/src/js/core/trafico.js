@@ -2423,8 +2423,8 @@ function iniciarSimulacion() {
     const Generador_3 = crearCalle("Entrada ←", 5, TIPOS.GENERADOR, 1933, 341, 225, 0.1, 2, 0);
     const Devorador_3 = crearCalle("Salida 1 →", 5, TIPOS.DEVORADOR, 1880, 328, 59, 0, 2, 0);
     const Devorador_4 = crearCalle("Salida 2 →", 5, TIPOS.DEVORADOR, 1758, 346, 117, 0, 2, 0);
-    const Generador_4 = crearCalle("E ←", 4, TIPOS.GENERADOR, 2399, 977, 170, 0.34, 3, 0.0);
-    const Generador_5 = crearCalle("E 2→", 4, TIPOS.GENERADOR, 1383, 826, -10, 0.30, 3, 0.0);
+    const Generador_4 = crearCalle("E ←", 4, TIPOS.GENERADOR, 2399, 977, 170, 0.0, 3, 0.0);
+    const Generador_5 = crearCalle("E 2→", 4, TIPOS.GENERADOR, 1383, 826, -10, 0.0, 3, 0.0);
     const Generador_6 = crearCalle("Er→", 2, TIPOS.GENERADOR, 1783, 1818, 80, 0.25, 2, 0.0);
     const Generador_7 = crearCalle("B →", 2, TIPOS.GENERADOR, 2149, 1913, 78, 0.27, 2, 0.0);
 
@@ -2772,6 +2772,22 @@ function iniciarSimulacion() {
     conexionesCA.push(...crearConexionLineal(  
         Generador_6,  
         Calle_Luis_Enrique_Erro_1  
+    ));
+    conexionesCA.push(...crearConexionLineal(  
+        Avenida_Juan_de_Dios_Batiz2,  
+        Avenida_Juan_de_Dios_Batiz7  
+    ));
+    conexionesCA.push(...crearConexionLineal(  
+        Avenida_Juan_de_Dios_Batiz3,  
+        Generador_5  
+    ));
+    conexionesCA.push(...crearConexionLineal(  
+        Avenida_Juan_de_Dios_Batiz4,  
+        Avenida_Juan_de_Dios_Batiz5  
+    ));
+    conexionesCA.push(...crearConexionLineal(  
+        Avenida_Juan_de_Dios_Batiz6,  
+        Generador_4  
     ));
     conexionesCA.push(...crearConexionLineal(  
         Generador_7,  
