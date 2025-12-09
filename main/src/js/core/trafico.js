@@ -4381,13 +4381,13 @@ function iniciarSimulacion() {
             probabilidadGeneracionGeneral = nuevaProbabilidad;
             probabilidadValor.textContent = valorSlider + '%';
 
-            // Aplicar la nueva probabilidad a todos los generadores
+            /* // Aplicar la nueva probabilidad a todos los generadores
             // Solo si los perfiles están desactivados (el slider solo funciona cuando perfiles está OFF)
             calles.forEach(calle => {
                 if (calle.tipo === TIPOS.GENERADOR) {
                     calle.probabilidadGeneracion = nuevaProbabilidad;
                 }
-            });
+            }); */
 
             console.log(`🎚️ Probabilidad de generación global: ${valorSlider}% aplicada a todos los generadores`);
         });

@@ -370,7 +370,7 @@ function togglePerfiles(usar) {
     configuracionTiempo.usarPerfiles = usar;
     multiplicadorCache.ultimaDia = -1; // Invalidar cache
     console.log(`⏰ Perfiles de tráfico: ${usar ? 'ACTIVADOS' : 'DESACTIVADOS'}`);
-
+/* 
     // Controlar el estado del slider de generación
     const probabilidadSlider = document.getElementById('probabilidadSlider');
     const probabilidadValor = document.getElementById('probabilidadValor');
@@ -399,7 +399,7 @@ function togglePerfiles(usar) {
             }
             console.log('🔓 Slider de generación habilitado (control manual)');
         }
-    }
+    } */
 }
 
 /**

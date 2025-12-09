@@ -150,7 +150,7 @@ function interpretarMetricas(metrics) {
             `Tasa cambio: ${netGeneration.toFixed(1)} veh/s - ${getNetGenerationLabel(netGeneration)}`,
             'Se requiere intervención: reducir generación o mejorar salidas'
         ];
-    } else if (throughput >= 2.5 && density >= 25 && density <= 60 && speed >= 50) {
+    } else if (density >= 25 && density <= 60 && speed >= 50) {
         // ÓPTIMO - Basado en THROUGHPUT alto con condiciones balanceadas
         // Zona de máxima eficiencia según ecuación fundamental
         estado.nivel = 'ÓPTIMO';
@@ -166,7 +166,7 @@ function interpretarMetricas(metrics) {
             `Tasa cambio: ${netGeneration.toFixed(1)} veh/s - ${getNetGenerationLabel(netGeneration)}`,
             'Sistema funcionando al máximo rendimiento'
         ];
-    } else if (density > 65 && speed < 35) {
+    } else if (density > 60 && speed < 35) {
         // CONGESTIONADO - Alta densidad con velocidad reducida
         estado.nivel = 'CONGESTIONADO';
         estado.emoji = '🟠';
@@ -181,7 +181,7 @@ function interpretarMetricas(metrics) {
             netGeneration > 2 ? `⚠ Población creciendo (${netGeneration.toFixed(1)} veh/s)` : 'Población estable',
             'Riesgo de colapso si aumenta densidad'
         ];
-    } else if (density < 25 && throughput < 1.5) {
+    } else if (density < 25) {
         // SUB-UTILIZADO - Baja densidad Y bajo flujo
         estado.nivel = 'SUB-UTILIZADO';
         estado.emoji = '🔵';

@@ -466,19 +466,19 @@ El cálculo se basa en el estado **binario** del vecindario de 3 celdas en el pa
 - **Acción requerida**: Reducir generación o mejorar salidas
 
 #### 🟢 ÓPTIMO
-- **Condición**: `throughput ≥2.5 && density 25-60% && speed ≥50%`
+- **Condición**: `density 25-60% && speed ≥50%`
 - **Descripción**: Máxima eficiencia del sistema: buen balance entre densidad y velocidad
 - **Throughput típico**: 2.5-5 veh/s
 - **Característica**: Sistema funcionando al máximo rendimiento
 
 #### 🟠 CONGESTIONADO
-- **Condición**: `density >65% && speed <35%`
+- **Condición**: `density >60% && speed <35%`
 - **Descripción**: Alta densidad vehicular con movimiento lento
 - **Throughput típico**: 1-2 veh/s
 - **Advertencia**: Riesgo de colapso si aumenta densidad
 
 #### 🔵 SUB-UTILIZADO
-- **Condición**: `density <25% && throughput <1.5`
+- **Condición**: `density <25%`
 - **Descripción**: Baja ocupación de las calles, capacidad disponible
 - **Throughput típico**: 0-1.5 veh/s
 - **Recomendación**: Considerar aumentar generación para aprovechar capacidad
