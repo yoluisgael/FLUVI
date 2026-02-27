@@ -55,18 +55,18 @@ Abre tu navegador y ve a:
 1. Con el servidor ejecutándose, abre tu navegador
 2. Navega a: **http://localhost:8000**
 3. La simulación cargará automáticamente:
-   - ✅ Inicialización de PixiJS con **WebGL habilitado**
-   - ✅ Carga de texturas y assets desde `assets/images/`
-   - ✅ Renderizado de la escena inicial con aceleración GPU
-   - ✅ Sistema de capas activado
+   - Inicialización de PixiJS con **WebGL habilitado**
+   - Carga de texturas y assets desde `assets/images/`
+   - Renderizado de la escena inicial con aceleración GPU
+   - Sistema de capas activado
 
 ### Paso 3: Usar la Aplicación
 
 Usa el panel lateral para:
-- 🎛️ Configurar parámetros de simulación
-- ✏️ Activar/desactivar modo de edición
-- 📊 Ver métricas en tiempo real
-- 💾 Exportar/importar configuraciones
+- Configurar parámetros de simulación
+- Activar/desactivar modo de edición
+- Ver métricas en tiempo real
+- Exportar/importar configuraciones
 
 **Controles de Cámara:**
 - **Scroll**: Zoom in/out
@@ -90,33 +90,33 @@ Para detener el servidor, presiona **Ctrl+C** en la terminal donde se está ejec
 
 ## Solución de Problemas
 
-### ❌ "El puerto 8000 ya está en uso"
+### "El puerto 8000 ya está en uso"
 **Solución:** Otro proceso está usando el puerto 8000
 - Cierra otras instancias del servidor
 - O modifica `servidor.py` para usar otro puerto (ej: 8080, 3000)
 
-### ❌ "WebGL no está disponible"
+### "WebGL no está disponible"
 **Solución:** Tu navegador/GPU no soporta WebGL
 - El sistema automáticamente usará Canvas 2D como fallback
-- Verás el mensaje: "⚠️ WebGL no disponible, usando Canvas 2D renderer..."
+- Verás el mensaje: "WebGL no disponible, usando Canvas 2D renderer..."
 - La aplicación funcionará, pero con menor rendimiento
 
-### ❌ "No se cargan las texturas"
+### "No se cargan las texturas"
 **Solución:** Estás abriendo `index.html` directamente con `file://`
 - **Debes usar el servidor local** para que CORS permita cargar las imágenes
 - Ejecuta `INICIAR_SERVIDOR.bat` y abre `http://localhost:8000`
 
-### ❌ "Python no se reconoce como comando"
+### "Python no se reconoce como comando"
 **Solución:** Python no está instalado o no está en el PATH
 - Descarga Python desde: https://www.python.org/downloads/
 - Durante la instalación, marca "Add Python to PATH"
 - Reinicia la terminal después de instalar
 
-### ✅ Verificar que WebGL está funcionando
+### Verificar que WebGL está funcionando
 Abre la consola del navegador (F12) y busca:
 ```
-✅ WebGL disponible, usando aceleración GPU
-✅ PixiApp inicializado correctamente
+WebGL disponible, usando aceleración GPU
+PixiApp inicializado correctamente
 ```
 
 Si ves estos mensajes, **PixiJS está usando WebGL correctamente**.
@@ -321,10 +321,10 @@ El sistema permite modificar manualmente la fecha y hora del simulador mediante 
 - Invalidación del cache de multiplicador al cambiar fecha/hora
 
 **Uso**:
-1. Click en "⏰ Cambiar Fecha y Hora"
+1. Click en "Cambiar Fecha y Hora"
 2. Selecciona día, hora y minutos deseados
 3. Verifica la vista previa
-4. Click en "✅ Confirmar y Aplicar"
+4. Click en "Confirmar y Aplicar"
 5. El simulador ajusta inmediatamente el tiempo virtual
 
 ### Configuración de Multiplicadores de Generación
@@ -356,12 +356,12 @@ El sistema permite configurar multiplicadores personalizados de generación de v
 **Ubicación en código**: `main/src/js/core/tiempo.js` (líneas 39-89) - Variable `MULTIPLICADORES_POR_DIA_HORA`
 
 **Uso**:
-1. Click en "📊 Configurar Multiplicador de Gen."
+1. Click en "Configurar Multiplicador de Gen."
 2. Selecciona el día de la semana a configurar
 3. Ajusta los 24 sliders según el patrón deseado
 4. (Opcional) Aplica un preset rápido
 5. (Opcional) Copia a todos los días si deseas el mismo patrón
-6. Click en "✅ Actualizar Multiplicadores"
+6. Click en "Actualizar Multiplicadores"
 7. Los cambios se aplican inmediatamente y se guardan con el escenario
 
 **Persistencia**:
@@ -564,13 +564,13 @@ El proyecto utiliza una arquitectura modular con scripts separados por responsab
 - Utilidades en `utils/`: Carga de assets y conversión de coordenadas
 
 **Beneficios de la Arquitectura Modular**:
-- ✅ **Separación de Responsabilidades**: Cada módulo tiene una función específica y bien definida
-- ✅ **Mantenibilidad**: Cambios en un módulo no afectan a otros
-- ✅ **Escalabilidad**: Fácil agregar nuevas funcionalidades sin modificar código existente
-- ✅ **Reutilización**: Módulos pueden ser reutilizados en otros proyectos
-- ✅ **Testing**: Cada módulo puede ser probado independientemente
-- ✅ **Debugging**: Más fácil localizar y corregir errores
-- ✅ **Colaboración**: Múltiples desarrolladores pueden trabajar en paralelo
+- **Separación de Responsabilidades**: Cada módulo tiene una función específica y bien definida
+- **Mantenibilidad**: Cambios en un módulo no afectan a otros
+- **Escalabilidad**: Fácil agregar nuevas funcionalidades sin modificar código existente
+- **Reutilización**: Módulos pueden ser reutilizados en otros proyectos
+- **Testing**: Cada módulo puede ser probado independientemente
+- **Debugging**: Más fácil localizar y corregir errores
+- **Colaboración**: Múltiples desarrolladores pueden trabajar en paralelo
 
 ### Flujo de Inicialización
 
@@ -638,22 +638,22 @@ El sistema usa eventos nativos de PixiJS:
 ### Beneficios del Uso de PixiJS
 
 **Rendimiento:**
-- ✅ **60 FPS** con cientos de vehículos simultáneos
-- ✅ **Aceleración GPU** vía WebGL para renderizado de alta velocidad
-- ✅ **Batch rendering** automático reduce llamadas de dibujo en 90%
-- ✅ **Sprites cacheados** evitan recálculos innecesarios
+- **60 FPS** con cientos de vehículos simultáneos
+- **Aceleración GPU** vía WebGL para renderizado de alta velocidad
+- **Batch rendering** automático reduce llamadas de dibujo en 90%
+- **Sprites cacheados** evitan recálculos innecesarios
 
 **Desarrollo:**
-- ✅ **Scene Graph** simplifica la gestión de objetos 2D
-- ✅ **Eventos nativos** en sprites eliminan cálculos manuales de colisión
-- ✅ **API moderna** con soporte para ES6+
-- ✅ **Debugging integrado** con DevTools de navegador
+- **Scene Graph** simplifica la gestión de objetos 2D
+- **Eventos nativos** en sprites eliminan cálculos manuales de colisión
+- **API moderna** con soporte para ES6+
+- **Debugging integrado** con DevTools de navegador
 
 **Mantenibilidad:**
-- ✅ **Separación de responsabilidades** con renderizadores especializados
-- ✅ **Código modular** fácil de extender y mantener
-- ✅ **Sistema de capas** clarifica el orden de renderizado
-- ✅ **Documentación completa** de PixiJS disponible
+- **Separación de responsabilidades** con renderizadores especializados
+- **Código modular** fácil de extender y mantener
+- **Sistema de capas** clarifica el orden de renderizado
+- **Documentación completa** de PixiJS disponible
 
 ## Documentación
 
@@ -680,7 +680,7 @@ Escuela Superior de Cómputo (ESCOM)
 
 FLUVI incluye un **Analizador de Métricas Avanzado** que permite analizar archivos CSV exportados usando Python directamente en el navegador mediante **Pyodide** (Python compilado a WebAssembly).
 
-### 📊 Visualizaciones Generadas
+### Visualizaciones Generadas
 
 **1. Análisis Temporal (4 gráficas)**
 - Densidad vs Tiempo
@@ -690,20 +690,20 @@ FLUVI incluye un **Analizador de Métricas Avanzado** que permite analizar archi
 
 **2. Diagrama Fundamental (2 gráficas)**
 - Entropía vs Densidad (coloreado por Flujo)
-- **Mapa de Calor por Día y Hora** 🔥
+- **Mapa de Calor por Día y Hora** 
 
 **3. Distribuciones Estadísticas**
 - Histogramas de Densidad y Flujo
 - Boxplots comparativos
 
-### 🔥 Mapa de Calor
+### Mapa de Calor
 
 Visualiza patrones de tráfico organizados por:
 - **Eje Y**: Días de la semana (Lunes - Domingo)
 - **Eje X**: Horas del día (0 - 23)
 - **Color**: 🟡 amarillo (baja densidad) → 🔴 rojo (alta densidad)
 
-### 🚀 Cómo Usar
+### Cómo Usar
 
 1. Ejecuta una simulación en FLUVI
 2. Exporta métricas usando "Descargar CSV"
@@ -713,7 +713,7 @@ Visualiza patrones de tráfico organizados por:
 6. Navega entre las 3 pestañas
 7. Descarga imágenes (individual o ZIP)
 
-### ✅ Características
+### Características
 
 - **100% en el navegador**: Sin instalación de Python
 - **Privacidad total**: Datos locales, no se envían a servidores
