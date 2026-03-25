@@ -1,729 +1,770 @@
-# FLUVI - Simulador de Tráfico Vehicular
-
-Sistema de simulación de tráfico vehicular basado en autómatas celulares para el análisis y optimización del flujo vehicular en vialidades cercanas al IPN - ESCOM.
-
-## Requisitos
-
-### Software Necesario
-- **Python 3.x**: Para ejecutar el servidor HTTP local
-- **Navegador Web Moderno**: Chrome, Firefox, Safari, Edge (últimas versiones)
-- **WebGL**: Para aceleración GPU (opcional, fallback a Canvas 2D disponible)
-- **Conexión a Internet**: Para cargar PixiJS desde CDN
-- **JavaScript Habilitado**: Requerido para el funcionamiento
-
-### ¿Por qué se necesita un servidor local?
-
-WebGL y la carga de recursos (texturas, imágenes) requieren que la aplicación se ejecute desde un servidor HTTP debido a las políticas de seguridad CORS (Cross-Origin Resource Sharing) de los navegadores. **No es posible abrir el archivo `index.html` directamente** desde el sistema de archivos (`file://`) para que WebGL funcione correctamente.
-
-## Inicio Rápido
-
-### Paso 1: Iniciar el Servidor Local
-
-**Opción A - Windows (Recomendado):**
-```bash
-# Navega a la carpeta main/
-cd main
-
-# Ejecuta el archivo .bat
-INICIAR_SERVIDOR.bat
-```
-
-**Opción B - Cualquier Sistema Operativo:**
-```bash
-# Navega a la carpeta main/
-cd main
-
-# Ejecuta el servidor Python directamente
-python servidor.py
-```
-
-El servidor se iniciará en el puerto **8000** y verás:
-```
-============================================================
-SERVIDOR WEB PARA FLUVI - SIMULADOR DE TRAFICO
-============================================================
-
-Servidor iniciado correctamente!
-
-Abre tu navegador y ve a:
-   http://localhost:8000
-   http://127.0.0.1:8000
-```
-
-### Paso 2: Abrir en el Navegador
-
-1. Con el servidor ejecutándose, abre tu navegador
-2. Navega a: **http://localhost:8000**
-3. La simulación cargará automáticamente:
-   - Inicialización de PixiJS con **WebGL habilitado**
-   - Carga de texturas y assets desde `assets/images/`
-   - Renderizado de la escena inicial con aceleración GPU
-   - Sistema de capas activado
-
-### Paso 3: Usar la Aplicación
-
-Usa el panel lateral para:
-- Configurar parámetros de simulación
-- Activar/desactivar modo de edición
-- Ver métricas en tiempo real
-- Exportar/importar configuraciones
-
-**Controles de Cámara:**
-- **Scroll**: Zoom in/out
-- **Arrastre**: Pan (mover cámara)
-
-**Modo Edición:**
-- **SHIFT + Arrastre**: Mover calles
-- **Click en calle/edificio**: Ver información
-- **Handles** (círculos): Mover y rotar calles
-- **Z**: Toggle modo edición de vértices (activar/desactivar)
-  - Cuando está activo, arrastra cualquier vértice para crear curvas
-  - Presiona Z nuevamente para desactivar el modo
-
-**Atajos de Teclado:**
-- **Ctrl+B**: Ocultar/mostrar panel lateral (sidebar)
-- **Enter**: Aplicar cambios en el modal de fecha/hora (cuando los campos están enfocados)
-
-### Detener el Servidor
-
-Para detener el servidor, presiona **Ctrl+C** en la terminal donde se está ejecutando.
-
-## Solución de Problemas
-
-### "El puerto 8000 ya está en uso"
-**Solución:** Otro proceso está usando el puerto 8000
-- Cierra otras instancias del servidor
-- O modifica `servidor.py` para usar otro puerto (ej: 8080, 3000)
-
-### "WebGL no está disponible"
-**Solución:** Tu navegador/GPU no soporta WebGL
-- El sistema automáticamente usará Canvas 2D como fallback
-- Verás el mensaje: "WebGL no disponible, usando Canvas 2D renderer..."
-- La aplicación funcionará, pero con menor rendimiento
-
-### "No se cargan las texturas"
-**Solución:** Estás abriendo `index.html` directamente con `file://`
-- **Debes usar el servidor local** para que CORS permita cargar las imágenes
-- Ejecuta `INICIAR_SERVIDOR.bat` y abre `http://localhost:8000`
-
-### "Python no se reconoce como comando"
-**Solución:** Python no está instalado o no está en el PATH
-- Descarga Python desde: https://www.python.org/downloads/
-- Durante la instalación, marca "Add Python to PATH"
-- Reinicia la terminal después de instalar
-
-### Verificar que WebGL está funcionando
-Abre la consola del navegador (F12) y busca:
-```
-WebGL disponible, usando aceleración GPU
-PixiApp inicializado correctamente
-```
-
-Si ves estos mensajes, **PixiJS está usando WebGL correctamente**.
-
-## Estructura del Proyecto
-
-```
-FLUVI/
-├── main/
-│   ├── index.html                         # Punto de entrada principal
-│   ├── INICIAR_SERVIDOR.bat              # Script para iniciar servidor (Windows)
-│   ├── servidor.py                        # Servidor HTTP local (Python)
-│   ├── docs/                              # Documentación del proyecto
-│   │   └── CONSTRUCTOR.md                 # Documentación del constructor de mapas
-│   └── src/
-│       ├── js/
-│       │   ├── core/                      # Lógica central de simulación
-│       │   │   ├── trafico.js             # Motor principal de simulación y autómatas celulares
-│       │   │   ├── tiempo.js              # Sistema de tiempo virtual (día/hora)
-│       │   │   ├── graficas.js            # Sistema de métricas (densidad, flujo, velocidad)
-│       │   │   ├── curvas.js              # Sistema de curvas y vértices en calles
-│       │   │   ├── estacionamientos.js    # Sistema de estacionamientos inteligentes
-│       │   │   └── ClickActionManager.js  # Gestor de clicks e interacciones
-│       │   ├── renderer/                  # Sistema de renderizado con PixiJS
-│       │   │   ├── PixiApp.js             # Aplicación principal de PixiJS (Singleton)
-│       │   │   ├── SceneManager.js        # Gestor de escena y capas (Scene Graph)
-│       │   │   ├── CameraController.js    # Sistema de cámara (zoom, pan)
-│       │   │   ├── DayNightCycle.js       # Ciclo día/noche (colores de fondo)
-│       │   │   ├── EditorHandles.js       # Handles de edición de calles
-│       │   │   ├── renderers/             # Renderizadores especializados
-│       │   │   │   ├── CalleRenderer.js   # Renderizado de calles
-│       │   │   │   ├── CarroRenderer.js   # Renderizado de vehículos
-│       │   │   │   ├── EdificioRenderer.js # Renderizado de edificios
-│       │   │   │   ├── ConexionRenderer.js # Renderizado de conexiones
-│       │   │   │   ├── UIRenderer.js      # Renderizado de UI (etiquetas)
-│       │   │   │   └── MinimapRenderer.js # Renderizado del minimapa
-│       │   │   └── utils/                 # Utilidades de renderizado
-│       │   │       ├── AssetLoader.js     # Cargador de texturas y assets
-│       │   │       └── CoordinateConverter.js # Conversión de coordenadas
-│       │   └── ui/                        # Módulos de interfaz de usuario
-│       │       ├── darkMode.js            # Sistema de modo oscuro
-│       │       ├── loadingSystem.js       # Sistema de carga con progreso
-│       │       ├── tooltips.js            # Inicialización de tooltips Bootstrap
-│       │       ├── modalFixes.js          # Correcciones para modales
-│       │       ├── consoleControl.js      # Control de logs de consola
-│       │       ├── sidebarToggle.js       # Toggle del sidebar (Ctrl+B)
-│       │       ├── infoBar.js             # Barra de información en tiempo real
-│       │       ├── timeControl.js         # Control de fecha y hora del simulador
-│       │       ├── multiplicadoresUI.js   # Configuración de multiplicadores por día/hora
-│       │       ├── editor.js              # Editor visual de calles
-│       │       ├── constructor.js         # Constructor de mapas
-│       │       ├── edificioUI.js          # Interfaz de configuración de estacionamientos
-│       │       ├── analizadorMetricas.js  # Analizador de métricas avanzado
-│       │       └── etiquetas.js           # Sistema de etiquetas
-│       ├── python/                        # Scripts Python para análisis
-│       │   └── analizador.py              # Analizador de métricas con visualizaciones
-│       └── css/                           # Hojas de estilo
-│           ├── estilos.css                # Estilos principales
-│           └── minimapa.css               # Estilos del minimapa
-├── assets/                                # Recursos estáticos
-│   └── images/                            # Imágenes y texturas
-│       ├── vehicles/                      # Sprites de vehículos (PNG)
-│       ├── buildings/                     # Texturas de edificios (PNG)
-│       ├── roads/                         # Texturas de carreteras (PNG)
-│       └── objects/                       # Objetos varios (PNG)
-└── README.md                              # Este archivo
-```
-
-## Características Principales
-
-### Simulación de Tráfico
-- **Autómatas Celulares**: Implementación de Regla 184 modificada
-- **Multi-carril**: Soporte para múltiples carriles con cambios de carril dinámicos
-- **Conexiones**: Tres tipos de conexiones (lineal, incorporación, probabilística) entre calles
-- **Sistema de Tiempo Virtual**: Simulación de días de la semana y horarios con avance dinámico
-- **Multiplicador de Tráfico Dinámico**: Generación de vehículos que varía según día y hora (horas pico, valle, etc.)
-- **Configuración de Multiplicadores**: Sistema completo para configurar multiplicadores por día de la semana (7 días) y hora (24 horas), con presets rápidos y valores independientes por rango horario
-- **Control Manual de Fecha/Hora**: Capacidad de modificar el tiempo simulado en cualquier momento
-- **Estacionamientos Inteligentes**: Sistema de entrada/salida de vehículos con probabilidades configurables por hora
-- **Gestión de Escenarios**: Guarda y carga configuraciones completas de simulación
-
-### Interfaz de Usuario
-- **Editor Visual**: Arrastra y rota calles con handles interactivos
-- **Constructor de Mapas**: Crea simulaciones personalizadas desde cero
-- **Barra de Información en Tiempo Real**: Muestra generación, población de vehículos, hora simulada, tiempo por frame y multiplicador de tráfico
-- **Control de Fecha y Hora**: Interfaz intuitiva para cambiar el día y hora del simulador con vista previa
-- **Métricas en Tiempo Real**: Gráficas de densidad, flujo y velocidad
-- **Minimapa**: Vista general del área de simulación
-- **Modo Oscuro**: Toggle entre tema claro y oscuro con persistencia
-- **Control de Sidebar**: Oculta/muestra el panel lateral con Ctrl+B
-
-### Funcionalidades Avanzadas
-- **Calles Curvas**: Sistema de vértices con interpolación angular
-- **Tooltips Interactivos**: Información al pasar el cursor sobre calles y edificios
-- **Arrastre con SHIFT**: Mueve calles fácilmente en modo edición
-- **Handles de Edición**: Controles visuales para mover y rotar calles
-- **Ciclo Día/Noche**: Cambio dinámico de colores de fondo según la hora simulada
-- **Exportar/Importar**: Guarda y carga simulaciones en formato JSON
-- **Renderizado por Capas**: Sistema de z-index para orden correcto de visualización
-- **Cámara Interactiva**: Zoom con scroll y pan arrastrando el canvas
-
-## Estacionamientos Inteligentes
-
-El sistema permite convertir edificios en estacionamientos funcionales que interactúan con el flujo vehicular.
-
-### Configuración de Estacionamientos
-
-**Parámetros básicos:**
-- **Capacidad**: Número máximo de vehículos que puede almacenar el estacionamiento
-- **Conexiones de Entrada**: Celdas específicas en las calles donde los vehículos pueden entrar
-- **Conexiones de Salida**: Celdas donde se generan vehículos que salen del estacionamiento
-
-**Probabilidades por Hora:**
-- **Probabilidad de Entrada** (0-100%): Porcentaje de vehículos que deciden entrar al pasar por una celda de entrada
-- **Probabilidad de Salida** (0-100%): Porcentaje de probabilidad de que salga un vehículo del estacionamiento cada frame
-- Configurables para cada una de las 24 horas del día
-- Perfiles predefinidos: Normal, Oficina, Centro Comercial
-
-### Comportamiento del Sistema
-
-**Entrada de Vehículos:**
-- Los vehículos que llegan a una celda de entrada son evaluados según la probabilidad configurada para esa hora
-- Si aceptan entrar, desaparecen del tráfico y el contador del estacionamiento aumenta
-- Si rechazan, continúan su trayecto normalmente
-- Sistema de absorción anticipada: detecta vehículos antes de que lleguen a la entrada
-
-**Salida de Vehículos:**
-- Los vehículos se generan en las celdas de salida según la probabilidad horaria
-- Solo se genera un vehículo si la celda de salida y la celda anterior están vacías (evita colisiones)
-- El tipo de vehículo generado es aleatorio (1-6)
-- El contador del estacionamiento disminuye al generar cada vehículo
-
-**Validaciones:**
-- No se pueden crear entradas y salidas en la misma celda
-- Se valida que las celdas estén dentro de los límites de la calle (carriles y posiciones válidas)
-- El estacionamiento no permite entradas si está lleno
-- No genera salidas si está vacío
-
-### Gestión de Escenarios
-
-El sistema permite guardar y cargar configuraciones completas de simulación que incluyen:
-
-**Información Guardada:**
-- Todas las calles con sus posiciones, ángulos, carriles y vértices (curvas)
-- Todos los edificios con sus propiedades visuales
-- Configuración completa de estacionamientos (capacidad, conexiones, probabilidades)
-- Conexiones entre calles
-- Parámetros de simulación (probabilidades de generación, cambio de carril)
-
-**Funcionalidades:**
-- **Guardar Escenario**: Exporta la configuración actual como archivo JSON
-- **Cargar Escenario**: Importa una configuración previamente guardada
-- Los estacionamientos mantienen sus probabilidades por hora al guardar/cargar
-- Permite crear bibliotecas de escenarios de prueba
-
-## Barra de Información (Info Bar)
-
-La barra de información en tiempo real muestra métricas clave de la simulación en la parte superior de la pantalla:
-
-### Generación
-- **Descripción**: Contador de iteraciones del autómata celular (frames de simulación)
-- **Formato**: Número entero con separadores de miles
-- **Uso**: Indica cuántos pasos de simulación se han ejecutado desde el inicio
-
-### Vehículos
-- **Descripción**: Total de vehículos activos en todas las calles
-- **Cálculo**: Cuenta todas las celdas con valores 1-6 (tipos de vehículos)
-- **Formato**: Número entero con separadores de miles
-- **Uso**: Monitorea la población vehicular en tiempo real
-
-### Hora
-- **Descripción**: Tiempo simulado actual (día, hora, minutos, segundos)
-- **Formato**: `Día HH:MM:SS` (ej: "Lunes 14:35:42")
-- **Sistema**: Tiempo virtual sincronizado con el multiplicador de tráfico
-- **Control**: Modificable desde "Configuración de Escenarios" con interfaz modal
-
-### Tiempo/Frame
-- **Descripción**: Tiempo simulado que representa cada frame/generación
-- **Formato**: Número decimal en segundos (ej: "0.512s")
-- **Uso**: Indica cuánto tiempo simulado avanza en cada paso de simulación
-
-### Multiplicador de Generación de Vehículos por Hora
-- **Descripción**: Factor dinámico que modifica la tasa de generación de vehículos
-- **Formato**: Número decimal con una cifra decimal + símbolo "×" (ej: "1.5×")
-- **Rango**: Varía según el día de la semana y la hora del día
-- **Sistema**: Basado en perfiles de tráfico realistas (hora pico, hora valle)
-- **Uso**: Simula patrones de tráfico reales con mayor generación en horas pico
-
-### Control de Fecha y Hora del Simulador
-
-El sistema permite modificar manualmente la fecha y hora del simulador mediante una interfaz modal intuitiva:
-
-**Ubicación**: Configuración de Escenarios → ⏰ Cambiar Fecha y Hora
-
-**Características**:
-- Selector de día de la semana (Domingo a Sábado)
-- Inputs numéricos para hora (0-23) y minutos (0-59)
-- Vista previa en tiempo real del tiempo seleccionado
-- Validación automática de rangos
-- Aplicación con Enter o botón de confirmación
-- Sincronización perfecta entre sidebar y barra de información
-- Invalidación del cache de multiplicador al cambiar fecha/hora
-
-**Uso**:
-1. Click en "Cambiar Fecha y Hora"
-2. Selecciona día, hora y minutos deseados
-3. Verifica la vista previa
-4. Click en "Confirmar y Aplicar"
-5. El simulador ajusta inmediatamente el tiempo virtual
-
-### Configuración de Multiplicadores de Generación
-
-El sistema permite configurar multiplicadores personalizados de generación de vehículos por día de la semana y hora del día, permitiendo simular patrones de tráfico realistas.
-
-**Ubicación**: Configuración de Escenarios → 📊 Configurar Multiplicador de Gen.
-
-**Características**:
-- **Configuración por día**: Ajusta multiplicadores independientes para cada día de la semana (Domingo a Sábado)
-- **Configuración por hora**: 24 sliders (uno por cada hora del día: 00:00 a 23:00)
-- **Rango de valores**: 0.0 (sin tráfico) a 3.0 (tráfico muy intenso)
-- **Independencia de rangos**: Cada slider controla exclusivamente su rango horario (ej: 08:00 controla de 08:00 a 08:59)
-- **Presets rápidos**:
-  - 🏢 **Día Laboral**: Picos en horas de entrada/salida (7-9 AM, 6-8 PM)
-  - 🎉 **Fin de Semana**: Patrón relajado con pico en tarde
-  - 📊 **Constante**: Tráfico uniforme (1.0) todo el día
-  - 🌙 **Nocturno**: Patrón invertido (alto en noche, bajo en día)
-- **Funciones adicionales**:
-  - 📋 **Copiar a Todos los Días**: Replica la configuración actual a los 7 días
-  - 🔄 **Restaurar Default**: Vuelve a valores predefinidos (un día específico o todos)
-
-**Configuración por Defecto** (editable en código):
-- **Lunes-Jueves**: Días laborales típicos con picos matutinos y vespertinos
-- **Viernes**: Laboral con mayor tráfico en tarde
-- **Sábado**: Fin de semana activo con pico en tarde
-- **Domingo**: Tráfico bajo y relajado todo el día
-
-**Ubicación en código**: `main/src/js/core/tiempo.js` (líneas 39-89) - Variable `MULTIPLICADORES_POR_DIA_HORA`
-
-**Uso**:
-1. Click en "Configurar Multiplicador de Gen."
-2. Selecciona el día de la semana a configurar
-3. Ajusta los 24 sliders según el patrón deseado
-4. (Opcional) Aplica un preset rápido
-5. (Opcional) Copia a todos los días si deseas el mismo patrón
-6. Click en "Actualizar Multiplicadores"
-7. Los cambios se aplican inmediatamente y se guardan con el escenario
-
-**Persistencia**:
-- Los multiplicadores configurados se guardan automáticamente al exportar un escenario
-- Se cargan automáticamente al importar un escenario
-- Mantiene compatibilidad con versiones anteriores del simulador
-
-## Métricas del Sistema
-
-### Densidad (%)
-- `<15%` - Muy baja
-- `15-25%` - Baja
-- `25-45%` - Moderada
-- `45-60%` - Buena ocupación
-- `60-75%` - Alta
-- `75-85%` - Muy alta
-- `≥85%` - Crítica
-
-### Velocidad (%)
-- `<15%` - Detenido
-- `15-30%` - Lento
-- `30-50%` - Moderado
-- `50-70%` - Fluido
-- `70-80%` - Muy fluido
-- `≥80%` - Excelente
-
-### Flujo Vehicular (veh/s)
-- `<0.8` - Muy bajo
-- `0.8-2.0` - Bajo
-- `2.0-3.0` - Moderado
-- `3.0-4.0` - Bueno
-- `4.0-4.5` - Alto
-- `≥4.5` - Excelente
-
-### Tasa de Cambio (veh/s)
-- `<-3` - Decrecimiento rápido
-- `-3 a -1` - Decrecimiento lento
-- `-1 a 1` - Estable
-- `1 a 3` - Crecimiento lento
-- `3 a 6` - Crecimiento moderado
-- `≥6` - Crecimiento rápido
-
-### Entropía de Shannon (bits)
-
-Métrica que mide la **diversidad de las 8 transiciones** del autómata celular basadas en el vecindario de 3 celdas (izquierda-centro-derecha).
-
-#### Fórmula
+# FLUVI - Vehicular Traffic Flow Simulator
+
+![FLUVI](https://fluvi.netlify.app/src/assets/logos/logo_horizontal.png)
+
+**[Live Demo](https://fluvi.netlify.app)** · **[Research Paper](#)** · [Report Bug](mailto:simuladordetraficoescomipn@gmail.com)
+
+> Published by **Instituto Politécnico Nacional (IPN)** — ESCOM · ALIROB Lab
+
+---
+
+FLUVI is a virtual-time vehicular traffic simulator built on **Cellular Automata** (CA) theory. Developed as a Bachelor's thesis at the **Instituto Politécnico Nacional (IPN) — ESCOM**, it models complex urban traffic behavior using a modified implementation of **Rule 184**, extended to support multi-lane roads, dynamic intersections, configurable probabilistic connections, and live Shannon entropy metrics.
+
+The system was designed to analyze and optimize traffic flow near academic zones, enabling researchers and urban planners to simulate scenarios before implementing real infrastructure changes.
+
+---
+
+## Main Features
+
+### Traffic Simulation
+- **Cellular Automata**: Modified Rule 184 implementation
+- **Multi-lane**: Support for multiple lanes with dynamic lane changes
+- **Connections**: Three types of connections (linear, merge, probabilistic) between streets
+- **Virtual Time System**: Simulation of days of the week and schedules with dynamic progression
+- **Dynamic Traffic Multiplier**: Vehicle generation that varies by day and hour (peak hours, off-peak, etc.)
+- **Multiplier Configuration**: Complete system for configuring multipliers by day of the week (7 days) and hour (24 hours), with quick presets and independent values per time range
+- **Manual Date/Time Control**: Ability to modify simulated time at any moment
+- **Smart Parking**: Vehicle entry/exit system with configurable hourly probabilities
+- **Scenario Management**: Save and load complete simulation configurations
+
+### User Interface
+- **Visual Editor**: Drag and rotate streets with interactive handles
+- **Map Builder**: Create custom simulations from scratch
+- **Real-Time Info Bar**: Displays generation count, vehicle population, simulated time, time per frame, and traffic multiplier
+- **Date and Time Control**: Intuitive interface for changing the simulator day and time with preview
+- **Real-Time Metrics**: Density, flow, and speed charts
+- **Minimap**: General overview of the simulation area
+- **Dark Mode**: Toggle between light and dark theme with persistence
+- **Sidebar Control**: Hide/show side panel with Ctrl+B
+
+### Advanced Features
+- **Curved Streets**: Vertex system with angular interpolation
+- **Interactive Tooltips**: Information on hover over streets and buildings
+- **SHIFT Drag**: Easily move streets in edit mode
+- **Edit Handles**: Visual controls to move and rotate streets
+- **Day/Night Cycle**: Dynamic background color changes based on simulated time
+- **Export/Import**: Save and load simulations in JSON format
+- **Layered Rendering**: Z-index system for correct visualization order
+- **Interactive Camera**: Zoom with scroll and pan by dragging the canvas
+
+---
+
+## System Metrics
+
+### Density (%)
+- `<15%` — Very low
+- `15-25%` — Low
+- `25-45%` — Moderate
+- `45-60%` — Good occupancy
+- `60-75%` — High
+- `75-85%` — Very high
+- `≥85%` — Critical
+
+### Speed (%)
+- `<15%` — Stopped
+- `15-30%` — Slow
+- `30-50%` — Moderate
+- `50-70%` — Flowing
+- `70-80%` — Very fluid
+- `≥80%` — Excellent
+
+### Vehicular Flow (veh/s)
+- `<0.8` — Very low
+- `0.8-2.0` — Low
+- `2.0-3.0` — Moderate
+- `3.0-4.0` — Good
+- `4.0-4.5` — High
+- `≥4.5` — Excellent
+
+### Rate of Change (veh/s)
+- `<-3` — Fast decrease
+- `-3 to -1` — Slow decrease
+- `-1 to 1` — Stable
+- `1 to 3` — Slow growth
+- `3 to 6` — Moderate growth
+- `≥6` — Fast growth
+
+### Shannon Entropy (bits)
+
+Metric that measures the **diversity of the 8 transitions** of the cellular automaton based on the 3-cell neighborhood (left-center-right).
+
+#### Formula
 ```
 H = -Σ(p_i × log₂(p_i))
 ```
 
-Donde `p_i` es la probabilidad empírica (frecuencia relativa) de cada transición:
+Where `p_i` is the empirical probability (relative frequency) of each transition:
 
 ```
-p_i = (cantidad de veces que ocurrió la transición i) / (total de celdas)
+p_i = (number of times transition i occurred) / (total cells)
 ```
 
-#### 8 Transiciones Medidas (Vecindario L-C-R)
+#### 8 Measured Transitions (L-C-R Neighborhood)
 
-El cálculo se basa en el estado **binario** del vecindario de 3 celdas en el paso anterior:
-- **0** = celda vacía
-- **1** = celda con carro (cualquier tipo 1-6)
+The calculation is based on the **binary** state of the 3-cell neighborhood in the previous step:
+- **0** = empty cell
+- **1** = cell with a vehicle (any type 1-6)
 
-| Índice | Configuración (L-C-R) | Valor Binario | Descripción del Vecindario |
-|--------|-----------------------|---------------|----------------------------|
-| 0 | `000` | 0 | Vacío - Vacío - Vacío |
-| 1 | `001` | 1 | Vacío - Vacío - Carro |
-| 2 | `010` | 2 | Vacío - Carro - Vacío |
-| 3 | `011` | 3 | Vacío - Carro - Carro |
-| 4 | `100` | 4 | Carro - Vacío - Vacío |
-| 5 | `101` | 5 | Carro - Vacío - Carro |
-| 6 | `110` | 6 | Carro - Carro - Vacío |
-| 7 | `111` | 7 | Carro - Carro - Carro |
+| Index | Configuration (L-C-R) | Binary Value | Neighborhood Description |
+|-------|-----------------------|--------------|--------------------------|
+| 0 | `000` | 0 | Empty — Empty — Empty |
+| 1 | `001` | 1 | Empty — Empty — Vehicle |
+| 2 | `010` | 2 | Empty — Vehicle — Empty |
+| 3 | `011` | 3 | Empty — Vehicle — Vehicle |
+| 4 | `100` | 4 | Vehicle — Empty — Empty |
+| 5 | `101` | 5 | Vehicle — Empty — Vehicle |
+| 6 | `110` | 6 | Vehicle — Vehicle — Empty |
+| 7 | `111` | 7 | Vehicle — Vehicle — Vehicle |
 
-**Nota**: La configuración se evalúa en el estado anterior del autómata (paso t-1) para cada celda.
+**Note**: The configuration is evaluated in the previous state of the automaton (step t-1) for each cell.
 
-#### Interpretación de Valores
+#### Value Interpretation
 
-- **0 bits**: Sistema estático (una sola configuración de vecindario)
-  - Ejemplo: Todas las celdas vacías (000 en todas las posiciones)
-- **~1 bit**: Baja diversidad (predominan 1-2 configuraciones)
-  - Ejemplo: Patrón muy repetitivo con poca variación
-- **1.5-2.5 bits**: Diversidad moderada (mezcla de varias configuraciones)
-  - Ejemplo: Sistema con patrones variados de tráfico
-- **3.000 bits**: Máximo teórico (distribución uniforme de las 8 configuraciones)
-  - Ejemplo: Todas las configuraciones ocurren con igual frecuencia (log₂(8) = 3)
+- **0 bits**: Static system (single neighborhood configuration)
+  - Example: All cells empty (000 in all positions)
+- **~1 bit**: Low diversity (1-2 configurations dominate)
+  - Example: Very repetitive pattern with little variation
+- **1.5-2.5 bits**: Moderate diversity (mix of several configurations)
+  - Example: System with varied traffic patterns
+- **3.000 bits**: Theoretical maximum (uniform distribution of all 8 configurations)
+  - Example: All configurations occur with equal frequency (log₂(8) = 3)
 
-#### Rangos de Clasificación
+#### Classification Ranges
 
-- `<0.5` - Homogéneo (sistema muy simple)
-- `0.5-1.0` - Baja diversidad
-- `1.0-1.8` - Diversidad moderada-baja
-- `1.8-2.5` - Diversidad moderada-alta
-- `≥2.5` - Alta diversidad (sistema muy dinámico)
+- `<0.5` — Homogeneous (very simple system)
+- `0.5-1.0` — Low diversity
+- `1.0-1.8` — Low-moderate diversity
+- `1.8-2.5` — Moderate-high diversity
+- `≥2.5` — High diversity (very dynamic system)
 
-### Estados del Sistema
+### System States
 
-#### 🔴 COLAPSO
-- **Condición**: `density >80% && speed <15%`
-- **Descripción**: Las calles están severamente congestionadas y casi paralizadas
-- **Throughput típico**: 0-1 veh/s
-- **Acción requerida**: Reducir generación o mejorar salidas
+#### 🔴 COLLAPSE
+- **Condition**: `density >80% && speed <15%`
+- **Description**: Streets are severely congested and nearly paralyzed
+- **Typical throughput**: 0-1 veh/s
+- **Required action**: Reduce generation or improve exits
 
-#### 🟢 ÓPTIMO
-- **Condición**: `density 25-60% && speed ≥50%`
-- **Descripción**: Máxima eficiencia del sistema: buen balance entre densidad y velocidad
-- **Throughput típico**: 2.5-5 veh/s
-- **Característica**: Sistema funcionando al máximo rendimiento
+#### 🟢 OPTIMAL
+- **Condition**: `density 25-60% && speed ≥50%`
+- **Description**: Maximum system efficiency: good balance between density and speed
+- **Typical throughput**: 2.5-5 veh/s
+- **Feature**: System operating at maximum performance
 
-#### 🟠 CONGESTIONADO
-- **Condición**: `density >60% && speed <35%`
-- **Descripción**: Alta densidad vehicular con movimiento lento
-- **Throughput típico**: 1-2 veh/s
-- **Advertencia**: Riesgo de colapso si aumenta densidad
+#### 🟠 CONGESTED
+- **Condition**: `density >60% && speed <35%`
+- **Description**: High vehicle density with slow movement
+- **Typical throughput**: 1-2 veh/s
+- **Warning**: Risk of collapse if density increases
 
-#### 🔵 SUB-UTILIZADO
-- **Condición**: `density <25%`
-- **Descripción**: Baja ocupación de las calles, capacidad disponible
-- **Throughput típico**: 0-1.5 veh/s
-- **Recomendación**: Considerar aumentar generación para aprovechar capacidad
+#### 🔵 UNDERUSED
+- **Condition**: `density <25%`
+- **Description**: Low street occupancy, available capacity
+- **Typical throughput**: 0-1.5 veh/s
+- **Recommendation**: Consider increasing generation to use available capacity
 
-#### 🟡 MODERADO
-- **Condición**: Otras combinaciones
-- **Descripción**: Condiciones de tráfico aceptables con margen de mejora
-- **Throughput típico**: Variable
-- **Característica**: Estado por defecto, funcional pero mejorable
-
-## Tecnologías Utilizadas
-
-### Motor Gráfico
-- **PixiJS v7+**: Motor de renderizado 2D de alto rendimiento
-  - Renderizado acelerado por GPU mediante WebGL
-  - Fallback automático a Canvas 2D si WebGL no está disponible
-  - Scene Graph con sistema de capas (layers) y z-index
-  - Sistema de sprites y texturas optimizado
-  - Eventos interactivos nativos en objetos 2D
-  - Pool de objetos para mejor gestión de memoria
-
-### Arquitectura de Renderizado
-- **PixiApp**: Singleton que gestiona el ciclo de vida de PixiJS
-- **SceneManager**: Administra capas, sprites y el Scene Graph
-  - Capas: background, streets, connections, vehicles, buildings, ui, debug
-  - Tracking de sprites por tipo (calles, vehículos, edificios, conexiones)
-  - Sistema de actualización selectiva para optimización
-- **CameraController**: Gestión de zoom, pan y transformaciones de vista
-- **Renderizadores Especializados**:
-  - `CalleRenderer`: Renderizado de calles con texturas y orientación
-  - `CarroRenderer`: Renderizado de vehículos con animación
-  - `EdificioRenderer`: Renderizado de edificios con texturas
-  - `ConexionRenderer`: Renderizado de conexiones entre calles
-  - `UIRenderer`: Renderizado de etiquetas y elementos de UI
-  - `MinimapRenderer`: Vista general del mapa
-- **AssetLoader**: Carga asíncrona de texturas desde `assets/images/`
-- **DayNightCycle**: Sistema de ciclo día/noche con interpolación de colores
-
-### Frontend
-- **HTML5, CSS3, JavaScript (ES6+)**: Tecnologías web modernas
-- **Bootstrap 5**: Framework de UI para interfaz responsive
-- **Chart.js**: Visualización de gráficas de métricas en tiempo real
-
-### Simulación
-- **Autómatas Celulares**: Motor de simulación basado en Regla 184 modificada
-- **Sistema Multi-carril**: Lógica de cambio de carril y prioridades
-- **Gestión de Conexiones**: Sistema de conexiones entre calles con prioridades
-
-## Arquitectura Técnica
-
-### Arquitectura Modular de JavaScript
-
-El proyecto utiliza una arquitectura modular con scripts separados por responsabilidad:
-
-**Módulos Core (`src/js/core/`)**:
-- `trafico.js`: Motor principal de simulación con autómatas celulares, control de velocidad y generación de vehículos
-- `tiempo.js`: Sistema de tiempo virtual con soporte para días de la semana, horas, minutos y segundos. Incluye perfiles de multiplicador de tráfico por día/hora
-- `graficas.js`: Recolección y cálculo de métricas (densidad, flujo, velocidad, entropía)
-- `curvas.js`: Sistema de curvas Bézier para calles con interpolación angular
-- `ClickActionManager.js`: Gestión centralizada de eventos de click e interacciones
-
-**Módulos UI (`src/js/ui/`)**:
-- `infoBar.js`: Sistema de información en tiempo real que actualiza la barra superior con generación, población, hora simulada, tiempo/frame y multiplicador
-- `timeControl.js`: Control modal para modificar fecha y hora del simulador con sincronización perfecta
-- `multiplicadoresUI.js`: Interfaz de configuración de multiplicadores de generación por día y hora (24 sliders, presets, copiar a todos los días)
-- `darkMode.js`: Toggle de modo oscuro con persistencia en localStorage
-- `loadingSystem.js`: Pantalla de carga con barra de progreso durante inicialización
-- `tooltips.js`: Inicialización de tooltips de Bootstrap 5 en elementos UI
-- `modalFixes.js`: Correcciones para advertencias de accesibilidad en modales
-- `consoleControl.js`: Sistema de activación/desactivación de logs de consola
-- `sidebarToggle.js`: Control del panel lateral con atajo Ctrl+B y redimensionamiento de canvas
-- `editor.js`: Editor visual de calles con modo de edición de vértices (toggle con tecla Z)
-- `constructor.js`: Constructor interactivo de mapas desde cero
-- `etiquetas.js`: Sistema de tooltips informativos sobre calles y edificios
-
-**Módulos Renderer (`src/js/renderer/`)**:
-- `PixiApp.js`: Singleton que maneja el ciclo de vida de PixiJS (WebGL/Canvas2D)
-- `SceneManager.js`: Gestión de scene graph con sistema de capas y z-index
-- `CameraController.js`: Control de cámara con zoom (scroll) y pan (arrastre)
-- `DayNightCycle.js`: Interpolación de colores de fondo según hora simulada
-- `EditorHandles.js`: Handles visuales para mover y rotar calles en modo edición
-- Renderizadores especializados en `renderers/`: Cada tipo de objeto (calles, vehículos, edificios, conexiones, UI, minimapa) tiene su propio renderizador
-- Utilidades en `utils/`: Carga de assets y conversión de coordenadas
-
-**Beneficios de la Arquitectura Modular**:
-- **Separación de Responsabilidades**: Cada módulo tiene una función específica y bien definida
-- **Mantenibilidad**: Cambios en un módulo no afectan a otros
-- **Escalabilidad**: Fácil agregar nuevas funcionalidades sin modificar código existente
-- **Reutilización**: Módulos pueden ser reutilizados en otros proyectos
-- **Testing**: Cada módulo puede ser probado independientemente
-- **Debugging**: Más fácil localizar y corregir errores
-- **Colaboración**: Múltiples desarrolladores pueden trabajar en paralelo
-
-### Flujo de Inicialización
-
-1. **Carga de PixiJS**: Se carga la librería PixiJS desde CDN
-2. **Inicialización de PixiApp**: Singleton que crea la aplicación PixiJS
-   - Intenta usar WebGL con aceleración GPU
-   - Si falla, usa Canvas 2D como fallback
-   - Reemplaza el canvas HTML5 tradicional
-3. **Carga de Assets**: `AssetLoader` carga todas las texturas de manera asíncrona
-4. **Creación de Scene Graph**: `SceneManager` crea las capas de renderizado
-5. **Inicialización de Renderizadores**: Se crean todos los renderizadores especializados
-6. **Setup de Cámara**: `CameraController` configura zoom y pan
-7. **Inicio del Loop**: PixiJS inicia el loop de renderizado automático
-
-### Sistema de Capas (Z-Index)
-
-```
-Layer Debug (z: 40)      → Vértices, elementos de depuración
-Layer UI (z: 30)         → Etiquetas, handles de edición
-Layer Buildings (z: 25)  → Edificios
-Layer Vehicles (z: 20)   → Vehículos (animados)
-Layer Connections (z: 15) → Líneas de conexión entre calles
-Layer Streets (z: 10)    → Calles con texturas
-Layer Background (z: 0)  → Fondo (color sólido)
-```
-
-### Ciclo de Renderizado
-
-```javascript
-// Cada frame (60 FPS típico):
-PixiApp.ticker → SceneManager.update(delta) → {
-  1. Actualizar color de fondo (DayNightCycle)
-  2. Actualizar vehículos (CarroRenderer)
-  3. Actualizar etiquetas si cambia estado
-  4. Actualizar conexiones si cambia estado
-  5. Actualizar vértices si cambia estado
-  6. PixiJS renderiza automáticamente el scene graph
-}
-```
-
-### Optimizaciones Implementadas
-
-- **Renderizado Selectivo**: Solo se actualizan sprites cuando cambian sus datos
-- **Pooling de Sprites**: Reutilización de objetos para evitar garbage collection
-- **Actualización por Estado**: Etiquetas, conexiones y vértices solo se renderizan cuando cambian
-- **Dirty Flags**: Sistema de banderas para detectar cambios
-- **Batch Rendering**: PixiJS agrupa sprites similares en una sola llamada de dibujo (WebGL)
-- **Texture Atlas**: Texturas combinadas para reducir cambios de estado en GPU
-
-### Interactividad
-
-El sistema usa eventos nativos de PixiJS:
-- **pointerdown/pointerup**: Clicks en objetos
-- **pointermove**: Movimiento del mouse sobre objetos
-- **pointerover/pointerout**: Hover para tooltips
-- **Capture Phase**: CameraController intercepta eventos antes que PixiJS para pan/zoom
-
-### Compatibilidad
-
-- **WebGL**: Aceleración GPU completa (preferido)
-- **Canvas 2D**: Fallback automático si WebGL no está disponible
-- **Multi-plataforma**: Funciona en todos los navegadores modernos
-- **Responsive**: Se adapta al tamaño de la ventana
-
-### Beneficios del Uso de PixiJS
-
-**Rendimiento:**
-- **60 FPS** con cientos de vehículos simultáneos
-- **Aceleración GPU** vía WebGL para renderizado de alta velocidad
-- **Batch rendering** automático reduce llamadas de dibujo en 90%
-- **Sprites cacheados** evitan recálculos innecesarios
-
-**Desarrollo:**
-- **Scene Graph** simplifica la gestión de objetos 2D
-- **Eventos nativos** en sprites eliminan cálculos manuales de colisión
-- **API moderna** con soporte para ES6+
-- **Debugging integrado** con DevTools de navegador
-
-**Mantenibilidad:**
-- **Separación de responsabilidades** con renderizadores especializados
-- **Código modular** fácil de extender y mantener
-- **Sistema de capas** clarifica el orden de renderizado
-- **Documentación completa** de PixiJS disponible
-
-## Documentación
-
-- Ver `docs/CONSTRUCTOR.md` para usar el constructor de mapas
-- Arquitectura de renderizado: `src/js/renderer/`
-- Documentación de PixiJS: https://pixijs.com/
-
-## Créditos
-
-**Desarrolladores:**
-- Connor Urbano Mendoza
-- Luis Gael Molina Figueroa
-- Denisse Marques Morales
-
-**Directores:**
-- Juárez Martínez Genaro
-- Maldonado Castillo Idalia
-
-**Institución:**
-Instituto Politécnico Nacional (IPN)
-Escuela Superior de Cómputo (ESCOM)
-
-## Analizador de Métricas con Python
-
-FLUVI incluye un **Analizador de Métricas Avanzado** que permite analizar archivos CSV exportados usando Python directamente en el navegador mediante **Pyodide** (Python compilado a WebAssembly).
-
-### Visualizaciones Generadas
-
-**1. Análisis Temporal (4 gráficas)**
-- Densidad vs Tiempo
-- Flujo vs Tiempo
-- Velocidad vs Tiempo
-- Estados de Tráfico clasificados por colores
-
-**2. Diagrama Fundamental (2 gráficas)**
-- Entropía vs Densidad (coloreado por Flujo)
-- **Mapa de Calor por Día y Hora** 
-
-**3. Distribuciones Estadísticas**
-- Histogramas de Densidad y Flujo
-- Boxplots comparativos
-
-### Mapa de Calor
-
-Visualiza patrones de tráfico organizados por:
-- **Eje Y**: Días de la semana (Lunes - Domingo)
-- **Eje X**: Horas del día (0 - 23)
-- **Color**: 🟡 amarillo (baja densidad) → 🔴 rojo (alta densidad)
-
-### Cómo Usar
-
-1. Ejecuta una simulación en FLUVI
-2. Exporta métricas usando "Descargar CSV"
-3. Clic en "Analizar Métricas" (botón azul)
-4. Carga el archivo CSV
-5. Espera el procesamiento (~60 seg primera vez, ~5 seg después)
-6. Navega entre las 3 pestañas
-7. Descarga imágenes (individual o ZIP)
-
-### Características
-
-- **100% en el navegador**: Sin instalación de Python
-- **Privacidad total**: Datos locales, no se envían a servidores
-- **Visualizaciones profesionales**: matplotlib, pandas, scipy
-- **Métricas avanzadas**: Clasificación de estados, capacidad crítica, correlaciones, detección de anomalías
-
-## Versión
-
-1.0.0 - 2025
+#### 🟡 MODERATE
+- **Condition**: Other combinations
+- **Description**: Acceptable traffic conditions with room for improvement
+- **Typical throughput**: Variable
+- **Feature**: Default state, functional but improvable
 
 ---
 
-**FLUVI** - Sistema de Gestión del Flujo Vehicular en Vialidades
+## Smart Parking
+
+The system allows converting buildings into functional parking lots that interact with vehicular flow.
+
+### Parking Configuration
+
+**Basic parameters:**
+- **Capacity**: Maximum number of vehicles the parking lot can store
+- **Entry Connections**: Specific cells on streets where vehicles can enter
+- **Exit Connections**: Cells where vehicles leaving the parking lot are generated
+
+**Hourly Probabilities:**
+- **Entry Probability** (0-100%): Percentage of vehicles that decide to enter when passing an entry cell
+- **Exit Probability** (0-100%): Probability percentage that a vehicle exits the parking lot each frame
+- Configurable for each of the 24 hours of the day
+- Predefined profiles: Normal, Office, Shopping Center
+
+### System Behavior
+
+**Vehicle Entry:**
+- Vehicles arriving at an entry cell are evaluated according to the probability configured for that hour
+- If they accept entry, they disappear from traffic and the parking counter increases
+- If they reject, they continue their route normally
+- Anticipatory absorption system: detects vehicles before they reach the entry
+
+**Vehicle Exit:**
+- Vehicles are generated at exit cells according to the hourly probability
+- A vehicle is only generated if the exit cell and the previous cell are empty (prevents collisions)
+- The type of generated vehicle is random (1-6)
+- The parking counter decreases when each vehicle is generated
+
+**Validations:**
+- Entries and exits cannot be created in the same cell
+- Cells are validated to be within street limits (valid lanes and positions)
+- The parking lot does not allow entries if it is full
+- Does not generate exits if it is empty
+
+### Scenario Management
+
+The system allows saving and loading complete simulation configurations that include:
+
+**Saved Information:**
+- All streets with their positions, angles, lanes, and vertices (curves)
+- All buildings with their visual properties
+- Complete parking configuration (capacity, connections, probabilities)
+- Street connections
+- Simulation parameters (generation probabilities, lane changes)
+
+**Features:**
+- **Save Scenario**: Exports the current configuration as a JSON file
+- **Load Scenario**: Imports a previously saved configuration
+- Parking lots maintain their hourly probabilities when saving/loading
+- Allows creating libraries of test scenarios
+
+---
+
+## Info Bar
+
+The real-time information bar displays key simulation metrics at the top of the screen:
+
+### Generation
+- **Description**: Iteration counter of the cellular automaton (simulation frames)
+- **Format**: Integer with thousands separators
+- **Use**: Indicates how many simulation steps have been executed since the start
+
+### Vehicles
+- **Description**: Total active vehicles on all streets
+- **Calculation**: Counts all cells with values 1-6 (vehicle types)
+- **Format**: Integer with thousands separators
+- **Use**: Monitors vehicle population in real time
+
+### Time
+- **Description**: Current simulated time (day, hour, minutes, seconds)
+- **Format**: `Day HH:MM:SS` (e.g. "Monday 14:35:42")
+- **System**: Virtual time synchronized with the traffic multiplier
+- **Control**: Modifiable from "Scenario Configuration" with modal interface
+
+### Time/Frame
+- **Description**: Simulated time represented by each frame/generation
+- **Format**: Decimal number in seconds (e.g. "0.512s")
+- **Use**: Indicates how much simulated time advances in each simulation step
+
+### Vehicle Generation Multiplier per Hour
+- **Description**: Dynamic factor that modifies the vehicle generation rate
+- **Format**: Decimal number with one decimal place + "×" symbol (e.g. "1.5×")
+- **Range**: Varies by day of the week and hour of the day
+- **System**: Based on realistic traffic profiles (peak hour, off-peak hour)
+- **Use**: Simulates real traffic patterns with higher generation during peak hours
+
+### Simulator Date and Time Control
+
+The system allows manually modifying the simulator date and time through an intuitive modal interface:
+
+**Location**: Scenario Configuration → Change Date and Time
+
+**Features**:
+- Day of the week selector (Sunday to Saturday)
+- Numeric inputs for hour (0-23) and minutes (0-59)
+- Real-time preview of the selected time
+- Automatic range validation
+- Application with Enter or confirmation button
+- Perfect synchronization between sidebar and info bar
+- Multiplier cache invalidation when changing date/time
+
+**Usage**:
+1. Click "Change Date and Time"
+2. Select desired day, hour, and minutes
+3. Verify the preview
+4. Click "Confirm and Apply"
+5. The simulator immediately adjusts the virtual time
+
+### Generation Multiplier Configuration
+
+The system allows configuring custom vehicle generation multipliers by day of the week and hour of the day, enabling simulation of realistic traffic patterns.
+
+**Location**: Scenario Configuration → 📊 Configure Generation Multiplier
+
+**Features**:
+- **Per-day configuration**: Independent multipliers for each day of the week (Sunday to Saturday)
+- **Per-hour configuration**: 24 sliders (one per hour of the day: 00:00 to 23:00)
+- **Value range**: 0.0 (no traffic) to 3.0 (very intense traffic)
+- **Range independence**: Each slider controls exclusively its time range (e.g. 08:00 controls from 08:00 to 08:59)
+- **Quick presets**:
+  - 🏢 **Workday**: Peaks at entry/exit hours (7-9 AM, 6-8 PM)
+  - 🎉 **Weekend**: Relaxed pattern with afternoon peak
+  - 📊 **Constant**: Uniform traffic (1.0) all day
+  - 🌙 **Night**: Inverted pattern (high at night, low during day)
+- **Additional functions**:
+  - 📋 **Copy to All Days**: Replicates current configuration to all 7 days
+  - 🔄 **Restore Default**: Returns to predefined values (a specific day or all)
+
+**Default Configuration** (editable in code):
+- **Monday-Thursday**: Typical workdays with morning and evening peaks
+- **Friday**: Workday with higher traffic in the afternoon
+- **Saturday**: Active weekend with afternoon peak
+- **Sunday**: Low and relaxed traffic all day
+
+**Code location**: `main/src/js/core/tiempo.js` (lines 39-89) — variable `MULTIPLICADORES_POR_DIA_HORA`
+
+**Usage**:
+1. Click "Configure Generation Multiplier"
+2. Select the day of the week to configure
+3. Adjust the 24 sliders according to the desired pattern
+4. (Optional) Apply a quick preset
+5. (Optional) Copy to all days if you want the same pattern
+6. Click "Update Multipliers"
+7. Changes apply immediately and are saved with the scenario
+
+**Persistence**:
+- Configured multipliers are automatically saved when exporting a scenario
+- They are automatically loaded when importing a scenario
+- Maintains compatibility with previous simulator versions
+
+---
+
+## Technologies Used
+
+### Graphics Engine
+- **PixiJS v7+**: High-performance 2D rendering engine
+  - GPU-accelerated rendering via WebGL
+  - Automatic fallback to Canvas 2D if WebGL is unavailable
+  - Scene Graph with layer system and z-index
+  - Optimized sprite and texture system
+  - Native interactive events on 2D objects
+  - Object pool for better memory management
+
+### Rendering Architecture
+- **PixiApp**: Singleton managing the PixiJS lifecycle
+- **SceneManager**: Manages layers, sprites, and the Scene Graph
+  - Layers: background, streets, connections, vehicles, buildings, ui, debug
+  - Sprite tracking by type (streets, vehicles, buildings, connections)
+  - Selective update system for optimization
+- **CameraController**: Zoom, pan, and view transformation management
+- **Specialized Renderers**:
+  - `CalleRenderer`: Street rendering with textures and orientation
+  - `CarroRenderer`: Vehicle rendering with animation
+  - `EdificioRenderer`: Building rendering with textures
+  - `ConexionRenderer`: Connection rendering between streets
+  - `UIRenderer`: Labels and UI element rendering
+  - `MinimapRenderer`: General map overview
+- **AssetLoader**: Asynchronous texture loading from `assets/images/`
+- **DayNightCycle**: Day/night cycle system with color interpolation
+
+### Frontend
+- **HTML5, CSS3, JavaScript (ES6+)**: Modern web technologies
+- **Bootstrap 5**: UI framework for responsive interface
+- **Chart.js**: Real-time metric chart visualization
+
+### Simulation
+- **Cellular Automata**: Simulation engine based on modified Rule 184
+- **Multi-lane System**: Lane change and priority logic
+- **Connection Management**: Street connection system with priorities
+
+---
+
+## Technical Architecture
+
+### Modular JavaScript Architecture
+
+The project uses a modular architecture with scripts separated by responsibility:
+
+**Core Modules (`src/js/core/`)**:
+- `trafico.js`: Main simulation engine with cellular automata, speed control, and vehicle generation
+- `tiempo.js`: Virtual time system with support for days of the week, hours, minutes, and seconds. Includes traffic multiplier profiles by day/hour
+- `graficas.js`: Collection and calculation of metrics (density, flow, speed, entropy)
+- `curvas.js`: Bézier curve system for streets with angular interpolation
+- `ClickActionManager.js`: Centralized management of click events and interactions
+
+**UI Modules (`src/js/ui/`)**:
+- `infoBar.js`: Real-time information system that updates the top bar with generation, population, simulated time, time/frame, and multiplier
+- `timeControl.js`: Modal control to modify simulator date and time with perfect synchronization
+- `multiplicadoresUI.js`: Configuration interface for generation multipliers by day and hour (24 sliders, presets, copy to all days)
+- `darkMode.js`: Dark mode toggle with localStorage persistence
+- `loadingSystem.js`: Loading screen with progress bar during initialization
+- `tooltips.js`: Bootstrap 5 tooltip initialization on UI elements
+- `modalFixes.js`: Fixes for accessibility warnings in modals
+- `consoleControl.js`: Console log enable/disable system
+- `sidebarToggle.js`: Side panel control with Ctrl+B shortcut and canvas resizing
+- `editor.js`: Visual street editor with vertex edit mode (toggle with Z key)
+- `constructor.js`: Interactive map builder from scratch
+- `etiquetas.js`: Informational tooltip system for streets and buildings
+
+**Renderer Modules (`src/js/renderer/`)**:
+- `PixiApp.js`: Singleton that manages the PixiJS lifecycle (WebGL/Canvas2D)
+- `SceneManager.js`: Scene graph management with layer and z-index system
+- `CameraController.js`: Camera control with zoom (scroll) and pan (drag)
+- `DayNightCycle.js`: Background color interpolation based on simulated hour
+- `EditorHandles.js`: Visual handles to move and rotate streets in edit mode
+- Specialized renderers in `renderers/`: Each object type (streets, vehicles, buildings, connections, UI, minimap) has its own renderer
+- Utilities in `utils/`: Asset loading and coordinate conversion
+
+**Benefits of Modular Architecture**:
+- **Separation of Concerns**: Each module has a specific and well-defined function
+- **Maintainability**: Changes in one module do not affect others
+- **Scalability**: Easy to add new functionality without modifying existing code
+- **Reusability**: Modules can be reused in other projects
+- **Testing**: Each module can be tested independently
+- **Debugging**: Easier to locate and fix errors
+- **Collaboration**: Multiple developers can work in parallel
+
+### Initialization Flow
+
+1. **PixiJS Loading**: PixiJS library is loaded from CDN
+2. **PixiApp Initialization**: Singleton that creates the PixiJS application
+   - Attempts to use WebGL with GPU acceleration
+   - Falls back to Canvas 2D if it fails
+   - Replaces the traditional HTML5 canvas
+3. **Asset Loading**: `AssetLoader` loads all textures asynchronously
+4. **Scene Graph Creation**: `SceneManager` creates the rendering layers
+5. **Renderer Initialization**: All specialized renderers are created
+6. **Camera Setup**: `CameraController` configures zoom and pan
+7. **Loop Start**: PixiJS starts the automatic rendering loop
+
+### Layer System (Z-Index)
+
+```
+Debug Layer   (z: 40)  → Vertices, debug elements
+UI Layer      (z: 30)  → Labels, edit handles
+Buildings     (z: 25)  → Buildings
+Vehicles      (z: 20)  → Vehicles (animated)
+Connections   (z: 15)  → Connection lines between streets
+Streets       (z: 10)  → Streets with textures
+Background    (z: 0)   → Background (solid color)
+```
+
+### Rendering Cycle
+
+```javascript
+// Every frame (typical 60 FPS):
+PixiApp.ticker → SceneManager.update(delta) → {
+  1. Update background color (DayNightCycle)
+  2. Update vehicles (CarroRenderer)
+  3. Update labels if state changes
+  4. Update connections if state changes
+  5. Update vertices if state changes
+  6. PixiJS automatically renders the scene graph
+}
+```
+
+### Implemented Optimizations
+
+- **Selective Rendering**: Only sprites are updated when their data changes
+- **Sprite Pooling**: Object reuse to avoid garbage collection
+- **State-Based Updates**: Labels, connections, and vertices are only rendered when they change
+- **Dirty Flags**: Flag system to detect changes
+- **Batch Rendering**: PixiJS groups similar sprites in a single draw call (WebGL)
+- **Texture Atlas**: Combined textures to reduce GPU state changes
+
+### Interactivity
+
+The system uses native PixiJS events:
+- **pointerdown/pointerup**: Clicks on objects
+- **pointermove**: Mouse movement over objects
+- **pointerover/pointerout**: Hover for tooltips
+- **Capture Phase**: CameraController intercepts events before PixiJS for pan/zoom
+
+### Compatibility
+
+- **WebGL**: Full GPU acceleration (preferred)
+- **Canvas 2D**: Automatic fallback if WebGL is not available
+- **Cross-platform**: Works in all modern browsers
+- **Responsive**: Adapts to window size
+
+### Benefits of Using PixiJS
+
+**Performance:**
+- **60 FPS** with hundreds of simultaneous vehicles
+- **GPU acceleration** via WebGL for high-speed rendering
+- **Automatic batch rendering** reduces draw calls by 90%
+- **Cached sprites** avoid unnecessary recalculations
+
+**Development:**
+- **Scene Graph** simplifies 2D object management
+- **Native events** on sprites eliminate manual collision calculations
+- **Modern API** with ES6+ support
+- **Integrated debugging** with browser DevTools
+
+**Maintainability:**
+- **Separation of concerns** with specialized renderers
+- **Modular code** easy to extend and maintain
+- **Layer system** clarifies rendering order
+- **Complete PixiJS documentation** available
+
+---
+
+## Project Structure
+
+```
+FLUVI/
+├── main/
+│   ├── index.html                         # Main entry point
+│   ├── START_SERVER.bat                   # Script to start server (Windows)
+│   ├── server.py                          # Local HTTP server (Python)
+│   ├── docs/                              # Project documentation
+│   │   └── CONSTRUCTOR.md                 # Map builder documentation
+│   └── src/
+│       ├── js/
+│       │   ├── core/                      # Core simulation logic
+│       │   │   ├── trafico.js             # Main simulation engine and cellular automata
+│       │   │   ├── tiempo.js              # Virtual time system (day/hour)
+│       │   │   ├── graficas.js            # Metrics system (density, flow, speed)
+│       │   │   ├── curvas.js              # Street curve and vertex system
+│       │   │   ├── estacionamientos.js    # Smart parking system
+│       │   │   └── ClickActionManager.js  # Click and interaction manager
+│       │   ├── renderer/                  # Rendering system with PixiJS
+│       │   │   ├── PixiApp.js             # Main PixiJS application (Singleton)
+│       │   │   ├── SceneManager.js        # Scene and layer manager (Scene Graph)
+│       │   │   ├── CameraController.js    # Camera system (zoom, pan)
+│       │   │   ├── DayNightCycle.js       # Day/night cycle (background colors)
+│       │   │   ├── EditorHandles.js       # Street editing handles
+│       │   │   ├── renderers/             # Specialized renderers
+│       │   │   │   ├── CalleRenderer.js   # Street rendering
+│       │   │   │   ├── CarroRenderer.js   # Vehicle rendering
+│       │   │   │   ├── EdificioRenderer.js # Building rendering
+│       │   │   │   ├── ConexionRenderer.js # Connection rendering
+│       │   │   │   ├── UIRenderer.js      # UI rendering (labels)
+│       │   │   │   └── MinimapRenderer.js # Minimap rendering
+│       │   │   └── utils/                 # Rendering utilities
+│       │   │       ├── AssetLoader.js     # Texture and asset loader
+│       │   │       └── CoordinateConverter.js # Coordinate conversion
+│       │   └── ui/                        # User interface modules
+│       │       ├── darkMode.js            # Dark mode system
+│       │       ├── loadingSystem.js       # Loading screen with progress bar
+│       │       ├── tooltips.js            # Bootstrap tooltip initialization
+│       │       ├── modalFixes.js          # Modal accessibility fixes
+│       │       ├── consoleControl.js      # Console log control
+│       │       ├── sidebarToggle.js       # Sidebar toggle (Ctrl+B)
+│       │       ├── infoBar.js             # Real-time information bar
+│       │       ├── timeControl.js         # Simulator date and time control
+│       │       ├── multiplicadoresUI.js   # Day/hour multiplier configuration
+│       │       ├── editor.js              # Visual street editor
+│       │       ├── constructor.js         # Map builder
+│       │       ├── edificioUI.js          # Parking configuration interface
+│       │       ├── analizadorMetricas.js  # Advanced metrics analyzer
+│       │       └── etiquetas.js           # Label system
+│       ├── python/                        # Python scripts for analysis
+│       │   └── analizador.py              # Metrics analyzer with visualizations
+│       └── css/                           # Style sheets
+│           ├── estilos.css                # Main styles
+│           └── minimapa.css               # Minimap styles
+├── assets/                                # Static resources
+│   └── images/                            # Images and textures
+│       ├── vehicles/                      # Vehicle sprites (PNG)
+│       ├── buildings/                     # Building textures (PNG)
+│       ├── roads/                         # Road textures (PNG)
+│       └── objects/                       # Miscellaneous objects (PNG)
+└── README.md                              # This file
+```
+
+---
+
+## Requirements
+
+### Required Software
+- **Python 3.x**: To run the local HTTP server
+- **Modern Web Browser**: Chrome, Firefox, Safari, Edge (latest versions)
+- **WebGL**: For GPU acceleration (optional, Canvas 2D fallback available)
+- **Internet Connection**: To load PixiJS from CDN
+- **JavaScript Enabled**: Required for the application to work
+
+### Why is a local server needed?
+
+WebGL and resource loading (textures, images) require the application to run from an HTTP server due to browser CORS (Cross-Origin Resource Sharing) security policies. **It is not possible to open `index.html` directly** from the file system (`file://`) for WebGL to work correctly.
+
+---
+
+## Quick Start
+
+### Step 1: Start the Local Server
+
+**Option A - Windows (Recommended):**
+```bash
+# Navigate to the main/ folder
+cd main
+
+# Run the .bat file
+START_SERVER.bat
+```
+
+**Option B - Any Operating System:**
+```bash
+# Navigate to the main/ folder
+cd main
+
+# Run the Python server directly
+python server.py
+```
+
+The server will start on port **8000** and you will see:
+```
+============================================================
+WEB SERVER FOR FLUVI - TRAFFIC SIMULATOR
+============================================================
+
+Server started successfully!
+
+Open your browser and go to:
+   http://localhost:8000
+   http://127.0.0.1:8000
+```
+
+### Step 2: Open in the Browser
+
+1. With the server running, open your browser
+2. Navigate to: **http://localhost:8000**
+3. The simulation will load automatically:
+   - PixiJS initialization with **WebGL enabled**
+   - Loading textures and assets from `assets/images/`
+   - Rendering the initial scene with GPU acceleration
+   - Layer system activated
+
+### Step 3: Use the Application
+
+Use the side panel to:
+- Configure simulation parameters
+- Enable/disable edit mode
+- View real-time metrics
+- Export/import configurations
+
+**Camera Controls:**
+
+| Input | Action |
+|-------|--------|
+| Mouse scroll | Zoom in/out |
+| Click + drag | Pan (move camera) |
+| Ctrl+B | Hide/show sidebar |
+| Enter | Apply changes in date/time modal |
+
+**Edit Mode:**
+
+| Input | Action |
+|-------|--------|
+| SHIFT + Drag | Move streets |
+| Click on street/building | View information |
+| Handles (circles) | Move and rotate streets |
+| Z | Toggle vertex edit mode |
+
+> When vertex edit mode is active, drag any vertex to create curves. Press Z again to disable.
+
+### Stop the Server
+
+To stop the server, press **Ctrl+C** in the terminal where it is running.
+
+---
+
+## Troubleshooting
+
+### "Port 8000 is already in use"
+**Solution:** Another process is using port 8000
+- Close other server instances
+- Or modify `server.py` to use a different port (e.g. 8080, 3000)
+
+### "WebGL is not available"
+**Solution:** Your browser/GPU does not support WebGL
+- The system will automatically use Canvas 2D as fallback
+- You will see the message: "WebGL not available, using Canvas 2D renderer..."
+- The application will work, but with lower performance
+
+### "Textures won't load"
+**Solution:** You are opening `index.html` directly with `file://`
+- **You must use the local server** so that CORS allows loading images
+- Run `START_SERVER.bat` and open `http://localhost:8000`
+
+### "Python is not recognized as a command"
+**Solution:** Python is not installed or is not in PATH
+- Download Python from: https://www.python.org/downloads/
+- During installation, check "Add Python to PATH"
+- Restart the terminal after installing
+
+### Verify that WebGL is working
+Open the browser console (F12) and look for:
+```
+WebGL available, using GPU acceleration
+PixiApp initialized successfully
+```
+
+If you see these messages, **PixiJS is using WebGL correctly**.
+
+---
+
+## Python Metrics Analyzer
+
+FLUVI includes an **Advanced Metrics Analyzer** that allows analyzing exported CSV files using Python directly in the browser via **Pyodide** (Python compiled to WebAssembly).
+
+### Generated Visualizations
+
+**1. Temporal Analysis (4 charts)**
+- Density vs Time
+- Flow vs Time
+- Speed vs Time
+- Traffic states classified by color
+
+**2. Fundamental Diagram (2 charts)**
+- Entropy vs Density (colored by Flow)
+- **Heatmap by Day and Hour**
+
+**3. Statistical Distributions**
+- Density and Flow Histograms
+- Comparative Boxplots
+
+### Heatmap
+
+Visualizes traffic patterns organized by:
+- **Y Axis**: Days of the week (Monday - Sunday)
+- **X Axis**: Hours of the day (0 - 23)
+- **Color**: 🟡 yellow (low density) → 🔴 red (high density)
+
+### How to Use
+
+1. Run a simulation in FLUVI
+2. Export metrics using "Download CSV"
+3. Click "Analyze Metrics" (blue button)
+4. Load the CSV file
+5. Wait for processing (~60 sec first time, ~5 sec after)
+6. Navigate between the 3 tabs
+7. Download images (individual or ZIP)
+
+### Features
+
+- **100% in the browser**: No Python installation required
+- **Full privacy**: Local data, not sent to servers
+- **Professional visualizations**: matplotlib, pandas, scipy
+- **Advanced metrics**: State classification, critical capacity, correlations, anomaly detection
+
+---
+
+## Documentation
+
+- See `docs/CONSTRUCTOR.md` to use the map builder
+- Rendering architecture: `src/js/renderer/`
+- PixiJS documentation: https://pixijs.com/
+
+---
+
+## Credits
+
+**Developers:**
+- Connor Urbano Mendoza
+- Luis Gael Molina Figueroa
+- Denisse Márquez Morales
+
+**Advisors:**
+- Juárez Martínez Genaro
+- Maldonado Castillo Idalia
+
+**Institution:**
+Instituto Politécnico Nacional (IPN)
+Escuela Superior de Cómputo (ESCOM)
+Artificial Life Robotics (ALIROB)
+
+## Version
+
+1.0.0 — 2025
+
+---
+
+*FLUVI — Vehicular Flow Management System on Roadways*
