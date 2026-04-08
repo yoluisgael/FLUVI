@@ -1,8 +1,8 @@
 # FLUVI - Vehicular Traffic Flow Simulator
 
-![FLUVI](https://fluvi.netlify.app/src/assets/logos/logo_horizontal.png)
+![FLUVI](main/src/assets/logos/logo_horizontal.png)
 
-**[Live Demo](https://fluvi.netlify.app)** · **[Research Paper](#)** · [Report Bug](mailto:simuladordetraficoescomipn@gmail.com)
+**[Live Demo](https://fluvi.netlify.app)** · **[Research Paper](https://www.comunidad.escom.ipn.mx/genaro/Papers/Thesis_files/FLUVI.pdf)** · [Report Bug](mailto:simuladordetraficoescomipn@gmail.com)
 
 > Published by **Instituto Politécnico Nacional (IPN)** — ESCOM · ALIROB Lab
 
@@ -11,6 +11,8 @@
 FLUVI is a virtual-time vehicular traffic simulator built on **Cellular Automata** (CA) theory. Developed as a Bachelor's thesis at the **Instituto Politécnico Nacional (IPN) — ESCOM**, it models complex urban traffic behavior using a modified implementation of **Rule 184**, extended to support multi-lane roads, dynamic intersections, configurable probabilistic connections, and live Shannon entropy metrics.
 
 The system was designed to analyze and optimize traffic flow near academic zones, enabling researchers and urban planners to simulate scenarios before implementing real infrastructure changes.
+
+![FLUVI Screenshot](main/src/assets/logos/FLUVI.png)
 
 ---
 
