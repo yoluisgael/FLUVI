@@ -1,0 +1,5918 @@
+{
+  "version": "1.0",
+  "id": "1762923807247",
+  "nombre": "Baches en Calle Erro y Barredo",
+  "descripcion": "Hubo un tiempo en que habi amuchos baches en toda esa calle que afectaba al trafico del cirucito del IPN",
+  "fechaCreacion": "2025-11-12T05:03:27.247Z",
+  "callesConfig": [
+    {
+      "id": "Retorno M. ←",
+      "nombre": "Retorno M. ←",
+      "tamano": 6,
+      "carriles": 2
+    },
+    {
+      "id": "Retorno M. →",
+      "nombre": "Retorno M. →",
+      "tamano": 6,
+      "carriles": 2
+    },
+    {
+      "id": "Retorno torres →",
+      "nombre": "Retorno torres →",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno torres ←",
+      "nombre": "Retorno torres ←",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno ESCOM ←",
+      "nombre": "Retorno ESCOM ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno ESCOM →",
+      "nombre": "Retorno ESCOM →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Estampa ←",
+      "nombre": "Retorno Estampa ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Estampa →",
+      "nombre": "Retorno Estampa →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Juan F. ←",
+      "nombre": "Retorno Juan F. ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Juan F. →",
+      "nombre": "Retorno Juan F. →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Juan F. 2 ←",
+      "nombre": "Retorno Juan F. 2 ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Juan F. 2 →",
+      "nombre": "Retorno Juan F. 2 →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Batiz ←",
+      "nombre": "Retorno Batiz ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Batiz →",
+      "nombre": "Retorno Batiz →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Batiz F. ←",
+      "nombre": "Retorno Batiz F. ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Batiz F. →",
+      "nombre": "Retorno Batiz F. →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno SECAD ←",
+      "nombre": "Retorno SECAD ←",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno SECAD →",
+      "nombre": "Retorno SECAD →",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Bernard ←",
+      "nombre": "Retorno Bernard ←",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Bernard →",
+      "nombre": "Retorno Bernard →",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 1 ←",
+      "nombre": "Retorno Erro 1 ←",
+      "tamano": 4,
+      "carriles": 2
+    },
+    {
+      "id": "Retorno Erro 2 ←",
+      "nombre": "Retorno Erro 2 ←",
+      "tamano": 3,
+      "carriles": 2
+    },
+    {
+      "id": "Retorno Wilfrido. ←",
+      "nombre": "Retorno Wilfrido. ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Escalera ←",
+      "nombre": "Retorno Escalera ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Escalera →",
+      "nombre": "Retorno Escalera →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido1 ←",
+      "nombre": "Retorno Wilfrido1 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido2 →",
+      "nombre": "Retorno Wilfrido2 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido3 →",
+      "nombre": "Retorno Wilfrido3 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido4 ←",
+      "nombre": "Retorno Wilfrido4 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido5 ←",
+      "nombre": "Retorno Wilfrido5 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido6 →",
+      "nombre": "Retorno Wilfrido6 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido7 ←",
+      "nombre": "Retorno Wilfrido7 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido8 →",
+      "nombre": "Retorno Wilfrido8 →",
+      "tamano": 3,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido9 ←",
+      "nombre": "Retorno Wilfrido9 ←",
+      "tamano": 3,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido10 ←",
+      "nombre": "Retorno Wilfrido10 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido11 →",
+      "nombre": "Retorno Wilfrido11 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 3 →",
+      "nombre": "Retorno Erro 3 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 3 ←",
+      "nombre": "Retorno Erro 3 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 4 →",
+      "nombre": "Retorno Erro 4 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 4 ←",
+      "nombre": "Retorno Erro 4 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 5 →",
+      "nombre": "Retorno Erro 5 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 5 ←",
+      "nombre": "Retorno Erro 5 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo →",
+      "nombre": "Retorno Barredo →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo ←",
+      "nombre": "Retorno Barredo ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 3 →",
+      "nombre": "Retorno Barredo 3 →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 3 ←",
+      "nombre": "Retorno Barredo 3 ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 4 →",
+      "nombre": "Retorno Barredo 4 →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 4 ←",
+      "nombre": "Retorno Barredo 4 ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 5 →",
+      "nombre": "Retorno Barredo 5 →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 5 ←",
+      "nombre": "Retorno Barredo 5 ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 6 →",
+      "nombre": "Retorno Barredo 6 →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 6 ←",
+      "nombre": "Retorno Barredo 6 ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Calle M. Luisa Estampa Ort. →",
+      "nombre": "Calle M. Luisa Estampa Ort. →",
+      "tamano": 50,
+      "carriles": 1
+    },
+    {
+      "id": "Calle M. Luisa Estampa Ort. ←",
+      "nombre": "Calle M. Luisa Estampa Ort. ←",
+      "tamano": 49,
+      "carriles": 1
+    },
+    {
+      "id": "Av. Miguel Othon de Mendizabal →",
+      "nombre": "Av. Miguel Othon de Mendizabal →",
+      "tamano": 248,
+      "carriles": 3
+    },
+    {
+      "id": "Calle Luis Enrique Erro Tramo 2 →",
+      "nombre": "Calle Luis Enrique Erro Tramo 2 →",
+      "tamano": 65,
+      "carriles": 2
+    },
+    {
+      "id": "Av. Juan de Dios Batiz ←",
+      "nombre": "Av. Juan de Dios Batiz ←",
+      "tamano": 199,
+      "carriles": 3
+    },
+    {
+      "id": "Entrada a Av. Juan de Dios Batiz ←",
+      "nombre": "Entrada a Av. Juan de Dios Batiz ←",
+      "tamano": 17,
+      "carriles": 3
+    },
+    {
+      "id": "Salida Juan de Dios Batiz ←",
+      "nombre": "Salida Juan de Dios Batiz ←",
+      "tamano": 84,
+      "carriles": 3
+    },
+    {
+      "id": "Av. Miguel Bernard →",
+      "nombre": "Av. Miguel Bernard →",
+      "tamano": 190,
+      "carriles": 3
+    },
+    {
+      "id": "Av. Wilfrido Massieu →",
+      "nombre": "Av. Wilfrido Massieu →",
+      "tamano": 343,
+      "carriles": 2
+    },
+    {
+      "id": "Av. Cien Metros ←",
+      "nombre": "Av. Cien Metros ←",
+      "tamano": 230,
+      "carriles": 3
+    },
+    {
+      "id": "Calle Interior IPN ←",
+      "nombre": "Calle Interior IPN ←",
+      "tamano": 180,
+      "carriles": 1
+    },
+    {
+      "id": "Calle Interior IPN →",
+      "nombre": "Calle Interior IPN →",
+      "tamano": 179,
+      "carriles": 1
+    },
+    {
+      "id": "Calle Luis Enrique Erro ←",
+      "nombre": "Calle Luis Enrique Erro ←",
+      "tamano": 177,
+      "carriles": 2
+    },
+    {
+      "id": "Calle Miguel Anda y Barredo ←",
+      "nombre": "Calle Miguel Anda y Barredo ←",
+      "tamano": 184,
+      "carriles": 2
+    },
+    {
+      "id": "Entrada Juan de Dios Batiz →",
+      "nombre": "Entrada Juan de Dios Batiz →",
+      "tamano": 95,
+      "carriles": 3
+    },
+    {
+      "id": "Av. Juan de Dios Batiz →",
+      "nombre": "Av. Juan de Dios Batiz →",
+      "tamano": 204,
+      "carriles": 3
+    },
+    {
+      "id": "Salida de Juan de Dios Batiz →",
+      "nombre": "Salida de Juan de Dios Batiz →",
+      "tamano": 76,
+      "carriles": 3
+    },
+    {
+      "id": "Av. IPN ←",
+      "nombre": "Av. IPN ←",
+      "tamano": 230,
+      "carriles": 2
+    },
+    {
+      "id": "Calle Luis Enrique Erro →",
+      "nombre": "Calle Luis Enrique Erro →",
+      "tamano": 178,
+      "carriles": 2
+    },
+    {
+      "id": "Calle Luis Enrique Erro Tramo 2 ←",
+      "nombre": "Calle Luis Enrique Erro Tramo 2 ←",
+      "tamano": 69,
+      "carriles": 2
+    },
+    {
+      "id": "Calle Miguel Anda y Barredo →",
+      "nombre": "Calle Miguel Anda y Barredo →",
+      "tamano": 184,
+      "carriles": 2
+    },
+    {
+      "id": "Av. Wilfrido Massieu ←",
+      "nombre": "Av. Wilfrido Massieu ←",
+      "tamano": 346,
+      "carriles": 2
+    },
+    {
+      "id": "Salida Cien Metros ←",
+      "nombre": "Salida Cien Metros ←",
+      "tamano": 4,
+      "carriles": 3
+    },
+    {
+      "id": "Entrada a Cien Metros →",
+      "nombre": "Entrada a Cien Metros →",
+      "tamano": 4,
+      "carriles": 3
+    },
+    {
+      "id": "Entrada a Av. IPN ←",
+      "nombre": "Entrada a Av. IPN ←",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "Salida Av. IPN ←",
+      "nombre": "Salida Av. IPN ←",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "Entrada ←",
+      "nombre": "Entrada ←",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "Salida 1 →",
+      "nombre": "Salida 1 →",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "Salida 2 →",
+      "nombre": "Salida 2 →",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "E ←",
+      "nombre": "E ←",
+      "tamano": 4,
+      "carriles": 3
+    },
+    {
+      "id": "E 2→",
+      "nombre": "E 2→",
+      "tamano": 4,
+      "carriles": 3
+    },
+    {
+      "id": "Er→",
+      "nombre": "Er→",
+      "tamano": 2,
+      "carriles": 2
+    },
+    {
+      "id": "B →",
+      "nombre": "B →",
+      "tamano": 2,
+      "carriles": 2
+    }
+  ],
+  "celdasBloqueadas": [
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 167,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 166,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 165,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 164,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 163,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 162,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 161,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 160,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 159,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 158,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 157,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 156,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 151,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 150,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 152,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 153,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 154,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 155,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 149,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 148,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 147,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 146,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 145,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 144,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 143,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 142,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 141,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 140,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 139,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 138,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 137,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 136,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 135,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 134,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 11,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 12,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 13,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 14,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 15,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 16,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 17,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 18,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 19,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 20,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 21,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 22,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 23,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 24,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 25,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 26,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 27,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 28,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 29,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 30,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 31,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 32,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 33,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 34,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 35,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 36,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 39,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 40,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 41,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 42,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 44,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 45,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 46,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 47,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 48,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 49,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 50,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 52,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 53,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 54,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 55,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 56,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 133,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 132,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 130,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 129,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 128,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 127,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 126,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 125,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 124,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 123,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 122,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 121,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 120,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 119,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 118,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 111,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 110,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 109,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 108,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 107,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 106,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 105,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 104,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 103,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 102,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 57,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 58,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 61,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 63,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 68,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 67,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 66,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 65,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 64,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 60,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 62,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 69,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 73,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 83,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 84,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 85,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 86,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 82,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 76,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 75,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 74,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 77,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 78,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 79,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 80,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 81,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 87,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 88,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 89,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 91,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 92,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 93,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 94,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 95,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 96,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 98,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 99,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 101,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 102,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 101,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 100,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 99,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 97,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 96,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 95,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 94,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 93,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 92,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 91,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 90,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 89,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 88,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 87,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 86,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 85,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 84,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 83,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 82,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 81,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 80,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 79,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 78,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 77,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 76,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 103,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 105,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 106,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 107,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 108,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 109,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 110,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 111,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 112,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 113,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 114,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 115,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 116,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 117,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 118,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 119,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 120,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 121,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 122,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 123,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 124,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 125,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 126,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 127,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 128,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 129,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 130,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 131,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 132,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 75,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 73,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 72,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 71,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 70,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 69,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 68,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 67,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 66,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 65,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 64,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 63,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 62,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 61,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 60,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 59,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 58,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 57,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 56,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 55,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 54,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 53,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 52,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 51,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 50,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 49,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 48,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 133,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 135,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 136,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 137,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 138,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 139,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 140,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 141,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 142,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 143,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 144,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 145,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 146,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 147,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 148,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 47,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 46,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 44,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 43,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 42,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 41,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 40,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 39,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 37,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 36,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 35,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 34,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 33,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 32,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 31,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 149,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 151,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 152,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 153,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 154,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 155,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 156,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 157,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 158,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 159,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 160,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 161,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 162,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 163,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 164,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 165,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 166,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 167,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 168,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 169,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 170,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 171,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 172,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 173,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 174,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 30,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 29,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 28,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 27,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 26,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 25,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 24,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 23,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 22,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 21,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 20,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 19,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 18,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 17,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 16,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 15,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 14,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 13,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 12,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 11,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 10,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 9,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 8,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 7,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 6,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 5,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 175,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 176,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 1,
+      "indice": 177,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 4,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 3,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 2,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 1,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 183,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 181,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 180,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 179,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 178,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 177,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 176,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 175,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 174,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 173,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 172,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 171,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 170,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 169,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 168,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 167,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 166,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 165,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 164,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 162,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 160,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 159,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 158,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 157,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 156,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 155,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 154,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 153,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 152,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 151,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 150,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 161,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 163,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "B →",
+      "calleId": "B →",
+      "carril": 1,
+      "indice": 1,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 1,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 2,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 3,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 4,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 5,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 6,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 7,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 8,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 9,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 10,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 11,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 12,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 13,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 15,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 16,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 19,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 20,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 21,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 22,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 23,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 24,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 25,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 26,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 27,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 28,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 29,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 30,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 18,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 17,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 31,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 33,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 35,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 36,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 37,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 38,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 39,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 40,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 41,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 42,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 43,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 44,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 45,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 46,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 47,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 48,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 49,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 50,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 149,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 148,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 147,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 146,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 145,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 144,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 143,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 142,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 141,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 140,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 139,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 138,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 137,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 136,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 135,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 51,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 53,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 54,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 55,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 56,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 57,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 58,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 59,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 60,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 61,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 62,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 134,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 133,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 132,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 131,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 130,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 129,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 128,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 127,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 126,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 125,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 124,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 123,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 122,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 52,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 63,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 64,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 65,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 66,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 67,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 68,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 69,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 70,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 71,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 72,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 121,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 120,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 119,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 117,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 116,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 115,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 114,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 113,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 112,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 73,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 74,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 75,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 76,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 77,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 78,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 79,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 80,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 81,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 82,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 83,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 84,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 85,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 86,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 87,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 88,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 89,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 90,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 91,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 92,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 93,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 94,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 95,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 96,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 97,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 111,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 110,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 109,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 108,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 107,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 106,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 105,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 104,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 103,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 102,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 101,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 100,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 99,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 98,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 96,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 95,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 94,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 93,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 92,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 91,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 90,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 89,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 88,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 87,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 86,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 97,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 98,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 99,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 100,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 102,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 103,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 104,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 105,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 106,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 107,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 108,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 109,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 110,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 111,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 85,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 83,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 81,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 80,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 79,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 78,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 77,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 76,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 75,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 74,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 73,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 72,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 71,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 70,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 69,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 68,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 67,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 66,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 65,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 64,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 63,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 62,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 61,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 112,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 113,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 114,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 115,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 116,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 117,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 118,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 119,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 120,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 121,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 122,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 123,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 124,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 126,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 127,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 128,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 129,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 130,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 131,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 132,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 133,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 134,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 135,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 136,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 137,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 138,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 60,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 59,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 58,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 57,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 56,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 55,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 54,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 53,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 52,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 51,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 50,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 49,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 48,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 47,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 139,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 140,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 143,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 144,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 145,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 146,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 147,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 148,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 149,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 150,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 151,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 152,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 153,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 154,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 155,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 156,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 157,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 158,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 159,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 160,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 161,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 162,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 46,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 45,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 44,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 43,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 42,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 41,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 40,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 39,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 38,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 37,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 36,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 35,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 34,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 33,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 32,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 31,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 29,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 28,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 27,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 26,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 25,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 24,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 23,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 22,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 21,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 18,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 17,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 16,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 15,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 14,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 13,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 12,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 11,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 10,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 9,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 8,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 7,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 6,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 5,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 4,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 3,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 2,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 1,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 19,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 20,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 163,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 164,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 166,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 167,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 168,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 169,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 170,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 171,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 172,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 165,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 173,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 174,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 175,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 176,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 177,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 178,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 179,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 180,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 181,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 1,
+      "indice": 182,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 62,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 63,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 64,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 65,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 66,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 67,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 68,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 69,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 70,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 71,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 2,
+      "indice": 72,
+      "tipo": "obstaculo",
+      "texture": "bache"
+    }
+  ],
+  "estadisticas": {
+    "totalBloqueos": 0,
+    "totalInundaciones": 0,
+    "totalObstaculos": 674
+  }
+}

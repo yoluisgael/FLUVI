@@ -1,0 +1,782 @@
+{
+  "version": "1.0",
+  "id": "1763098932454",
+  "nombre": "Paro del IPN",
+  "descripcion": "Entradas cerradas",
+  "fechaCreacion": "2025-11-14T05:42:12.454Z",
+  "callesConfig": [
+    {
+      "id": "Retorno M. ←",
+      "nombre": "Retorno M. ←",
+      "tamano": 6,
+      "carriles": 2
+    },
+    {
+      "id": "Retorno M. →",
+      "nombre": "Retorno M. →",
+      "tamano": 6,
+      "carriles": 2
+    },
+    {
+      "id": "Retorno torres →",
+      "nombre": "Retorno torres →",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno torres ←",
+      "nombre": "Retorno torres ←",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno ESCOM ←",
+      "nombre": "Retorno ESCOM ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno ESCOM →",
+      "nombre": "Retorno ESCOM →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Estampa ←",
+      "nombre": "Retorno Estampa ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Estampa →",
+      "nombre": "Retorno Estampa →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Juan F. ←",
+      "nombre": "Retorno Juan F. ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Juan F. →",
+      "nombre": "Retorno Juan F. →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Juan F. 2 ←",
+      "nombre": "Retorno Juan F. 2 ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Juan F. 2 →",
+      "nombre": "Retorno Juan F. 2 →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Batiz ←",
+      "nombre": "Retorno Batiz ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Batiz →",
+      "nombre": "Retorno Batiz →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Batiz F. ←",
+      "nombre": "Retorno Batiz F. ←",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Batiz F. →",
+      "nombre": "Retorno Batiz F. →",
+      "tamano": 6,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno SECAD ←",
+      "nombre": "Retorno SECAD ←",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno SECAD →",
+      "nombre": "Retorno SECAD →",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Bernard ←",
+      "nombre": "Retorno Bernard ←",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Bernard →",
+      "nombre": "Retorno Bernard →",
+      "tamano": 7,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 1 ←",
+      "nombre": "Retorno Erro 1 ←",
+      "tamano": 4,
+      "carriles": 2
+    },
+    {
+      "id": "Retorno Erro 2 ←",
+      "nombre": "Retorno Erro 2 ←",
+      "tamano": 3,
+      "carriles": 2
+    },
+    {
+      "id": "Retorno Wilfrido. ←",
+      "nombre": "Retorno Wilfrido. ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Escalera ←",
+      "nombre": "Retorno Escalera ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Escalera →",
+      "nombre": "Retorno Escalera →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido1 ←",
+      "nombre": "Retorno Wilfrido1 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido2 →",
+      "nombre": "Retorno Wilfrido2 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido3 →",
+      "nombre": "Retorno Wilfrido3 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido4 ←",
+      "nombre": "Retorno Wilfrido4 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido5 ←",
+      "nombre": "Retorno Wilfrido5 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido6 →",
+      "nombre": "Retorno Wilfrido6 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido7 ←",
+      "nombre": "Retorno Wilfrido7 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido8 →",
+      "nombre": "Retorno Wilfrido8 →",
+      "tamano": 3,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido9 ←",
+      "nombre": "Retorno Wilfrido9 ←",
+      "tamano": 3,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido10 ←",
+      "nombre": "Retorno Wilfrido10 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Wilfrido11 →",
+      "nombre": "Retorno Wilfrido11 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 3 →",
+      "nombre": "Retorno Erro 3 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 3 ←",
+      "nombre": "Retorno Erro 3 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 4 →",
+      "nombre": "Retorno Erro 4 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 4 ←",
+      "nombre": "Retorno Erro 4 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 5 →",
+      "nombre": "Retorno Erro 5 →",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Erro 5 ←",
+      "nombre": "Retorno Erro 5 ←",
+      "tamano": 4,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo →",
+      "nombre": "Retorno Barredo →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo ←",
+      "nombre": "Retorno Barredo ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 3 →",
+      "nombre": "Retorno Barredo 3 →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 3 ←",
+      "nombre": "Retorno Barredo 3 ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 4 →",
+      "nombre": "Retorno Barredo 4 →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 4 ←",
+      "nombre": "Retorno Barredo 4 ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 5 →",
+      "nombre": "Retorno Barredo 5 →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 5 ←",
+      "nombre": "Retorno Barredo 5 ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 6 →",
+      "nombre": "Retorno Barredo 6 →",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Retorno Barredo 6 ←",
+      "nombre": "Retorno Barredo 6 ←",
+      "tamano": 5,
+      "carriles": 1
+    },
+    {
+      "id": "Calle M. Luisa Estampa Ort. →",
+      "nombre": "Calle M. Luisa Estampa Ort. →",
+      "tamano": 50,
+      "carriles": 1
+    },
+    {
+      "id": "Calle M. Luisa Estampa Ort. ←",
+      "nombre": "Calle M. Luisa Estampa Ort. ←",
+      "tamano": 49,
+      "carriles": 1
+    },
+    {
+      "id": "Av. Miguel Othon de Mendizabal →",
+      "nombre": "Av. Miguel Othon de Mendizabal →",
+      "tamano": 248,
+      "carriles": 3
+    },
+    {
+      "id": "Calle Luis Enrique Erro Tramo 2 →",
+      "nombre": "Calle Luis Enrique Erro Tramo 2 →",
+      "tamano": 65,
+      "carriles": 2
+    },
+    {
+      "id": "Av. Juan de Dios Batiz ←",
+      "nombre": "Av. Juan de Dios Batiz ←",
+      "tamano": 199,
+      "carriles": 3
+    },
+    {
+      "id": "Entrada a Av. Juan de Dios Batiz ←",
+      "nombre": "Entrada a Av. Juan de Dios Batiz ←",
+      "tamano": 17,
+      "carriles": 3
+    },
+    {
+      "id": "Salida Juan de Dios Batiz ←",
+      "nombre": "Salida Juan de Dios Batiz ←",
+      "tamano": 84,
+      "carriles": 3
+    },
+    {
+      "id": "Av. Miguel Bernard →",
+      "nombre": "Av. Miguel Bernard →",
+      "tamano": 190,
+      "carriles": 3
+    },
+    {
+      "id": "Av. Wilfrido Massieu →",
+      "nombre": "Av. Wilfrido Massieu →",
+      "tamano": 343,
+      "carriles": 2
+    },
+    {
+      "id": "Av. Cien Metros ←",
+      "nombre": "Av. Cien Metros ←",
+      "tamano": 230,
+      "carriles": 3
+    },
+    {
+      "id": "Calle Interior IPN ←",
+      "nombre": "Calle Interior IPN ←",
+      "tamano": 180,
+      "carriles": 1
+    },
+    {
+      "id": "Calle Interior IPN →",
+      "nombre": "Calle Interior IPN →",
+      "tamano": 179,
+      "carriles": 1
+    },
+    {
+      "id": "Calle Luis Enrique Erro ←",
+      "nombre": "Calle Luis Enrique Erro ←",
+      "tamano": 177,
+      "carriles": 2
+    },
+    {
+      "id": "Calle Miguel Anda y Barredo ←",
+      "nombre": "Calle Miguel Anda y Barredo ←",
+      "tamano": 184,
+      "carriles": 2
+    },
+    {
+      "id": "Entrada Juan de Dios Batiz →",
+      "nombre": "Entrada Juan de Dios Batiz →",
+      "tamano": 95,
+      "carriles": 3
+    },
+    {
+      "id": "Av. Juan de Dios Batiz →",
+      "nombre": "Av. Juan de Dios Batiz →",
+      "tamano": 204,
+      "carriles": 3
+    },
+    {
+      "id": "Salida de Juan de Dios Batiz →",
+      "nombre": "Salida de Juan de Dios Batiz →",
+      "tamano": 76,
+      "carriles": 3
+    },
+    {
+      "id": "Av. IPN ←",
+      "nombre": "Av. IPN ←",
+      "tamano": 230,
+      "carriles": 2
+    },
+    {
+      "id": "Calle Luis Enrique Erro →",
+      "nombre": "Calle Luis Enrique Erro →",
+      "tamano": 178,
+      "carriles": 2
+    },
+    {
+      "id": "Calle Luis Enrique Erro Tramo 2 ←",
+      "nombre": "Calle Luis Enrique Erro Tramo 2 ←",
+      "tamano": 69,
+      "carriles": 2
+    },
+    {
+      "id": "Calle Miguel Anda y Barredo →",
+      "nombre": "Calle Miguel Anda y Barredo →",
+      "tamano": 184,
+      "carriles": 2
+    },
+    {
+      "id": "Av. Wilfrido Massieu ←",
+      "nombre": "Av. Wilfrido Massieu ←",
+      "tamano": 346,
+      "carriles": 2
+    },
+    {
+      "id": "Salida Cien Metros ←",
+      "nombre": "Salida Cien Metros ←",
+      "tamano": 4,
+      "carriles": 3
+    },
+    {
+      "id": "Entrada a Cien Metros →",
+      "nombre": "Entrada a Cien Metros →",
+      "tamano": 4,
+      "carriles": 3
+    },
+    {
+      "id": "Entrada a Av. IPN ←",
+      "nombre": "Entrada a Av. IPN ←",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "Salida Av. IPN ←",
+      "nombre": "Salida Av. IPN ←",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "Entrada ←",
+      "nombre": "Entrada ←",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "Salida 1 →",
+      "nombre": "Salida 1 →",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "Salida 2 →",
+      "nombre": "Salida 2 →",
+      "tamano": 5,
+      "carriles": 2
+    },
+    {
+      "id": "E ←",
+      "nombre": "E ←",
+      "tamano": 4,
+      "carriles": 3
+    },
+    {
+      "id": "E 2→",
+      "nombre": "E 2→",
+      "tamano": 4,
+      "carriles": 3
+    },
+    {
+      "id": "Er→",
+      "nombre": "Er→",
+      "tamano": 2,
+      "carriles": 2
+    },
+    {
+      "id": "B →",
+      "nombre": "B →",
+      "tamano": 2,
+      "carriles": 2
+    }
+  ],
+  "celdasBloqueadas": [
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 0,
+      "indice": 122,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 122,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 121,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 1,
+      "indice": 120,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro ←",
+      "calleId": "Calle Luis Enrique Erro ←",
+      "carril": 0,
+      "indice": 121,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Luis Enrique Erro →",
+      "calleId": "Calle Luis Enrique Erro →",
+      "carril": 0,
+      "indice": 57,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Retorno Erro 5 ←",
+      "calleId": "Retorno Erro 5 ←",
+      "carril": 0,
+      "indice": 0,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 139,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 140,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 0,
+      "indice": 140,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Retorno Barredo 6 ←",
+      "calleId": "Retorno Barredo 6 ←",
+      "carril": 0,
+      "indice": 1,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Retorno Barredo 6 ←",
+      "calleId": "Retorno Barredo 6 ←",
+      "carril": 0,
+      "indice": 0,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 0,
+      "indice": 42,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo →",
+      "calleId": "Calle Miguel Anda y Barredo →",
+      "carril": 0,
+      "indice": 43,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Calle Miguel Anda y Barredo ←",
+      "calleId": "Calle Miguel Anda y Barredo ←",
+      "carril": 1,
+      "indice": 138,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 0,
+      "indice": 193,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 1,
+      "indice": 193,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 1,
+      "indice": 192,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 2,
+      "indice": 192,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 2,
+      "indice": 193,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 2,
+      "indice": 191,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 2,
+      "indice": 190,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 1,
+      "indice": 191,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 2,
+      "indice": 189,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 1,
+      "indice": 190,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz ←",
+      "calleId": "Av. Juan de Dios Batiz ←",
+      "carril": 2,
+      "indice": 188,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 0,
+      "indice": 5,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Retorno Juan F. →",
+      "calleId": "Retorno Juan F. →",
+      "carril": 0,
+      "indice": 0,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 0,
+      "indice": 4,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 1,
+      "indice": 5,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 1,
+      "indice": 4,
+      "tipo": "bloqueo",
+      "texture": null
+    },
+    {
+      "calleNombre": "Av. Juan de Dios Batiz →",
+      "calleId": "Av. Juan de Dios Batiz →",
+      "carril": 0,
+      "indice": 3,
+      "tipo": "bloqueo",
+      "texture": null
+    }
+  ],
+  "estadisticas": {
+    "totalBloqueos": 32,
+    "totalInundaciones": 0,
+    "totalObstaculos": 0
+  }
+}
